@@ -5,7 +5,7 @@
 (defvar *rules* nil)
 
 (defmacro deftemplate (name fileds)
-  "Define rule template"
+  "Define fact template"
 
   )
 
