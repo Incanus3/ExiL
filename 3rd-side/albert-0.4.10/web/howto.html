@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+<link rel="stylesheet" type="text/css" href="albdocs.css">
+<title>How to generate lisp docs with Albert</title>
+</head>
+
+<body>
+<h1>How to generate lisp docs with Albert</h1>
+
+<p>When making your ASDF system-file, add extra properties that Albert
+can understand to configure the behaviour of Albert.  This is from the
+current version of <a href="http://www.langband.org/">Langband</a>:</p>
+<font size="-1">
+<pre class="codesample">
+(asdf:defsystem :langband-engine
+    :name "Langband Engine"
+    :author "Stig E Sandoe"
+    :version "0.1.7"
+    :licence "GPL"
+    :properties ((#:author-email . "stig@langband.org")
+		 (#:date . "Summer 2003")
+		 ((#:albert #:output-dir) . "albert-docs/")
+		 ((#:albert #:formats) . ("docbook"))
+		 ((#:albert #:docbook #:template) . "book")
+		 ((#:albert #:docbook #:bgcolor) . "white")
+		 ((#:albert #:docbook #:textcolor) . "black")
+		 )
+    :components
+    ...)
+</pre>
+</font>
+
+<p>The above preferences ensures that I get a Docbook 'book' as output
+with correct info for any headers/title-pages/etc.  To see a list of
+understood properties, check <a href="properties.html">this page</a>.</p>
+
+<p>To generate the documentation for langband I do:</p>
+<pre class="codesample">
+* (in-package :cl-user)
+
+* (require :albert)
+* (load "langband-engine.asd")
+* (albert:document-systems :langband-engine) ;; changed from v0.2
+</pre>
+
+<p>Albert will generate DocBook documentation in your chosen directory, in
+this case <tt>albert-docs/</tt>.  To generate HTML with 
+<tt>jade</tt> you can do this:</p>
+
+<pre class="codesample">jade -d ALBERT_PATH/data/albert.dsl -t sgml ALBERT_PATH/data/xml.dcl book.xml</pre>
+
+<p>For Langband this results is this <a
+title="Example of Albert output for a Lisp project" href="http://albert.sourceforge.net/langband/index.html">reference
+documentation</a>.  The
+ALBERT_PATH for the Debian package is <tt>/usr/share/albert</tt></p>
+
+<table border="1">
+  <tr valign=top><td>
+<b>IMPORTANT:</b> To get decent-looking docs you need to do
+<b>two</b> things.<br>
+<b>1.</b> Copy <code>albert.css</code> file from the
+albert-distribution (or <tt>/usr/share/albert/</tt>) to where you have
+the HTML documents.<br>
+<b>2.</b> Copy or link the <code>icons/</code>
+directory to where you have the HTML documents to get the navigation
+icons used in the example docs.</td></tr>
+</table>
+
+<p>To generate documentation in a printable format (not as far in
+development as the HTML output), you can try these
+commands:</p>
+<pre class="codesample">
+jade -d ALBERT_PATH/data/print-albert.dsl -t tex ALBERT_PATH/data/xml.dcl book.xml
+jadetex book.tex
+</pre>
+
+<hr>
+<p><b>Note:</b> The actual <tt>docme.lisp</tt> script in langband is a bit more
+complicated and the latest version is <a
+href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/langband/langband/tools/docme.lisp?rev=HEAD&content-type=text/vnd.viewcvs-markup">here</a>.
+It also provides examples of how to ignore some calls in the
+method-listings, as well as special handling of a few
+langband-specific macros.  See the <a href="faq.html">FAQ</a> for more explanation for some
+of the extras.</p>
+
+
+<hr>
+<table width="100%">
+  <tr valign=top>
+    <td>
+      <address>stig@users.sourceforge.net</address>
+    </td>
+    <td>
+      <div align=right><a href="http://sourceforge.net"><img
+      src="http://sourceforge.net/sflogo.php?group_id=84355&amp;type=5" width="105" height="31" border="0" alt="SourceForge.net Logo" /></a></div>
+    </td>
+  </tr>
+</table>
+
+</body> </html>

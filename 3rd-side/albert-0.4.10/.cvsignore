@@ -1,0 +1,13 @@
+*.fas*
+*.lib
+*.ufsl
+*.x86f
+*.err
+*.trace
+output.csf
+output.sdoc
+sylte.xml
+converted.xml
+Docs-Albert
+trash
+

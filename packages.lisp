@@ -1,4 +1,5 @@
 (in-package :cl-user)
 
 (defpackage :exil
-  (:use :common-lisp))
+  (:use :common-lisp)
+  (:shadow :assert))

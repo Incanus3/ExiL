@@ -1,0 +1,10 @@
+usr/share/albert
+usr/share/albert/icons
+usr/share/common-lisp/source/albert
+usr/share/common-lisp/source/albert/apispec
+usr/share/common-lisp/source/albert/spres
+usr/share/common-lisp/source/albert/spres/rules
+usr/share/common-lisp/source/albert/specs
+usr/share/common-lisp/source/albert/tools
+usr/share/common-lisp/source/albert/base
+usr/share/common-lisp/source/albert/lisp2csf

@@ -1,0 +1,98 @@
+albert (0.4.10) unstable; urgency=low
+
+  * Yet another upstream, mostly bugfix.
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Tue, 20 Apr 2004 13:43:06 +0200
+
+albert (0.4.9) unstable; urgency=low
+
+  * Yet another new upstream.
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Mon, 27 Oct 2003 18:52:27 +0100
+
+albert (0.4.8) unstable; urgency=low
+
+  * New upstream.
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Mon, 20 Oct 2003 20:02:52 +0200
+
+albert (0.4.7) unstable; urgency=low
+
+  * New upstream.
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Mon, 20 Oct 2003 01:46:44 +0200
+
+albert (0.4.6.1) unstable; urgency=low
+
+  * Fix e-mail address
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 16 Jul 2003 12:07:26 -0600
+
+albert (0.4.6) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 12 Jul 2003 12:21:03 -0600
+
+albert (0.4.4) unstable; urgency=low
+
+  * Initial upload
+  * Use debian/compat rather than export DH_COMPAT
+  * Don't duplicate license with COPYING file
+  * Refer to GPL on filesystem in debian/copyright
+  * Update standards-version to 3.5.10.0 [no changes required]
+  * Add skeletal alb_xml2sexp man page
+  * Added possibility to control calls and calledby info from settings.
+  * Actually generate calledby info if that is wanted
+  * Some bugfixes
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri,  4 Jul 2003 15:57:10 -0600
+
+albert (0.4.3-1) unstable; urgency=low
+
+  * Updated code to work as debian-package
+  * Updated code to work with SBCL
+  * Ignore a few extra cmuc/sbcl calls
+  * Removed dead code
+  * Minor tweaking
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Fri,  4 Jul 2003 01:11:21 +0200
+
+albert (0.4.2-1) unstable; urgency=low
+
+  * Added hovering text to links.
+  * Allowed the choice of when defgenerics get their own page be controlled via settings.
+  * Allowed settings to control when a class gets a quick-index.
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Thu,  3 Jul 2003 23:02:53 +0200
+
+albert (0.4-1) unstable; urgency=low
+
+  * Fixed some last-minute bugs in v0.3 and made syntax in asdf-file more lenient. 
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Wed,  2 Jul 2003 15:56:42 +0200
+
+albert (0.3-1) unstable; urgency=low
+
+  * Updated with new version that just needs an asdf-system, not a prefs-file.
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Wed,  2 Jul 2003 00:27:24 +0200
+
+albert (0.2-1) unstable; urgency=low
+
+  * Minor updates, mostly in handling SETF functions and generics.
+  Think I've found the right balance in how to present it.  
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Tue, 20 May 2003 01:33:25 +0200
+
+albert (0.1-2) unstable; urgency=low
+
+  * Various updates in package structure.
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Sat, 15 Mar 2003 14:05:03 +0100
+
+albert (0.1-1) unstable; urgency=low
+
+  * New package
+
+ -- Stig E Sandoe <stig@users.sourceforge.net>  Thu, 13 Mar 2003 22:03:07 +0100

@@ -1,0 +1,15 @@
+body { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+       border: solid;
+       padding: 1em; }
+
+code {  color: darkblue;
+       background: #eeeeee }
+
+pre.codesample  { color: darkgreen;
+                  background: #dddddd }
+
+td.settingkey { background: #eeeeee }
+td.settingdesc { background: #eeeedd }
+
+.settingdesc code { background: #ddddff;
+                    color: darkblue }

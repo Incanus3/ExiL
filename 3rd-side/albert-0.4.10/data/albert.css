@@ -1,0 +1,89 @@
+body { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+       border: solid;
+       padding: 1em; }
+
+/* we want the hyperspec links to be a bit different. */
+a:visited               { color: blue; text-decoration: none }
+a:link                  { color: blue; text-decoration: none }
+
+a.hyperspec:link	{ color: #68228b; text-decoration: none }
+a.hyperspec:visited	{ color: #68228b; text-decoration: none }
+
+h1 { margin-bottom: 0mm; padding-bottom: 0mm; }
+
+
+/*a.hyperspec:hover { color: #ff4500; text-decoration: none }*/
+/*a:active                { color: red; text-decoration: none }*/
+/*a:hover                 { color: red; text-decoration: none }*/
+
+/* This one disables the navigation header */
+.navheader { display: none }
+
+/* This one disables the navigation footer */
+.navfooter { display: none }
+
+.navfooter a { text-decoration: none }
+
+/* You can disable table of contents on the front page */
+.toc       { /*display: none*/ }
+
+.contenttitle { color: green;
+                text-decoration: underline; }
+
+/* if you wish to colour headers of methods/vars that are exported or unexported */
+ font.exported { /*color: blue;*/
+                 font-weight: bold; } 
+/* font.not-exported {  color: darkgreen; } */
+
+table.variablelist span { color: darkgreen;
+			  font-weight: bold;
+                          /*text-decoration: underline;*/
+                          }
+
+/*div.navigation		{ margin-top: 3mm; }*/
+.navigation td          { /*background-color: #99ffcc;*/
+                          background-color: #aaddaa;
+                          font-weight: bold;
+                          font-family: avantgarde, sans-serif;
+                          font-size: 110%; }
+
+table.calstable { background-color: #aaddaa }
+
+pre.programlisting { background-color: #aaddaa; }
+
+/* this one can adjust the tables with programlistings */
+/*table.para { margin-left: 6mm;
+             width: 100%; }*/
+
+.minorheader {  color: darkgreen }
+
+div.informaltable { margin-top: 3mm;
+                    margin-bottom: 3mm; }
+
+HR { border-top: solid; margin-top: 0mm; margin-bottom: 0mm; padding-top: 0mm; padding-bottom: 0mm; }
+
+P.bottom { margin-top: 0mm; margin-bottom: 0mm; padding-top: 0mm; padding-bottom: 0mm; }
+
+div.refnamediv h2 { color: green;
+                    text-decoration: underline; }
+
+div.refsynopsisdiv h2 { color: green;
+	                text-decoration: underline; }
+
+div.refsect1 h2 { color: green;
+	          text-decoration: underline; }
+
+/* possibly bad */
+div.refsect2 h3 {  display: none; }
+
+/* this stuff seems unused */
+/*
+.TOCTITLE  { font-size: 10pt;
+             color: blue;
+ 	     text-decoration: underline; }
+
+   .NAVTOC    { margin-left: 15;
+             display: none }
+
+.NAVBTN    { font-size: 10pt }
+*/

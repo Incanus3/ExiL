@@ -1,0 +1,132 @@
+<!--
+      DTD for the SDOC-part of the Software Development Foundation (SDS)
+      developed and written by Stig E. Sandoe <stig@ii.uib.no>
+
+      December 99
+      
+-->
+
+<!-- <?xml version="1.0" encoding="ISO-8859-1"?> -->
+
+<!ENTITY % text " #PCDATA ">
+
+<!ENTITY % freeforall " module | category | package | class | method | enum | variable | typespec | directive ">
+
+<!ELEMENT sdoc (%freeforall;)+>
+<!ATTLIST sdoc
+       language CDATA ""
+       >
+
+
+<!-- describes a location -->
+<!ELEMENT location EMPTY>
+<!ATTLIST location
+       file CDATA ""
+       startline CDATA "-1"
+       startcol CDATA "-1"
+       endline CDATA "-1"
+       endcol CDATA "-1"
+       position CDATA "-1"
+       >
+
+
+<!ELEMENT info EMPTY>       
+<!ATTLIST info
+     type CDATA #IMPLIED
+     value CDATA #IMPLIED
+     info CDATA #IMPLIED
+     >
+       
+<!ELEMENT doc (text)>
+<!ATTLIST doc
+     type CDATA #IMPLIED
+     >
+
+<!ELEMENT text (%text;)>
+
+       
+<!-- top-elem part -->
+       
+<!-- describes some namespace/package, needs more work -->              
+<!ELEMENT package (doc*,location?,info*,(%freeforall;)*) >
+<!ATTLIST package
+     id CDATA #IMPLIED
+     name CDATA #IMPLIED
+     >
+
+<!ELEMENT module (doc*, info*, (%freeforall;)*)>
+<!ATTLIST module
+    id CDATA #IMPLIED
+    name CDATA #IMPLIED
+    fullname CDATA ""
+    >
+    
+<!ELEMENT class (doc*,location,access,inherit*,info*,(%freeforall;)*)>
+<!ATTLIST class
+    id CDATA #IMPLIED
+    name CDATA #IMPLIED
+    >
+
+<!ELEMENT category (doc*, info*, (%freeforall;)*)>
+<!ATTLIST category
+    id CDATA #IMPLIED
+    name CDATA #REQUIRED
+    >
+
+<!ELEMENT method (doc*, where+,access,info*,retval*,arg*,(%freeforall;)*)>
+<!ATTLIST method
+    id CDATA #IMPLIED
+    name CDATA #REQUIRED
+    >            
+
+<!ELEMENT where (location)>
+<!ATTLIST where what (declaration|definition|unknown) "unknown">
+
+<!-- see other docs -->
+<!ELEMENT retval (info*)>
+<!ELEMENT arg (info*)>
+
+<!ELEMENT enum (doc*,location,access,enumval*)>
+<!ATTLIST enum
+    id CDATA #IMPLIED
+    name CDATA #IMPLIED
+    >
+    
+<!ELEMENT enumval EMPTY>
+<!ATTLIST enumval
+    name CDATA ""
+    value CDATA ""
+    >
+
+<!ELEMENT variable (doc*,location,access,info* )>
+<!ATTLIST variable
+    id CDATA #IMPLIED
+    name CDATA #IMPLIED
+    >
+
+<!ELEMENT typespec (doc*, location,access, info*) >
+<!ATTLIST typespec
+    id CDATA #REQUIRED
+    name CDATA #REQUIRED
+    >
+
+
+<!ELEMENT access EMPTY>
+<!ATTLIST access
+     visibility CDATA ""
+     scope CDATA ""
+     >
+
+<!ELEMENT inherit (info*)>
+<!ATTLIST inherit
+    name CDATA ""
+    >
+
+<!ELEMENT directive (doc*,location)>
+<!ATTLIST directive
+    name CDATA ""
+    value CDATA ""
+    info CDATA ""
+    >
+
+    
