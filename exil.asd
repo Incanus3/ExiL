@@ -3,9 +3,9 @@
 
 (defsystem exil
   :name "EXpert system In Lisp"
-  :author "Jakub Kaláb <jakubkalab@gmail.com>"
+  :author "Jakub Kalab <jakubkalab@gmail.com>"
   :version "0.1"
-  :maintainer "Jakub Kaláb <jakubkalab@gmail.com>"
+  :maintainer "Jakub Kalab <jakubkalab@gmail.com>"
   :licence "BSD"
   :description "EXpert system In Lisp"
   :long-description ""

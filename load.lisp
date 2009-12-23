@@ -5,6 +5,17 @@
    (directory-namestring
     (or *load-truename* *compile-file-truename*))))
 
-(load (merge-pathnames "3rd-side/asdf.lisp" *path*))
-(push-end *path* asdf:*central-registry*)
-(asdf:oos 'asdf:load-op :exil)
+;; (print (merge-pathnames "3rd-side/asdf.lisp" *path*))
+;; nefunguje uvnitr #-lispworks (progn ... )
+(require 'asdf (merge-pathnames "3rd-side/asdf.lisp" *path*))
+
+#-lispworks
+(progn
+  (push *path* asdf:*central-registry*)
+  (asdf:oos 'asdf:load-op :exil))
+
+#+lispworks
+(progn
+  (load (merge-pathnames "defsys.lisp" *path*))
+;  (load-system :exil)
+  (compile-system :exil :load t))
