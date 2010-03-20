@@ -20,4 +20,4 @@
   (intern (symbol-name symbol) :keyword))
 
 (defmacro mac-exp (&body body)
-  `(pprint (macroexpand-1 ',body)))
+  `(pprint (macroexpand-1 ',@body)))

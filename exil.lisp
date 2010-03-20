@@ -7,9 +7,8 @@
 (defvar *templates* nil)
 (defvar *rules* nil)
 
-;; concatenate "tmpl-" before symbol.
-(defun tmpl-symbol (symbol)
-  (symbol-append "tmpl-" symbol))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; fact classes
 
 ;; virtual class fact
 (defclass fact () ())
@@ -48,6 +47,10 @@
 		    collect (slot-value fact field)))))
   fact)
 
+;; concatenate "tmpl-" before symbol.
+(defun tmpl-symbol (symbol)
+  (symbol-append "tmpl-" symbol))
+
 ;; make defclass slot-designator from the deftemplate one
 (defun field->slot-designator (field)
   (destructuring-bind (field name &key (default nil)
@@ -67,26 +70,27 @@
 
 (defmacro deftemplate (name &body fields)
   "Define fact template"
-  `(progn
-     (defclass ,name (template)
-       (,@(loop for field in (car fields)
-	     collect (field->slot-designator field))
-	(fields :initform ',(mapcar #'second (car fields)) :reader fields)))
+  (let ((tmpl-name (tmpl-symbol name)))
+    `(progn
+       (defclass ,tmpl-name (template)
+	 (,@(loop for field in (car fields)
+	       collect (field->slot-designator field))
+	  (fields :initform ',(mapcar #'second (car fields)) :reader fields)))
      
-     (defun ,name (&rest rest)
-       (apply #'make-instance ',name rest))
+       (defun ,tmpl-name (&rest rest)
+	 (apply #'make-instance ',tmpl-name rest))
      
-     (defmethod fact-equal-p ((obj1 ,name) (obj2 ,name))
-       (and
-	,@(loop for field in (car fields)
-	     collect `(equalp (slot-value obj1 ',(second field))
-			      (slot-value obj2 ',(second field))))))
+       (defmethod fact-equal-p ((obj1 ,tmpl-name) (obj2 ,tmpl-name))
+	 (and
+	  ,@(loop for field in (car fields)
+	       collect `(equalp (slot-value obj1 ',(second field))
+				(slot-value obj2 ',(second field))))))
      
-     (pushnew ',name *templates*)
+       (pushnew ',name *templates*)
 
-     ;; could have remembered return-value of 1.st expression and return it
-     ;; but hope this is more effective
-     (find-class ',name)))
+       ;; could have remembered return-value of 1.st expression and return it
+       ;; but hope this is more effective
+       (find-class ',tmpl-name))))
 
 (defmacro assert (fact)
   "Add fact into working memory"
@@ -104,6 +108,9 @@
   "Create group of facts to be asserted after (reset)"
   (declare (ignorable facts-list))
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; rules
 
 (defclass rule ()
   ((name :initarg :name :reader name)
