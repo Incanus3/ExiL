@@ -7,25 +7,9 @@
 (defvar *templates* nil)
 (defvar *rules* nil)
 
-(defun to-keyword (symbol)
-  "get keyword form of symbol"
-  (intern (symbol-name symbol) :keyword))
-
 ;; concatenate "tmpl-" before symbol.
-;; doesn't work as i'd like: returns |tmpl-<symbol>|. ask smb less dumb
-(defun symbol->tmpl-symbol (symbol &optional (pkg :exil))
-  (intern (concatenate 'string "tmpl-" (symbol-name symbol)) pkg))
-
-;; make defclass slot-designator from the deftemplate one
-(defun field->slot-designator (field)
-  (destructuring-bind (field name &key (default nil)
-                             (type t type-provided-p)) field
-    (declare (ignore field))
-    `(,name :initarg ,(to-keyword name)
-            :initform ,default
-;			:accessor ,(symbol->tmpl-symbol name)
-			:accessor ,name
-            ,@(when type-provided-p `(:type ,type)))))
+(defun tmpl-symbol (symbol)
+  (symbol-append "tmpl-" symbol))
 
 ;; virtual class fact
 (defclass fact () ())
@@ -63,6 +47,17 @@
 		    collect (to-keyword field)
 		    collect (slot-value fact field)))))
   fact)
+
+;; make defclass slot-designator from the deftemplate one
+(defun field->slot-designator (field)
+  (destructuring-bind (field name &key (default nil)
+                             (type t type-provided-p)) field
+    (declare (ignore field))
+    `(,name :initarg ,(to-keyword name)
+            :initform ,default
+			:accessor ,(symbol->tmpl-symbol name)
+			:accessor ,name
+            ,@(when type-provided-p `(:type ,type)))))
 
 ;; Defines class with the same name as template and with slot for every
 ;; field and one additional slot for list of field-slots,
@@ -110,18 +105,22 @@
   )
 
 (defclass rule ()
-  ((lhs :initarg :lhs :reader lhs)
+  ((name :initarg :name :reader name)
+   (lhs :initarg :lhs :reader lhs)
    (rhs :initarg :rhs :reader rhs)))
 
-(defmacro defrule (&body rule)
+(defmacro defrule (name &body rule)
   "Define rule"
   (let ((=>-position (position '=> rule))
-	(rule (gensym)))
-    `(let ((,rule (make-instance
-		   'rule
-		   :lhs ',(subseq rule 0 =>-position)
-		   :rhs ',(subseq rule (1+ =>-position)))))
-       
+	(rule-symbol (gensym)))
+    `(let ((,rule-symbol
+	    (make-instance
+	     'rule
+	     :name ',name
+	     :lhs ',(subseq rule 0 =>-position)
+	     :rhs ',(subseq rule (1+ =>-position)))))
+       (push ,rule-symbol *rules*)
+       ,rule-symbol)))
 
 (defun reset ()
   "Reset the environment"
