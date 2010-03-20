@@ -2,7 +2,7 @@
 
 (defsystem :exil
   ()
-  :members ("packages" "exil")
+  :members ("packages" "utils" "exil")
   :rules
-   ((:load ("exil") (:requires (:load "packages")))
+   ((:load :all (:requires (:load :previous)))
     (:compile :all (:requires (:load :previous)))))

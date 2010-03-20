@@ -55,7 +55,7 @@
     (declare (ignore field))
     `(,name :initarg ,(to-keyword name)
             :initform ,default
-			:accessor ,(symbol->tmpl-symbol name)
+			:accessor ,(tmpl-symbol name)
 			:accessor ,name
             ,@(when type-provided-p `(:type ,type)))))
 
@@ -64,6 +64,7 @@
 ;; then pushes template name into *templates*.
 ;; This is necessary for defrule to be able to distinguish between normal
 ;; and template facts.
+
 (defmacro deftemplate (name &body fields)
   "Define fact template"
   `(progn
