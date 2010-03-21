@@ -12,7 +12,7 @@
   :components
   ((:file "packages")
    (:file "utils"  :depends-on ("packages"))
-   (:file "global" :depends-on ("packages"))
-   (:file "facts"  :depends-on ("packages" "utils"))
-   (:file "rules"  :depends-on ("packages" "rules"))
-   (:file "rete"   :depends-on ("packages" "facts" "rules"))))
+   (:file "global" :depends-on ("packages" "utils"))
+   (:file "facts"  :depends-on ("global"))
+   (:file "rules"  :depends-on ("global" "facts"))
+   (:file "rete"   :depends-on ("global" "facts" "rules"))))

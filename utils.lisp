@@ -6,11 +6,10 @@
 (defun string-append (&rest strings)
   (apply #'concatenate 'string strings))
 
-(defmethod my-symbol-name ((symbol symbol))
-  (symbol-name symbol))
-
-(defmethod my-symbol-name ((string string))
-  string)  
+(defgeneric my-symbol-name (symbol)
+  (:documentation "For symbol returns its name, for string just return itself")
+  (:method ((symbol symbol)) (symbol-name symbol))
+  (:method ((string string)) string))
 
 (defun symbol-append (&rest symbols)
   (cap-intern (apply #'string-append (mapcar #'my-symbol-name symbols))))

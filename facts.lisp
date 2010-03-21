@@ -18,8 +18,8 @@
 
 ;; prints facts
 (defmethod print-object ((fact simple-fact) stream)
-  (print-unreadable-object (fact stream)
-    (format stream "simple-fact ~s"
+  (print-unreadable-object (fact stream :type t)
+    (format stream "~s"
 	    (fact fact))
     fact))
 
