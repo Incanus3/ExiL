@@ -11,5 +11,8 @@
   :long-description ""
   :components
   ((:file "packages")
-   (:file "utils" :depends-on ("packages"))
-   (:file "exil" :depends-on ("packages" "utils"))))
+   (:file "utils"  :depends-on ("packages"))
+   (:file "global" :depends-on ("packages"))
+   (:file "facts"  :depends-on ("packages" "utils"))
+   (:file "rules"  :depends-on ("packages" "rules"))
+   (:file "rete"   :depends-on ("packages" "facts" "rules"))))
