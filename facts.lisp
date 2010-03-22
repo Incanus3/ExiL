@@ -16,6 +16,9 @@
 	 :initarg :fact
 	 :reader fact)))
 
+(defmacro make-fact (fact)
+  `(make-instance 'simple-fact :fact ',fact))
+
 ;; prints facts
 (defmethod print-object ((fact simple-fact) stream)
   (print-unreadable-object (fact stream :type t)

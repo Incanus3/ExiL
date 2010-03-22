@@ -8,6 +8,9 @@
 (defclass simple-pattern (pattern simple-fact) ((fact :initarg :pattern
 						      :reader pattern)))
 
+(defmacro make-pattern (pattern)
+  `(make-instance 'simple-pattern :pattern ',pattern))
+
 (defclass template-pattern (pattern template) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -34,12 +37,15 @@
 (defun variable-p (symbol)
   (char-equal (char (symbol-name symbol) 0) #\?))
 
+;; could use hash-table instead of assoc-list, if the facts has many atoms
+;; in need of longer facts could be 2 methods (with assoc-list and hash table)
+;; and one that would call them depending on length
 (defmethod variable-bindings ((pattern simple-pattern)
 			      (fact simple-fact))
   (let ((bindings))
     (mapcar (lambda (pt-atom atom)
 	      (if (variable-p pt-atom)
-		  (let ((binding (assoc pt-atom bindings)))
+		  (let ((binding (cdr (assoc pt-atom bindings))))
 		    (if binding
 			(unless (atom-equal-p binding atom)
 			  (return-from variable-bindings nil))
@@ -48,13 +54,29 @@
 		    (return-from variable-bindings nil))))
 	    (pattern pattern)
 	    (fact fact))
-    bindings))
+    (nreverse bindings)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; rete class
+;; rete classes
 
-(defclass rete () ((working-memory :accessor wm)
-		   (production-memory :accessor pm)))
+(defclass node () ((children :accessor childern :initform nil)))
+
+(defclass alpha-test-node (node)
+  ((pattern :reader pattern
+	    :initarg :pattern
+	    :initform (error "alpha-test-node pattern has to be specified")))
+
+(defclass alpha-memory-node (node) ((fact-bindings-pairs :accessor fb-pairs)))
+
+(defclass beta-join-node (node) ())
+
+(defclass beta-memory-node (node) ((tokens :accessor tokens)))
+
+(defclass rete () ((alpha-test-nodes   :accessor a-test-nodes)
+		   (alpha-memory-nodes :accessor a-mem-nodes)
+		   (beta-join-nodes    :accessor b-join-nodes
+				       :initform (make-instance 'beta-join-node))
+		   (beta-memory-nodes  :accessor b-mem-nodes)))
 
 (defmethod add-rule ((rete rete))
   
