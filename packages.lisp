@@ -2,4 +2,4 @@
 
 (defpackage :exil
   (:use :common-lisp)
-  (:shadow :assert))
+  (:shadow :assert :intern))

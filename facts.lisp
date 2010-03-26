@@ -16,14 +16,17 @@
 	 :initarg :fact
 	 :reader fact)))
 
+(defmethod initialize-instance :after ((simple-fact simple-fact) &key)
+  (cl:assert (notany #'variable-p (fact simple-fact))
+	     () "fact can't include variables"))
+
 (defmacro make-fact (fact)
   `(make-instance 'simple-fact :fact ',fact))
 
 ;; prints facts
 (defmethod print-object ((fact simple-fact) stream)
   (print-unreadable-object (fact stream :type t)
-    (format stream "~s"
-	    (fact fact))
+    (format stream "~s" (fact fact))
     fact))
 
 (defmethod fact-equal-p ((fact1 simple-fact) (fact2 simple-fact))
@@ -35,8 +38,8 @@
 
 ;; prints template
 (defmethod print-object ((fact template) stream)
-  (print-unreadable-object (fact stream)
-    (format stream "template-fact ~s"
+  (print-unreadable-object (fact stream :type t)
+    (format stream "~s"
 	    `(,(type-of fact)
 	       ,@(loop for field in (fields fact)
 		    collect (to-keyword field)

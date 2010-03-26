@@ -5,8 +5,8 @@
 
 (defclass rule ()
   ((name :initarg :name :reader name)
-   (lhs :initarg :lhs :reader lhs)
-   (rhs :initarg :rhs :reader rhs)))
+   (conditions :initarg :conditions :reader conditions)
+   (activations :initarg :activations :reader activations)))
 
 (defmacro defrule (name &body rule)
   "Define rule"
@@ -16,8 +16,8 @@
 	    (make-instance
 	     'rule
 	     :name ',name
-	     :lhs ',(subseq rule 0 =>-position)
-	     :rhs ',(subseq rule (1+ =>-position)))))
+	     :conditions ',(subseq rule 0 =>-position)
+	     :activations ',(subseq rule (1+ =>-position)))))
        (push ,rule-symbol *rules*)
        ,rule-symbol)))
 
