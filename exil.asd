@@ -16,3 +16,4 @@
    (:file "facts"  :depends-on ("global"))
    (:file "rules"  :depends-on ("global" "facts"))
    (:file "rete"   :depends-on ("global" "facts" "rules"))))
+
