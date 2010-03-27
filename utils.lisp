@@ -51,3 +51,5 @@
     (otherwise (let ((subsets (subsets (rest list))))
 		 (append subsets (mapcar (lambda (x) (cons (first list) x))
 					 subsets))))))
+(defun assoc-value (key plist)
+  (cdr (assoc key plist)))
