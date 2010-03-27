@@ -17,6 +17,7 @@
   (dolist (child children node)
     (add-child node child)))
 
+;; children are alpha-memory-nodes
 (defclass alpha-test-node (node)
   ((pattern :reader pattern
 	    :initarg :pattern
@@ -25,12 +26,15 @@
 (defmethod node-equal-p ((node1 alpha-test-node) (node2 alpha-test-node))
   (pattern-equal-p (pattern node1) (pattern node2)))
 
+;; children are beta-join-nodes
 (defclass alpha-memory-node (node) ((fact-bindings-pairs :accessor fb-pairs)))
 
+;; children are beta-memory-nodes (or production-nodes)
 (defclass beta-join-node (node) ())
 
 ;(defmethod 
 
+;; children are beta-join-nodes
 (defclass beta-memory-node (node) ((tokens :accessor tokens)))
 
 (defclass rete () ((alpha-test-nodes   :accessor a-test-nodes)

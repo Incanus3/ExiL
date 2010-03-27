@@ -34,7 +34,7 @@
 (defmethod fact-equal-p ((fact1 simple-fact) (fact2 simple-fact))
   (equalp (fact fact1) (fact fact2)))
 
-(defvar *templates* ())
+(defvar *templates* (make-hash-table))
 
 ;; stores template for template facts
 ;; slot slots holds alist of slot specifiers (plists):
@@ -45,8 +45,12 @@
    (slots :reader slots :initarg :slots
 	  :initform (error "slots slot has to be specified"))))
 
+(defun add-template (template)
+  (setf (gethash (name template) *templates*) template)
+  template)
+
 (defun find-template (name)
-  (find name *templates* :key #'name))
+  (gethash name *templates*))
 
 (defmethod tmpl-slot-spec ((template template) slot-name)
   (assoc-value slot-name (slots template)))
@@ -56,10 +60,9 @@
        (equalp (slots tmpl1) (slots tmpl2))))
 
 (defmethod print-object ((tmpl template) stream)
-  (pprint `(template
-	    ,(name tmpl)
-	    ,(slots tmpl))
-	  stream))
+  (format stream "~A" `(template
+			,(name tmpl)
+			,(slots tmpl))))
 
 ;; make defclass slot-designator from the deftemplate one
 (defun field->slot-designator (field)
@@ -77,23 +80,22 @@
 	     :name ',name
 	     :slots ',(loop for field in fields
 			 collect (field->slot-designator field)))))
-       (setf *templates*
-	     (cons ,template
-		   (remove-if (lambda (template)
-				(equalp (name template) ',name))
-			      *templates*)))
-       ,template)))
+       (add-template ,template))))
 
 ;; stores template fact
 ;; slot slots holds alist of slot names and values
 (defclass template-fact (fact)
-  ((slots :reader slots :initarg :slots
-	  :initform (error "name slot has to be specified"))))
+  ((template-name :reader tmpl-name :initarg :tmpl-name
+		  :initform (error "template-name slot has to be specified"))
+   (slots :reader slots :initarg :slots
+	  :initform (error "slots slot has to be specified"))))
 
 (defmacro tmpl-fact (fact-spec)
   (let ((template (find-template (first fact-spec))))
+    (cl:assert template () "can't find template ~A" (first fact-spec))
     `(make-instance
       'template-fact
+      :tmpl-name ',(first fact-spec)
       :slots ',(loop
 		 with initargs = (rest fact-spec)
 		 for slot-spec in (slots template)
@@ -103,20 +105,27 @@
 				   (getf (cdr slot-spec)
 					 :default)))))))
 
+(defun tmpl-fact-p (fact-spec)
+  (find-template (first fact-spec)))
+
 (defmethod tmpl-fact-slot-value ((fact template-fact) slot-name)
   (assoc-value slot-name (slots fact)))
 
 (defmethod fact-equal-p ((fact1 template-fact) (fact2 template-fact))
   (equalp (slots fact1) (slots fact2)))
 
+(defmethod print-object ((fact template-fact) stream)
+  (print-unreadable-object (fact stream :type t)
+    (format stream "~A" (cons (tmpl-name fact) (slots fact)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
 
-(defmacro assert (fact)
+(defmacro assert (fact-spec)
   "Add fact into working memory"
-  (if (find (first fact) *templates*)
-      `(pushnew ,fact *facts* :test fact-equal-p)
-      `(pushnew (make-instance 'simple-fact :fact ',fact) *facts*
+  (if (tmpl-fact-p fact-spec)
+      `(pushnew (tmpl-fact ,fact-spec) *facts* :test #'fact-equal-p)
+      `(pushnew (make-instance 'simple-fact :fact ',fact-spec) *facts*
 	       :test #'fact-equal-p)))
 
 (defmacro retract (fact)
