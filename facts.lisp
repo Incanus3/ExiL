@@ -3,8 +3,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fact classes
 
-(defvar *facts* ())
-
 ;; virtual class fact
 (defclass fact () ())
 
@@ -34,8 +32,6 @@
 (defmethod fact-equal-p ((fact1 simple-fact) (fact2 simple-fact))
   (equalp (fact fact1) (fact fact2)))
 
-(defvar *templates* (make-hash-table))
-
 ;; stores template for template facts
 ;; slot slots holds alist of slot specifiers (plists):
 ;; (<name> . (:default <default> [:type <type> \ planned \])
@@ -45,12 +41,12 @@
    (slots :reader slots :initarg :slots
 	  :initform (error "slots slot has to be specified"))))
 
-(defun add-template (template)
-  (setf (gethash (name template) *templates*) template)
+(defun add-template (template &optional (environment *current-environment*))
+  (setf (gethash (name template) (templates environment)) template)
   template)
 
-(defun find-template (name)
-  (gethash name *templates*))
+(defun find-template (name &optional (environment *current-environment*))
+  (gethash name (templates environment)))
 
 (defmethod tmpl-slot-spec ((template template) slot-name)
   (assoc-value slot-name (slots template)))
@@ -121,11 +117,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
 
-(defmacro assert (fact-spec)
+(defmacro assert (fact-spec &optional (environment *current-environment*))
   "Add fact into working memory"
   (if (tmpl-fact-p fact-spec)
-      `(pushnew (tmpl-fact ,fact-spec) *facts* :test #'fact-equal-p)
-      `(pushnew (make-instance 'simple-fact :fact ',fact-spec) *facts*
+      `(pushnew (tmpl-fact ,fact-spec) (facts environment) :test #'fact-equal-p)
+      `(pushnew (make-instance 'simple-fact :fact ',fact-spec) (facts environment)
 	       :test #'fact-equal-p)))
 
 (defmacro retract (fact)

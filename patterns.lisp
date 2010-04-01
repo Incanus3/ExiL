@@ -65,7 +65,7 @@
 			   (fact simple-fact))
   (when (every (lambda (pt-atom atom)
 		 (or (variable-p pt-atom)
-		     (equalp pt-atom atom)))
+		     (atom-equal-p pt-atom atom)))
 	       (pattern pattern)
 	       (fact fact))
     fact))
@@ -88,5 +88,4 @@
 	    (unless (atom-equal-p pt-atom atom)
 	      (return nil)))
      finally (return (nreverse bindings))))
-
 

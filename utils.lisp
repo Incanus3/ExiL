@@ -6,8 +6,9 @@
 (defun intern (string &optional (package *package*))
   (cl:intern (string-upcase string) package))
 
-(defun string-append (&rest strings)
-  (apply #'concatenate 'string strings))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun string-append (&rest strings)
+    (apply #'concatenate 'string strings)))
 
 (defgeneric my-symbol-name (symbol)
   (:documentation "For symbol returns its name, for string just return itself")
@@ -27,12 +28,17 @@
    (lambda (stream char)
      (declare (ignore char))
      (let ((string-list (read-delimited-list #\] stream t)))
-       (apply #'concatenate 'string string-list))))
-)
+       (apply #'string-append string-list)))))
 
+;; following 2 functions may seem redundant (and they are)
+;; but they're names tell much more about the purpose of such call
 (defun to-keyword (symbol)
   "get keyword form of symbol"
-  (intern (symbol-name symbol) :keyword))
+  (intern symbol :keyword))
+
+(defun from-keyword (key &optional (package *package*))
+  "get sybol from key"
+  (intern key package))
 
 (defmacro mac-exp (&body body)
   `(pprint (macroexpand-1 ',@body)))
@@ -43,8 +49,8 @@
 (defun subsets (list)
   (cl:assert (<= (length list) 20)
 	  ()
-	  (string-append "subsets: Can't generate subsets of list longer then 20,"
-			 "not enough memory!"))
+	  ["subsets: Can't generate subsets of list longer then 20,"
+			 "not enough memory!"])
   (case (length list)
     (0 ())
     (1 (list () list))

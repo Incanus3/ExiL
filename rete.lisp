@@ -37,6 +37,11 @@
 ;; children are beta-join-nodes
 (defclass beta-memory-node (node) ((tokens :accessor tokens)))
 
+(defclass production-node (beta-memory-node)
+  ((production :reader production
+	       :initarg :production
+	       :initform (error "production slot has to be specified"))))
+
 (defclass rete () ((alpha-test-nodes   :accessor a-test-nodes)
 		   (alpha-memory-nodes :accessor a-mem-nodes)
 		   (beta-join-nodes    :accessor b-join-nodes

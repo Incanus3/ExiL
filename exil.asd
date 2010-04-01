@@ -11,9 +11,10 @@
   :long-description ""
   :components
   ((:file "packages")
-   (:file "utils"    :depends-on ("packages"))
-   (:file "facts"    :depends-on ("utils"))
-   (:file "patterns" :depends-on ("facts"))
-   (:file "rules"    :depends-on ("patterns"))
-   (:file "rete"     :depends-on ("rules"))))
+   (:file "utils"       :depends-on ("packages"))
+   (:file "environment" :depends-on ("utils"))
+   (:file "facts"       :depends-on ("environment"))
+   (:file "patterns"    :depends-on ("facts"))
+   (:file "rules"       :depends-on ("patterns"))
+   (:file "rete"        :depends-on ("rules"))))
 
