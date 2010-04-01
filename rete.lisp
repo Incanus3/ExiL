@@ -48,7 +48,7 @@
 				       :initform (make-instance 'beta-join-node))
 		   (beta-memory-nodes  :accessor b-mem-nodes)))
 
-(defmethod add-rule ((rete rete) (rule rule))
+(defmethod new-rule ((rete rete) (rule rule))
   (let ((subsets (subsets (conditions rule))))
     )
   )

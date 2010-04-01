@@ -3,7 +3,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rules
 
-(defvar *rules*)
+(defun add-rule (rule &optional (environment *current-environment*))
+  (push rule (rules environment))
+  rule)
 
 (defclass rule ()
   ((name :initarg :name :reader name)
@@ -20,8 +22,7 @@
 	     :name ',name
 	     :conditions ',(subseq rule 0 =>-position)
 	     :activations ',(subseq rule (1+ =>-position)))))
-       (push ,rule-symbol *rules*)
-       ,rule-symbol)))
+       (add-rule ,rule-symbol))))
 
 (defun reset ()
   "Reset the environment"

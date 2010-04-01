@@ -120,8 +120,8 @@
 (defmacro assert (fact-spec &optional (environment *current-environment*))
   "Add fact into working memory"
   (if (tmpl-fact-p fact-spec)
-      `(pushnew (tmpl-fact ,fact-spec) (facts environment) :test #'fact-equal-p)
-      `(pushnew (make-instance 'simple-fact :fact ',fact-spec) (facts environment)
+      `(pushnew (tmpl-fact ,fact-spec) (facts ,environment) :test #'fact-equal-p)
+      `(pushnew (make-instance 'simple-fact :fact ',fact-spec) (facts ,environment)
 	       :test #'fact-equal-p)))
 
 (defmacro retract (fact)
