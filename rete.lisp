@@ -8,7 +8,14 @@
 |#
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; general-purpose classes
+;; general-purpose functions
+
+(defun constant-test (desired-value real-value)
+  (or (variable-p desired-value)
+      (atom-equal-p desired-value real-value)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; generalic node classes
 
 (defclass node () ((children :accessor children :initform ())))
 
@@ -27,10 +34,10 @@
 (defgeneric node-activation (node object)
   (:documentation "handels various node activations"))
 
-(defgeneric activate-children (node)
-  (:method ((node node))
+(defgeneric activate-children (node object)
+  (:method ((node node) object)
     (dolist (child (children node))
-      (node-activation child))))
+      (node-activation child object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; alpha memory classes
@@ -43,18 +50,52 @@
    (desired-value :reader value :initarg :value
 		  :initform (error "desired-value slot has to be specified"))))
 
+(defmethod node-equal-p ((node1 alpha-test-node)
+			 (node2 alpha-test-node))
+  (and (equalp (tested-field node1)
+	       (tested-field node2))
+       (atom-equal-p (value node1)
+		     (value node2))))
+
+(defgeneric test (node wme)
+  (:documentation "provides testing part of alpha-test-node activation")
+  (:method ((node alpha-test-node) (wme fact)) nil))
+
+(defmethod activate-children ((node alpha-test-node) (wme fact))
+  (dolist (child (children node))
+    (when (node-activation child wme) (return))))
+
+;; returns test return value, thanks to this it is possible for
+;; activate-children to break after first successful test
+(defmethod node-activation ((node alpha-test-node) (wme fact))
+  (let ((test (test node wme)))
+    (when test (activate-children node))
+    test))
+
+;; tested-field holds field index
+(defclass simple-fact-test-node (alpha-test-node) ())
+
+(defmethod test ((node simple-fact-test-node) (wme simple-fact))
+  (constant-test (value node) (nth (tested-field node) (fact wme))))
+
+;; tested-field holds field name
+(defclass template-fact-test-node (alpha-test-node) ())
+
+(defmethod test ((node template-fact-test-node) (wme template-fact))
+  (constant-test (value node) (tmpl-fact-slot-value wme (tested-field node))))
+
 ;; slot dataflow-networks holds hash table of network top nodes in alpha memory.
 ;; for each template there is a dataflow network (accessible through
 ;; its template name) and one network is for simple-facts
 ;; slot simple-fact-key-name holds symbol for access into dataflow-networks
 ;; hash-table for simeple-facts, if there was some constant name for this,
 ;; it wouldn't be possible to create template of such name
-(defclass alpha-top-node (alpha-test-node)
+(defclass alpha-top-node (alpha-node)
   ((dataflow-networks :accessor networks :initform (make-hash-table))
    (simple-fact-key-name :reader simple-fact-key-name
 			 :initform (gensym "simple-fact"))))
 
-(defmethod node-activation ((node alpha-test-node) (wme fact))
+(defmethod node-activation ((node alpha-top-node) (wme fact))
   (node-activation
    (gethash
     (typecase wme
@@ -62,29 +103,8 @@
       (template-fact (tmpl-name wme)))
     (networks node))))
 
-(defgeneric test (node wme)
-  (:documentation "provides testing part of alpha-test-node activation")
-  (:method ((node alpha-test-node) wme) nil))
-
-(defmethod node-activation ((node simple-fact-test-node) (wme simple-fact))
-  (when (test node wme) (activate-children node)))
-
-;; tested-field holds field index
-(defclass simple-fact-test-node (alpha-test-node) ())
-
-(defmethod test ((node simple-fact-test-node) (wme simple-fact))
-  (atom-equal-p (nth (tested-field node) (fact wme))
-		(value node)))
-
-;; tested-field holds field name
-(defclass template-fact-test-node (alpha-test-node) ())
-
-(defmethod test ((node template-fact-test-node) (wme template-fact))
-  (atom-equal-p (tmpl-fact-slot-value wme (tested-field node))
-		(value node)))
-
 ;; children are beta-join-nodes
-(defclass alpha-memory-node (node) ((items :accessor items :initform ())))
+(defclass alpha-memory-node (alpha-node) ((items :accessor items :initform ())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; beta memory classes
