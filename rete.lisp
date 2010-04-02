@@ -69,7 +69,7 @@
 ;; activate-children to break after first successful test
 (defmethod node-activation ((node alpha-test-node) (wme fact))
   (let ((test (test node wme)))
-    (when test (activate-children node))
+    (when test (activate-children node wme))
     test))
 
 ;; tested-field holds field index
@@ -101,10 +101,15 @@
     (typecase wme
       (simple-fact (simple-fact-key-name node))
       (template-fact (tmpl-name wme)))
-    (networks node))))
+    (networks node))
+   wme))
 
 ;; children are beta-join-nodes
 (defclass alpha-memory-node (alpha-node) ((items :accessor items :initform ())))
+
+(defmethod node-activation ((node alpha-memory-node) (wme fact))
+  (pushnew wme (items node) :test #'fact-equal-p)
+  (activate-children node wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; beta memory classes
@@ -125,7 +130,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export
 
-(defclass rete () ((top-alpha-node :reader top-a-node)
+(defclass rete () ((top-alpha-node :reader top-a-node
+				   :initform (make-instance 'alpha-top-node))
 		   (top-beta-node  :reader   top-b-node)))
 
 (defmethod add-wme ((rete rete) (fact fact))

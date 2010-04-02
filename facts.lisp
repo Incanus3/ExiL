@@ -56,9 +56,8 @@
        (equalp (slots tmpl1) (slots tmpl2))))
 
 (defmethod print-object ((tmpl template) stream)
-  (format stream "~A" `(template
-			,(name tmpl)
-			,(slots tmpl))))
+  (print-unreadable-object (tmpl stream :type t)
+    (format stream "~A ~A" (name tmpl) (slots tmpl)))))
 
 ;; make defclass slot-designator from the deftemplate one
 (defun field->slot-designator (field)
