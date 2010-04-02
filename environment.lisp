@@ -3,7 +3,8 @@
 (defclass exil-environment ()
   ((facts :initform ())
    (templates :initform (make-hash-table))
-   (rules :initform (make-hash-table))))
+   (rules :initform (make-hash-table))
+   (rete :initform (make-instance 'rete))))
 
 (defvar *environments*
   (let ((table (make-hash-table)))
