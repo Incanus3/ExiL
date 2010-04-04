@@ -12,9 +12,10 @@
   :components
   ((:file "packages")
    (:file "utils"       :depends-on ("packages"))
-   (:file "environment" :depends-on ("utils"))
-   (:file "facts"       :depends-on ("environment"))
+   (:file "facts"       :depends-on ("utils"))
    (:file "patterns"    :depends-on ("facts"))
    (:file "rules"       :depends-on ("patterns"))
-   (:file "rete"        :depends-on ("rules"))))
+   (:file "rete"        :depends-on ("rules"))
+   (:file "environment" :depends-on ("rete"))
+   (:file "export"      :depends-on ("environment"))))
 

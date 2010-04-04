@@ -41,13 +41,6 @@
    (slots :reader slots :initarg :slots
 	  :initform (error "slots slot has to be specified"))))
 
-(defun add-template (template &optional (environment *current-environment*))
-  (setf (gethash (name template) (templates environment)) template)
-  template)
-
-(defun find-template (name &optional (environment *current-environment*))
-  (gethash name (templates environment)))
-
 (defmethod tmpl-slot-spec ((template template) slot-name)
   (assoc-value slot-name (slots template)))
 
@@ -57,23 +50,26 @@
 
 (defmethod print-object ((tmpl template) stream)
   (print-unreadable-object (tmpl stream :type t)
-    (format stream "~A ~A" (name tmpl) (slots tmpl)))))
+    (format stream "~A ~A" (name tmpl) (slots tmpl))))
 
 ;; make defclass slot-designator from the deftemplate one
 (defun field->slot-designator (field)
-  (destructuring-bind (field name &key (default nil)) field
-    (declare (ignore field))
+  (destructuring-bind (name &key (default nil)) field
     `(,name . (:default ,default))))
 
 ;; creates instance of template class with given name and slot specification
 ;; and pushes it into *templates*.
-(defmacro deftemplate (name &body fields)
+;; it is to consider whether lambda list (name fields)
+;;  of (name &body fields) is better
+;; for the former possibility, the call is more similar to defclass
+;; for the latter, the call is more like defstruct call
+(defmacro deftemplate (name fields)
   (let ((template (gensym "template")))
     `(let ((,template
 	    (make-instance
 	     'template
 	     :name ',name
-	     :slots ',(loop for field in fields
+	     :slots ',(loop for field in (to-list-of-lists fields)
 			 collect (field->slot-designator field)))))
        (add-template ,template))))
 
@@ -112,23 +108,3 @@
 (defmethod print-object ((fact template-fact) stream)
   (print-unreadable-object (fact stream :type t)
     (format stream "~A" (cons (tmpl-name fact) (slots fact)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; application macros
-
-(defmacro assert (fact-spec &optional (environment *current-environment*))
-  "Add fact into working memory"
-  (if (tmpl-fact-p fact-spec)
-      `(pushnew (tmpl-fact ,fact-spec) (facts ,environment) :test #'fact-equal-p)
-      `(pushnew (make-instance 'simple-fact :fact ',fact-spec) (facts ,environment)
-	       :test #'fact-equal-p)))
-
-(defmacro retract (fact)
-  "Remove fact from working memory"
-  (declare (ignorable fact))
-  )
-
-(defmacro deffacts (facts-list)
-  "Create group of facts to be asserted after (reset)"
-  (declare (ignorable facts-list))
-  )

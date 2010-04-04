@@ -59,3 +59,11 @@
 					 subsets))))))
 (defun assoc-value (key plist)
   (cdr (assoc key plist)))
+
+(defun to-list (x)
+  (if (listp x)
+      x
+      (list x)))
+
+(defun to-list-of-lists (list)
+  (mapcar #'to-list list))

@@ -54,8 +54,8 @@
 			 (node2 alpha-test-node))
   (and (equalp (tested-field node1)
 	       (tested-field node2))
-       (atom-equal-p (value node1)
-		     (value node2))))
+       (constant-test (value node1)
+		      (value node2))))
 
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation")
