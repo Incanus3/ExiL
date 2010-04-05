@@ -25,7 +25,7 @@
 
 ;; prints facts
 (defmethod print-object ((fact simple-fact) stream)
-  (print-unreadable-object (fact stream :type t)
+  (print-unreadable-object (fact stream :type t :identity t)
     (format stream "~s" (fact fact))
     fact))
 
@@ -106,5 +106,5 @@
   (equalp (slots fact1) (slots fact2)))
 
 (defmethod print-object ((fact template-fact) stream)
-  (print-unreadable-object (fact stream :type t)
+  (print-unreadable-object (fact stream :type t :identity t)
     (format stream "~A" (cons (tmpl-name fact) (slots fact)))))

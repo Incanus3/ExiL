@@ -39,6 +39,8 @@
     (dolist (child (children node))
       (node-activation child object))))
 
+(defclass memory-node (node) ((items :accessor items :initform ())))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; alpha memory classes
 
@@ -48,7 +50,9 @@
   ((tested-field :reader tested-field :initarg :tested-field
 		 :initform (error "tested-field slot has to be specified"))
    (desired-value :reader value :initarg :value
-		  :initform (error "desired-value slot has to be specified"))))
+		  :initform (error "desired-value slot has to be specified"))
+   (alpha-memory :reader memory :initarg :memory
+		 :initform nil)))
 
 (defmethod node-equal-p ((node1 alpha-test-node)
 			 (node2 alpha-test-node))
@@ -65,11 +69,18 @@
   (dolist (child (children node))
     (when (node-activation child wme) (return))))
 
+(defmethod activate-memory ((node alpha-test-node) (wme fact))
+  (with-slots ((mem memory)) node
+    (when mem
+      (node-activation mem wme))))
+
 ;; returns test return value, thanks to this it is possible for
 ;; activate-children to break after first successful test
 (defmethod node-activation ((node alpha-test-node) (wme fact))
   (let ((test (test node wme)))
-    (when test (activate-children node wme))
+    (when test
+      (activate-children node wme)
+      (activate-memory node wme))
     test))
 
 ;; tested-field holds field index
@@ -105,7 +116,7 @@
    wme))
 
 ;; children are beta-join-nodes
-(defclass alpha-memory-node (alpha-node) ((items :accessor items :initform ())))
+(defclass alpha-memory-node (alpha-node memory-node) ())
 
 (defmethod node-activation ((node alpha-memory-node) (wme fact))
   (pushnew wme (items node) :test #'fact-equal-p)
@@ -114,13 +125,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; beta memory classes
 
+(defclass beta-node (node) ((parent :accessor parent :initarg :parent
+				    :initform nil)))
+
 ;; children are beta-memory-nodes (or production-nodes)
-(defclass beta-join-node (node) ())
+(defclass beta-join-node (beta-node) ())
 
 ;(defclass tob-beta-node (beta-join-node) (pare 
 
+;; left activation
+(defmethod node-activation ((node beta-join-node) (wme fact)))
+
+;; right activation
+(defmethod node-activation ((node beta-join-node) (token token)))
+
+(defclass token () ((parent :reader parent :initarg :parent :initform nil)
+		    (wme :reader wme :initarg :wme
+			 :initform (error "wme slot has to be specified"))))
+
+(defgeneric token-equal-p (token1 token2)
+  (:documentation "token equality predicate")
+  (:method (token1 token2) nil)
+  (:method ((token1 (eql nil)) (token2 (eql nil))) t))
+
+(defmethod token-equal-p ((token1 token) (token2 token))
+  (and (fact-equal-p (wme token1) (wme token2))
+       (token-equal-p (parent token1) (parent token2))))
+
 ;; children are beta-join-nodes
-(defclass beta-memory-node (node) ((tokens :accessor tokens)))
+(defclass beta-memory-node (beta-node memory-node) ())
+
+(defmethod node-activation ((node beta-memory-node) (token token))
+  (pushnew token (items node) :test #'token-equal-p)
+  (activate-children node token))
 
 (defclass production-node (beta-memory-node)
   ((production :reader production
