@@ -128,20 +128,15 @@
 (defclass beta-node (node) ((parent :accessor parent :initarg :parent
 				    :initform nil)))
 
-;; children are beta-memory-nodes (or production-nodes)
-(defclass beta-join-node (beta-node) ())
-
-;(defclass tob-beta-node (beta-join-node) (pare 
-
-;; left activation
-(defmethod node-activation ((node beta-join-node) (wme fact)))
-
-;; right activation
-(defmethod node-activation ((node beta-join-node) (token token)))
-
+;; could be changed to cons to be more effective
 (defclass token () ((parent :reader parent :initarg :parent :initform nil)
 		    (wme :reader wme :initarg :wme
 			 :initform (error "wme slot has to be specified"))))
+
+(defmethod previous-wme ((token token) &optional (n 1))
+  "gives wme from token n wmes back"
+  (dotimes (i n (wme token))
+    (setf token (parent token))))
 
 (defgeneric token-equal-p (token1 token2)
   (:documentation "token equality predicate")
@@ -163,6 +158,46 @@
   ((production :reader production
 	       :initarg :production
 	       :initform (error "production slot has to be specified"))))
+
+(defclass test () ((current-field-to-test
+		    :reader current-field :initarg :current-field
+		    :initform (error "current-field slot has to be specified"))
+		   (previous-condition-number
+		    :documentation "tells, how many conditions back i must go"
+		    :reader previous-condition :initarg :previous-condition
+		    :initform 0)
+		   (previous-field-to-test
+		    :reader previous-field :initarg :previous-field
+		    :initform (error "previous-field slot has to be specified"))))
+
+;; children are beta-memory-nodes (or production-nodes)
+(defclass beta-join-node (beta-node)
+  ((alpha-memory :reader memory :initarg :memory
+		 :initform (error "alpha-memory slot has to be specified"))
+   (tests :accessor tests :initarg :tests :initform ())))
+
+(defmethod perform-join-test ((test test) (token token) (wme fact))
+  (atom-equal-p (fact-field wme (current-field test))
+		(fact-field (previous-wme token (previous-condition test))
+			    (previous-field test))))
+
+(defmethod perform-join-tests ((tests list) (token token) (wme fact))
+  (dolist (test tests t)
+    (unless (perform-join-test test token wme) (return nil))))
+    
+;; left activation
+(defmethod node-activation ((node beta-join-node) (token token))
+  (dolist (wme (items (memory node)))
+    (if (perform-join-tests (tests node) token wme)
+	(activate-children
+	 node (make-instance 'token :parent token :wme wme)))))
+
+;; right activation
+(defmethod node-activation ((node beta-join-node) (wme fact))
+  (dolist (token (items (parent node)))
+    (if (perform-join-tests (tests node) token wme)
+	(activate-children
+	 node (make-instance 'token :parent token :wme wme)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export

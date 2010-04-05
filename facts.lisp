@@ -108,3 +108,10 @@
 (defmethod print-object ((fact template-fact) stream)
   (print-unreadable-object (fact stream :type t :identity t)
     (format stream "~A" (cons (tmpl-name fact) (slots fact)))))
+
+(defgeneric fact-field (fact field)
+  (:documentation "returns fact's field")
+  (:method ((fact simple-fact) (field integer))
+    (nth field (fact fact)))
+  (:method ((fact template-fact) (field symbol))
+    (tmpl-fact-slot-value fact field)))
