@@ -12,7 +12,8 @@
   :components
   ((:file "packages")
    (:file "utils"       :depends-on ("packages"))
-   (:file "facts"       :depends-on ("utils"))
+   (:file "templates"   :depends-on ("utils"))
+   (:file "facts"       :depends-on ("templates"))
    (:file "patterns"    :depends-on ("facts"))
    (:file "rules"       :depends-on ("patterns"))
    (:file "rete"        :depends-on ("rules"))

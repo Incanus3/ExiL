@@ -3,12 +3,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; pattern classes
 
+;; virtual class pattern
 (defclass pattern () ())
 
+;; pattern equality predicate
 (defgeneric pattern-equal-p (pattern1 pattern2)
   (:method ((pattern1 pattern) (pattern2 pattern)) nil))
 
-(defclass simple-pattern (pattern) ((fact :initarg :pattern :reader pattern)))
+;; class simple-pattern
+(defclass simple-pattern (pattern)
+  ((fact :initform (error "fact slot must be specified")
+	 :initarg :pattern
+	 :reader pattern)))
 
 (defmacro make-pattern (pattern)
   `(make-instance 'simple-pattern :pattern ',pattern))
@@ -23,7 +29,7 @@
 (defmethod pattern-equal-p ((pattern1 simple-pattern) (pattern2 simple-pattern))
   (equalp (pattern pattern1) (pattern pattern2)))
 
-;; checks pattern constant equivalency, ignoeres variables
+;; checks pattern constant equivalency, ignores variables
 (defmethod pattern-const-equal-p ((pattern1 simple-pattern)
 				  (pattern2 simple-pattern))
   (every (lambda (atom1 atom2)
@@ -33,7 +39,29 @@
 	 (pattern pattern1)
 	 (pattern pattern2)))
 
-(defclass template-pattern (pattern template) ())
+;; although pattern is not fact, i inherit from template-fact class
+;; because otherwise i'd have to copy a huge bunch of code, that would be
+;; the same as for template-facts
+(defclass template-pattern (pattern template-fact) ())
+
+(defmacro tmpl-pattern (pattern-spec)
+  `(tmpl-object ,pattern-spec 'template-pattern))
+
+(defun tmpl-pattern-specification-p (specification)
+  (tmpl-object-specification-p specification))
+
+(defmethod tmpl-pattern-slot-value ((pattern template-pattern) slot-name)
+  (tmpl-object-slot-value pattern slot-name))
+
+(defmethod pattern-equal-p ((pattern1 template-pattern) (pattern2 template-pattern))
+  (tmpl-object-equal-p pattern1 pattern2))
+
+(defgeneric pattern-field (pattern field)
+  (:documentation "returns pattern's field")
+  (:method ((pattern simple-pattern) (field integer))
+    (nth field (pattern pattern)))
+  (:method ((pattern template-pattern) (field symbol))
+    (tmpl-pattern-slot-value pattern field)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fact matching
@@ -43,21 +71,26 @@
   (:method (object1 object2) (equalp object1 object2)))
 
 ;; terminology note:
-;; be sure about distiction of following 2 things
-;; a) templates - instances of class template
+;; be sure about distiction of following expressions
+;; a) template-facts - instances of class template-fact
 ;;      - they're just facts with named slots
-;;      - e.g. (car (color red) (mph 160))
-;; b) patterns - could be either in simple fact or in template fact form
+;;      - e.g. (car :color red :mph 160)
+;; b) templates - instances of class template
+;;      - prescriptions for template-facts - describe the slot names,
+;;        default values, etc.
+;;      - you can't create template-fact without having a template for it
+;; c) patterns - could be either in simple-fact or in template-fact form
 ;;      - they're not facts, they can include wildcards, variables, etc.
 ;;      - e.g. (on red-box ?some-other-box)
-;;      - or (car (color ?some-color))
+;;      - or (car :color ?some-color)
 
 (defgeneric variable-bindings (pattern fact)
   (:documentation "if the fact passes the pattern,
                      returns the variable bindings in assoc list"))
 
-(defun variable-p (symbol)
-  (char-equal (char (symbol-name symbol) 0) #\?))
+(defun variable-p (expr)
+  (and (symbolp expr)
+       (char-equal (char (symbol-name expr) 0) #\?)))
 
 ;; checks consistency of constant atoms in pattern, ignores variables
 ;; returns fact if passed, nil otherwise

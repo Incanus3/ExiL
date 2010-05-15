@@ -18,14 +18,14 @@
   (gethash "default" *environments*))
 
 (defmacro defenv (name &key (redefine nil))
-  (let ((name (my-symbol-name name)))
+  (let ((name (symbol-name name)))
     (when (or (not (gethash name *environments*))
 	      redefine)
       (setf (gethash name *environments*)
 	    (make-instance 'exil-environment)))))
 
 (defmacro setenv (name)
-  (let ((env (gethash (my-symbol-name name) *environments*)))
+  (let ((env (gethash (symbol-name name) *environments*)))
     (when env (setf *current-environment* env))))
 
 ;; creates reader function <slot-name> and writer function set-<slot-name>
@@ -47,13 +47,13 @@
   (exil-env-accessors facts templates rules))
 
 (defun add-template (template &optional (environment *current-environment*))
-  (setf (gethash (my-symbol-name (name template)) (templates environment)) template)
+  (setf (gethash (symbol-name (name template)) (templates environment)) template)
   template)
 
 (defun find-template (name &optional (environment *current-environment*))
-  (gethash (my-symbol-name name) (templates environment)))
+  (gethash (symbol-name name) (templates environment)))
 
 (defun add-rule (rule &optional (environment *current-environment*))
-  (setf (gethash (my-symbol-name (name rule)) (rules environment)) rule)
+  (setf (gethash (symbol-name (name rule)) (rules environment)) rule)
   rule)
 

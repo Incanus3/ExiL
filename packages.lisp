@@ -3,4 +3,4 @@
 (defpackage :exil
   (:use :common-lisp)
   (:export :assert :retract :deffacts :deftemplate :defrule)
-  (:shadow :assert :intern))
+  (:shadow :assert :intern :symbol-name))

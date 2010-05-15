@@ -10,16 +10,16 @@
   (defun string-append (&rest strings)
     (apply #'concatenate 'string strings)))
 
-(defgeneric my-symbol-name (symbol)
+(defgeneric symbol-name (symbol)
   (:documentation "For symbol returns its name, for string just return itself")
-  (:method ((symbol symbol)) (symbol-name symbol))
+  (:method ((symbol symbol)) (cl:symbol-name symbol))
   (:method ((string string)) string))
 
 (defun symbol-append (&rest symbols)
-  (intern (apply #'string-append (mapcar #'my-symbol-name symbols))))
+  (intern (apply #'string-append (mapcar #'symbol-name symbols))))
 ;; (symbol-append "test-" 'symbol) => TEST-SYMBOL
 
-;; following 2 definitions enables the use of [] parentheses to append
+;; following 2 definitions enable the use of square ([]) parentheses to append
 ;; the containded strings, this will be useful for managing strings longer
 ;; than one row
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -79,6 +79,9 @@
 
 ;; like pushnew, but returns the test-equivalent object, which actualy resides
 ;; in the place (if there already was a test-equivalent object, returns it)
+;; i could shadow the pushnew from common-lisp package and name this just
+;; pushnew, but since this one is 2x slower, i'll keep both of them and
+;; use this only when appropriate
 (defmacro my-pushnew (item place &key (test #'equalp) (key #'identity))
   `(progn (pushnew ,item ,place :test ,test :key ,key)
 	  (find ,item ,place :test ,test :key ,key)))

@@ -9,7 +9,7 @@
     `(let ((,fact (if (tmpl-fact-p ',fact-spec)
 		      (tmpl-fact ,fact-spec)
 		      (make-instance 'simple-fact :fact ',fact-spec))))
-       (my-pushnew ,fact (facts ,environment) :test #'fact-equal-p)))))
+       (my-pushnew ,fact (facts ,environment) :test #'fact-equal-p))))
 
 (defmacro retract (fact)
   "Remove fact from working memory"
