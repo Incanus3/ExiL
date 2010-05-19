@@ -44,8 +44,8 @@
 ;; the same as for template-facts
 (defclass template-pattern (pattern template-fact) ())
 
-(defmacro tmpl-pattern (pattern-spec)
-  `(tmpl-object ,pattern-spec 'template-pattern))
+(defun tmpl-pattern (pattern-spec)
+  (tmpl-object pattern-spec 'template-pattern))
 
 (defun tmpl-pattern-specification-p (specification)
   (tmpl-object-specification-p specification))
@@ -62,63 +62,4 @@
     (nth field (pattern pattern)))
   (:method ((pattern template-pattern) (field symbol))
     (tmpl-pattern-slot-value pattern field)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; fact matching
-
-(defgeneric atom-equal-p (object1 object2)
-  (:documentation "equality predicate for fact atoms")
-  (:method (object1 object2) (equalp object1 object2)))
-
-;; terminology note:
-;; be sure about distiction of following expressions
-;; a) template-facts - instances of class template-fact
-;;      - they're just facts with named slots
-;;      - e.g. (car :color red :mph 160)
-;; b) templates - instances of class template
-;;      - prescriptions for template-facts - describe the slot names,
-;;        default values, etc.
-;;      - you can't create template-fact without having a template for it
-;; c) patterns - could be either in simple-fact or in template-fact form
-;;      - they're not facts, they can include wildcards, variables, etc.
-;;      - e.g. (on red-box ?some-other-box)
-;;      - or (car :color ?some-color)
-
-(defgeneric variable-bindings (pattern fact)
-  (:documentation "if the fact passes the pattern,
-                     returns the variable bindings in assoc list"))
-
-(defun variable-p (expr)
-  (and (symbolp expr)
-       (char-equal (char (symbol-name expr) 0) #\?)))
-
-;; checks consistency of constant atoms in pattern, ignores variables
-;; returns fact if passed, nil otherwise
-(defmethod constant-check ((pattern simple-pattern)
-			   (fact simple-fact))
-  (when (every (lambda (pt-atom atom)
-		 (or (variable-p pt-atom)
-		     (atom-equal-p pt-atom atom)))
-	       (pattern pattern)
-	       (fact fact))
-    fact))
-
-;; could use hash-table instead of assoc-list, if the facts has many atoms
-;; in need of longer facts could be 2 methods (with assoc-list and hash table)
-;; and one that would call them depending on length
-(defmethod variable-bindings ((pattern simple-pattern)
-			      (fact simple-fact))
-  (loop
-     with bindings = ()
-     for pt-atom in (pattern pattern)
-     for atom in (fact fact)
-     do (if (variable-p pt-atom)
-	    (let ((binding (cdr (assoc pt-atom bindings))))
-	      (if binding
-		  (unless (atom-equal-p binding atom)
-		    (return nil))
-		  (push (cons pt-atom atom) bindings)))
-	    (unless (atom-equal-p pt-atom atom)
-	      (return nil)))
-     finally (return (nreverse bindings))))
 

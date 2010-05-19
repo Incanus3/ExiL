@@ -8,14 +8,66 @@
 |#
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; general-purpose functions
+;; fact matching
+
+;; terminology note:
+;; be sure about distiction of following expressions
+;; a) template-facts - instances of class template-fact
+;;      - they're just facts with named slots
+;;      - e.g. (car :color red :mph 160)
+;; b) templates - instances of class template
+;;      - prescriptions for template-facts - describe the slot names,
+;;        default values, etc.
+;;      - you can't create template-fact without having a template for it
+;; c) patterns - could be either in simple-fact or in template-fact form
+;;      - they're not facts, they can include wildcards, variables, etc.
+;;      - e.g. (on red-box ?some-other-box)
+;;      - or (car :color ?some-color)
+
+(defgeneric atom-equal-p (object1 object2)
+  (:documentation "equality predicate for fact atoms")
+  (:method (object1 object2) (equalp object1 object2)))
+
+(defgeneric variable-bindings (pattern fact)
+  (:documentation "if the fact passes the pattern,
+                     returns the variable bindings in assoc list"))
+
+;; checks consistency of constant atoms in pattern, ignores variables
+;; returns fact if passed, nil otherwise
+(defmethod constant-check ((pattern simple-pattern)
+			   (fact simple-fact))
+  (when (every (lambda (pt-atom atom)
+		 (or (variable-p pt-atom)
+		     (atom-equal-p pt-atom atom)))
+	       (pattern pattern)
+	       (fact fact))
+    fact))
+
+;; could use hash-table instead of assoc-list, if the facts has many atoms
+;; in need of longer facts could be 2 methods (with assoc-list and hash table)
+;; and one that would call them depending on length
+(defmethod variable-bindings ((pattern simple-pattern)
+			      (fact simple-fact))
+  (loop
+     with bindings = ()
+     for pt-atom in (pattern pattern)
+     for atom in (fact fact)
+     do (if (variable-p pt-atom)
+	    (let ((binding (cdr (assoc pt-atom bindings))))
+	      (if binding
+		  (unless (atom-equal-p binding atom)
+		    (return nil))
+		  (push (cons pt-atom atom) bindings)))
+	    (unless (atom-equal-p pt-atom atom)
+	      (return nil)))
+     finally (return (nreverse bindings))))
 
 (defun constant-test (desired-value real-value)
   (or (variable-p desired-value)
       (atom-equal-p desired-value real-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; generalic node classes
+;; generic node classes
 
 (defclass node () ((children :accessor children :initform ())))
 
@@ -65,6 +117,9 @@
   (:documentation "provides testing part of alpha-test-node activation")
   (:method ((node alpha-test-node) (wme fact)) nil))
 
+;; once the wme passes test of some of node's children, there's no need
+;; to continue the search, because the children are created in a way
+;; that no wme can pass 2 children's tests
 (defmethod activate-children ((node alpha-test-node) (wme fact))
   (dolist (child (children node))
     (when (node-activation child wme) (return))))
@@ -141,11 +196,10 @@
 (defgeneric token-equal-p (token1 token2)
   (:documentation "token equality predicate")
   (:method (token1 token2) nil)
-  (:method ((token1 (eql nil)) (token2 (eql nil))) t))
-
-(defmethod token-equal-p ((token1 token) (token2 token))
-  (and (fact-equal-p (wme token1) (wme token2))
-       (token-equal-p (parent token1) (parent token2))))
+  (:method ((token1 (eql nil)) (token2 (eql nil))) t)
+  (:method ((token1 token) (token2 token))
+    (and (fact-equal-p (wme token1) (wme token2))
+	 (token-equal-p (parent token1) (parent token2)))))
 
 ;; children are beta-join-nodes
 (defclass beta-memory-node (beta-node memory-node) ())

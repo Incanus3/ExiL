@@ -4,6 +4,7 @@
 
 (defclass exil-environment ()
   ((facts :initform ())
+   (fact-groups :initform ())
    (templates :initform (make-hash-table :test 'equalp))
    (rules :initform (make-hash-table :test 'equalp))
    (rete :initform (make-instance 'rete))))
@@ -44,7 +45,18 @@
 	       collect `(exil-env-accessor ,slot-name))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors facts templates rules))
+  (exil-env-accessors facts fact-groups templates rules))
+
+(defun add-fact (fact &optional (environment *current-environment*))
+  (my-pushnew fact (facts environment) :test #'fact-equal-p))
+
+(defun add-fact-group (group-name fact-descriptions
+		       &optional (environment *current-environment*))
+  (if (assoc group-name (fact-groups environment))
+      (setf (assoc-value group-name (fact-groups environment))
+	    fact-descriptions)
+      (push (cons group-name fact-descriptions)
+	    (fact-groups environment))))
 
 (defun add-template (template &optional (environment *current-environment*))
   (setf (gethash (symbol-name (name template)) (templates environment)) template)
@@ -56,4 +68,7 @@
 (defun add-rule (rule &optional (environment *current-environment*))
   (setf (gethash (symbol-name (name rule)) (rules environment)) rule)
   rule)
+
+(defun reset-environment (&optional (environment *current-environment*))
+  (setf (facts environment) ()))
 

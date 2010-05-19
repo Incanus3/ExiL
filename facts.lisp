@@ -20,8 +20,8 @@
   (cl:assert (notany #'variable-p (fact simple-fact))
 	     () "fact can't include variables"))
 
-(defmacro make-fact (fact)
-  `(make-instance 'simple-fact :fact ',fact))
+(defun make-fact (fact)
+  (make-instance 'simple-fact :fact fact))
 
 ;; prints facts
 (defmethod print-object ((fact simple-fact) stream)
@@ -40,8 +40,8 @@
 ;; fact-spec or falls back to default values if he finds nothing
 ;; if there's some other crap in fact-spec, tmpl-fact doesn't care,
 ;; the only condition is, that (rest fact-spec) has to be plist
-(defmacro tmpl-fact (fact-spec)
-  `(tmpl-object ,fact-spec 'template-fact))
+(defun tmpl-fact (fact-spec)
+  (tmpl-object fact-spec 'template-fact))
 
 (defmethod initialize-instance :after ((fact template-fact) &key)
   (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))

@@ -66,6 +66,12 @@
   (cdr (assoc key plist)))
 ;; (assoc-value 'b '((a . 1) (b . 2))) => 2
 
+(defun (setf assoc-value) (value key plist)
+  (setf (cdr (assoc key plist)) value))
+;; (defvar alist '((a . 1) (b . 2)))
+;; (setf (assoc-value 'a alist) 3)
+;; alist => '((a . 3) (b . 2))
+
 (defun to-list (x)
   (if (listp x)
       x
@@ -82,6 +88,7 @@
 ;; i could shadow the pushnew from common-lisp package and name this just
 ;; pushnew, but since this one is 2x slower, i'll keep both of them and
 ;; use this only when appropriate
-(defmacro my-pushnew (item place &key (test #'equalp) (key #'identity))
-  `(progn (pushnew ,item ,place :test ,test :key ,key)
-	  (find ,item ,place :test ,test :key ,key)))
+(defmacro my-pushnew (item place &key (test '#'equalp) (key '#'identity))
+  `(progn
+     (pushnew ,item ,place :test ,test :key ,key)
+     (find (funcall ,key ,item) ,place :test ,test :key ,key)))

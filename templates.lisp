@@ -1,5 +1,15 @@
 (in-package :exil)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; general-purpose functions
+
+(defun variable-p (expr)
+  (and (symbolp expr)
+       (char-equal (char (symbol-name expr) 0) #\?)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; template class
+
 ;; stores template for template facts
 ;; slot slots holds alist of slot specifiers (plists):
 ;; (<name> . (:default <default> [:type <type> \ planned \])
@@ -43,6 +53,9 @@
 			 collect (field->slot-designator field)))))
        (add-template ,template))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; template-object class
+
 ;; virtual template-object class, template-fact and template-object will
 ;; inherit from this one
 ;; slot slots holds alist of slot names and values
@@ -63,14 +76,13 @@
 ;; specification or falls back to default values if he finds nothing
 ;; if there's some other crap in specification, tmpl-object doesn't care,
 ;; the only condition is, that (rest specification) has to be plist
-(defmacro tmpl-object (specification object-type)
+(defun tmpl-object (specification object-type)
   (let ((template (find-template (first specification))))
     (cl:assert template () "can't find template ~A" (first specification))
-    `(make-instance
-      ,object-type
-      :tmpl-name ',(first specification)
-      :slots ',(loop
-		 with initargs = (rest specification)
+    (make-instance
+     object-type ;; >>>>>>>>>>>>>>cat's standing on my keyboard
+     :tmpl-name (first specification)
+     :slots (loop with initargs = (rest specification)
 		 for slot-spec in (slots template)
 		 collect (cons (car slot-spec)
 			       (or (getf initargs
@@ -79,7 +91,11 @@
 					 :default)))))))
 
 (defun tmpl-object-specification-p (specification)
-  (find-template (first specification)))
+  (and (listp specification)
+       (find-template (first specification))
+       (or (null (rest specification))
+	   ;; probably faster than (= (length specification) 1)
+	   (keywordp (second specification)))))
 
 (defmethod tmpl-object-slot-value ((object template-object) slot-name)
   (assoc-value slot-name (slots object)))
