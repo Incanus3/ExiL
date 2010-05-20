@@ -125,7 +125,7 @@
     (when (node-activation child wme) (return))))
 
 (defmethod activate-memory ((node alpha-test-node) (wme fact))
-  (with-slots ((mem memory)) node
+  (with-slots ((mem alpha-memory)) node
     (when mem
       (node-activation mem wme))))
 
@@ -150,6 +150,16 @@
 (defmethod test ((node template-fact-test-node) (wme template-fact))
   (constant-test (value node) (tmpl-fact-slot-value wme (tested-field node))))
 
+;; after alpha-top-node selects the right dataflow network according to fact type
+;; and eventually template name, it activates the right subtop node
+;; the simple-fact subtop-node is created when during rete class initialization
+;; the template-fact subtop-nodes are created, when condition of that template
+;; appears in some newly added rule
+(defclass alpha-subtop-node (alpha-node) ())
+
+(defmethod node-activation ((node alpha-subtop-node) (wme fact))
+  (activate-children node wme))
+
 ;; slot dataflow-networks holds hash table of network top nodes in alpha memory.
 ;; for each template there is a dataflow network (accessible through
 ;; its template name) and one network is for simple-facts
@@ -160,6 +170,11 @@
   ((dataflow-networks :accessor networks :initform (make-hash-table))
    (simple-fact-key-name :reader simple-fact-key-name
 			 :initform (gensym "simple-fact"))))
+
+(defmethod initialize-instance :after ((node alpha-top-node) &key)
+  (setf (gethash (simple-fact-key-name node)
+		 (networks node))
+	(make-instance 'alpha-subtop-node)))
 
 (defmethod node-activation ((node alpha-top-node) (wme fact))
   (node-activation
@@ -256,9 +271,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export
 
-(defclass rete () ((top-alpha-node :reader top-a-node
+(defclass rete () ((alpha-top-node :reader alpha-top-node
 				   :initform (make-instance 'alpha-top-node))
-		   (top-beta-node  :reader   top-b-node)))
+		   (beta-top-node  :reader   beta-top-node)))
 
 (defmethod add-wme ((rete rete) (fact fact))
   (declare (ignore rete fact))
