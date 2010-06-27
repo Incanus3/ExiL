@@ -10,8 +10,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template class
 
-;; stores template for template facts
-;; slot slots holds alist of slot specifiers (plists):
+;; stores template for template facts and patterns
+;; slot "slots" holds alist of slot specifiers (plists):
 ;; (<name> . (:default <default> [:type <type> \ planned \])
 ;; it is a bit redundant, since there's only one supported option
 ;; so far, but it's easily extensible
@@ -80,7 +80,7 @@
   (let ((template (find-template (first specification))))
     (cl:assert template () "can't find template ~A" (first specification))
     (make-instance
-     object-type ;; >>>>>>>>>>>>>>cat's standing on my keyboard
+     object-type ;; >>>>>>>>>>>>>> cat's standing on my keyboard
      :tmpl-name (first specification)
      :slots (loop with initargs = (rest specification)
 		 for slot-spec in (slots template)

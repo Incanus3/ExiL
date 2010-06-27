@@ -66,10 +66,21 @@
   (or (variable-p desired-value)
       (atom-equal-p desired-value real-value)))
 
+;; described-object for debugging purposes
+
+(defclass described-object () ((description :initarg :description
+					    :initform ""
+					    :accessor description)))
+
+(defmethod print-object :after ((object described-object) stream)
+  (unless (equal (description object) "")
+    (format stream "  ~A" (description object))))
+
+;; YOU SHOULD REMOVE THE DESCRIBED-OBJECT SUPERCLASS AFTER PROPER DEBUG
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; generic node classes
 
-(defclass node () ((children :accessor children :initform ())))
+(defclass node (described-object) ((children :accessor children :initform ())))
 
 (defgeneric node-equal-p (node1 node2)
   (:method ((node1 node) (node2 node)) nil))
@@ -112,6 +123,10 @@
 	       (tested-field node2))
        (constant-test (value node1)
 		      (value node2))))
+
+(defmethod print-object ((node alpha-test-node) stream)
+  (print-unreadable-object (node stream :type t)
+    (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
 
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation")
@@ -203,10 +218,21 @@
 		    (wme :reader wme :initarg :wme
 			 :initform (error "wme slot has to be specified"))))
 
+(defmethod token (wme &optional parent)
+  (make-instance 'token :wme wme :parent parent))
+
 (defmethod previous-wme ((token token) &optional (n 1))
   "gives wme from token n wmes back"
   (dotimes (i n (wme token))
     (setf token (parent token))))
+
+(defmethod print-object ((token token) stream)
+  (print-unreadable-object (token stream :type t)
+    (format stream "~A"
+	    (nreverse
+	     (loop for tkn = token then (parent tkn)
+		while tkn
+		collect (wme tkn))))))
 
 (defgeneric token-equal-p (token1 token2)
   (:documentation "token equality predicate")
@@ -228,6 +254,10 @@
 	       :initarg :production
 	       :initform (error "production slot has to be specified"))))
 
+(defmethod node-activation ((node production-node) (token token))
+  (pushnew token (items node) :test #'token-equal-p)
+  (format t "Production node activated by ~A~%" token))
+
 (defclass test () ((current-field-to-test
 		    :reader current-field :initarg :current-field
 		    :initform (error "current-field slot has to be specified"))
@@ -238,6 +268,12 @@
 		   (previous-field-to-test
 		    :reader previous-field :initarg :previous-field
 		    :initform (error "previous-field slot has to be specified"))))
+
+(defun make-test (current-field previous-condition previous-field)
+  (make-instance 'test
+		 :current-field current-field
+		 :previous-condition previous-condition
+		 :previous-field previous-field))
 
 ;; children are beta-memory-nodes (or production-nodes)
 (defclass beta-join-node (beta-node)
@@ -268,12 +304,18 @@
 	(activate-children
 	 node (make-instance 'token :parent token :wme wme)))))
 
+(defclass beta-top-node (beta-join-node) ())
+
+(defmethod node-activation ((node beta-top-node) (wme fact))
+  (activate-children node (make-instance 'token :parent nil :wme wme)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export
 
 (defclass rete () ((alpha-top-node :reader alpha-top-node
 				   :initform (make-instance 'alpha-top-node))
-		   (beta-top-node  :reader   beta-top-node)))
+		   (beta-top-nodes  :accessor beta-top-nodes
+				    :initform nil)))
 
 (defmethod add-wme ((rete rete) (fact fact))
   (declare (ignore rete fact))

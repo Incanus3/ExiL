@@ -45,7 +45,8 @@
 	       collect `(exil-env-accessor ,slot-name))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors facts fact-groups templates rules))
+  (exil-env-accessors facts fact-groups templates rules rete))
+ ;; rete should be removed after proper DEBUG
 
 (defun add-fact (fact &optional (environment *current-environment*))
   (my-pushnew fact (facts environment) :test #'fact-equal-p))

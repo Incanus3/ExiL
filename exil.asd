@@ -11,12 +11,14 @@
   :long-description ""
   :components
   ((:file "packages")
-   (:file "utils"       :depends-on ("packages"))
-   (:file "templates"   :depends-on ("utils"))
-   (:file "facts"       :depends-on ("templates"))
-   (:file "patterns"    :depends-on ("facts"))
-   (:file "rules"       :depends-on ("patterns"))
-   (:file "rete"        :depends-on ("rules"))
-   (:file "environment" :depends-on ("rete"))
-   (:file "export"      :depends-on ("environment"))))
+   (:file "utils"             :depends-on ("packages"))
+   (:file "templates"         :depends-on ("utils"))
+   (:file "facts"             :depends-on ("templates"))
+   (:file "patterns"          :depends-on ("facts"))
+   (:file "rules"             :depends-on ("patterns"))
+   (:file "rete-activations"  :depends-on ("rules"))
+   (:file "rete-net-creation" :depends-on ("rete-activations"))
+   (:file "print-tree"        :depends-on ("rete-activations"))
+   (:file "environment"       :depends-on ("rete-net-creation"))
+   (:file "export"            :depends-on ("environment"))))
 

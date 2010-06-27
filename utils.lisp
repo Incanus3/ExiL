@@ -20,7 +20,7 @@
 ;; (symbol-append "test-" 'symbol) => TEST-SYMBOL
 
 ;; following 2 definitions enable the use of square ([]) parentheses to append
-;; the containded strings, this will be useful for managing strings longer
+;; the contained strings, this will be useful for managing strings longer
 ;; than one row
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (set-macro-character #\] (get-macro-character #\)))
