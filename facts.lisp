@@ -20,9 +20,6 @@
   (cl:assert (notany #'variable-p (fact simple-fact))
 	     () "fact can't include variables"))
 
-(defun make-fact (fact)
-  (make-instance 'simple-fact :fact fact))
-
 ;; prints facts
 (defmethod print-object ((fact simple-fact) stream)
   (print-unreadable-object (fact stream :type t :identity t)
@@ -62,3 +59,8 @@
     (nth field (fact fact)))
   (:method ((fact template-fact) (field symbol))
     (tmpl-fact-slot-value fact field)))
+
+(defun make-fact (fact-spec)
+  (if (tmpl-fact-specification-p fact-spec)
+      (tmpl-fact fact-spec)
+      (make-instance 'simple-fact :fact fact-spec)))

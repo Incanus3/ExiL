@@ -31,7 +31,7 @@
 	    (make-instance
 	     'rule
 	     :name ',name
-	     :conditions ',(subseq rule 0 =>-position)
+	     :conditions (mapcar #'make-pattern ',(subseq rule 0 =>-position))
 	     :activations ',(subseq rule (1+ =>-position)))))
        (add-rule ,rule-symbol))))
 

@@ -23,7 +23,7 @@
 )
 
 ;; Alpha network part
-(defparameter *rete* (slot-value *current-environment* 'rete))
+(defparameter *rete* (rete *current-environment*))
 
 (defparameter alpha-top-node (alpha-top-node *rete*))
 
@@ -61,6 +61,7 @@
 			      :tested-field 2
 			      :value 'red
 			      :memory mn3))
+
 (add-child simple-fact-alpha-subtop tn0)
 (add-children tn0 (list tn1 tn2 tn3))
 (add-child tn1 tn4)
@@ -98,24 +99,24 @@
 (defparameter memories (append a-memories b-memories))
 
 (defparameter beta-top-node (make-instance 'beta-top-node
-				     :memory mn1))
+					   :alpha-memory mn1
+					   :beta-memory bm1))
 
 (push beta-top-node (beta-top-nodes *rete*))
-(add-child beta-top-node bm1)
 
 (defparameter jn1 (make-instance 'beta-join-node
 			   :parent bm1
-			   :memory mn2
+			   :alpha-memory mn2
+			   :beta-memory bm2
 			   :tests (list (make-test 0 0 2))
 			   :description "(?x on ?y) & (?y left-of ?z)"))
-(add-child jn1 bm2)
 
 (defparameter jn2 (make-instance 'beta-join-node
 			   :parent bm2
-			   :memory mn3
+			   :alpha-memory mn3
+			   :beta-memory pn
 			   :tests (list (make-test 0 0 2))
 			   :description "(?x on ?y) & (?y left-of ?z) & (?z color RED)"))
-(add-child jn2 pn)
 
 (add-child mn1 beta-top-node)
 (add-child mn2 jn1)
@@ -130,10 +131,12 @@
 (defun act (n)
   (node-activation alpha-top-node (nth n (facts))))
 
+
+
 ;; alpha part is working!!! hallowed is the left parenthesis
 
 #|
-(
+a(
 
 (trace node-activation)
 

@@ -114,7 +114,7 @@
 		 :initform (error "tested-field slot has to be specified"))
    (desired-value :reader value :initarg :value
 		  :initform (error "desired-value slot has to be specified"))
-   (alpha-memory :reader memory :initarg :memory
+   (alpha-memory :accessor memory :initarg :memory
 		 :initform nil)))
 
 (defmethod node-equal-p ((node1 alpha-test-node)
@@ -125,7 +125,7 @@
 		      (value node2))))
 
 (defmethod print-object ((node alpha-test-node) stream)
-  (print-unreadable-object (node stream :type t)
+  (print-unreadable-object (node stream :type t :identity t)
     (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
 
 (defgeneric test (node wme)
@@ -153,14 +153,18 @@
       (activate-memory node wme))
     test))
 
+(defclass simple-fact-alpha-node (alpha-node) ())
+
+(defclass template-fact-alpha-node (alpha-node) ())
+
 ;; tested-field holds field index
-(defclass simple-fact-test-node (alpha-test-node) ())
+(defclass simple-fact-test-node (alpha-test-node simple-fact-alpha-node) ())
 
 (defmethod test ((node simple-fact-test-node) (wme simple-fact))
   (constant-test (value node) (nth (tested-field node) (fact wme))))
 
 ;; tested-field holds field name
-(defclass template-fact-test-node (alpha-test-node) ())
+(defclass template-fact-test-node (alpha-test-node template-fact-alpha-node) ())
 
 (defmethod test ((node template-fact-test-node) (wme template-fact))
   (constant-test (value node) (tmpl-fact-slot-value wme (tested-field node))))
@@ -174,6 +178,10 @@
 
 (defmethod node-activation ((node alpha-subtop-node) (wme fact))
   (activate-children node wme))
+
+(defclass simple-fact-subtop-node (alpha-subtop-node simple-fact-alpha-node) ())
+
+(defclass template-fact-subtop-node (alpha-subtop-node template-fact-alpha-node) ())
 
 ;; slot dataflow-networks holds hash table of network top nodes in alpha memory.
 ;; for each template there is a dataflow network (accessible through
@@ -189,7 +197,7 @@
 (defmethod initialize-instance :after ((node alpha-top-node) &key)
   (setf (gethash (simple-fact-key-name node)
 		 (networks node))
-	(make-instance 'alpha-subtop-node)))
+	(make-instance 'simple-fact-subtop-node)))
 
 (defmethod node-activation ((node alpha-top-node) (wme fact))
   (node-activation
@@ -276,10 +284,16 @@
 		 :previous-field previous-field))
 
 ;; children are beta-memory-nodes (or production-nodes)
+;; there's always just one child
 (defclass beta-join-node (beta-node)
-  ((alpha-memory :reader memory :initarg :memory
+  ((alpha-memory :reader memory :initarg :alpha-memory
 		 :initform (error "alpha-memory slot has to be specified"))
    (tests :accessor tests :initarg :tests :initform ())))
+
+(defmethod initialize-instance :after ((node beta-join-node)
+				       &key (beta-memory
+					     (make-instance 'beta-memory-node)))
+  (add-child node beta-memory))
 
 (defmethod perform-join-test ((test test) (token token) (wme fact))
   (atom-equal-p (fact-field wme (current-field test))

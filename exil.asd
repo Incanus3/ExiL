@@ -18,7 +18,7 @@
    (:file "rules"             :depends-on ("patterns"))
    (:file "rete-activations"  :depends-on ("rules"))
    (:file "rete-net-creation" :depends-on ("rete-activations"))
-   (:file "print-tree"        :depends-on ("rete-activations"))
    (:file "environment"       :depends-on ("rete-net-creation"))
+   (:file "print-tree"        :depends-on ("environment"))
    (:file "export"            :depends-on ("environment"))))
 

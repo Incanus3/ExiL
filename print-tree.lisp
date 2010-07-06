@@ -3,7 +3,7 @@
 (defun print-node (node depth &optional (stream t))
   (dotimes (i (1- depth))
     (format stream " "))
-  (format stream "~[ *-- ~:;  `-- ~]~A~%" depth node))
+  (format stream " ~[*-- ~:; `-- ~]~A~%" depth node))
 
 (defmethod node-children ((node node))
   (children node))
@@ -31,6 +31,6 @@
   (dolist (child (node-children root))
     (depth-first-search child function (1+ depth))))
 
-(defun print-rete (&optional (rete *rete*))
+(defun print-rete (&optional (rete (rete *current-environment*)))
   (depth-first-search (alpha-top-node rete)
 		      #'print-node))

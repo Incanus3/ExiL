@@ -16,8 +16,8 @@
 	 :initarg :pattern
 	 :reader pattern)))
 
-(defmacro make-pattern (pattern)
-  `(make-instance 'simple-pattern :pattern ',pattern))
+;(defmacro make-pattern (pattern)
+;  `(make-instance 'simple-pattern :pattern ',pattern))
 
 ;; prints patterns
 (defmethod print-object ((pattern simple-pattern) stream)
@@ -29,20 +29,22 @@
 (defmethod pattern-equal-p ((pattern1 simple-pattern) (pattern2 simple-pattern))
   (equalp (pattern pattern1) (pattern pattern2)))
 
+(defun var-or-equal-p (atom1 atom2)
+  (or (and (variable-p atom1)
+	   (variable-p atom2))
+      (atom-equal-p atom1 atom2)))
+
 ;; checks pattern constant equivalency, ignores variables
 (defmethod pattern-const-equal-p ((pattern1 simple-pattern)
 				  (pattern2 simple-pattern))
-  (every (lambda (atom1 atom2)
-	   (or (and (variable-p atom1)
-		    (variable-p atom2))
-	       (equalp atom1 atom2)))
+  (every #'var-or-equal-p
 	 (pattern pattern1)
 	 (pattern pattern2)))
 
 ;; although pattern is not fact, i inherit from template-fact class
 ;; because otherwise i'd have to copy a huge bunch of code, that would be
 ;; the same as for template-facts
-(defclass template-pattern (pattern template-fact) ())
+(defclass template-pattern (pattern template-object) ())
 
 (defun tmpl-pattern (pattern-spec)
   (tmpl-object pattern-spec 'template-pattern))
@@ -63,3 +65,7 @@
   (:method ((pattern template-pattern) (field symbol))
     (tmpl-pattern-slot-value pattern field)))
 
+(defun make-pattern (specification)
+  (if (tmpl-fact-specification-p specification)
+      (tmpl-pattern specification)
+      (make-instance 'simple-pattern :pattern specification)))

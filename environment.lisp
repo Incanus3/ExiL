@@ -46,7 +46,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (exil-env-accessors facts fact-groups templates rules rete))
- ;; rete should be removed after proper DEBUG
+;; rete should be removed after proper DEBUG
 
 (defun add-fact (fact &optional (environment *current-environment*))
   (my-pushnew fact (facts environment) :test #'fact-equal-p))
@@ -69,6 +69,9 @@
 (defun add-rule (rule &optional (environment *current-environment*))
   (setf (gethash (symbol-name (name rule)) (rules environment)) rule)
   rule)
+
+(defun find-rule (name &optional (environment *current-environment*))
+  (gethash (symbol-name name) (rules environment)))
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()))
