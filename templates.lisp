@@ -60,17 +60,9 @@
 ;; inherit from this one
 ;; slot slots holds alist of slot names and values
 (defclass template-object ()
-  ((template-name :reader tmpl-name :initarg :tmpl-name
-		  :initform (error "template-name slot has to be specified"))
-   (slots :reader slots :initarg :slots
-	  :initform (error "slots slot has to be specified"))))
-
-;; creation of of template-object fails, when the user tries to instance it
-;; directly
-;; i couldn't use typep, because it returns true for inherited types too
-(defmethod initialize-instance :before ((object template-object) &key)
-  (when (equalp (type-of object) 'template-object)
-    (error "template-object class is virtual")))
+  ((template-name :reader tmpl-name :initarg :tmpl-name)
+   (slot-default :initform nil :allocation :class)
+   (slots :reader slots :initarg :slots)))
 
 ;; tmpl-object searches template's slot list, finds values from them in
 ;; specification or falls back to default values if he finds nothing
@@ -88,7 +80,8 @@
 			       (or (getf initargs
 					 (to-keyword (car slot-spec)))
 				   (getf (cdr slot-spec)
-					 :default)))))))
+					 :default)
+				   (class-slot-value object-type 'slot-default)))))))
 
 (defun tmpl-object-specification-p (specification)
   (and (listp specification)

@@ -44,7 +44,8 @@
 ;; although pattern is not fact, i inherit from template-fact class
 ;; because otherwise i'd have to copy a huge bunch of code, that would be
 ;; the same as for template-facts
-(defclass template-pattern (pattern template-object) ())
+(defclass template-pattern (pattern template-object)
+  ((slot-default :initform '? :allocation :class)))
 
 (defun tmpl-pattern (pattern-spec)
   (tmpl-object pattern-spec 'template-pattern))

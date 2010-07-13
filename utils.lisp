@@ -92,3 +92,6 @@
   `(progn
      (pushnew ,item ,place :test ,test :key ,key)
      (find (funcall ,key ,item) ,place :test ,test :key ,key)))
+
+(defun class-slot-value (class-name slot-name)
+  (slot-value (make-instance class-name) slot-name))

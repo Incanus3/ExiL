@@ -194,10 +194,35 @@
    (simple-fact-key-name :reader simple-fact-key-name
 			 :initform (gensym "simple-fact"))))
 
+;(defmethod initialize-instance :after ((node alpha-top-node) &key)
+;  (setf (gethash (simple-fact-key-name node)
+;		 (networks node))
+;	(make-instance 'simple-fact-subtop-node)))
+
+;; OR GET-NETWORK INITIALIZE-SUBNET
+
+(defmethod get-network ((node alpha-top-node)
+			&optional (template-name (simple-fact-key-name node)))
+  (gethash template-name (networks node)))
+
+(defmethod (setf get-network) (value (node alpha-top-node)
+			       &optional (template-name (simple-fact-key-name node)))
+  (setf (gethash template-name (networks node)) value))
+
+(defmethod initialize-network ((node alpha-top-node)
+			      &optional (template-name (simple-fact-key-name node)))
+  (setf (get-network node template-name)
+	(make-instance (if (equalp template-name (simple-fact-key-name node))
+			   'simple-fact-subtop-node
+			   'template-fact-subtop-node))))
+
+(defmethod get/initialize-network ((node alpha-top-node)
+				   &optional (template-name (simple-fact-key-name node)))
+  (or (get-network node template-name)
+      (initialize-network node template-name)))
+
 (defmethod initialize-instance :after ((node alpha-top-node) &key)
-  (setf (gethash (simple-fact-key-name node)
-		 (networks node))
-	(make-instance 'simple-fact-subtop-node)))
+  (initialize-network node))
 
 (defmethod node-activation ((node alpha-top-node) (wme fact))
   (node-activation
