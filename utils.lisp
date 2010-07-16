@@ -62,9 +62,13 @@
 					 subsets))))))
 ;; (subsets '(1 2)) = ((1 2) (1) (2) ())
 
-(defun assoc-value (key plist)
-  (cdr (assoc key plist)))
+(defun assoc-value (key alist)
+  (cdr (assoc key alist)))
 ;; (assoc-value 'b '((a . 1) (b . 2))) => 2
+
+(defun assoc-key (value alist)
+  (car (rassoc value alist)))
+;; (assoc-key 2 '((a . 1) (b . 2))) => b
 
 (defun (setf assoc-value) (value key plist)
   (setf (cdr (assoc key plist)) value))

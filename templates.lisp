@@ -108,3 +108,6 @@
 
 (defmethod find-atom (atom (object template-object))
   (find atom (mapcar #'cdr (slots object))))
+
+(defmethod atom-postition (atom (object template-object))
+  (assoc-key atom (slots object)))

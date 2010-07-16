@@ -59,6 +59,7 @@
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete)
 					  (tmpl-name pattern))))
 
+#|
 (defun 
 
 (defun  find-atom-in-cond-list% (atom cond-list)
@@ -69,3 +70,4 @@
 (defmethod get-join-tests-from-condition ((condition pattern)
 					  (prev-conds list))
   (
+|#
