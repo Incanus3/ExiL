@@ -60,9 +60,14 @@
 ;; inherit from this one
 ;; slot slots holds alist of slot names and values
 (defclass template-object ()
-  ((template-name :reader tmpl-name :initarg :tmpl-name)
+  ((template-name :reader tmpl-name :initarg :tmpl-name
+		  ;; error would be better, but than class-slot-value
+		  ;; wouldn't work, cause it doesn't provide the init value
+;		  :initform (error "template-name has to be specified")
+		  :initform nil)
    (slot-default :initform nil :allocation :class)
-   (slots :reader slots :initarg :slots)))
+   (slots :reader slots :initarg :slots
+	  :initform ())))
 
 ;; tmpl-object searches template's slot list, finds values from them in
 ;; specification or falls back to default values if he finds nothing
@@ -101,3 +106,5 @@
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~A" (cons (tmpl-name object) (slots object)))))
 
+(defmethod find-atom (atom (object template-object))
+  (find atom (mapcar #'cdr (slots object))))

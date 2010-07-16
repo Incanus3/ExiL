@@ -29,6 +29,12 @@
 (defmethod fact-equal-p ((fact1 simple-fact) (fact2 simple-fact))
   (equalp (fact fact1) (fact fact2)))
 
+(defmethod find-atom (atom (fact simple-fact))
+  (find atom (fact fact)))
+
+(defmethod atom-postition (atom (fact simple-fact))
+  (position atom (fact fact)))
+
 ;; stores template fact
 ;; slot slots holds alist of slot names and values
 (defclass template-fact (fact template-object) ())
@@ -64,3 +70,4 @@
   (if (tmpl-fact-specification-p fact-spec)
       (tmpl-fact fact-spec)
       (make-instance 'simple-fact :fact fact-spec)))
+

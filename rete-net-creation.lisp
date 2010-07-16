@@ -1,5 +1,6 @@
 (in-package :exil)
 
+;; parent can be either alpha-test-node or simple/pattern-fact-subtop-node
 (defmethod find-test-node ((parent alpha-node) field value)
   (dolist (child (children parent) nil)
     (when (and (equalp (tested-field child) field)
@@ -58,3 +59,13 @@
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete)
 					  (tmpl-name pattern))))
 
+(defun 
+
+(defun  find-atom-in-cond-list% (atom cond-list)
+  (loop for condition in (reverse cond-list)
+     for i = 1 then (1+ i)
+     untill (find atom condition
+
+(defmethod get-join-tests-from-condition ((condition pattern)
+					  (prev-conds list))
+  (
