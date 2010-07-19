@@ -308,6 +308,13 @@
 		 :previous-condition previous-condition
 		 :previous-field previous-field))
 
+(defmethod print-object ((test test) stream)
+  (print-unreadable-object (test stream :type t :identity t)
+    (with-slots (current-field-to-test previous-condition-number previous-field-to-test)
+	test
+      (format stream "~A" (list current-field-to-test previous-condition-number
+				previous-field-to-test)))))
+
 ;; children are beta-memory-nodes (or production-nodes)
 ;; there's always just one child
 (defclass beta-join-node (beta-node)

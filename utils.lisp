@@ -1,4 +1,4 @@
-(in-package :exil)
+(In-package :exil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; various utilities
@@ -99,3 +99,8 @@
 
 (defun class-slot-value (class-name slot-name)
   (slot-value (make-instance class-name) slot-name))
+
+(defun select (list &rest indices)
+  (mapcar (lambda (i)
+	    (nth i list))
+	  indices))

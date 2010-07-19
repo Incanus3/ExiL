@@ -136,8 +136,6 @@
 ;; alpha part is working!!! hallowed is the left parenthesis
 
 #|
-a(
-
 (trace node-activation)
 
 ; (B3 color RED)
@@ -178,3 +176,14 @@ a(
 |#
 
 ;; beta part is working too! hallowed are both parentheses
+
+(deftemplate blah (a (b :default 10)))
+(defvar *fact* (make-fact '(blah foo bar)))
+(defvar *tmpl-fact* (make-fact '(blah :a 5)))
+
+(defrule two-blocks-left-of-red-one
+  (?x on ?y)
+  (?y left-of ?z)
+  (?z color red)
+=>
+)

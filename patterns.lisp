@@ -41,6 +41,12 @@
 	 (pattern pattern1)
 	 (pattern pattern2)))
 
+(defmethod find-atom (atom (pattern simple-pattern))
+  (find atom (pattern pattern)))
+
+(defmethod atom-postition (atom (pattern simple-pattern))
+  (position atom (pattern pattern)))
+
 ;; although pattern is not fact, i inherit from template-fact class
 ;; because otherwise i'd have to copy a huge bunch of code, that would be
 ;; the same as for template-facts

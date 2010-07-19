@@ -59,15 +59,19 @@
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete)
 					  (tmpl-name pattern))))
 
-#|
-(defun 
-
 (defun  find-atom-in-cond-list% (atom cond-list)
   (loop for condition in (reverse cond-list)
      for i = 1 then (1+ i)
-     untill (find atom condition
+     until (find-atom atom condition)
+     finally
+       (let ((position (atom-postition atom condition)))
+	 (when position (return (cons i position))))))
 
 (defmethod get-join-tests-from-condition ((condition pattern)
 					  (prev-conds list))
-  (
-|#
+    (loop for atom in (pattern condition)
+       for i = 0 then (1+ i)
+       for (prev-cond . field) = (find-atom-in-cond-list% atom prev-conds)
+	 then (find-atom-in-cond-list% atom prev-conds)
+       when prev-cond
+	 collect (make-test i prev-cond field)))
