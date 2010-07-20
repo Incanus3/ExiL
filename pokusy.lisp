@@ -185,5 +185,9 @@
   (?x on ?y)
   (?y left-of ?z)
   (?z color red)
+  (?x is ?x)
 =>
 )
+
+(defvar *rule* (find-rule 'two-blocks-left-of-red-one))
+(defvar *conds* (conditions *rule*))

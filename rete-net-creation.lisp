@@ -59,7 +59,7 @@
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete)
 					  (tmpl-name pattern))))
 
-(defun  find-atom-in-cond-list% (atom cond-list)
+(defun find-atom-in-cond-list% (atom cond-list)
   (loop for condition in (reverse cond-list)
      for i = 1 then (1+ i)
      until (find-atom atom condition)
@@ -67,11 +67,30 @@
        (let ((position (atom-postition atom condition)))
 	 (when position (return (cons i position))))))
 
+;; not perfect - if there are more occurences of a same variable in condition
+;; it makes tests for every one
+;; add some used variable list or think of sth better
+(defmethod get-intercondition-tests% ((condition pattern) (prev-conds list))
+  (loop for atom in (pattern condition)
+     with used-vars
+     for i = 0 then (1+ i)
+     for (prev-cond . field) = (find-atom-in-cond-list% atom prev-conds)
+     then (find-atom-in-cond-list% atom prev-conds)
+     unless (member atom used-vars)
+     when prev-cond
+     collect (make-test i prev-cond field)
+     do (push atom used-vars)))
+
+(defun get-intracondition-tests% (condition)
+  (loop for subpattern on (pattern condition)
+     for i = 0 then (1+ i)
+     when (variable-p (first subpattern))
+     when (position (first subpattern) (rest subpattern))
+     collect (make-test 0 i (+ 1 i (position (first subpattern) (rest subpattern))))))
+
 (defmethod get-join-tests-from-condition ((condition pattern)
 					  (prev-conds list))
-    (loop for atom in (pattern condition)
-       for i = 0 then (1+ i)
-       for (prev-cond . field) = (find-atom-in-cond-list% atom prev-conds)
-	 then (find-atom-in-cond-list% atom prev-conds)
-       when prev-cond
-	 collect (make-test i prev-cond field)))
+;; get join tests of condition against prev-conds
+  (append (get-intercondition-tests% condition prev-conds)
+;; get internal condition tests (same variable twice in condition)
+	  (get-intracondition-tests% condition)))
