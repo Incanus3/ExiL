@@ -87,6 +87,8 @@
 
 ;; beta network part
 
+(defparameter bm0 (beta-top-node *rete*))
+
 (defparameter bm1 (make-instance 'beta-memory-node
 				 :description "(?x on ?y)"))
 (defparameter bm2 (make-instance 'beta-memory-node
@@ -98,11 +100,10 @@
 (defparameter b-memories (list bm1 bm2 pn))
 (defparameter memories (append a-memories b-memories))
 
-(defparameter beta-top-node (make-instance 'beta-top-node
-					   :alpha-memory mn1
-					   :beta-memory bm1))
-
-(push beta-top-node (beta-top-nodes *rete*))
+(defparameter jn0 (make-instance 'beta-join-node
+				 :parent bm0
+				 :alpha-memory mn1
+				 :beta-memory bm1))
 
 (defparameter jn1 (make-instance 'beta-join-node
 			   :parent bm1
@@ -118,10 +119,11 @@
 			   :tests (list (make-test 0 0 2))
 			   :description "(?x on ?y) & (?y left-of ?z) & (?z color RED)"))
 
-(add-child mn1 beta-top-node)
+(add-child mn1 jn0)
 (add-child mn2 jn1)
 (add-child mn3 jn2)
 
+(add-child bm0 jn0)
 (add-child bm1 jn1)
 (add-child bm2 jn2)
 

@@ -127,7 +127,6 @@
 (defmethod print-object ((node alpha-test-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
-
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation")
   (:method ((node alpha-test-node) (wme fact)) nil))
@@ -251,6 +250,8 @@
 		    (wme :reader wme :initarg :wme
 			 :initform (error "wme slot has to be specified"))))
 
+(defclass empty-token (token) ((wme :initform nil)))
+
 (defmethod token (wme &optional parent)
   (make-instance 'token :wme wme :parent parent))
 
@@ -270,7 +271,7 @@
 (defgeneric token-equal-p (token1 token2)
   (:documentation "token equality predicate")
   (:method (token1 token2) nil)
-  (:method ((token1 (eql nil)) (token2 (eql nil))) t)
+  (:method ((token1 empty-token) (token2 empty-token)) t)
   (:method ((token1 token) (token2 token))
     (and (fact-equal-p (wme token1) (wme token2))
 	 (token-equal-p (parent token1) (parent token2)))))
@@ -281,6 +282,9 @@
 (defmethod node-activation ((node beta-memory-node) (token token))
   (pushnew token (items node) :test #'token-equal-p)
   (activate-children node token))
+
+(defclass beta-top-node (beta-memory-node) 
+  ((items :initform (list (make-instance 'empty-token)))))
 
 (defclass production-node (beta-memory-node)
   ((production :reader production
@@ -350,18 +354,20 @@
 	(activate-children
 	 node (make-instance 'token :parent token :wme wme)))))
 
+#|
 (defclass beta-top-node (beta-join-node) ())
 
 (defmethod node-activation ((node beta-top-node) (wme fact))
   (activate-children node (make-instance 'token :parent nil :wme wme)))
+|#
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export
 
 (defclass rete () ((alpha-top-node :reader alpha-top-node
 				   :initform (make-instance 'alpha-top-node))
-		   (beta-top-nodes  :accessor beta-top-nodes
-				    :initform nil)))
+		   (beta-top-node  :accessor beta-top-node
+				   :initform (make-instance 'beta-top-node))))
 
 (defmethod add-wme ((rete rete) (fact fact))
   (declare (ignore rete fact))
@@ -370,15 +376,5 @@
 
 (defmethod remove-wme ((rete rete) (fact fact))
   (declare (ignore rete fact))
-
-  )
-
-(defmethod add-production ((rete rete) (rule rule))
-  (declare (ignore rete rule))
-  
-  )
-
-(defmethod remove-production ((rete rete) (rule rule))
-  (declare (ignore rete rule))
 
   )

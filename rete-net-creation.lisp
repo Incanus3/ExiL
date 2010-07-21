@@ -94,3 +94,12 @@
   (append (get-intercondition-tests% condition prev-conds)
 ;; get internal condition tests (same variable twice in condition)
 	  (get-intracondition-tests% condition)))
+
+(defmethod add-production ((rete rete) (rule rule))
+  (with-slots (conditions activations) rule
+    (loop with current-node = (beta-top-node rete))))
+
+(defmethod remove-production ((rete rete) (rule rule))
+  (declare (ignore rete rule))
+
+  )
