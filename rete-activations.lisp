@@ -83,7 +83,8 @@
 (defclass node (described-object) ((children :accessor children :initform ())))
 
 (defgeneric node-equal-p (node1 node2)
-  (:method ((node1 node) (node2 node)) nil))
+  (:method ((node1 (eql nil)) (node2 (eql nil))) t)
+  (:method ((node1 node) (node2 node)) (equalp node1 node2)))
 
 (defmethod add-child ((node node) (child node))
   (pushnew child (children node) :test #'node-equal-p)
@@ -319,6 +320,17 @@
       (format stream "~A" (list current-field-to-test previous-condition-number
 				previous-field-to-test)))))
 
+(defmethod test-equal-p ((test1 test) (test2 test))
+  (with-accessors ((cf1 current-field) (pc1 previous-condition) (pf1 previous-field))
+      test1
+    (with-accessors ((cf2 current-field) (pc2 previous-condition) (pf2 previous-field))
+	test2
+      (and (equalp cf1 cf2) (= pc1 pc2) (equalp pf1 pf2)))))
+
+(defmethod tests-equal-p ((test-list1 list) (test-list2 list))
+  (and (= (length test-list1) (length test-list2))
+       (every #'test-equal-p test-list1 test-list2)))
+
 ;; children are beta-memory-nodes (or production-nodes)
 ;; there's always just one child
 (defclass beta-join-node (beta-node)
@@ -353,6 +365,14 @@
     (if (perform-join-tests (tests node) token wme)
 	(activate-children
 	 node (make-instance 'token :parent token :wme wme)))))
+
+(defmethod node-equal-p ((node1 beta-join-node)
+			 (node2 beta-join-node))
+  (with-slots ((am1 alpha-memory) (tsts1 tests) (par1 parent)) node1
+    (with-slots ((am2 alpha-memory) (tsts2 tests) (par2 parent)) node2
+      (and (node-equal-p am1 am2)
+	   (node-equal-p par1 par2)
+	   (tests-equal-p tsts1 tsts2)))))
 
 #|
 (defclass beta-top-node (beta-join-node) ())

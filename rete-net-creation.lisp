@@ -95,9 +95,33 @@
 ;; get internal condition tests (same variable twice in condition)
 	  (get-intracondition-tests% condition)))
 
+(defmethod find/create-join-node ((parent beta-memory-node)
+				  (tests list)
+				  (a-memory alpha-memory-node))
+  (let ((join-node (make-instance 'beta-join-node
+				  :parent parent
+				  :tests tests
+				  :alpha-memory a-memory)))
+    (or (find-if (lambda (child) (node-equal-p child join-node)) (children parent))
+	(progn (push join-node (children parent))
+	       join-node))))
+
 (defmethod add-production ((rete rete) (rule rule))
   (with-slots (conditions activations) rule
-    (loop with current-node = (beta-top-node rete))))
+    (loop
+       for current-cond in conditions
+       for i = 0 then (1+ i)
+       for prev-conds = () then (subseq conditions 0 i)
+       for alpha-mem = (create-alpha-net rete current-cond) then
+	 (create-alpha-net rete current-cond)
+       for tests = () then
+	 (get-join-tests-from-condition current-cond prev-conds)
+       for current-mem-node = (beta-top-node rete) then
+	 (beta-memory current-join-node)
+       for current-join-node
+	 = (find/create-join-node current-mem-node tests alpha-mem) then
+	 (find/create-join-node current-mem-node tests alpha-mem))
+	 
 
 (defmethod remove-production ((rete rete) (rule rule))
   (declare (ignore rete rule))
