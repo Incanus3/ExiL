@@ -334,7 +334,7 @@
 ;; children are beta-memory-nodes (or production-nodes)
 ;; there's always just one child
 (defclass beta-join-node (beta-node)
-  ((alpha-memory :reader memory :initarg :alpha-memory
+  ((alpha-memory :reader alpha-memory :initarg :alpha-memory
 		 :initform (error "alpha-memory slot has to be specified"))
    (tests :accessor tests :initarg :tests :initform ())))
 
@@ -342,6 +342,9 @@
 				       &key (beta-memory
 					     (make-instance 'beta-memory-node)))
   (add-child node beta-memory))
+
+(defmethod beta-memory ((node beta-join-node))
+  (first (children node)))
 
 (defmethod perform-join-test ((test test) (token token) (wme fact))
   (atom-equal-p (fact-field wme (current-field test))

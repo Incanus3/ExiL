@@ -74,5 +74,9 @@
   (gethash (symbol-name name) (rules environment)))
 
 (defun reset-environment (&optional (environment *current-environment*))
-  (setf (facts environment) ()))
+  (setf (facts environment) ()
+	(fact-groups environment) ()
+	(templates environment) (make-hash-table :test 'equalp)
+	(rules environment) (make-hash-table :test 'equalp)
+	(rete environment) (make-instance 'rete)))
 

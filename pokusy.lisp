@@ -13,14 +13,14 @@
 
 (reset)
 
-
-
+#|
 (defrule find-stack-of-two-blocks-to-the-left-of-a-red-block
   (?x on ?y)
   (?y left-of ?z)
   (?z color red)
 =>
 )
+|#
 
 ;; Alpha network part
 (defparameter *rete* (rete *current-environment*))
@@ -187,7 +187,6 @@
   (?x on ?y)
   (?y left-of ?z)
   (?z color red)
-  (?x is ?x)
 =>
 )
 

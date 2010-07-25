@@ -22,12 +22,13 @@
     (find/create-test-node% parent field value 'template-fact-test-node)))
 
 (defmethod create-alpha-net% ((pattern simple-pattern) (root simple-fact-subtop-node))
-  (loop with pattern = (pattern pattern)
+  (loop with patt = (pattern pattern)
      with node = root
-     for atom in pattern
-     for field upto (1- (length pattern))
+     for atom in patt
+     for field = 0 then (1+ field)
      do (multiple-value-bind (child created-p) (find/create-test-node node field atom)
-;	  (print (list node child created-p))
+	  (format t "atom: ~A~%field: ~A~%parent: ~A~%child: ~A~%created-p: ~A~%~%"
+		  atom field node child created-p)
 	  (when created-p (add-child node child))
 	  (setf node child))
      finally
@@ -52,10 +53,10 @@
 		   (setf (memory node)
 			 (make-instance 'alpha-memory-node))))))
 
-(defmethod create-alpha-net ((rete rete) (pattern simple-pattern))
+(defmethod create-alpha-net ((pattern simple-pattern) &optional (rete (rete)))
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete))))
 
-(defmethod create-alpha-net ((rete rete) (pattern template-pattern))
+(defmethod create-alpha-net ((pattern template-pattern) &optional (rete (rete)))
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete)
 					  (tmpl-name pattern))))
 
@@ -106,21 +107,21 @@
 	(progn (push join-node (children parent))
 	       join-node))))
 
-(defmethod add-production ((rete rete) (rule rule))
+(defmethod add-production ((rule rule) &optional (rete (rete)))
   (with-slots (conditions activations) rule
     (loop
        for current-cond in conditions
        for i = 0 then (1+ i)
        for prev-conds = () then (subseq conditions 0 i)
-       for alpha-mem = (create-alpha-net rete current-cond) then
-	 (create-alpha-net rete current-cond)
+       for alpha-mem = (create-alpha-net current-cond rete) then
+	 (create-alpha-net current-cond rete)
        for tests = () then
 	 (get-join-tests-from-condition current-cond prev-conds)
        for current-mem-node = (beta-top-node rete) then
 	 (beta-memory current-join-node)
        for current-join-node
 	 = (find/create-join-node current-mem-node tests alpha-mem) then
-	 (find/create-join-node current-mem-node tests alpha-mem))
+	 (find/create-join-node current-mem-node tests alpha-mem))))
 	 
 
 (defmethod remove-production ((rete rete) (rule rule))

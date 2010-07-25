@@ -31,6 +31,10 @@
   (dolist (child (node-children root))
     (depth-first-search child function (1+ depth))))
 
-(defun print-rete (&optional (rete (rete *current-environment*)))
+(defun print-rete (&optional (stream t) (rete (rete)))
+  (format stream "alpha-part:~%")
   (depth-first-search (alpha-top-node rete)
+		      #'print-node)
+  (format stream "beta-part:~%")
+  (depth-first-search (beta-top-node rete)
 		      #'print-node))
