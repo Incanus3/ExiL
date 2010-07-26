@@ -13,9 +13,12 @@
   "Add fact into working memory"
   `(%assert ',fact-spec))
 
-(defmacro retract (fact &optional)
+(defun retract (fact)
   "Remove fact from working memory"
-  (declare (ignorable fact)))
+  (remove-wme fact))
+
+(defun clear ()
+  (reset-environment))
 
 (defmacro deffacts (name &body fact-descriptions)
   "Create group of facts to be asserted after (reset)"
@@ -41,7 +44,7 @@
 
 (defun reset ()
   "Reset the environment"
-  (reset-environment)
+  (clear)
   (dolist (group (fact-groups))
     (assert-group (cdr group))))
 

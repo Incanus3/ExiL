@@ -79,5 +79,5 @@
 	(fact-groups environment) ()
 	(templates environment) (make-hash-table :test 'equalp)
 	(rules environment) (make-hash-table :test 'equalp)
-	(rete environment) (make-instance 'rete)))
-
+	(rete environment) (make-instance 'rete))
+  nil)

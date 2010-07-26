@@ -128,7 +128,7 @@
 			 rule))))
 	 
 
-(defmethod remove-production ((rete rete) (rule rule))
+(defmethod remove-production ((rule rule) &optional (rete (rete)))
   (declare (ignore rete rule))
 
   )
