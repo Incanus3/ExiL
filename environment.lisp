@@ -68,6 +68,7 @@
 
 (defun add-rule (rule &optional (environment *current-environment*))
   (setf (gethash (symbol-name (name rule)) (rules environment)) rule)
+  (new-production rule (rete environment))
   rule)
 
 (defun find-rule (name &optional (environment *current-environment*))

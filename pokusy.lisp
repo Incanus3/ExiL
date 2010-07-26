@@ -187,8 +187,11 @@
   (?x on ?y)
   (?y left-of ?z)
   (?z color red)
-=>
+>
 )
 
 (defvar *rule* (find-rule 'two-blocks-left-of-red-one))
+(new-production *rule*)
+(print-rete)
+(reset-environment)
 (defvar *conds* (conditions *rule*))

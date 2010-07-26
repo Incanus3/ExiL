@@ -105,9 +105,10 @@
 				  :alpha-memory a-memory)))
     (or (find-if (lambda (child) (node-equal-p child join-node)) (children parent))
 	(progn (push join-node (children parent))
+	       (push join-node (children a-memory))
 	       join-node))))
 
-(defmethod add-production ((rule rule) &optional (rete (rete)))
+(defmethod new-production ((rule rule) &optional (rete (rete)))
   (with-slots (conditions activations) rule
     (loop
        for current-cond in conditions
@@ -121,7 +122,10 @@
 	 (beta-memory current-join-node)
        for current-join-node
 	 = (find/create-join-node current-mem-node tests alpha-mem) then
-	 (find/create-join-node current-mem-node tests alpha-mem))))
+	 (find/create-join-node current-mem-node tests alpha-mem)
+       finally
+	 (add-production (beta-memory current-join-node)
+			 rule))))
 	 
 
 (defmethod remove-production ((rete rete) (rule rule))

@@ -278,23 +278,28 @@
 	 (token-equal-p (parent token1) (parent token2)))))
 
 ;; children are beta-join-nodes
-(defclass beta-memory-node (beta-node memory-node) ())
+(defclass beta-memory-node (beta-node memory-node)
+  ((productions :accessor productions
+;		:initarg :productions
+		:initform ())))
 
 (defmethod node-activation ((node beta-memory-node) (token token))
   (pushnew token (items node) :test #'token-equal-p)
   (activate-children node token))
 
+(defmethod add-production ((node beta-memory-node) (production rule))
+  (push-update production (productions node) :test #'rule-equal-p))
+
+(defmethod delete-production ((node beta-memory-node) (production rule))
+  (setf (productions node)
+	(delete production (productions node) :test #'rule-equal-p)))
+
+(defmethod print-object ((node beta-memory-node) stream)
+  (print-unreadable-object (node stream :type t :identity t)
+    (format stream "productions: ~A" (productions node))))
+
 (defclass beta-top-node (beta-memory-node) 
   ((items :initform (list (make-instance 'empty-token)))))
-
-(defclass production-node (beta-memory-node)
-  ((production :reader production
-	       :initarg :production
-	       :initform (error "production slot has to be specified"))))
-
-(defmethod node-activation ((node production-node) (token token))
-  (pushnew token (items node) :test #'token-equal-p)
-  (format t "Production node activated by ~A~%" token))
 
 (defclass test () ((current-field-to-test
 		    :reader current-field :initarg :current-field
@@ -331,7 +336,7 @@
   (and (= (length test-list1) (length test-list2))
        (every #'test-equal-p test-list1 test-list2)))
 
-;; children are beta-memory-nodes (or production-nodes)
+;; children are beta-memory-nodes
 ;; there's always just one child
 (defclass beta-join-node (beta-node)
   ((alpha-memory :reader alpha-memory :initarg :alpha-memory
@@ -340,7 +345,10 @@
 
 (defmethod initialize-instance :after ((node beta-join-node)
 				       &key (beta-memory
-					     (make-instance 'beta-memory-node)))
+					     (make-instance 'beta-memory-node
+							    :parent node)))
+  (when (equalp beta-memory 'production)
+    (setf beta-memory (make-instance 'production-node :parent node)))
   (add-child node beta-memory))
 
 (defmethod beta-memory ((node beta-join-node))

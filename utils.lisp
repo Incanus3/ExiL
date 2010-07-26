@@ -97,6 +97,13 @@
      (pushnew ,item ,place :test ,test :key ,key)
      (find (funcall ,key ,item) ,place :test ,test :key ,key)))
 
+;; like pushnew, but if there is test-equal atom in the place,
+;; replaces it by item
+(defmacro push-update (item place &key (test '#'equalp) (key '#'identity))
+  `(progn
+     (setf ,place (delete ,item ,place :test ,test :key ,key))
+     (push ,item ,place)))
+
 (defun class-slot-value (class-name slot-name)
   (slot-value (make-instance class-name) slot-name))
 
