@@ -1,3 +1,5 @@
+(in-package :exil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; alpha memory classes
 
@@ -21,6 +23,7 @@
 (defmethod print-object ((node alpha-test-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
+
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation")
   (:method ((node alpha-test-node) (wme fact)) nil))
@@ -30,16 +33,16 @@
 ;; that no wme can pass 2 children's tests
 (defmethod activate-children ((node alpha-test-node) (wme fact))
   (dolist (child (children node))
-    (when (node-activation child wme) (return))))
+    (when (activate child wme) (return))))
 
 (defmethod activate-memory ((node alpha-test-node) (wme fact))
   (with-slots ((mem alpha-memory)) node
     (when mem
-      (node-activation mem wme))))
+      (activate mem wme))))
 
 ;; returns test return value, thanks to this it is possible for
 ;; activate-children to break after first successful test
-(defmethod node-activation ((node alpha-test-node) (wme fact))
+(defmethod activate ((node alpha-test-node) (wme fact))
   (let ((test (test node wme)))
     (when test
       (activate-children node wme)
@@ -69,7 +72,7 @@
 ;; appears in some newly added rule
 (defclass alpha-subtop-node (alpha-node) ())
 
-(defmethod node-activation ((node alpha-subtop-node) (wme fact))
+(defmethod activate ((node alpha-subtop-node) (wme fact))
   (activate-children node wme))
 
 (defclass simple-fact-subtop-node (alpha-subtop-node simple-fact-alpha-node) ())
@@ -117,8 +120,8 @@
 (defmethod initialize-instance :after ((node alpha-top-node) &key)
   (initialize-network node))
 
-(defmethod node-activation ((node alpha-top-node) (wme fact))
-  (node-activation
+(defmethod activate ((node alpha-top-node) (wme fact))
+  (activate
    (gethash
     (typecase wme
       (simple-fact (simple-fact-key-name node))
@@ -129,8 +132,10 @@
 ;; children are beta-join-nodes
 (defclass alpha-memory-node (alpha-node memory-node) ())
 
-(defmethod node-activation ((node alpha-memory-node) (wme fact))
+(defmethod activate ((node alpha-memory-node) (wme fact))
   (pushnew wme (items node) :test #'fact-equal-p)
   (activate-children node wme))
 
+(defmethod inactivate ((node alpha-memory-node) (wme fact))
+  (setf (items node) (delete wme (items node) :test #'fact-equal-p)))
 

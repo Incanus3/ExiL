@@ -17,48 +17,6 @@
 ;;      - e.g. (on red-box ?some-other-box)
 ;;      - or (car :color ?some-color)
 
-(defgeneric atom-equal-p (object1 object2)
-  (:documentation "equality predicate for fact atoms")
-  (:method (object1 object2) (equalp object1 object2)))
-
-(defgeneric variable-bindings (pattern fact)
-  (:documentation "if the fact passes the pattern,
-                     returns the variable bindings in assoc list"))
-
-;; checks consistency of constant atoms in pattern, ignores variables
-;; returns fact if passed, nil otherwise
-(defmethod constant-check ((pattern simple-pattern)
-			   (fact simple-fact))
-  (when (every (lambda (pt-atom atom)
-		 (or (variable-p pt-atom)
-		     (atom-equal-p pt-atom atom)))
-	       (pattern pattern)
-	       (fact fact))
-    fact))
-
-;; could use hash-table instead of assoc-list, if the facts has many atoms
-;; in need of longer facts could be 2 methods (with assoc-list and hash table)
-;; and one that would call them depending on length
-(defmethod variable-bindings ((pattern simple-pattern)
-			      (fact simple-fact))
-  (loop
-     with bindings = ()
-     for pt-atom in (pattern pattern)
-     for atom in (fact fact)
-     do (if (variable-p pt-atom)
-	    (let ((binding (cdr (assoc pt-atom bindings))))
-	      (if binding
-		  (unless (atom-equal-p binding atom)
-		    (return nil))
-		  (push (cons pt-atom atom) bindings)))
-	    (unless (atom-equal-p pt-atom atom)
-	      (return nil)))
-     finally (return (nreverse bindings))))
-
-(defun constant-test (desired-value real-value)
-  (or (variable-p desired-value)
-      (atom-equal-p desired-value real-value)))
-
 ;; described-object for debugging purposes
 
 (defclass described-object () ((description :initarg :description
@@ -88,13 +46,23 @@
   (dolist (child children node)
     (add-child node child)))
 
-(defgeneric node-activation (node object)
+(defgeneric activate (node object)
   (:documentation "handels various node activations"))
 
 (defgeneric activate-children (node object)
   (:method ((node node) object)
     (dolist (child (children node))
-      (node-activation child object))))
+      (activate child object))))
+
+;; called by remove-wme
+(defgeneric inactivate (node object))
+
+(defmethod inactivate-children ((node node) object)
+  (dolist (child (children node))
+    (inactivate child object)))
+
+(defmethod inactivate ((node node) object)
+  (inactivate-children node object))
 
 (defclass memory-node (node) ((items :accessor items :initform ())))
 

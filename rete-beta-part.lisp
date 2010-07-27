@@ -1,3 +1,5 @@
+(in-package :exil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; beta memory classes
 
@@ -41,9 +43,14 @@
 ;		:initarg :productions
 		:initform ())))
 
-(defmethod node-activation ((node beta-memory-node) (token token))
+;; NUTNO DOPLNIT UPRAVU AGENDY PRI ACTIVACI A INACTIVACI
+;; BETA-MEMORY-NODU S NEPRAZDNYM SLOTEM PRODUCTIONS
+(defmethod activate ((node beta-memory-node) (token token))
   (pushnew token (items node) :test #'token-equal-p)
   (activate-children node token))
+
+(defmethod inactivate ((node beta-memory-node) (fact fact))
+  (setf (items node) (delete fact (items node) :key #'wme)))
 
 (defmethod add-production ((node beta-memory-node) (production rule))
   (push-update production (productions node) :test #'rule-equal-p))
@@ -122,14 +129,14 @@
     (unless (perform-join-test test token wme) (return nil))))
     
 ;; left activation
-(defmethod node-activation ((node beta-join-node) (token token))
-  (dolist (wme (items (memory node)))
+(defmethod activate ((node beta-join-node) (token token))
+  (dolist (wme (items (alpha-memory node)))
     (if (perform-join-tests (tests node) token wme)
 	(activate-children
 	 node (make-instance 'token :parent token :wme wme)))))
 
 ;; right activation
-(defmethod node-activation ((node beta-join-node) (wme fact))
+(defmethod activate ((node beta-join-node) (wme fact))
   (dolist (token (items (parent node)))
     (if (perform-join-tests (tests node) token wme)
 	(activate-children
@@ -146,7 +153,7 @@
 #|
 (defclass beta-top-node (beta-join-node) ())
 
-(defmethod node-activation ((node beta-top-node) (wme fact))
+(defmethod activate ((node beta-top-node) (wme fact))
   (activate-children node (make-instance 'token :parent nil :wme wme)))
 |#
 
@@ -159,11 +166,8 @@
 				   :initform (make-instance 'beta-top-node))))
 
 (defmethod add-wme ((fact fact) &optional (rete (rete)))
-  (declare (ignore rete fact))
-
-  )
+  (activate (alpha-top-node rete) fact))
 
 (defmethod remove-wme ((fact fact) &optional (rete (rete)))
-  (declare (ignore rete fact))
-
-  )
+  (inactivate (alpha-top-node rete))
+  (inactivate (beta-top-node rete)))

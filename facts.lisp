@@ -39,19 +39,11 @@
 ;; slot slots holds alist of slot names and values
 (defclass template-fact (fact template-object) ())
 
-;; tmpl-fact searches template's slot list, finds values from them in
-;; fact-spec or falls back to default values if he finds nothing
-;; if there's some other crap in fact-spec, tmpl-fact doesn't care,
-;; the only condition is, that (rest fact-spec) has to be plist
-(defun tmpl-fact (fact-spec)
-  (tmpl-object fact-spec 'template-fact))
 
 (defmethod initialize-instance :after ((fact template-fact) &key)
   (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
 	     () "fact can't include variables"))
 
-(defun tmpl-fact-specification-p (fact-spec)
-  (tmpl-object-specification-p fact-spec))
 
 (defmethod tmpl-fact-slot-value ((fact template-fact) slot-name)
   (tmpl-object-slot-value fact slot-name))
@@ -65,9 +57,4 @@
     (nth field (fact fact)))
   (:method ((fact template-fact) (field symbol))
     (tmpl-fact-slot-value fact field)))
-
-(defun make-fact (fact-spec)
-  (if (tmpl-fact-specification-p fact-spec)
-      (tmpl-fact fact-spec)
-      (make-instance 'simple-fact :fact fact-spec)))
 
