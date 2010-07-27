@@ -69,9 +69,6 @@
    (slots :reader slots :initarg :slots
 	  :initform ())))
 
-
-
-
 (defmethod tmpl-object-slot-value ((object template-object) slot-name)
   (assoc-value slot-name (slots object)))
 
@@ -88,3 +85,32 @@
 
 (defmethod atom-postition (atom (object template-object))
   (assoc-key atom (slots object)))
+
+;; forward declaration, real one will appear in environment.lisp
+(defgeneric find-template (name &optional environment))
+
+;; tmpl-object searches template's slot list, finds values from them in
+;; specification or falls back to default values if he finds nothing
+;; if there's some other crap in specification, tmpl-object doesn't care,
+;; the only condition is, that (rest specification) has to be plist
+(defun tmpl-object (specification object-type)
+  (let ((template (find-template (first specification))))
+    (cl:assert template () "can't find template ~A" (first specification))
+    (make-instance
+     object-type ;; >>>>>>>>>>>>>> cat's standing on my keyboard
+     :tmpl-name (first specification)
+     :slots (loop with initargs = (rest specification)
+		 for slot-spec in (slots template)
+		 collect (cons (car slot-spec)
+			       (or (getf initargs
+					 (to-keyword (car slot-spec)))
+				   (getf (cdr slot-spec)
+					 :default)
+				   (class-slot-value object-type 'slot-default)))))))
+
+(defun tmpl-object-specification-p (specification)
+  (and (listp specification)
+       (find-template (first specification))
+       (or (null (rest specification))
+	   ;; probably faster than (= (length specification) 1)
+	   (keywordp (second specification)))))

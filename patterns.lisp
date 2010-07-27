@@ -61,8 +61,6 @@
 (defclass template-pattern (pattern template-object)
   ((slot-default :initform '? :allocation :class)))
 
-
-
 (defmethod tmpl-pattern-slot-value ((pattern template-pattern) slot-name)
   (tmpl-object-slot-value pattern slot-name))
 
@@ -75,3 +73,14 @@
     (nth field (pattern pattern)))
   (:method ((pattern template-pattern) (field symbol))
     (tmpl-pattern-slot-value pattern field)))
+
+(defun tmpl-pattern (pattern-spec)
+  (tmpl-object pattern-spec 'template-pattern))
+
+(defun tmpl-pattern-specification-p (specification)
+  (tmpl-object-specification-p specification))
+
+(defun make-pattern (specification)
+  (if (tmpl-fact-specification-p specification)
+      (tmpl-pattern specification)
+      (make-instance 'simple-pattern :pattern specification)))

@@ -51,6 +51,7 @@
 ;		:initarg :productions
 		:initform ())))
 
+;; forward declarations, real ones will appear in environment.lisp
 (defgeneric agenda (&optional environment))
 (defgeneric add-match (match &optional agenda))
 (defgeneric remove-match (match &optional agenda))

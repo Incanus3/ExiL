@@ -58,3 +58,18 @@
   (:method ((fact template-fact) (field symbol))
     (tmpl-fact-slot-value fact field)))
 
+;; tmpl-fact searches template's slot list, finds values from them in
+;; fact-spec or falls back to default values if he finds nothing
+;; if there's some other crap in fact-spec, tmpl-fact doesn't care,
+;; the only condition is, that (rest fact-spec) has to be plist
+(defun tmpl-fact (fact-spec)
+  (tmpl-object fact-spec 'template-fact))
+
+(defun tmpl-fact-specification-p (fact-spec)
+  (tmpl-object-specification-p fact-spec))
+
+(defun make-fact (fact-spec)
+  (if (tmpl-fact-specification-p fact-spec)
+      (tmpl-fact fact-spec)
+      (make-instance 'simple-fact :fact fact-spec)))
+
