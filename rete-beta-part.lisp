@@ -51,6 +51,10 @@
 ;		:initarg :productions
 		:initform ())))
 
+(defgeneric agenda (&optional environment))
+(defgeneric add-match (match &optional agenda))
+(defgeneric remove-match (match &optional agenda))
+
 (defmethod complete-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
     (add-match (agenda) (cons production token))))
@@ -60,14 +64,18 @@
     (complete-match node token))
   (activate-children node token))
 
+(defmethod broken-match ((node beta-memory-node) (token token))
+  (dolist (production (productions node))
+    (remove-match (agenda) (cons production token))))
+
 ;; SPATNE - varianta delete musi jako druhou hodnotu vratit list
 ;; tokenu, ktere smazala, ty se musi poslat funkci broken match
 (defmethod inactivate ((node beta-memory-node) (fact fact))
-  (multiple-value-bind (new-items altered-p) 
-      (ext-delete fact (items node) :test #'includes-p)
+  (multiple-value-bind (new-items deleted) 
+      (diff-delete fact (items node) :test #'includes-p)
     (setf (items node) new-items)
-    (when altered-p
-      (broken-match node token
+    (dolist (item deleted)
+      (broken-match node item))))
 
 (defmethod add-production ((node beta-memory-node) (production rule))
   (push-update production (productions node) :test #'rule-equal-p))

@@ -106,12 +106,25 @@
 	   (,new-list (pushnew ,item ,place :test ,test :key ,key)))
        (values ,new-list (not (= (length ,new-list) ,length))))))
 
+;; like delete, but as a second value returns, whether the list was actualy
+;; altered
 (defmacro ext-delete (item place &key (test '#'equalp) (key '#'identity))
   (let ((length (gensym "length"))
 	(new-list (gensym "new-list")))
     `(let ((,length (length ,place))
 	   (,new-list (delete ,item ,place :test ,test :key ,key)))
        (values ,new-list (not (= (length ,new-list) ,length))))))
+
+;; like delete, but as a second value returns list of deleted items
+(defmacro diff-delete (item sequence &key (test '#'equalp) (key '#'identity))
+  (let ((new-list (gensym "new-list"))
+	(deleted (gensym "deleted"))
+	(elem (gensym "elem")))
+    `(let (,new-list ,deleted)
+       (dolist (,elem ,sequence (values (nreverse ,new-list) ,deleted))
+	 (if (funcall ,test ,item (funcall ,key ,elem))
+	     (push ,elem ,deleted)
+	   (push ,elem ,new-list))))))
 
 ;; like pushnew, but if there is test-equal atom in the place,
 ;; replaces it by item
