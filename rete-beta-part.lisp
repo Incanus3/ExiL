@@ -21,6 +21,14 @@
   (dotimes (i n (wme token))
     (setf token (parent token))))
 
+;; it would be more logical if the arguements were switched, but this is
+;; more convenient, when i supply this predicate as a test to delete
+(defmethod includes-p ((fact fact) (token token))
+  (loop for tkn = token then (parent tkn)
+     unless tkn do (return nil)
+     when (fact-equal-p fact (wme tkn)) do
+       (return t)))
+
 (defmethod print-object ((token token) stream)
   (print-unreadable-object (token stream :type t)
     (format stream "~A"
@@ -43,14 +51,23 @@
 ;		:initarg :productions
 		:initform ())))
 
-;; NUTNO DOPLNIT UPRAVU AGENDY PRI ACTIVACI A INACTIVACI
-;; BETA-MEMORY-NODU S NEPRAZDNYM SLOTEM PRODUCTIONS
+(defmethod complete-match ((node beta-memory-node) (token token))
+  (dolist (production (productions node))
+    (add-match (agenda) (cons production token))))
+
 (defmethod activate ((node beta-memory-node) (token token))
-  (pushnew token (items node) :test #'token-equal-p)
+  (when (nth-value 1 (pushnew token (items node) :test #'token-equal-p))
+    (complete-match node token))
   (activate-children node token))
 
+;; SPATNE - varianta delete musi jako druhou hodnotu vratit list
+;; tokenu, ktere smazala, ty se musi poslat funkci broken match
 (defmethod inactivate ((node beta-memory-node) (fact fact))
-  (setf (items node) (delete fact (items node) :key #'wme)))
+  (multiple-value-bind (new-items altered-p) 
+      (ext-delete fact (items node) :test #'includes-p)
+    (setf (items node) new-items)
+    (when altered-p
+      (broken-match node token
 
 (defmethod add-production ((node beta-memory-node) (production rule))
   (push-update production (productions node) :test #'rule-equal-p))
@@ -169,5 +186,5 @@
   (activate (alpha-top-node rete) fact))
 
 (defmethod remove-wme ((fact fact) &optional (rete (rete)))
-  (inactivate (alpha-top-node rete))
-  (inactivate (beta-top-node rete)))
+  (inactivate (alpha-top-node rete) fact)
+  (inactivate (beta-top-node rete) fact))

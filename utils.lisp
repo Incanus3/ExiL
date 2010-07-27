@@ -97,6 +97,22 @@
      (pushnew ,item ,place :test ,test :key ,key)
      (find (funcall ,key ,item) ,place :test ,test :key ,key)))
 
+;; like pushnew, but as a second value returns, whether the list was actualy
+;; altered
+(defmacro ext-pushnew (item place &key (test '#'equalp) (key '#'identity))
+  (let ((length (gensym "length"))
+	(new-list (gensym "new-list")))
+    `(let ((,length (length ,place))
+	   (,new-list (pushnew ,item ,place :test ,test :key ,key)))
+       (values ,new-list (not (= (length ,new-list) ,length))))))
+
+(defmacro ext-delete (item place &key (test '#'equalp) (key '#'identity))
+  (let ((length (gensym "length"))
+	(new-list (gensym "new-list")))
+    `(let ((,length (length ,place))
+	   (,new-list (delete ,item ,place :test ,test :key ,key)))
+       (values ,new-list (not (= (length ,new-list) ,length))))))
+
 ;; like pushnew, but if there is test-equal atom in the place,
 ;; replaces it by item
 (defmacro push-update (item place &key (test '#'equalp) (key '#'identity))
