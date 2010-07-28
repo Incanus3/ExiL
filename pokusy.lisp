@@ -1,5 +1,6 @@
 (in-package :exil)
 
+#|
 (deffacts blah
 	(b1 on b2)
 	(b1 on b3)
@@ -21,7 +22,6 @@
 =>
 )
 
-#|
 (assert (B3 color RED))
 (print-memories)
 (assert (B3 on TABLE))
@@ -42,6 +42,10 @@
 (assert (B1 on B2))
 (print-memories)
 
+(retract (b1 on b2))
+
+(undefrule two-blocks-left-of-red-one)
+
 (deftemplate blah (a (b :default 10)))
 (defvar *fact* (make-fact '(blah foo bar)))
 (defvar *tmpl-fact* (make-fact '(blah :a 5)))
@@ -51,7 +55,6 @@
 (print-rete)
 (reset-environment)
 (defvar *conds* (conditions *rule*))
-
 |#
 
 (defmethod get-alpha-memories ((node alpha-subtop-node))
@@ -86,7 +89,7 @@
     (print-memory mem)))
 
 (defun print-memories (&optional (rete (rete)))
-  (fresh-line t)p
+  (fresh-line t)
   (terpri t)
   (print-alpha-mems rete)
   (terpri t)

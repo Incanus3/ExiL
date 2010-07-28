@@ -127,8 +127,10 @@
 	 (add-production (beta-memory current-join-node)
 			 rule))))
 	 
-
 (defmethod remove-production ((rule rule) &optional (rete (rete)))
-  (declare (ignore rete rule))
-
-  )
+  (labels ((walk-through (node)
+	     (when (typep node 'beta-memory-node)
+	       (delete-production node rule))
+	     (dolist (child (children node))
+	       (walk-through child))))
+    (walk-through (beta-top-node rete))))

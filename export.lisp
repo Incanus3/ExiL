@@ -3,19 +3,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
 
-(defun %assert (fact-spec)
-  (let ((fact (if (tmpl-fact-specification-p fact-spec)
-		  (tmpl-fact fact-spec)
-		  (make-instance 'simple-fact :fact fact-spec))))
-    (add-fact fact)))
+(defun assert% (fact-spec)
+  (add-fact (make-fact fact-spec)))
 
 (defmacro assert (fact-spec)
   "Add fact into working memory"
-  `(%assert ',fact-spec))
+  `(assert% ',fact-spec))
 
-(defun retract (fact)
+(defun retract% (fact-spec)
+  (rem-fact (make-fact fact-spec)))
+
+(defmacro retract (fact-spec)
   "Remove fact from working memory"
-  (remove-wme fact))
+  `(retract% ',fact-spec))
 
 (defun clear ()
   (reset-environment))
@@ -38,9 +38,12 @@
 	     :activations ',(subseq rule (1+ =>-position)))))
        (add-rule ,rule-symbol))))
 
+(defmacro undefrule (name)
+  `(rem-rule (find-rule ',name)))
+
 (defun assert-group (fact-descriptions)
   (dolist (desc fact-descriptions)
-    (%assert desc)))
+    (assert% desc)))
 
 (defun reset ()
   "Reset the environment"

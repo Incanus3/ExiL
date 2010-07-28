@@ -53,6 +53,11 @@
   (my-pushnew fact (facts environment) :test #'fact-equal-p)
   (add-wme fact))
 
+(defun rem-fact (fact &optional (environment *current-environment*))
+  (setf (facts environment)
+	(delete fact (facts environment) :test #'fact-equal-p))
+  (remove-wme fact))
+
 (defun add-fact-group (group-name fact-descriptions
 		       &optional (environment *current-environment*))
   (if (assoc group-name (fact-groups environment))
@@ -71,7 +76,14 @@
 (defun add-rule (rule &optional (environment *current-environment*))
   (setf (gethash (symbol-name (name rule)) (rules environment)) rule)
   (new-production rule (rete environment))
+  (dolist (fact (facts environment))
+    (add-wme fact))
   rule)
+
+;; ODSTRANIT Z AGENDY VSECHNY MATCHE TYKAJICI SE RULE
+(defun rem-rule (rule &optional (environment *current-environment*))
+  (remhash (symbol-name (name rule)) (rules environment))
+  (remove-production rule (rete environment)))
 
 (defun find-rule (name &optional (environment *current-environment*))
   (gethash (symbol-name name) (rules environment)))
@@ -90,12 +102,12 @@
        (token-equal-p (match-token match1)
 		      (match-token match2))))
 
-(defmethod  add-match (match &optional (environment *current-environment*))
-  (format t "NEW MATCH: ~A~%" match)
+(defmethod add-match (match &optional (environment *current-environment*))
+;  (format t "NEW MATCH: ~A~%" match)
   (pushnew match (agenda environment) :test #'match-equal-p))
 
 (defmethod remove-match (match &optional (environment *current-environment*))
-  (format t "BRAKING MATCH: ~A~%" match)
+;  (format t "BRAKING MATCH: ~A~%" match)
   (setf (agenda environment) 
 	(delete match (agenda environment) :test #'match-equal-p)))
 
@@ -105,5 +117,7 @@
 ;	(templates environment) (make-hash-table :test 'equalp)
 ;	(rules environment) (make-hash-table :test 'equalp)
 	(rete environment) (make-instance 'rete))
+  (loop for rule being the hash-values in (rules environment)
+     do (add-rule rule environment))
   nil)
 

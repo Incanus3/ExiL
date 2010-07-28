@@ -72,11 +72,11 @@
 
 (defmethod broken-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (remove-match (agenda) (cons production token))))
+    (remove-match (cons production token))))
 
 ;; SPATNE - varianta delete musi jako druhou hodnotu vratit list
 ;; tokenu, ktere smazala, ty se musi poslat funkci broken match
-(defmethod inactivate ((node beta-memory-node) (fact fact))
+(defmethod inactivate :before ((node beta-memory-node) (fact fact))
   (multiple-value-bind (new-items deleted) 
       (diff-delete fact (items node) :test #'includes-p)
     (setf (items node) new-items)

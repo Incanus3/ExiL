@@ -49,6 +49,10 @@
       (activate-memory node wme))
     test))
 
+(defmethod inactivate :after ((node alpha-test-node) (wme fact))
+  (when (memory node)
+    (inactivate (memory node) wme)))
+
 (defclass simple-fact-alpha-node (alpha-node) ())
 
 (defclass template-fact-alpha-node (alpha-node) ())
@@ -128,6 +132,10 @@
       (template-fact (tmpl-name wme)))
     (networks node))
    wme))
+
+(defmethod inactivate ((node alpha-top-node) (wme fact))
+  (loop for child being the hash-values in (networks node)
+     do (inactivate child wme)))
 
 ;; children are beta-join-nodes
 (defclass alpha-memory-node (alpha-node memory-node) ())
