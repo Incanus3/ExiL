@@ -19,7 +19,8 @@
 (defmethod previous-wme ((token token) &optional (n 1))
   "gives wme from token n wmes back"
   (dotimes (i n (wme token))
-    (setf token (parent token))))
+    (setf token (parent token))
+    (unless token (return))))
 
 ;; it would be more logical if the arguements were switched, but this is
 ;; more convenient, when i supply this predicate as a test to delete
@@ -58,11 +59,15 @@
 
 (defmethod complete-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (add-match (agenda) (cons production token))))
+    (add-match (cons production token))))
 
 (defmethod activate ((node beta-memory-node) (token token))
-  (when (nth-value 1 (pushnew token (items node) :test #'token-equal-p))
+;  (fresh-line t)
+;  (format t "BETA-MEM-NODE ACTIVATED~%productions: ~A~%items before: ~A~%"
+;	  (productions node) (items node))
+  (when (nth-value 1 (ext-pushnew token (items node) :test #'token-equal-p))
     (complete-match node token))
+;  (format t "items after: ~A~%" (items node))
   (activate-children node token))
 
 (defmethod broken-match ((node beta-memory-node) (token token))
@@ -145,10 +150,12 @@
 (defmethod beta-memory ((node beta-join-node))
   (first (children node)))
 
+;; PERFORM JOIN TEST NEPODPORUJE INTRACONDITION TESTY - DODELAT
 (defmethod perform-join-test ((test test) (token token) (wme fact))
-  (atom-equal-p (fact-field wme (current-field test))
-		(fact-field (previous-wme token (previous-condition test))
-			    (previous-field test))))
+  (let ((previous-wme (previous-wme token (1- (previous-condition test)))))
+    (when previous-wme
+      (atom-equal-p (fact-field wme (current-field test))
+		    (fact-field previous-wme (previous-field test))))))
 
 (defmethod perform-join-tests ((tests list) (token token) (wme fact))
   (dolist (test tests t)

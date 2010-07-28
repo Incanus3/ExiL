@@ -36,7 +36,7 @@
 ;; i could supply a default value for the environment parameter
 (defmacro exil-env-accessor (slot-name)
   `(progn
-     (defun ,slot-name (&optional (environment *current-environment*))
+     (defmethod ,slot-name (&optional (environment *current-environment*))
        (slot-value environment ',slot-name))
      (defsetf ,slot-name (&optional (environment *current-environment*)) (value)
        `(setf (slot-value ,environment ',',slot-name) ,value))))
@@ -90,20 +90,20 @@
        (token-equal-p (match-token match1)
 		      (match-token match2))))
 
-(defun add-match (match &optional (environment *current-environment*))
+(defmethod  add-match (match &optional (environment *current-environment*))
   (format t "NEW MATCH: ~A~%" match)
   (pushnew match (agenda environment) :test #'match-equal-p))
 
-(defun remove-match (match &optional (environment *current-environment*))
+(defmethod remove-match (match &optional (environment *current-environment*))
   (format t "BRAKING MATCH: ~A~%" match)
   (setf (agenda environment) 
 	(delete match (agenda environment) :test #'match-equal-p)))
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()
-	(fact-groups environment) ()
-	(templates environment) (make-hash-table :test 'equalp)
-	(rules environment) (make-hash-table :test 'equalp)
+;	(fact-groups environment) ()
+;	(templates environment) (make-hash-table :test 'equalp)
+;	(rules environment) (make-hash-table :test 'equalp)
 	(rete environment) (make-instance 'rete))
   nil)
 

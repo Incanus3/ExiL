@@ -27,8 +27,8 @@
      for atom in patt
      for field = 0 then (1+ field)
      do (multiple-value-bind (child created-p) (find/create-test-node node field atom)
-	  (format t "atom: ~A~%field: ~A~%parent: ~A~%child: ~A~%created-p: ~A~%~%"
-		  atom field node child created-p)
+;	  (format t "atom: ~A~%field: ~A~%parent: ~A~%child: ~A~%created-p: ~A~%~%"
+;		  atom field node child created-p)
 	  (when created-p (add-child node child))
 	  (setf node child))
      finally

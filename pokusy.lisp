@@ -11,71 +11,8 @@
 	(b3 on table)
 	(b3 color red))
 
+;; reset by mel po vymazani prostredi zavest fakta definovana pomoci deffacts
 (reset)
-
-(defun sumarize-children (node-list)
-  (apply #'append (mapcar #'children node-list)))
-
-(defun sumarize-memories (node-list)
-  (mapcar #'memory node-list))
-
-(defun print-memories (mem-list)
-  (dolist (mem mem-list)
-    (format t "~A's items:~%  ~A~%" mem (items mem))))
-
-(defparameter a-memories (list mn1 mn2 mn3))
-
-(defun print-mems ()
-  (print-memories memories))
-
-(defun act (n)
-  (node-activation alpha-top-node (nth n (facts))))
-
-#|
-(trace node-activation)
-
-; (B3 color RED)
-(act 0)
-(print-mems)
-
-; (B3 on TABLE)
-(act 1)
-(print-mems)
-
-; (B3 left-of B4)
-(act 2)
-(print-mems)
-
-; (B2 color BLUE)
-(act 3)
-(print-mems)
-
-; (B2 left-of B3)
-(act 4)
-(print-mems)
-
-; (B2 on TABLE)
-(act 5)
-(print-mems)
-
-; (B1 color RED)
-(act 6)
-(print-mems)
-
-; (B1 on B3)
-(act 7)
-(print-mems)
-
-; (B1 on B2)
-(act 8)
-(print-mems)
-|#
-
-;; beta part is working too! hallowed are both parentheses
-
-(deftemplate blah (a (b :default 10)))
-(defvar *fact* (make-fact '(blah foo bar)))
-(defvar *tmpl-fact* (make-fact '(blah :a 5)))
 
 (defrule two-blocks-left-of-red-one
   (?x on ?y)
@@ -84,8 +21,73 @@
 =>
 )
 
+#|
+(assert (B3 color RED))
+(print-memories)
+(assert (B3 on TABLE))
+(print-memories)
+(assert (B3 left-of B4))
+(print-memories)
+;; tenhle fakt vubec neprojde
+(assert (B2 color BLUE))
+(print-memories)
+(assert (B2 left-of B3))
+(print-memories)
+(assert (B2 on TABLE))
+(print-memories)
+(assert (B1 color RED))
+(print-memories)
+(assert (B1 on B3))
+(print-memories)
+(assert (B1 on B2))
+(print-memories)
+
+(deftemplate blah (a (b :default 10)))
+(defvar *fact* (make-fact '(blah foo bar)))
+(defvar *tmpl-fact* (make-fact '(blah :a 5)))
+
 (defvar *rule* (find-rule 'two-blocks-left-of-red-one))
 (new-production *rule*)
 (print-rete)
 (reset-environment)
 (defvar *conds* (conditions *rule*))
+
+|#
+
+(defmethod get-alpha-memories ((node alpha-subtop-node))
+  (let (memories)
+    (labels ((walk-through (node)
+	       (if (typep node 'alpha-memory-node)
+		   (push node memories)
+		   (dolist (child (node-children node))
+		     (walk-through child)))))
+      (walk-through node)
+      memories)))
+
+(defmethod get-beta-memories ((node beta-top-node))
+  (let (memories)
+    (labels ((walk-through (node)
+	       (when (typep node 'beta-memory-node)
+		 (push node memories))
+	       (dolist (child (children node))
+		 (walk-through child))))
+      (walk-through node)
+      (nreverse memories))))
+	  
+(defmethod print-memory ((memory memory-node))
+  (format t "~A:~%  ~A~%" memory (items memory)))
+
+(defun print-alpha-mems (&optional (rete (rete)))
+  (dolist (mem (get-alpha-memories (get-network (alpha-top-node rete))))
+    (print-memory mem)))
+
+(defun print-beta-mems (&optional (rete (rete)))
+  (dolist (mem (get-beta-memories (beta-top-node rete)))
+    (print-memory mem)))
+
+(defun print-memories (&optional (rete (rete)))
+  (fresh-line t)p
+  (terpri t)
+  (print-alpha-mems rete)
+  (terpri t)
+  (print-beta-mems rete))
