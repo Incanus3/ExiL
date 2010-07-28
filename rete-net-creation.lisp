@@ -68,10 +68,7 @@
        (let ((position (atom-postition atom condition)))
 	 (when position (return (cons i position))))))
 
-;; not perfect - if there are more occurences of a same variable in condition
-;; it makes tests for every one
-;; add some used variable list or think of sth better
-(defmethod get-intercondition-tests% ((condition pattern) (prev-conds list))
+(defmethod get-intercondition-tests% ((condition simple-pattern) (prev-conds list))
   (loop for atom in (pattern condition)
      with used-vars
      for i = 0 then (1+ i)
@@ -82,12 +79,30 @@
      collect (make-test i prev-cond field)
      do (push atom used-vars)))
 
-(defun get-intracondition-tests% (condition)
+(defmethod get-intercondition-tests% ((condition template-pattern) (prev-conds list))
+  (loop for (slot-name . slot-val) in (slots condition)
+     with used-vars
+     for (prev-cond . field) = (find-atom-in-cond-list% slot-val prev-conds)
+     then (find-atom-in-cond-list% slot-val prev-conds)
+     unless (member slot-val used-vars)
+     when prev-cond
+     collect (make-test slot-name prev-cond field)
+     do (push slot-val used-vars)))
+
+(defmethod get-intracondition-tests% ((condition simple-pattern))
   (loop for subpattern on (pattern condition)
      for i = 0 then (1+ i)
      when (variable-p (first subpattern))
      when (position (first subpattern) (rest subpattern))
      collect (make-test 0 i (+ 1 i (position (first subpattern) (rest subpattern))))))
+
+(defmethod get-intracondition-tests% ((condition template-pattern))
+  (loop for subpattern on (slots condition)
+     for (slot-name . slot-val) = (first subpattern) then
+       (first subpattern)
+     when (variable-p slot-val)
+     when (find slot-val (rest subpattern) :key #'cdr)
+       collect (make-test 0 slot-name (car (find slot-val (rest subpattern) :key #'cdr)))))
 
 (defmethod get-join-tests-from-condition ((condition pattern)
 					  (prev-conds list))

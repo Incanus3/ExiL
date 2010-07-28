@@ -46,6 +46,25 @@
 
 (undefrule two-blocks-left-of-red-one)
 
+(deftemplate fact (id attr val))
+
+(defrule two-blocks-left-of-red-one-tmpl
+  (fact :id ?x :attr on :val ?y)
+  (fact :id ?y :attr left-of :val ?z)
+  (fact :id ?z :attr color :val red)
+=>
+)
+
+(assert (fact :id b3 :attr color :val red))
+(assert (fact :id b3 :attr on :val table))
+(assert (fact :id b3 :attr left-of :val b4))
+(assert (fact :id b2 :attr color :val blue))
+(assert (fact :id b2 :attr left-of :val b3))
+(assert (fact :id b2 :attr on :val table))
+(assert (fact :id b1 :attr color :val red))
+(assert (fact :id b1 :attr on :val b3))
+(assert (fact :id b1 :attr on :val b2))
+
 (deftemplate blah (a (b :default 10)))
 (defvar *fact* (make-fact '(blah foo bar)))
 (defvar *tmpl-fact* (make-fact '(blah :a 5)))
