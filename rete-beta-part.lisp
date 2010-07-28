@@ -84,7 +84,9 @@
       (broken-match node item))))
 
 (defmethod add-production ((node beta-memory-node) (production rule))
-  (push-update production (productions node) :test #'rule-equal-p))
+  (push-update production (productions node) :test #'rule-equal-p)
+  (dolist (item (items node))
+    (complete-match node item)))
 
 (defmethod delete-production ((node beta-memory-node) (production rule))
   (setf (productions node)

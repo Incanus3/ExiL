@@ -83,7 +83,8 @@
 ;; ODSTRANIT Z AGENDY VSECHNY MATCHE TYKAJICI SE RULE
 (defun rem-rule (rule &optional (environment *current-environment*))
   (remhash (symbol-name (name rule)) (rules environment))
-  (remove-production rule (rete environment)))
+  (remove-production rule (rete environment))
+  (remove-matches rule environment))
 
 (defun find-rule (name &optional (environment *current-environment*))
   (gethash (symbol-name name) (rules environment)))
@@ -110,6 +111,11 @@
 ;  (format t "BRAKING MATCH: ~A~%" match)
   (setf (agenda environment) 
 	(delete match (agenda environment) :test #'match-equal-p)))
+
+(defmethod remove-matches (rule &optional (environment *current-environment*))
+  (setf (agenda environment)
+	(delete rule (agenda environment)
+		:test #'rule-equal-p :key #'match-production)))
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()

@@ -39,7 +39,9 @@
        (add-rule ,rule-symbol))))
 
 (defmacro undefrule (name)
-  `(rem-rule (find-rule ',name)))
+  (let ((rule (gensym "rule")))
+    `(let ((,rule (find-rule ',name)))
+       (when ,rule (rem-rule ,rule)))))
 
 (defun assert-group (fact-descriptions)
   (dolist (desc fact-descriptions)
