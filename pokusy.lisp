@@ -55,6 +55,8 @@
 =>
 )
 
+(print-rete)
+
 (assert (fact :id b3 :attr color :val red))
 (assert (fact :id b3 :attr on :val table))
 (assert (fact :id b3 :attr left-of :val b4))
@@ -64,6 +66,11 @@
 (assert (fact :id b1 :attr color :val red))
 (assert (fact :id b1 :attr on :val b3))
 (assert (fact :id b1 :attr on :val b2))
+
+(print (agenda))
+
+(retract (fact :id b1 :attr on :val b2))
+(undefrule two-blocks-left-of-red-one-tmpl)
 
 (deftemplate blah (a (b :default 10)))
 (defvar *fact* (make-fact '(blah foo bar)))

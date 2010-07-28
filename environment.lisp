@@ -8,7 +8,9 @@
    (templates :initform (make-hash-table :test 'equalp))
    (rules :initform (make-hash-table :test 'equalp))
    (rete :initform (make-instance 'rete))
-   (agenda :initform ())))
+   (agenda :initform ())
+   (strategies :initform ())
+   (current-strategy-name :initform 'default)))
 
 (defvar *environments*
   (let ((table (make-hash-table)))
@@ -46,7 +48,8 @@
 	       collect `(exil-env-accessor ,slot-name))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors facts fact-groups templates rules rete agenda))
+  (exil-env-accessors facts fact-groups templates rules rete agenda
+		      strategies current-strategy-name))
 ;; rete should be removed after proper DEBUG
 
 (defun add-fact (fact &optional (environment *current-environment*))
@@ -116,6 +119,20 @@
   (setf (agenda environment)
 	(delete rule (agenda environment)
 		:test #'rule-equal-p :key #'match-production)))
+
+(defmethod defstrategy (name function &optional (environment *current-environment*))
+  (push-update (cons name function) (strategies environment)))
+
+(defmethod set-strategy (&optional (name 'default) (environment *current-environment*))
+  (if (find name (strategies environment) :key #'car)
+    (setf (current-strategy-name environment) name)
+    (warn "unknown strategy ~A" name)))
+
+(defmethod current-strategy (&optional (environment *current-environment*))
+  (assoc-value (current-strategy-name environment) (strategies environment)))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defstrategy 'default #'first))
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()
