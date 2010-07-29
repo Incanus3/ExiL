@@ -20,7 +20,7 @@
   (?y left-of ?z)
   (?z color red)
 =>
-)
+  (assert (?x and ?y left-of ?z)))
 
 (assert (B3 color RED))
 (print-memories)

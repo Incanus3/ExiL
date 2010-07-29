@@ -9,7 +9,7 @@
    (rules :initform (make-hash-table :test 'equalp))
    (rete :initform (make-instance 'rete))
    (agenda :initform ())
-   (strategies :initform ())
+   (strategies :initform `((default . ,#'first)))
    (current-strategy-name :initform 'default)))
 
 (defvar *environments*
@@ -120,8 +120,13 @@
 	(delete rule (agenda environment)
 		:test #'rule-equal-p :key #'match-production)))
 
-(defmethod defstrategy (name function &optional (environment *current-environment*))
-  (push-update (cons name function) (strategies environment)))
+(defmethod defstrategy% (name function &optional (environment *current-environment*))
+  (if (typep function 'function)
+      (push-update (cons name function) (strategies environment))
+      (warn "~A is not a function" function)))
+
+(defmacro defstrategy (name function)
+  `(defstrategy% ',name ,function))
 
 (defmethod set-strategy (&optional (name 'default) (environment *current-environment*))
   (if (find name (strategies environment) :key #'car)
@@ -130,9 +135,6 @@
 
 (defmethod current-strategy (&optional (environment *current-environment*))
   (assoc-value (current-strategy-name environment) (strategies environment)))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defstrategy 'default #'first))
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()

@@ -46,6 +46,12 @@
     (and (fact-equal-p (wme token1) (wme token2))
 	 (token-equal-p (parent token1) (parent token2)))))
 
+(defmethod token->list ((token token))
+  (loop with list = ()
+     for tkn = token then (parent tkn)
+     when (typep tkn 'empty-token) do (return list)
+     do (push (wme tkn) list)))
+
 ;; children are beta-join-nodes
 (defclass beta-memory-node (beta-node memory-node)
   ((productions :accessor productions
