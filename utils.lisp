@@ -66,6 +66,9 @@
   (cdr (assoc key alist)))
 ;; (assoc-value 'b '((a . 1) (b . 2))) => 2
 
+(defun (setf assoc-value) (value key alist)
+  (setf (cdr (assoc key alist)) value))
+
 (defun assoc-key (value alist)
   (car (rassoc value alist)))
 ;; (assoc-key 2 '((a . 1) (b . 2))) => b

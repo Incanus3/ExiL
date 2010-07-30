@@ -10,7 +10,10 @@
    (rete :initform (make-instance 'rete))
    (agenda :initform ())
    (strategies :initform `((default . ,#'first)))
-   (current-strategy-name :initform 'default)))
+   (current-strategy-name :initform 'default)
+   (watchers :initform '((facts . nil)
+			 (rules . nil)
+			 (activations . nil)))))
 
 (defvar *environments*
   (let ((table (make-hash-table)))
@@ -49,17 +52,23 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (exil-env-accessors facts fact-groups templates rules rete agenda
-		      strategies current-strategy-name))
+		      strategies current-strategy-name watchers))
 ;; rete should be removed after proper DEBUG
 
 (defun add-fact (fact &optional (environment *current-environment*))
-  (my-pushnew fact (facts environment) :test #'fact-equal-p)
-  (add-wme fact))
+  (when (nth-value 1 (ext-pushnew fact (facts environment) :test #'fact-equal-p))
+    (when (watched-p 'facts)
+      (format t "==> ~A~%" fact))
+    (add-wme fact))))
 
 (defun rem-fact (fact &optional (environment *current-environment*))
-  (setf (facts environment)
-	(delete fact (facts environment) :test #'fact-equal-p))
-  (remove-wme fact))
+  (multiple-value-bind (new-list altered-p)
+      (ext-delete fact (facts environment) :test #'fact-equal-p)
+    (when altered-p
+      (setf (facts environment) new-list)
+      (when (watched-p 'facts)
+	(format t "<== ~A~%" fact))
+      (remove-wme fact))))
 
 (defun add-fact-group (group-name fact-descriptions
 		       &optional (environment *current-environment*))
@@ -106,14 +115,22 @@
        (token-equal-p (match-token match1)
 		      (match-token match2))))
 
+(defun activation->string (pair)
+  (format nil "Activation:~%~A~%~A~%" (car pair) (cdr pair)))
+
 (defmethod add-match (match &optional (environment *current-environment*))
-;  (format t "NEW MATCH: ~A~%" match)
-  (pushnew match (agenda environment) :test #'match-equal-p))
+    (when (and (nth-value 1 (ext-pushnew match (agenda environment)
+					 :test #'match-equal-p))
+	       (watched-p 'activations))
+      (format t "==> ~A" (activation->string match)))))
 
 (defmethod remove-match (match &optional (environment *current-environment*))
-;  (format t "BRAKING MATCH: ~A~%" match)
-  (setf (agenda environment) 
-	(delete match (agenda environment) :test #'match-equal-p)))
+  (multiple-value-bind (new-list altered-p)
+      (ext-delete match (agenda environment) :test #'match-equal-p)
+    (when altered-p
+      (setf (agenda environment) new-list)
+      (when (watched-p 'activations)
+	(format t "<== ~A" (activation->string match))))))
 
 (defmethod remove-matches (rule &optional (environment *current-environment*))
   (setf (agenda environment)
@@ -135,6 +152,31 @@
 
 (defmethod current-strategy (&optional (environment *current-environment*))
   (assoc-value (current-strategy-name environment) (strategies environment)))
+
+(defmethod select-activation (&optional (environment *current-environment*))
+  (let ((activation (funcall (current-strategy environment) (agenda environment))))
+    (setf (agenda environment) (delete activation (agenda environment)
+				       :test #'match-equal-p))
+    activation))
+
+(defmethod watch% (watcher &optional (environment *current-environment*))
+  (cl:assert (find watcher (mapcar #'car (watchers environment)))
+	     () "I don't know how to watch ~A" watcher)
+  (setf (assoc-value watcher (watchers environment)) t))
+
+(defmacro watch (watcher)
+  `(watch% ',watcher))
+
+(defmethod unwatch% (watcher &optional (environment *current-environment*))
+  (cl:assert (find watcher (mapcar #'car (watchers environment)))
+	     () "I don't know how to watch ~A" watcher)
+  (setf (assoc-value watcher (watchers environment)) nil))
+
+(defmacro unwatch (watcher)
+  `(unwatch% ',watcher))
+
+(defmethod watched-p (watcher &optional (environment *current-environment*))
+  (assoc-value watcher (watchers environment)))
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()

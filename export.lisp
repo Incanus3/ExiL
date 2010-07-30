@@ -24,6 +24,7 @@
   "Create group of facts to be asserted after (reset)"
   `(add-fact-group ',name ',fact-descriptions))
 
+;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 (defmacro defrule (name &body rule)
   "Define rule"
   (let ((=>-position (position '=> rule))
@@ -53,7 +54,13 @@
   (dolist (group (fact-groups))
     (assert-group (cdr group))))
 
+(defun step ()
+  (when (agenda)
+    (let ((activation (select-activation)))
+      (activate-rule (car activation)
+		     (cdr activation)))
+    t))
+
 (defun run ()
   "Run the infenece engine"
-
-  )
+  (loop while (step)))
