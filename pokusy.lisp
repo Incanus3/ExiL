@@ -120,3 +120,39 @@
   (print-alpha-mems rete)
   (terpri t)
   (print-beta-mems rete))
+
+#|
+   ROBOTS:
+(deftemplate goal (action object from to))
+(deftemplate in (object location))
+
+(deffacts world
+  (in :object robot :location A)
+  (in :object box :locatoin B)
+  (goal :action push :object box :from B :to A))
+
+(defrule stop
+  (goal :object ?x :to ?y)
+  (in :object ?x :location ?y)
+  =>
+  ;(halt))
+
+(defrule move
+  (goal :object ?x :from ?y)
+  (in :object ?x :location ?y)
+  (in :object robot :location ~?y)
+  (in :object robot :location ?z)
+  =>
+  (modify (in :object robot :location ?z)
+	  (in :object robot :location ?y)))
+
+(defrule push
+  (goal :object ?x :from ?y :to ?z)
+  (in :object ?x :location ?y)
+  (in :object robot :location ?y)
+  =>
+  (modify (in :object robot :location ?y)
+	  (in :object robot :location ?z))
+  (modify (in :object ?x :location ?y)
+	  (in :object ?x :location ?z)))
+|#

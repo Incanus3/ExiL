@@ -129,15 +129,15 @@
        for current-cond in conditions
        for i = 0 then (1+ i)
        for prev-conds = () then (subseq conditions 0 i)
-       for alpha-mem = (create-alpha-net current-cond rete) then
+       for alpha-memory = (create-alpha-net current-cond rete) then
 	 (create-alpha-net current-cond rete)
        for tests = () then
 	 (get-join-tests-from-condition current-cond prev-conds)
        for current-mem-node = (beta-top-node rete) then
 	 (beta-memory current-join-node)
        for current-join-node
-	 = (find/create-join-node current-mem-node tests alpha-mem) then
-	 (find/create-join-node current-mem-node tests alpha-mem)
+	 = (find/create-join-node current-mem-node tests alpha-memory) then
+	 (find/create-join-node current-mem-node tests alpha-memory)
        finally
 	 (add-production (beta-memory current-join-node)
 			 rule))))

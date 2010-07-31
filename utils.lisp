@@ -73,12 +73,6 @@
   (car (rassoc value alist)))
 ;; (assoc-key 2 '((a . 1) (b . 2))) => b
 
-(defun (setf assoc-value) (value key plist)
-  (setf (cdr (assoc key plist)) value))
-;; (defvar alist '((a . 1) (b . 2)))
-;; (setf (assoc-value 'a alist) 3)
-;; alist => '((a . 3) (b . 2))
-
 (defun to-list (x)
   (if (listp x)
       x

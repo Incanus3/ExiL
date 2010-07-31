@@ -12,7 +12,9 @@
 ;; pattern classes
 
 ;; virtual class pattern
-(defclass pattern () ())
+(defclass pattern () ((negated :initform nil
+			       :initarg :negated
+			       :accessor negated)))
 
 ;; pattern equality predicate
 (defgeneric pattern-equal-p (pattern1 pattern2)
@@ -30,7 +32,8 @@
 ;; prints patterns
 (defmethod print-object ((pattern simple-pattern) stream)
   (print-unreadable-object (pattern stream :type t)
-    (format stream "~s" (pattern pattern))
+    (format stream "~:[~;-~]~S" (negated pattern)
+	    (pattern pattern))
     pattern))
 
 ;; checks pattern equivalency
@@ -74,13 +77,17 @@
   (:method ((pattern template-pattern) (field symbol))
     (tmpl-pattern-slot-value pattern field)))
 
-(defun tmpl-pattern (pattern-spec)
-  (tmpl-object pattern-spec 'template-pattern))
+(defun tmpl-pattern (pattern-spec &optional (negated nil))
+  (let ((pattern (tmpl-object pattern-spec 'template-pattern)))
+    (setf (negated pattern) negated)
+    pattern))
 
 (defun tmpl-pattern-specification-p (specification)
   (tmpl-object-specification-p specification))
 
 (defun make-pattern (specification)
-  (if (tmpl-fact-specification-p specification)
-      (tmpl-pattern specification)
-      (make-instance 'simple-pattern :pattern specification)))
+  (let* ((negated (equalp (first specification) '-))
+	 (spec (if negated (rest specification) specification)))
+    (if (tmpl-fact-specification-p spec)
+	(tmpl-pattern spec negated)
+	(make-instance 'simple-pattern :pattern spec :negated negated))))

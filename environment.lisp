@@ -41,6 +41,7 @@
 ;; i could supply a default value for the environment parameter
 (defmacro exil-env-accessor (slot-name)
   `(progn
+     (defgeneric ,slot-name (&optional environment))
      (defmethod ,slot-name (&optional (environment *current-environment*))
        (slot-value environment ',slot-name))
      (defsetf ,slot-name (&optional (environment *current-environment*)) (value)
@@ -59,7 +60,7 @@
   (when (nth-value 1 (ext-pushnew fact (facts environment) :test #'fact-equal-p))
     (when (watched-p 'facts)
       (format t "==> ~A~%" fact))
-    (add-wme fact))))
+    (add-wme fact)))
 
 (defun rem-fact (fact &optional (environment *current-environment*))
   (multiple-value-bind (new-list altered-p)
@@ -122,7 +123,7 @@
     (when (and (nth-value 1 (ext-pushnew match (agenda environment)
 					 :test #'match-equal-p))
 	       (watched-p 'activations))
-      (format t "==> ~A" (activation->string match)))))
+      (format t "==> ~A" (activation->string match))))
 
 (defmethod remove-match (match &optional (environment *current-environment*))
   (multiple-value-bind (new-list altered-p)

@@ -17,6 +17,13 @@
   "Remove fact from working memory"
   `(retract% ',fact-spec))
 
+(defun modify% (old-fact-spec new-fact-spec)
+  (retract% old-fact-spec)
+  (assert% new-fact-spec))
+
+(defmacro modify (old-fact-spec new-fact-spec)
+  `(modify% ',old-fact-spec ',new-fact-spec))
+
 (defun clear ()
   (reset-environment))
 

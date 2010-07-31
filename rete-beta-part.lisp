@@ -71,7 +71,7 @@
 ;  (fresh-line t)
 ;  (format t "BETA-MEM-NODE ACTIVATED~%productions: ~A~%items before: ~A~%"
 ;	  (productions node) (items node))
-  (when (nth-value 1 (ext-pushnew token (items node) :test #'token-equal-p))
+  (when (nth-value 1 (add-item node token #'token-equal-p))
     (complete-match node token))
 ;  (format t "items after: ~A~%" (items node))
   (activate-children node token))
@@ -191,12 +191,18 @@
 	   (node-equal-p par1 par2)
 	   (tests-equal-p tsts1 tsts2)))))
 
-#|
-(defclass beta-top-node (beta-join-node) ())
+(defclass beta-negative-node (beta-join-node memory-node) ())
 
-(defmethod activate ((node beta-top-node) (wme fact))
-  (activate-children node (make-instance 'token :parent nil :wme wme)))
-|#
+;; left activation
+(defmethod activate ((node beta-negative-node) (token token))
+  (add-item node token #'token-equal-p)
+  (unless (dolist (wme (items (alpha-memory node)) nil)
+	    (when (perform-join-tests (tests node) wme)
+	      (return t)))
+    (activate-children node token)))
+
+(defmethod activate ((node beta-negative-node) (wme fact))
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export

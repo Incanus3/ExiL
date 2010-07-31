@@ -66,4 +66,5 @@
 
 (defclass memory-node (node) ((items :accessor items :initform ())))
 
-
+(defmethod add-item ((node memory-node) item &optional (equality-predicate #'equalp))
+  (ext-pushnew item (items node) :test equality-predicate))
