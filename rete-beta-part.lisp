@@ -9,7 +9,8 @@
 ;; could be changed to cons to be more effective
 (defclass token () ((parent :reader parent :initarg :parent :initform nil)
 		    (wme :reader wme :initarg :wme
-			 :initform (error "wme slot has to be specified"))))
+			 :initform (error "wme slot has to be specified"))
+		    (negative-wmes :initform nil :accessor negative-wmes)))
 
 (defclass empty-token (token) ((wme :initform nil)))
 
@@ -28,6 +29,12 @@
   (loop for tkn = token then (parent tkn)
      unless tkn do (return nil)
      when (fact-equal-p fact (wme tkn)) do
+       (return t)))
+
+(defmethod includes-p ((included-token token) (token token))
+  (loop for tkn = token then (parent tkn)
+     unless tkn do (return nil)
+     when (token-equal-p tkn included-token) do
        (return t)))
 
 (defmethod print-object ((token token) stream)
@@ -80,12 +87,17 @@
   (dolist (production (productions node))
     (remove-match (cons production token))))
 
-;; SPATNE - varianta delete musi jako druhou hodnotu vratit list
-;; tokenu, ktere smazala, ty se musi poslat funkci broken match
 (defmethod inactivate :before ((node beta-memory-node) (fact fact))
   (multiple-value-bind (new-items deleted) 
       (diff-delete fact (items node) :test #'includes-p)
     (setf (items node) new-items)
+    (dolist (item deleted)
+      (broken-match node item))))
+
+(defmethod inactivate :before ((node beta-memory-node) (token token))
+  (multiple-value-bind (new-list deleted)
+      (diff-delete token (items node) :test #'includes-p)
+    (setf (items node) new-list)
     (dolist (item deleted)
       (broken-match node item))))
 
@@ -193,16 +205,36 @@
 
 (defclass beta-negative-node (beta-join-node memory-node) ())
 
+;; returns list of wmes (from neg-node's alpha-memory), which are
+;; with given token var-consistent
+(defmethod get-bad-wmes ((node beta-negative-node) (token token))
+  (let (bad-wmes)
+    (dolist (wme (items (alpha-memory node)) bad-wmes)
+      (when (perform-join-tests (tests node) token wme)
+	(push wme bad-wmes)))))
+    
 ;; left activation
 (defmethod activate ((node beta-negative-node) (token token))
-  (add-item node token #'token-equal-p)
-  (unless (dolist (wme (items (alpha-memory node)) nil)
-	    (when (perform-join-tests (tests node) wme)
-	      (return t)))
-    (activate-children node token)))
+  (let ((bad-wmes (get-bad-wmes node token)))
+    (unless bad-wmes (activate-children node token))
+    (setf (negative-wmes token) bad-wmes)
+    (add-item node token #'token-equal-p)))
 
 (defmethod activate ((node beta-negative-node) (wme fact))
-  ())
+  (dolist (token (items node))
+    (when (perform-join-tests (tests node) token wme)
+      (unless (negative-wmes token)
+	(inactivate-children node token))
+      (pushnew wme (negative-wmes token) :test #'fact-equal-p))))
+
+(defmethod inactivate ((node beta-negative-node) (wme fact))
+  (dolist (token (items node))
+    (when (and (negative-wmes token)
+	       (perform-join-tests (tests node) token wme))
+      (setf (negative-wmes token)
+	    (delete wme (negative-wmes token) :test #'fact-equal-p))
+      (unless (negative-wmes token)
+	(activate-children node token)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export

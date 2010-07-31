@@ -135,12 +135,13 @@
   (goal :object ?x :to ?y)
   (in :object ?x :location ?y)
   =>
-  ;(halt))
+  ;(halt)
+  )
 
 (defrule move
   (goal :object ?x :from ?y)
   (in :object ?x :location ?y)
-  (in :object robot :location ~?y)
+  (- in :object robot :location ?y)
   (in :object robot :location ?z)
   =>
   (modify (in :object robot :location ?z)
@@ -155,4 +156,11 @@
 	  (in :object robot :location ?z))
   (modify (in :object ?x :location ?y)
 	  (in :object ?x :location ?z)))
+
+(watch facts)
+(watch activations)
+
+(reset)
+
+(step)
 |#

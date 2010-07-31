@@ -38,7 +38,8 @@
 
 ;; checks pattern equivalency
 (defmethod pattern-equal-p ((pattern1 simple-pattern) (pattern2 simple-pattern))
-  (equalp (pattern pattern1) (pattern pattern2)))
+  (and (equalp (pattern pattern1) (pattern pattern2))
+       (equalp (negated pattern1) (negated pattern2))))
 
 (defun var-or-equal-p (atom1 atom2)
   (or (and (variable-p atom1)
@@ -48,9 +49,10 @@
 ;; checks pattern constant equivalency, ignores variables
 (defmethod pattern-const-equal-p ((pattern1 simple-pattern)
 				  (pattern2 simple-pattern))
-  (every #'var-or-equal-p
-	 (pattern pattern1)
-	 (pattern pattern2)))
+  (and (equalp (negated pattern1) (negated pattern2))
+       (every #'var-or-equal-p
+	      (pattern pattern1)
+	      (pattern pattern2))))
 
 (defmethod find-atom (atom (pattern simple-pattern))
   (find atom (pattern pattern)))
@@ -68,7 +70,8 @@
   (tmpl-object-slot-value pattern slot-name))
 
 (defmethod pattern-equal-p ((pattern1 template-pattern) (pattern2 template-pattern))
-  (tmpl-object-equal-p pattern1 pattern2))
+  (and (equalp (negated pattern1) (negated pattern2))
+       (tmpl-object-equal-p pattern1 pattern2)))
 
 (defgeneric pattern-field (pattern field)
   (:documentation "returns pattern's field")
@@ -91,3 +94,7 @@
     (if (tmpl-fact-specification-p spec)
 	(tmpl-pattern spec negated)
 	(make-instance 'simple-pattern :pattern spec :negated negated))))
+
+(defmethod print-object ((object template-pattern) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "(~:[~;- ~]~A ~A)" (negated object) (tmpl-name object) (slots object))))

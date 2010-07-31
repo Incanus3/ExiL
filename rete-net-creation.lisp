@@ -123,6 +123,7 @@
 	       (push join-node (children a-memory))
 	       join-node))))
 
+;; DODELAT NEGATIVE NODY
 (defmethod new-production ((rule rule) &optional (rete (rete)))
   (with-slots (conditions activations) rule
     (loop
