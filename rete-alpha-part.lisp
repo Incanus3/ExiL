@@ -33,7 +33,7 @@
 ;; that no wme can pass 2 children's tests
 (defmethod activate-children ((node alpha-test-node) (wme fact))
   (dolist (child (children node))
-    (when (activate child wme) (return))))
+    (activate child wme)))
 
 (defmethod activate-memory ((node alpha-test-node) (wme fact))
   (with-slots ((mem alpha-memory)) node

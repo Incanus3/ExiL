@@ -37,7 +37,8 @@
        (return (if (memory node)
 		   (memory node)
 		   (setf (memory node)
-			 (make-instance 'alpha-memory-node))))))
+			 (make-instance 'alpha-memory-node
+					:description pattern))))))
 
 (defmethod create-alpha-net% ((pattern template-pattern) (root template-fact-subtop-node))
   (loop with slots = (slots pattern)
@@ -51,7 +52,8 @@
        (return (if (memory node)
 		   (memory node)
 		   (setf (memory node)
-			 (make-instance 'alpha-memory-node))))))
+			 (make-instance 'alpha-memory-node
+					:description pattern))))))
 
 (defmethod create-alpha-net ((pattern simple-pattern) &optional (rete (rete)))
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete))))

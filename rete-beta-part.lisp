@@ -112,7 +112,7 @@
 
 (defmethod print-object ((node beta-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
-    (format stream "productions: ~A" (productions node))))
+    (format stream "productions: ~S" (productions node))))
 
 (defclass beta-top-node (beta-memory-node) 
   ((items :initform (list (make-instance 'empty-token)))))
@@ -231,6 +231,7 @@
   nil)
 
 (defmethod inactivate ((node beta-negative-node) (wme fact))
+  (inactivate-children node wme)
   (dolist (token (items node))
     (when (and (negative-wmes token)
 	       (perform-join-tests (tests node) token wme))

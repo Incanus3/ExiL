@@ -9,7 +9,11 @@
    (rules :initform (make-hash-table :test 'equalp))
    (rete :initform (make-instance 'rete))
    (agenda :initform ())
-   (strategies :initform `((default . ,#'first)))
+   (strategies :initform `((default . ,#'depth-strategy)
+			   (depth-strategy . ,#'depth-strategy)
+			   (breadth-strategy . ,#'breadth-strategy)
+			   (simplicity-strategy . ,#'simplicity-strategy)
+			   (complexity-strategy . ,#'complexity-strategy)))
    (current-strategy-name :initform 'default)
    (watchers :initform '((facts . nil)
 			 (rules . nil)
@@ -166,6 +170,7 @@
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()
+	(agenda environment) ()
 	(rete environment) (make-instance 'rete))
   (loop for rule being the hash-values in (rules environment)
      do (add-rule rule environment))
@@ -173,6 +178,7 @@
 
 (defun completely-reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()
+	(agenda environment) ()
 	(fact-groups environment) ()
 	(templates environment) (make-hash-table :test 'equalp)
 	(rules environment) (make-hash-table :test 'equalp)

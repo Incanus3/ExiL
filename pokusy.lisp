@@ -171,4 +171,25 @@
 (run)
 
 (completely-reset-environment)
+
+1)
+(in :obj robot :loc A)
+(in :obj box :loc B)
+(goal :act push :obj box :from B :to A)
+
+fire MOVE
+
+2)
+(in :obj robot :loc B)
+(in :obj box :loc B)
+(goal :act push :obj box :from B :to A)
+
+fire PUSH
+
+3)
+(in :obj robot :loc A)
+(in :obj box :loc A)
+(goal :act push :obj box :from B :to A)
+
 |#
+

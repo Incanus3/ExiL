@@ -37,7 +37,7 @@
 		(pattern pattern)))
       (format stream "~:[~;NOT ~]~S" (negated pattern)
 	      (pattern pattern)))
-  pattern))
+  pattern)
 
 ;; checks pattern equivalency
 (defmethod pattern-equal-p ((pattern1 simple-pattern) (pattern2 simple-pattern))
