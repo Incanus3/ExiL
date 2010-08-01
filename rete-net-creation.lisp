@@ -123,6 +123,18 @@
 	       (push join-node (children a-memory))
 	       join-node))))
 
+(defmethod find/create-neg-node ((parent beta-memory-node)
+				 (tests list)
+				 (a-memory alpha-memory-node))
+  (let ((neg-node (make-instance 'beta-negative-node
+				 :parent parent
+				 :tests tests
+				 :alpha-memory a-memory)))
+    (or (find-if (lambda (child) (node-equal-p child neg-node)) (children parent))
+	(progn (push neg-node (children parent))
+	       (push neg-node (children a-memory))
+	       neg-node))))
+
 ;; DODELAT NEGATIVE NODY
 (defmethod new-production ((rule rule) &optional (rete (rete)))
   (with-slots (conditions activations) rule
@@ -137,8 +149,12 @@
        for current-mem-node = (beta-top-node rete) then
 	 (beta-memory current-join-node)
        for current-join-node
-	 = (find/create-join-node current-mem-node tests alpha-memory) then
-	 (find/create-join-node current-mem-node tests alpha-memory)
+	 = (if (negated current-cond)
+	       (find/create-neg-node current-mem-node tests alpha-memory)
+	       (find/create-join-node current-mem-node tests alpha-memory)) then
+	 (if (negated current-cond)
+	     (find/create-neg-node current-mem-node tests alpha-memory)
+	     (find/create-join-node current-mem-node tests alpha-memory))
        finally
 	 (add-production (beta-memory current-join-node)
 			 rule))))

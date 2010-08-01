@@ -199,7 +199,8 @@
 			 (node2 beta-join-node))
   (with-slots ((am1 alpha-memory) (tsts1 tests) (par1 parent)) node1
     (with-slots ((am2 alpha-memory) (tsts2 tests) (par2 parent)) node2
-      (and (node-equal-p am1 am2)
+      (and (equalp (type-of node1) (type-of node2))
+	   (node-equal-p am1 am2)
 	   (node-equal-p par1 par2)
 	   (tests-equal-p tsts1 tsts2)))))
 
@@ -225,6 +226,7 @@
     (when (perform-join-tests (tests node) token wme)
       (unless (negative-wmes token)
 	(inactivate-children node token))
+      (format t "pushing ~A to token ~A~%" wme token)
       (pushnew wme (negative-wmes token) :test #'fact-equal-p))))
 
 (defmethod inactivate ((node beta-negative-node) (wme fact))
