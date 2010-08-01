@@ -25,10 +25,12 @@
     (dolist (binding var-bind-list new-tree)
       (setf new-tree (subst (cdr binding) (car binding) new-tree)))))
 
-(defmethod activate-rule ((rule rule) (token token))
-  (let* ((bindings (get-variable-bindings (conditions rule)
-					  (token->list token)))
-	 (activations (substitute-variables (activations rule)
-					    bindings)))
+(defmethod activate-rule ((activation match))
+  (with-slots (rule token) activation
+    (let* ((bindings (get-variable-bindings (remove-if #'negated (conditions rule))
+					    (token->list token)))
+	   (activations (substitute-variables (activations rule)
+					      bindings)))
+    (format t "Firing ~A~%" activation)
     (dolist (activation activations)
-      (eval activation))))
+      (eval activation)))))

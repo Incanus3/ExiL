@@ -74,6 +74,7 @@
      for i = 0 then (1+ i)
      for (prev-cond . field) = (find-atom-in-cond-list% atom prev-conds)
      then (find-atom-in-cond-list% atom prev-conds)
+     when (variable-p atom)
      unless (member atom used-vars)
      when prev-cond
      collect (make-test i prev-cond field)
@@ -84,6 +85,7 @@
      with used-vars
      for (prev-cond . field) = (find-atom-in-cond-list% slot-val prev-conds)
      then (find-atom-in-cond-list% slot-val prev-conds)
+     when (variable-p slot-val)
      unless (member slot-val used-vars)
      when prev-cond
      collect (make-test slot-name prev-cond field)

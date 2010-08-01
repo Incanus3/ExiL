@@ -30,7 +30,8 @@
 
 (defmethod print-object ((tmpl template) stream)
   (print-unreadable-object (tmpl stream :type t)
-    (format stream "~A ~A" (name tmpl) (slots tmpl))))
+    (format stream "~A ~S" (name tmpl) (slots tmpl)))
+  tmpl)
 
 ;; make defclass slot-designator from the deftemplate one
 (defun field->slot-designator (field)
@@ -77,8 +78,11 @@
        (equalp (slots object1) (slots object2))))
 
 (defmethod print-object ((object template-object) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~A" (cons (tmpl-name object) (slots object)))))
+  (if *print-escape*
+      (print-unreadable-object (object stream :type t :identity t)
+	(format stream "~A" (cons (tmpl-name object) (slots object))))
+      (format stream "~A" (cons (tmpl-name object) (slots object))))
+  object)
 
 (defmethod find-atom (atom (object template-object))
   (find atom (mapcar #'cdr (slots object))))

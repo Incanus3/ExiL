@@ -31,10 +31,13 @@
 
 ;; prints patterns
 (defmethod print-object ((pattern simple-pattern) stream)
-  (print-unreadable-object (pattern stream :type t)
-    (format stream "~:[~;-~]~S" (negated pattern)
-	    (pattern pattern))
-    pattern))
+  (if *print-escape*
+      (print-unreadable-object (pattern stream :type t)
+	(format stream "~:[~;NOT ~]~S" (negated pattern)
+		(pattern pattern)))
+      (format stream "~:[~;NOT ~]~S" (negated pattern)
+	      (pattern pattern)))
+  pattern))
 
 ;; checks pattern equivalency
 (defmethod pattern-equal-p ((pattern1 simple-pattern) (pattern2 simple-pattern))
@@ -96,5 +99,10 @@
 	(make-instance 'simple-pattern :pattern spec :negated negated))))
 
 (defmethod print-object ((object template-pattern) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (format stream "(~:[~;- ~]~A ~A)" (negated object) (tmpl-name object) (slots object))))
+  (if *print-escape*
+      (print-unreadable-object (object stream :type t :identity t)
+	(format stream "~:[~;NOT ~]~A" (negated object)
+		(cons (tmpl-name object) (slots object))))
+      (format stream "~:[~;NOT ~]~A" (negated object)
+	      (cons (tmpl-name object) (slots object))))
+  object)

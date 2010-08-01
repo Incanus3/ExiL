@@ -104,11 +104,15 @@
       (nreverse memories))))
 	  
 (defmethod print-memory ((memory memory-node))
-  (format t "~A:~%  ~A~%" memory (items memory)))
+  (format t "~A:~%  ~A~%~%" memory (items memory)))
 
 (defun print-alpha-mems (&optional (rete (rete)))
-  (dolist (mem (get-alpha-memories (get-network (alpha-top-node rete))))
-    (print-memory mem)))
+  (let ((nets
+	 (loop for net being the hash-values in (networks (alpha-top-node rete))
+	    collect net)))
+    (dolist (net nets)
+      (dolist (mem (get-alpha-memories net))
+	(print-memory mem)))))
 
 (defun print-beta-mems (&optional (rete (rete)))
   (dolist (mem (get-beta-memories (beta-top-node rete)))
@@ -128,14 +132,14 @@
 
 (deffacts world
   (in :object robot :location A)
-  (in :object box :locatoin B)
+  (in :object box :location B)
   (goal :action push :object box :from B :to A))
 
 (defrule stop
   (goal :object ?x :to ?y)
   (in :object ?x :location ?y)
   =>
-  ;(halt)
+  (halt)
   )
 
 (defrule move
@@ -161,6 +165,10 @@
 (watch activations)
 
 (reset)
-
 (step)
+(print-memories)
+
+(run)
+
+(completely-reset-environment)
 |#

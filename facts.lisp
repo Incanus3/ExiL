@@ -22,9 +22,11 @@
 
 ;; prints facts
 (defmethod print-object ((fact simple-fact) stream)
-  (print-unreadable-object (fact stream :type t :identity t)
-    (format stream "~s" (fact fact))
-    fact))
+  (if *print-escape*
+      (print-unreadable-object (fact stream :type t :identity t)
+	(format stream "~s" (fact fact)))
+      (format stream "~s" (fact fact)))
+  fact))
 
 (defmethod fact-equal-p ((fact1 simple-fact) (fact2 simple-fact))
   (equalp (fact fact1) (fact fact2)))

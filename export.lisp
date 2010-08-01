@@ -63,11 +63,16 @@
 
 (defun step ()
   (when (agenda)
-    (let ((activation (select-activation)))
-      (activate-rule (car activation)
-		     (cdr activation)))
+    (activate-rule (select-activation))
     t))
+
+(defvar *exil-running* nil)
+
+(defun halt ()
+  (format t "Halting~%")
+  (setf *exil-running* nil))
 
 (defun run ()
   "Run the infenece engine"
-  (loop while (step)))
+  (setf *exil-running* t)
+  (loop while (and *exil-running* (step))))

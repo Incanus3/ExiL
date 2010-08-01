@@ -102,41 +102,26 @@
 (defun find-rule (name &optional (environment *current-environment*))
   (gethash (symbol-name name) (rules environment)))
 
-;; match is a pair (production token)
-;; (there's more effective way to do this, but it doesn't look good :-))
-(defun match-production (match)
-  (car match))
-
-(defun match-token (match)
-  (cdr match))
-
-(defun match-equal-p (match1 match2)
-  (and (rule-equal-p (match-production match1)
-		     (match-production match2))
-       (token-equal-p (match-token match1)
-		      (match-token match2))))
-
-(defun activation->string (pair)
-  (format nil "Activation:~%~A~%~A~%" (car pair) (cdr pair)))
-
-(defmethod add-match (match &optional (environment *current-environment*))
+(defmethod add-match (production token &optional (environment *current-environment*))
+  (let ((match (make-match production token)))
     (when (and (nth-value 1 (ext-pushnew match (agenda environment)
 					 :test #'match-equal-p))
 	       (watched-p 'activations))
-      (format t "==> ~A" (activation->string match))))
+      (format t "==> ~A~%" match))))
 
-(defmethod remove-match (match &optional (environment *current-environment*))
+(defmethod remove-match (production token &optional (environment *current-environment*))
+  (let ((match (make-match production token)))
   (multiple-value-bind (new-list altered-p)
       (ext-delete match (agenda environment) :test #'match-equal-p)
     (when altered-p
       (setf (agenda environment) new-list)
       (when (watched-p 'activations)
-	(format t "<== ~A" (activation->string match))))))
+	(format t "<== ~A~%" match))))))
 
 (defmethod remove-matches (rule &optional (environment *current-environment*))
   (setf (agenda environment)
 	(delete rule (agenda environment)
-		:test #'rule-equal-p :key #'match-production)))
+		:test #'rule-equal-p :key #'match-rule)))
 
 (defmethod defstrategy% (name function &optional (environment *current-environment*))
   (if (typep function 'function)
@@ -181,11 +166,15 @@
 
 (defun reset-environment (&optional (environment *current-environment*))
   (setf (facts environment) ()
-;	(fact-groups environment) ()
-;	(templates environment) (make-hash-table :test 'equalp)
-;	(rules environment) (make-hash-table :test 'equalp)
 	(rete environment) (make-instance 'rete))
   (loop for rule being the hash-values in (rules environment)
      do (add-rule rule environment))
   nil)
 
+(defun completely-reset-environment (&optional (environment *current-environment*))
+  (setf (facts environment) ()
+	(fact-groups environment) ()
+	(templates environment) (make-hash-table :test 'equalp)
+	(rules environment) (make-hash-table :test 'equalp)
+	(rete environment) (make-instance 'rete))
+  nil)

@@ -67,12 +67,12 @@
 
 ;; forward declarations, real ones will appear in environment.lisp
 (defgeneric agenda (&optional environment))
-(defgeneric add-match (match &optional agenda))
-(defgeneric remove-match (match &optional agenda))
+(defgeneric add-match (rule token &optional agenda))
+(defgeneric remove-match (rule token &optional agenda))
 
 (defmethod complete-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (add-match (cons production token))))
+    (add-match production token)))
 
 (defmethod activate ((node beta-memory-node) (token token))
 ;  (fresh-line t)
@@ -85,7 +85,7 @@
 
 (defmethod broken-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (remove-match (cons production token))))
+    (remove-match production token)))
 
 (defmethod inactivate :before ((node beta-memory-node) (fact fact))
   (multiple-value-bind (new-items deleted) 
@@ -219,15 +219,16 @@
   (let ((bad-wmes (get-bad-wmes node token)))
     (unless bad-wmes (activate-children node token))
     (setf (negative-wmes token) bad-wmes)
-    (add-item node token #'token-equal-p)))
+    (add-item node token #'token-equal-p))
+  nil)
 
 (defmethod activate ((node beta-negative-node) (wme fact))
   (dolist (token (items node))
     (when (perform-join-tests (tests node) token wme)
       (unless (negative-wmes token)
 	(inactivate-children node token))
-      (format t "pushing ~A to token ~A~%" wme token)
-      (pushnew wme (negative-wmes token) :test #'fact-equal-p))))
+      (pushnew wme (negative-wmes token) :test #'fact-equal-p)))
+  nil)
 
 (defmethod inactivate ((node beta-negative-node) (wme fact))
   (dolist (token (items node))
@@ -236,7 +237,8 @@
       (setf (negative-wmes token)
 	    (delete wme (negative-wmes token) :test #'fact-equal-p))
       (unless (negative-wmes token)
-	(activate-children node token)))))
+	(activate-children node token))))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export
