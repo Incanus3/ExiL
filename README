@@ -1,0 +1,2 @@
+Just load the file "load.lisp", enter the exil package and happily use the macros and methods defined in export.lisp.
+The documentation is part of the text part (text/bakalarka.pdf).
