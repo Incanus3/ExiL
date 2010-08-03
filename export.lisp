@@ -3,33 +3,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
 
-(defun assert% (fact-spec)
-  (add-fact (make-fact fact-spec)))
-
 (defmacro assert (fact-spec)
   "Add fact into working memory"
   `(assert% ',fact-spec))
-
-(defun retract% (fact-spec)
-  (rem-fact (make-fact fact-spec)))
 
 (defmacro retract (fact-spec)
   "Remove fact from working memory"
   `(retract% ',fact-spec))
 
-(defun modify% (old-fact-spec new-fact-spec)
-  (retract% old-fact-spec)
-  (assert% new-fact-spec))
-
 (defmacro modify (old-fact-spec new-fact-spec)
+  "Replace old-fact by new-fact"
   `(modify% ',old-fact-spec ',new-fact-spec))
 
 (defun clear ()
+  "Delete all facts"
   (reset-environment))
 
 (defmacro deffacts (name &body fact-descriptions)
   "Create group of facts to be asserted after (reset)"
   `(add-fact-group ',name ',fact-descriptions))
+
+(defun reset ()
+  "Clear all facts and add all fact groups"
+  (clear)
+  (dolist (group (fact-groups))
+    (assert-group (cdr group))))
 
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 (defmacro defrule (name &body rule)
@@ -47,21 +45,21 @@
        (add-rule ,rule-symbol))))
 
 (defmacro undefrule (name)
+  "Undefine rule"
   (let ((rule (gensym "rule")))
     `(let ((,rule (find-rule ',name)))
        (when ,rule (rem-rule ,rule)))))
 
-(defun assert-group (fact-descriptions)
-  (dolist (desc fact-descriptions)
-    (assert% desc)))
+(defmacro defstrategy (name function)
+  "Define strategy"
+  `(defstrategy% ',name ,function))
 
-(defun reset ()
-  "Reset the environment"
-  (clear)
-  (dolist (group (fact-groups))
-    (assert-group (cdr group))))
+(defmacro set-strategy ()
+  "Set strategy to use"
+  `(set-strategy% ',name))
 
 (defun step ()
+  "Run inference engine for one turn"
   (when (agenda)
     (activate-rule (select-activation))
     t))
@@ -69,6 +67,7 @@
 (defvar *exil-running* nil)
 
 (defun halt ()
+  "Stop the inference engine"
   (format t "Halting~%")
   (setf *exil-running* nil))
 
@@ -76,3 +75,12 @@
   "Run the infenece engine"
   (setf *exil-running* t)
   (loop while (and *exil-running* (step))))
+
+(defmacro watch (watcher)
+  "Watch selected item (facts, rules, activations)"
+  `(watch% ',watcher))
+
+(defmacro unwatch (watcher)
+  "Unwatch selected item"
+  `(unwatch% ',watcher))
+

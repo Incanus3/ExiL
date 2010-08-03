@@ -66,6 +66,13 @@
       (format t "==> ~A~%" fact))
     (add-wme fact)))
 
+(defun assert% (fact-spec)
+  (add-fact (make-fact fact-spec)))
+
+(defun assert-group (fact-descriptions)
+  (dolist (desc fact-descriptions)
+    (assert% desc)))
+
 (defun rem-fact (fact &optional (environment *current-environment*))
   (multiple-value-bind (new-list altered-p)
       (ext-delete fact (facts environment) :test #'fact-equal-p)
@@ -74,6 +81,13 @@
       (when (watched-p 'facts)
 	(format t "<== ~A~%" fact))
       (remove-wme fact))))
+
+(defun retract% (fact-spec)
+  (rem-fact (make-fact fact-spec)))
+
+(defun modify% (old-fact-spec new-fact-spec)
+  (retract% old-fact-spec)
+  (assert% new-fact-spec))
 
 (defun add-fact-group (group-name fact-descriptions
 		       &optional (environment *current-environment*))
@@ -132,10 +146,7 @@
       (push-update (cons name function) (strategies environment))
       (warn "~A is not a function" function)))
 
-(defmacro defstrategy (name function)
-  `(defstrategy% ',name ,function))
-
-(defmethod set-strategy (&optional (name 'default) (environment *current-environment*))
+(defmethod set-strategy% (&optional (name 'default) (environment *current-environment*))
   (if (find name (strategies environment) :key #'car)
     (setf (current-strategy-name environment) name)
     (warn "unknown strategy ~A" name)))
@@ -154,16 +165,10 @@
 	     () "I don't know how to watch ~A" watcher)
   (setf (assoc-value watcher (watchers environment)) t))
 
-(defmacro watch (watcher)
-  `(watch% ',watcher))
-
 (defmethod unwatch% (watcher &optional (environment *current-environment*))
   (cl:assert (find watcher (mapcar #'car (watchers environment)))
 	     () "I don't know how to watch ~A" watcher)
   (setf (assoc-value watcher (watchers environment)) nil))
-
-(defmacro unwatch (watcher)
-  `(unwatch% ',watcher))
 
 (defmethod watched-p (watcher &optional (environment *current-environment*))
   (assoc-value watcher (watchers environment)))
