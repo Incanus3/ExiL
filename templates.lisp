@@ -44,15 +44,7 @@
 ;; or (name &body fields) is better
 ;; for the former possibility, the call is more similar to defclass
 ;; for the latter, the call is more like defstruct call
-(defmacro deftemplate (name fields)
-  (let ((template (gensym "template")))
-    `(let ((,template
-	    (make-instance
-	     'template
-	     :name ',name
-	     :slots ',(loop for field in (to-list-of-lists fields)
-			 collect (field->slot-designator field)))))
-       (add-template ,template))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template-object class

@@ -3,6 +3,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
 
+(defmacro deftemplate (name fields)
+  (let ((template (gensym "template")))
+    `(let ((,template
+	    (make-instance
+	     'template
+	     :name ',name
+	     :slots ',(loop for field in (to-list-of-lists fields)
+			 collect (field->slot-designator field)))))
+       (add-template ,template))))
+
 (defmacro assert (fact-spec)
   "Add fact into working memory"
   `(assert% ',fact-spec))
@@ -54,7 +64,7 @@
   "Define strategy"
   `(defstrategy% ',name ,function))
 
-(defmacro set-strategy ()
+(defmacro set-strategy (name)
   "Set strategy to use"
   `(set-strategy% ',name))
 
