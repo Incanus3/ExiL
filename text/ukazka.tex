@@ -1,0 +1,100 @@
+Na závěr této sekce uvedu krátký příklad práce s~knihovnou. Řádky začínající
+``\verb|EXIL>|'' označují vstup uživatele, zbytek je výstup programu.
+\begin{verbatim}
+EXIL> (deftemplate goal (action object from to))
+#<TEMPLATE GOAL ((ACTION :DEFAULT NIL) (OBJECT :DEFAULT NIL)
+                 (FROM :DEFAULT NIL) (TO :DEFAULT NIL))>
+
+EXIL> (deftemplate in (object location))
+#<TEMPLATE IN ((OBJECT :DEFAULT NIL) (LOCATION :DEFAULT NIL))>
+\end{verbatim}
+\begin{verbatim}
+EXIL> (deffacts world
+        (in :object robot :location A)
+        (in :object box :location B)
+        (goal :action push :object box :from B :to A))
+T
+\end{verbatim}
+\begin{verbatim}
+EXIL> (defrule stop
+        (goal :object ?x :to ?y)
+        (in :object ?x :location ?y)
+      =>
+        (halt))
+#<RULE STOP>
+\end{verbatim}
+\begin{verbatim}
+EXIL> (defrule move
+        (goal :object ?x :from ?y)
+        (in :object ?x :location ?y)
+        (- in :object robot :location ?y)
+        (in :object robot :location ?z)
+      =>
+        (modify (in :object robot :location ?z)
+                (in :object robot :location ?y)))
+#<RULE MOVE>
+\end{verbatim}
+\begin{verbatim}
+EXIL> (defrule push
+        (goal :object ?x :from ?y :to ?z)
+        (in :object ?x :location ?y)
+        (in :object robot :location ?y)
+      =>
+        (modify (in :object robot :location ?y)
+                (in :object robot :location ?z))
+        (modify (in :object ?x :location ?y)
+                (in :object ?x :location ?z)))
+#<RULE PUSH>
+\end{verbatim}
+\begin{verbatim}
+EXIL> (watch facts)
+T
+
+EXIL> (watch activations)
+T
+\end{verbatim}
+\begin{verbatim}
+EXIL> (reset)
+==> (IN (OBJECT . ROBOT) (LOCATION . A))
+==> (IN (OBJECT . BOX) (LOCATION . B))
+==> (GOAL (ACTION . PUSH) (OBJECT . BOX) (FROM . B) (TO . A))
+==> Activation MOVE:
+((GOAL (ACTION . PUSH) (OBJECT . BOX) (FROM . B) (TO . A))
+ (IN (OBJECT . BOX) (LOCATION . B))
+ (IN (OBJECT . ROBOT) (LOCATION . A)))
+NIL
+\end{verbatim}
+\begin{verbatim}
+EXIL> (run)
+Firing Activation MOVE:
+((GOAL (ACTION . PUSH) (OBJECT . BOX) (FROM . B) (TO . A))
+ (IN (OBJECT . BOX) (LOCATION . B))
+ (IN (OBJECT . ROBOT) (LOCATION . A)))
+<== (IN (OBJECT . ROBOT) (LOCATION . A))
+==> (IN (OBJECT . ROBOT) (LOCATION . B))
+==> Activation PUSH:
+((GOAL (ACTION . PUSH) (OBJECT . BOX) (FROM . B) (TO . A))
+ (IN (OBJECT . BOX) (LOCATION . B))
+ (IN (OBJECT . ROBOT) (LOCATION . B)))
+\end{verbatim}
+\begin{verbatim}
+Firing Activation PUSH:
+((GOAL (ACTION . PUSH) (OBJECT . BOX) (FROM . B) (TO . A))
+ (IN (OBJECT . BOX) (LOCATION . B))
+ (IN (OBJECT . ROBOT) (LOCATION . B)))
+<== (IN (OBJECT . ROBOT) (LOCATION . B))
+==> (IN (OBJECT . ROBOT) (LOCATION . A))
+<== (IN (OBJECT . BOX) (LOCATION . B))
+==> (IN (OBJECT . BOX) (LOCATION . A))
+==> Activation STOP:
+((GOAL (ACTION . PUSH) (OBJECT . BOX) (FROM . B) (TO . A))
+ (IN (OBJECT . BOX) (LOCATION . A)))
+\end{verbatim}
+\begin{verbatim}
+Firing Activation STOP:
+((GOAL (ACTION . PUSH) (OBJECT . BOX) (FROM . B) (TO . A))
+ (IN (OBJECT . BOX) (LOCATION . A)))
+Halting
+NIL
+\end{verbatim}
+Příklad je převzat z~\cite{introduction} a je původně určen pro systém CLIPS.
