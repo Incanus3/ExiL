@@ -1,6 +1,34 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Použité algoritmy}
 Přiložená implementace expertního systému zahrnuje několik z~literatury
-čerpaných algoritmů. V~prvé řadě je to algoritmus Rete, který se stará
-o~zjišťování, která odvozovací pravidla jsou splněna fakty ze znalostní
-baze. Poté je použito několik velice jednoduchých algoritmů pro výběr
-pravidla, jenž bude jako další aktivováno. 
+čerpaných algoritmů. V~prvé řadě je to algoritmus Rete, který se stará o~pattern
+matching podmínek odvozovacích pravidel proti faktům znalostní baze, tedy o
+zjišťování, která odvozovací pravidla je možno aplikovat v dalším kole výpočtu.
+Poté je použito několik velice jednoduchých algoritmů pro výběr pravidla, jenž
+bude jako další aktivováno.
+
+\subsection{Algoritmus Rete}
+Algoritmus Rete kontroluje splnění podmínek inferenčních pravidel fakty
+znalostní baze. Použití naivního přístupu, tedy zkoušení platnosti všech
+podmínek proti všem faktům při každé změně znalostní baze není možné, neboť
+tato kontrola se již při několika stovkách faktů či desítkách pravidel
+(závisí samozřejmě na výkonu výpočetního hardware, jeho zatížení, atd.)
+stává příliš časově náročnou.
+
+Algoritmus pracuje na základě dataflow sítě (či chcete-li sítě toku dat),
+kterou průběžne konstruuje a upravuje při každém přidání či odebrání
+inferenčního pravidla. Přepočet splněných pravidel algoritmem Rete je o tolik
+rychlejší díky tomu, že tato síť uchovává v každém uzlu výsledky z minulých
+výpočtů a nově přidaný (či odebraný) fakt touto sítí jen velice rychle
+\uv{proteče} a aktualizuje výsledky jen ve velmi malé části uzlů.
+
+Dataflow síť algoritmu je z pohledu teorie grafů spojitý orientovaný graf.
+Máme-li dva uzly a orientovanou hranu, která je spojuje, budu uzel, z nějž
+hrana vede, označovat jako rodiče a uzel, do nějž vede, jako potomka.
+Síť je tvořena dvěma částmi označovanými jako alfa a beta.
+
+Alfa část sítě řeší konstantní porovnávání přidávaných faktů s patterny
+v podmínkách pravidel, ignoruje tedy vazby proměnných a jejich konzistenci.
+Jde v podstatě o strom, jehož každý uzel testuje právě jeden atom faktu.
+Má-li atom požadovanou hodnotu, předá uzel fakt svým potomkům a ty pokračují
+v testování.
