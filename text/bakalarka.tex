@@ -9,7 +9,8 @@
 \subtitle{Forward-chaining Expert System Implementation}
 \author{Jakub Kaláb}
 \year{2010}
-\date{\today}
+%\date{\today}
+\date{5.8.2010}
 \annotation{Expertní systémy mají v~praxi bohaté využití. Jejich smyslem je
 asistovat expertovi na danou problematiku, či jej plně nahradit. V~příloze
 bakalářské práce implementuji prázdný expertní systém s~dopředným řetězením
@@ -22,115 +23,21 @@ Lisp} tak, aby jej bylo možno plně integrovat do dalších programů.}
 
 \maketitle
 
-\section{Co je to experní systém}
-Expertní systém je počítačový program, který ze zadané znalostní báze pomocí
-zadaných pravidel odvozuje nová fakta. Díky tomu je jej možno využít v~praxi
-jako asistenta odborníka v~daném oboru, nebo jej, v~ideálním případě, zcela
-nahradit.
-
-Pro lepší představu uvedu příklad - expertní systém v~ordinaci
-praktického lékaře. Na začátku zadá lékař, případně za pomoci znalostního
-inženýra, expertnímu systému znalostní bazi, tj. informace o~příznacích
-známých chorob, možnostech jejich léčby, medikaci, konfliktních léků, atd.
-Expertní systém potom při zadání příznaků pacienta s~jistou pravděpodobností
-(odvislé od pravděpodobností zadaných v~jednotlivých pravidlech příznak
-$\rightarrow$ choroba) určí možné choroby, alternativy léčby, apod.
-
-\subsection{Co odlišuje expertní systém od jiných výpočetních programů}
-Toto samozrejmě může dělat i~program, který bychom za expertní systém
-neoznačili, rozdíl je v~tom, že expertní systém je obecný - znalostní
-baze je zcela oddělena řídícího mechanismu. Tento je tudíž zcela
-nezávislý na konkrétní doméně. Takto tomu u~jiných programů většinou
-nebývá, data bývají smýchána s~rozhodovacím a~řídícím kódem programu
-a~program je tudíž jednoúčelový.
-
-\subsection{Charakteristické vlastnosti expertních systémů}
+\include{1-teorie}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Uživatelská příručka}
-Tato práce se zabývá implementací již známých algoritmů, je tedy spíše
-praktického zaměření. Úmyslně jsem tedy posunul kapitolu s~hlubším popisem
-implementovaných algoritmů až za uživatelskou příručku, aby byl čternář při
-její četbě již seznámen s~používanými datovými strukturami, strukturou
-pravidel, apod.
-
-Tato kapitola vyžaduje alespoň zběžnou znalost programovacího jazyka
-Common Lisp, jeho základní datové typy (symbol, seznam) a metody pro
-práci s~nimi.
-
-V~kapitole budu občas uvádět v~závorkách a kurzívou názvy některých použitých
-tříd či metod. Je to kvůli snadnější orientaci při následné četbě programátorské
-dokumentace. Čtenář, který tuto číst nehodlá je může směle přeskakovat.
-
-\subsection{Použité datové struktury}
-Uživatel expertního systému se nejčasteji setká se dvěma datovými strukturami,
-jsou to fakta (třída \emph{fact}) a pravidla (třída \emph{rule}). Fakta znalostní
-baze mohou být buď jednoduchá (třída \emph{simple-fact}), specifikovaná prostým
-seznamem atomů (např. \verb|(on book table)|), či strukturovaná (třída
-\emph{template-fact}. Pro použití strukturovaných fakt je třeba nejdříve definovat
-šablonu makrem \verb|deftemplate| následovně:
-\begin{verbatim}
-(deftemplate in (object location (ammount :default 1)))
-\end{verbatim}
-Specifikace takovéhoto strukturovaného faktu pak vypadá takto:
-\verb|(in :object fridge :location kitchen)|.
-
-Kromě fakt se uživatel setká ještě s~tzv. \emph{patterny} (pro neznalost
-výstižného českého ekvivalentu se budu držet dobře zažitého výrazu anglického).
-Tyto jsou faktům velmi podobné, jen se v~nich mohou vyskytovat proměnné.
-Název proměnné v~mé implementaci vždy začíná otazníkem (stejně jako v~systému
-CLIPS) a je tedy od běžného atomu jasně patrná. Patterny mohou být, stejně
-jako fakta jednoduché či strukturované. Při snaze použít proměnnou v~popisu
-faktu skončí vyhodnocení výrazu chybou.
-
-Převodní pravidlo expertní systému se skládá ze dvou částí - podmínkek
-a aktivací. Podmínky určují, za jakých okolností je pravidlo splněno
-fakty znalostní baze a je jej možno zařadit do seznamu pravidel k~aktivaci
-(tento seznam budu dále označovat jako \emph{agenda}). Seznam aktivací
-je tvořen libovolným počtem Lispových výrazů (jež pochopitelně mohou
-zahrnovat i systémem definované metody a makra), které se při aktivaci
-pravidla vyhodnotí. Pravidlo tedy typicky při platnosti nějakých fakt
-či neplatnosti jiných přidá do znalostní baze nějaká další fakta, či
-některerá z~baze odebere.
-
-\subsection{Manipulace s~fakty znalostní baze}
-K~přidání faktu do znalostní baze souží makro \verb|assert|, přidání tedy
-vypadá následovně:
-\begin{verbatim}
-(assert (on book table))
-(assert (in :object fridge :location kitchen))
-\end{verbatim}
-Při pokusu o~opětované přidání již existujícího faktu se nestane nic.
-
-Odebrání faktu z~baze se provádí makrem \verb|retract| se stejnou syntaxí.
-Při pokusu o~odebrání neexistujícího faktu se opět nic nestane.
-
-Posledním makrem z~této skupiny je \verb|modify| to slouží k~modifikaci
-faktu (jeho nahrazení jiným) a používá se takto:
-\begin{verbatim}
-(modify (in :object snack :location fridge)
-        (in :object snack :location schoolbag))
-\end{verbatim}
-Toto makro je ve skutečnosti jen zkratkou pro postupné volání \verb|assert|
-a \verb|retract|. Neslouží ani tak k~ušetření zdrojového kódu, jako spíš
-ke zčitelnění aktivací pravidla - z~jeho použití je evidentní vztah dvou
-faktů.
+\include{2-prirucka}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Použité algoritmy}
-Přiložená implementace expertního systému zahrnuje několik z~literatury
-čerpaných algoritmů. V~prvé řadě je to algoritmus Rete, který se stará
-o~zjišťování, která odvozovací pravidla jsou splněna fakty ze znalostní
-baze. Poté je použito několik velice jednoduchých algoritmů pro výběr
-pravidla, jenž bude jako další aktivováno. 
+\include{3-algoritmy}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Popis implementace}
+\include{4-implementace}
 
 \end{document}
