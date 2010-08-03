@@ -25,9 +25,9 @@
   (equalp (name rule1) (name rule2)))
 
 (defmethod print-object ((rule rule) stream)
-  (print-unreadable-object (rule stream :type t)
-    (if *print-escape*
-	(format stream "~A" (name rule))
-	(format stream "~A~%~A~%=>~%~A" (name rule) (conditions rule)
-		(activations rule))))
+  (if *print-escape*
+      (print-unreadable-object (rule stream :type t)
+	(format stream "~A" (name rule)))
+      (format stream "Rule ~A:~%~{~A~%~}=>~%~{~A~}" (name rule) (conditions rule)
+	      (activations rule)))
   rule)
