@@ -31,9 +31,9 @@ Síť je tvořena dvěma částmi označovanými jako alfa a beta. Navštívení
 sítě Rete algoritmu nazýváme aktivací. Některé uzly mohou být aktivovány
 i více způsoby.
 
-Pozn.: V této práci budu slovo potomek používat v neživotném tvaru. Není to
+Pozn.: V~této práci budu slovo potomek používat v~neživotném tvaru. Není to
 pravděpodobně zcela gramaticky korektní, ovšem označní \uv{ti potomci},
-mluvíme-li o uzlech dataflow sítě, mi přijde poněkud směšné.
+mluvíme-li o~uzlech dataflow sítě, mi přijde poněkud směšné.
 
 \begin{figure}[h]
 \centerline{\epsfbox{network.eps}}
@@ -153,32 +153,32 @@ nové či pospojovat již existující uzly dataflow sítě. Algoritmus postupn�
 prochází podmínky pravidla, vytváří (či recykluje) pro každou paměťový
 beta-uzel a spojovací beta-uzel, který napojí na následující paměťový beta-uzel.
 Ke každému spojovacímu uzlu také vytvoří (či plně nebo částečně recykluje)
-cestu v alfa části sítě. Poslední paměťový uzel označí jako produkční
-a uloží v něm pravidlo aby mohlo být při splnění všech podmínek předáno
-spolu s tokenem zpět prostředí a zařazeno do agendy.
+cestu v~alfa části sítě. Poslední paměťový uzel označí jako produkční
+a uloží v~něm pravidlo aby mohlo být při splnění všech podmínek předáno
+spolu s~tokenem zpět prostředí a zařazeno do agendy.
 
-Při odstranění pravidla ze systému je pravidlo odstraněno také z odpovídajícího
+Při odstranění pravidla ze systému je pravidlo odstraněno také z~odpovídajícího
 produkčního uzlu a všechny nyní zbytečné uzly jsou ze sítě odstraněny.
 
-\subsection{Strategie pro výběr pravidla k aktivaci}
+\subsection{Strategie pro výběr pravidla k~aktivaci}
 Expertní systém je velice obecný výpočetní mechanismus a proto není možné
 určit jednu odvozovací strategii, která by pokrývala všechny domény problémů,
-v nichž ho lze využít. Implementace proto poskytuje několik vestavěných
-strategií pro výběr pravidla z agendy k následné aktivaci a umožňuje i
+v~nichž ho lze využít. Implementace proto poskytuje několik vestavěných
+strategií pro výběr pravidla z~agendy k~následné aktivaci a umožňuje i
 definici uživatelských strategií.
 \begin{itemize}
-\item {\bf{}Strategie nejnovější aktivace (\emph{depth strategy})} vybírá z agendy
+\item {\bf{}Strategie nejnovější aktivace (\emph{depth strategy})} vybírá z~agendy
 pravidlo, které sem bylo přidáno jako poslední. Inferenční mechanismus tedy
 provádí jakýsi výpočet do hloubky, spouští nově aktivovaná pravidla dokud to
-lze a teprve při jejich vyčerpání se ve výpočtu vrací k pravidlům aktivovaným
+lze a teprve při jejich vyčerpání se ve výpočtu vrací k~pravidlům aktivovaným
 dříve.
-\item {\bf{}Strategie nejstarší aktivace (\emph{breadth strategy})} vybírá z agendy
+\item {\bf{}Strategie nejstarší aktivace (\emph{breadth strategy})} vybírá z~agendy
 pravidlo, které sem bylo přidáno jako první. Je tedy přesným opakem strategie
 předchozí, provádí výpočet \uv{do šířky}.
 \item {\bf{}Strategie nejobecnějšího pravidla (\emph{simplicity strategy})} vybírá
-pravidlo s nejnižším počtem podmínek, tedy obecnější (statisticky čím méně je podmínek,
+pravidlo s~nejnižším počtem podmínek, tedy obecnější (statisticky čím méně je podmínek,
 tím více najdeme shod, které pravidlo splní).
 \item {\bf{}Strategie nejkonkrétnějšího pravidla (\emph{complexity strategy})} vybírá
-pravidlo s nejvyšším počtem podmínek, tedy specifičtější.
+pravidlo s~nejvyšším počtem podmínek, tedy specifičtější.
 \end{itemize}
--- Volně převzato z \cite{introduction}.
+-- Volně převzato z~\cite{introduction}.
