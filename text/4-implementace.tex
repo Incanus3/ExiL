@@ -7,7 +7,7 @@ Common Lisp). Vývoj jsem prováděl na architektuře \textsf{GNU/Linux x86}.
 Funkčnost knihovny jsem testoval také ve vývojovém prostředí
 LispWorks\textsuperscript{\textregistered}.
 
-Zdrojový kód knihovny je rozdělen celkem do 15 soborů:
+Zdrojový kód knihovny je rozdělen celkem do 15 souborů:
 \begin{verbatim}
         packages.lisp
         utils.lisp
@@ -173,5 +173,12 @@ kterým je agenda jako parametr předána a ony jeden z~objektů typu \verb|matc
 vrátí. Ten je poté z~agendy odstraněn.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Environment}
-
+V~souboru \verb|environment| definuji třídu stejného jména, která pouze
+zastřešuje všechny doposud definované konstrukty. Obsahuje seznam definovaných
+šablon, znalostní bazi faktů, definované skupiny faktů, seznam pravidel
+a agendu. Kromě toho obsahuje instanci třídy \verb|rete|, jejíž jediným
+zajímavým prvkem je odkaz na kořen stromu dataflow sítě, seznam definovaných
+strategií a název aktuálně zvolené strategie. Posledním prvkem prostředí
+je seznam aktuálně aktivních \emph{watcherů}, tedy sledovaných objektů
+(viz \ref{watchers}).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
