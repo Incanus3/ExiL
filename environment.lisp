@@ -20,7 +20,7 @@
 			 (activations . nil)))))
 
 (defvar *environments*
-  (let ((table (make-hash-table)))
+  (let ((table (make-hash-table :test #'equalp)))
     (setf (gethash "default" table)
 	  (make-instance 'exil-environment))
     table))
@@ -45,7 +45,8 @@
 ;; i could supply a default value for the environment parameter
 (defmacro exil-env-accessor (slot-name)
   `(progn
-     (defgeneric ,slot-name (&optional environment))
+     ,(unless (equalp slot-name 'agenda)
+	      `(defgeneric ,slot-name (&optional environment)))
      (defmethod ,slot-name (&optional (environment *current-environment*))
        (slot-value environment ',slot-name))
      (defsetf ,slot-name (&optional (environment *current-environment*)) (value)
@@ -102,7 +103,7 @@
   (setf (gethash (symbol-name (name template)) (templates environment)) template)
   template)
 
-(defun find-template (name &optional (environment *current-environment*))
+(defmethod find-template (name &optional (environment *current-environment*))
   (gethash (symbol-name name) (templates environment)))
 
 (defun add-rule (rule &optional (environment *current-environment*))

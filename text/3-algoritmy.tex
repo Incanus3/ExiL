@@ -8,6 +8,7 @@ Poté je použito několik velice jednoduchých algoritmů pro výběr pravidla,
 bude jako další aktivováno.
 
 \subsection{Algoritmus Rete}
+
 Algoritmus Rete (materiály nabízí několik alternativ čtení názvu tohoto algoritmu,
 mezi nimi \uv{reet} [rýt] či \uv{ree-tee} [rýtý] \cite{doorenbos}) kontroluje
 splnění podmínek inferenčních pravidel fakty znalostní baze. Použití naivního
@@ -29,6 +30,17 @@ hrana vede, označovat jako rodiče a uzel, do nějž vede, jako potomka.
 Síť je tvořena dvěma částmi označovanými jako alfa a beta. Navštívení uzlu
 sítě Rete algoritmu nazýváme aktivací. Některé uzly mohou být aktivovány
 i více způsoby.
+
+\begin{figure}[h]
+\centerline{\epsfbox{network.eps}}
+\caption{Dataflow síť Rete algoritmu\cite{rete}}
+\label{network}
+\end{figure}
+
+Na obrázku \ref{network} je znázorněna dataflow síť Rete algoritmu.
+Pokud by ovšem mělo znázornění odpovídat používané terminologii, měla
+by být alfa část sítě na pravé straně. To si ale čtenář jistě snadno
+představí.
 
 \subsubsection{Alfa síť}
 Alfa část sítě řeší konstantní porovnávání přidávaných faktů s~patterny
@@ -125,6 +137,12 @@ spojovacímu uzlu je jako následník připojen paměťový beta-uzel, který
 uchovává tokeny s~částečnými (v~prvních třech případech) či úplnými
 (ve čtvrtém případě) shodami.
 
+\begin{figure}[h]
+\centerline{\epsfbox{condition-joining.eps}}
+\caption{Spojovací uzly mezi jednotlivými podmínkami inferenčního pravidla\cite{doorenbos}}
+\label{condition-joining}
+\end{figure}
+
 \subsubsection{Přidání/odebrání inferenčních pravidel}
 Definuje-li uživatel nové inferenční pravidlo je třeba pro něj vytvořit
 nové či pospojovat již existující uzly dataflow sítě. Algoritmus postupně
@@ -137,3 +155,26 @@ spolu s tokenem zpět prostředí a zařazeno do agendy.
 
 Při odstranění pravidla ze systému je pravidlo odstraněno také z odpovídajícího
 produkčního uzlu a všechny nyní zbytečné uzly jsou ze sítě odstraněny.
+
+\subsection{Strategie pro výběr pravidla k aktivaci}
+Expertní systém je velice obecný výpočetní mechanismus a proto není možné
+určit jednu odvozovací strategii, která by pokrývala všechny domény problémů,
+v nichž ho lze využít. Implementace proto poskytuje několik vestavěných
+strategií pro výběr pravidla z agendy k následné aktivaci a umožňuje i
+definici uživatelských strategií.
+\begin{itemize}
+\item {\bf{}Strategie nejnovější aktivace (\emph{depth strategy})} vybírá z agendy
+pravidlo, které sem bylo přidáno jako poslední. Inferenční mechanismus tedy
+provádí jakýsi výpočet do hloubky, spouští nově aktivovaná pravidla dokud to
+lze a teprve při jejich vyčerpání se ve výpočtu vrací k pravidlům aktivovaným
+dříve.
+\item {\bf{}Strategie nejstarší aktivace (\emph{breadth strategy})} vybírá z agendy
+pravidlo, které sem bylo přidáno jako první. Je tedy přesným opakem strategie
+předchozí, provádí výpočet \uv{do šířky}.
+\item {\bf{}Strategie nejobecnějšího pravidla (\emph{simplicity strategy})} vybírá
+pravidlo s nejnižším počtem podmínek, tedy obecnější (statisticky čím méně je podmínek,
+tím více najdeme shod, které pravidlo splní).
+\item {\bf{}Strategie nejkonkrétnějšího pravidla (\emph{complexity strategy})} vybírá
+pravidlo s nejvyšším počtem podmínek, tedy specifičtější.
+\end{itemize}
+-- Volně převzato z \cite{introduction}.

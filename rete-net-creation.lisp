@@ -141,7 +141,7 @@
 
 ;; DODELAT NEGATIVE NODY
 (defmethod new-production ((rule rule) &optional (rete (rete)))
-  (with-slots (conditions activations) rule
+  (with-slots (conditions) rule
     (loop
        for current-cond in conditions
        for i = 0 then (1+ i)
