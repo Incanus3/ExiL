@@ -25,10 +25,75 @@ výpočtů a nově přidaný (či odebraný) fakt touto sítí jen velice rychle
 Dataflow síť algoritmu je z pohledu teorie grafů spojitý orientovaný graf.
 Máme-li dva uzly a orientovanou hranu, která je spojuje, budu uzel, z nějž
 hrana vede, označovat jako rodiče a uzel, do nějž vede, jako potomka.
-Síť je tvořena dvěma částmi označovanými jako alfa a beta.
+Síť je tvořena dvěma částmi označovanými jako alfa a beta. Navštívení uzlu
+sítě Rete algoritmu nazýváme aktivací. Některé uzly mohou být aktivovány
+i více způsoby.
 
+\subsubsection{Alfa síť}
 Alfa část sítě řeší konstantní porovnávání přidávaných faktů s patterny
 v podmínkách pravidel, ignoruje tedy vazby proměnných a jejich konzistenci.
 Jde v podstatě o strom, jehož každý uzel testuje právě jeden atom faktu.
-Má-li atom požadovanou hodnotu, předá uzel fakt svým potomkům a ty pokračují
-v testování.
+Kořen alfa sítě je aktivován faktem, faktem aktivuje všechny své potomky.
+Tyto už provádějí testy jednotlivých atomů, má-li atom požadovanou hodnotu,
+předá uzel fakt svým potomkům a ty pokračují v testování. Projde-li fakt
+všemi konstatními testy, aktivuje poslední testovací uzel fakterm k němu
+přidružený paměťový alfa-uzel. Ten fakt uloží do své paměti a aktivuje
+jím své následníky v beta částí sítě.
+
+Kořen alfa části sítě může ještě rozlišovat typ faktu (jde-li o fakt
+jednoduchý či složený, ve druhém případě pak typ šablony). A podle toho
+aktivovat faktem jen část potomků.
+
+Pro lepší představu uvedu příklad. Mějme následující pravidlo:
+\begin{verbatim}
+(defrule move
+  (goal :object ?x :from ?y)
+  (in :object ?x :location ?y)
+  (- in :object robot :location ?y)
+  (in :object robot :location ?z)
+  =>
+  (modify (in :object robot :location ?z)
+  (in :object robot :location ?y)))
+\end{verbatim}
+Kořen alfa sítě tedy bude mít dva potomky - pro šablony \verb|goal|
+a \verb|in| (ignorujme prozatím, že třetí podmínka pravidla je negovaná,
+to řeší až beta část dataflow sítě). Z uzlu pro šablonu \verb|goal|
+povede hrana rovnou do alfa-paměti, všechny zbylé atomy podmínky jsou
+totiž proměnné. Z uzlu pro šablonu povede také hrana do další alfa
+paměti, neboť totéž platí pro druhou podmínku. Bude mít ale i dalšího
+následníka a to testovací uzel, zda je slot \verb|object| roven hodnotě
+\verb|robot|. Ten pak už aktivuje poslední paměťový alfa-uzel.
+
+Máme tedy dva typové uzly (pro šablony \verb|goal| a \verb|in|, jeden
+testovací uzel a tři uzly paměťové. To zatím není tak působivé,
+uvědomme si ale, že definujeme-li další pravidlo, které bude mít
+některé podmínky stejné jako výše uvedené, žádné uzly nám pro tyto
+podmínky nepřibudou. A budou-li podmínky alespoň podobné, přibudou
+jen testovací uzly pro atomy patternu, které se budou lišit.
+
+Zde je možno pozorovat první z výhod oproti naivnímu přístupu. Totiž
+máme-li pravidla se stejnými či podobnými podmínkami, velká část testů
+se provádí jen jednou, což nám markantně snižuje časovou náročnost výpočtu.
+
+\subsubsection{Beta síť}
+Beta část sítě je opět tvořena několika typy uzlů. Kromě uzlů paměťových
+jsou zde uzly, které testují konzistenci vazeb proměnných mezi jednotlivými
+podmínkami inferenčního pravidla, uzly negativních testů a produkční uzly.
+
+Paměťové beta-uzly už neuchovávají jednotlivá fakta, jako je tomu v alfa
+části dataflow sítě, nýbrž tzv. \emph{tokeny}, tedy skupiny faktů. Každý
+paměťový uzel udržuje seznam tokenů, jimiž byly splněny dosavadní podmínky
+inferenčního pravidla (tzv. \emph{partial match}). Máme-li tedy pravidlo
+o čtyřech podmínkách, budeme pro něj potřebovat čtyři paměťové beta-uzly.
+První uzel uchovává jednomístné tokeny s fakty, které prošly první podmínkou.
+Neliší se tedy příliš od paměťového alfa-uzlu. Druhý už ale uchovává tokeny
+s dvojicí faktů - faktem, jenž prošel první podmínkou a faktem, který prošel
+druhou. Takto se fakta v tokenech nabalují, až máme konečně v posledním uzlu
+token stejné délky, jako je počet podmínek inferenčního pravidla. Tento uzel
+označíme jako produkční - je-li aktivován tokenem, našli jsme kompletní
+shodu faktů s podmínkami pravidal (\emph{complete match}), v tuto chvíli
+algoritmus Rete ohlásí nalezení shody (dvojice pravidlo-token) prostředí
+a ta je přidána do seznamu aktivací.
+
+Hybnou silou beta síťě jsou spojovací uzly (v anglických materiálech tzv.
+\emph{join node}). 
