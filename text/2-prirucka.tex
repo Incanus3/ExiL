@@ -24,6 +24,8 @@ třeba nejdříve definovat šablonu makrem \verb|deftemplate| následovně:
 \begin{verbatim}
 (deftemplate in (object location (ammount :default 1)))
 \end{verbatim}
+Volání makra je velice podobné volání vestavěného makra Common lispu
+\verb|defclass|, jen neobsahuje seznam tříd, neboť neposkytuje dědičnost.
 Prvním parametrem je jméno šablony, dalším pak seznam slotů (pojmenované
 části faktu) s~případnými implicitními hodnotami. Specifikace takovéhoto
  strukturovaného faktu pak vypadá takto:

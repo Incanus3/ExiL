@@ -1,1 +1,55 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Popis implementace}
+Knihovna je napsána v programovacím jazyku Common Lisp. K jejímu vývoji jsem
+použil textový editor \textsf{GNU Emacs} s rozšířením \textsf{SLIME} (The
+Superior Lisp Interaction Mode for Emacs) a kompilátor \textsf{SBCL} (Steel Bank
+Common Lisp). Vývoj jsem prováděl na architektuře \textsf{GNU/Linux x86}.
+Funkčnost knihovny jsem testoval také ve vývojovém prostředí
+LispWorks\textsuperscript{\textregistered}.
+
+Zdrojový kód knihovny je rozdělen celkem do 15 soborů:
+\begin{verbatim}
+        packages.lisp
+        utils.lisp
+        templates.lisp
+        facts.lisp
+        patterns.lisp
+        rules.lisp
+        rete-generic-node.lisp
+        rete-alpha-part.lisp
+        rete-beta-part.lisp
+        rete-net-creation.lisp
+        matches.lisp
+        activations.lisp
+        strategies.lisp
+        environment.lisp
+        export.lisp
+\end{verbatim}
+\begin{itemize}
+\item V souboru \verb|packages.lisp| definuji package (\uv{balíček}) \verb|exil|,
+který bude definované funkce, metody a makra obsahovat.
+\item Soubor \verb|utils.lisp| obsahuje jednoduché obecné funkce a makra, které
+jsem během vývoje pro zjednodušení další práce napsal.
+\item V souboru \verb|export.lisp| jsou všechny metody a makra, které knihovna
+uživateli poskytuje. Tyto jsou z package \verb|exil| exportovány, lze je
+tedy volat bez nutnosti vstupu do package (před název je třeba připojit
+``\verb|exil:|'').
+\item Ve zbytku souborů definuji jednotlivé třídy a metdody. Kód v každém ze
+souborů staví na konstruktech definovaných v předchozích souborech. Prostředí
+(třída \verb|environment|), definovaná ve stejnojmenném souboru nakonec všechny
+dříve definované třídy zakomponuje do jednoho celku a vytvoří celek, na kterém
+může soubor \verb|export| vystavět makra, která uživatel bude nakonec používat.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Templates}
+Soubor vytváří základní mechanismus pro práci se strukturovanými daty.
+Třída \verb|template| obsahuje sloty pro uchování informací o uživatelsky
+definovaných šablonách. Všechna strukturovaná data nebo patterny jsou pak
+odvozenými instancemi třídy \verb|template-object|. Při vytváření těchto
+instancí mechanismus prochází kromě inicializačních parametrů také specifikaci
+slotů uloženou v konkrétní instanci třídy \verb|template| a tak umožňuje
+nastavení implicitnch hodnot. Krom toho soubor definuje predikát
+\verb|tmpl-object-specification-p|, který podle specifikace faktu (resp.
+patternu) určí, jde-li o fakt jednoduchý či strukturovaný.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Facts a Patterns}
