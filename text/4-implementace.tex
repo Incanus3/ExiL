@@ -45,7 +45,7 @@ může soubor \verb|export| vystavět makra, která uživatel bude nakonec použ
 Soubor vytváří základní mechanismus pro práci se strukturovanými daty.
 Třída \verb|template| obsahuje sloty pro uchování informací o uživatelsky
 definovaných šablonách. Všechna strukturovaná data nebo patterny jsou pak
-odvozenými instancemi třídy \verb|template-object|. Při vytváření těchto
+instancemi tříd odvozených od \verb|template-object|. Při vytváření těchto
 instancí mechanismus prochází kromě inicializačních parametrů také specifikaci
 slotů uloženou v konkrétní instanci třídy \verb|template| a tak umožňuje
 nastavení implicitnch hodnot. Krom toho soubor definuje predikát
@@ -53,3 +53,65 @@ nastavení implicitnch hodnot. Krom toho soubor definuje predikát
 patternu) určí, jde-li o fakt jednoduchý či strukturovaný.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Facts a Patterns}
+Definice základních datových struktur \verb|fact| a \verb|pattern| a od nich
+odvozených \verb|simple-fact|, \verb|template-fact|, \verb|simple-pattern|
+a \verb|template-pattern|. Nevyžaduje hlubší popis.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Rules}
+Definice třídy \verb|rule| pro uchování inferenčních pravidel. Třída nese
+informace o jméně pravidla, jeho podmínkách (typu \verb|pattern|) a aktivacích
+(prostý seznam lispových výrazů, které se při aktivaci pravidla postupně
+vyhodnotí).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Rete}
+Algoritmus Rete je nejsložitější částí implementace knihovny, jeho kód je tedy
+pochopitelně nejdelší. Je rozdělen do čtyř souborů.
+
+První z nich, \verb|rete-generic-node| definuje třídu \verb|node|, která je
+základem všech uzlů dataflow sítě algoritmu. Tím je zajištěno, že každý uzel
+sítě uchovává seznam svých následníků a implementuje metody \verb|activate|
+a \verb|inactivate|, skrze něž je svým rodičem upozorňován na změny ve znalostní
+bazi. Každý typ uzlu na tyto aktivace reaguje jinak.
+
+Implementace aktivací konkrétních souborů zabírá většinu kódu následujícíh dvou
+souborů - \verb|rete-alpha-part| a \verb|rete-beta-part|. Kořenem celé dataflow
+sítě algoritmu Rete je \verb|alpha-top-node|. Ten uchovává hashovací tabulku
+jednotlivých podsítí alfa-sítě podle typu šablony faktů, které ta která síť
+testuje. Je zde navíc jedna podsíť pro fakta jednoduchá (ta nemají šablonu).
+
+Jakmile je určena podsíť, jíž bude nově přidaný (resp. odebraný) fakt procházet,
+je aktivovaný příslušný \uv{podkořen} (\verb|alpha-subtop-node|), ten už má
+potomky typu \verb|alpha-test-node|. Při průchodu každým testovacím uzlem je
+otestován jeden atom faktu. Poslední testovací uzel předá při kladném výsledku
+testu fakt paměťovému uzlu (\verb|alpha-memory-node|), ten si jej uloží
+a pošle ho beta části sítě.
+
+V souboru \verb|rete-beta-part| je kromě jednotlivých typů uzlů definována třída
+\verb|token|, uchovávající skupinu faktů prošlých podmínkami inferenčního 
+pravidla. Relativně zajímavým prvkej je zde také přístup k testování  kozistence
+vazeb proměnných mezi jednotlivými podmínkami pravidla. Algoritmus zde při
+aktivaci spojovacího uzlu (\verb|beta-join-node| a \verb|beta-negative-node|)
+vůbec nehledí na konkrétní proměnné, jak by čtenář mohl očekávat. Při tvorbě
+dataflow sítě je totiž pro každý spojovací uzel vytvořen seznam objektů typu
+\verb|test|. Každý test slouží k otestování konzistence jednoho pole aktuální
+podmínky s předchozími podmínkami. Test obsahuje tři hodnoty - název (v případě
+strukturovaného patternu podmínky) či index (v případě nestrukturovaného)
+pole aktuálně testované podmínky, číslo značící, o kolik podmínek zpět má hledat
+konzistentní pole a název či index tohoto pole.
+
+Pro lepší porozumnění uvedu příklad. Mějme pravidlo
+\begin{verbatim}
+(defrule find-green-block-on-a-red-one
+  (green ?x)
+  (red ?y)
+  (on ?x ?y)
+=>
+  ; zde budou aktivace)
+\end{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Matches, Activations a Strategies}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Environment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
