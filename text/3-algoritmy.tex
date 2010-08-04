@@ -31,6 +31,10 @@ Síť je tvořena dvěma částmi označovanými jako alfa a beta. Navštívení
 sítě Rete algoritmu nazýváme aktivací. Některé uzly mohou být aktivovány
 i více způsoby.
 
+Pozn.: V této práci budu slovo potomek používat v neživotném tvaru. Není to
+pravděpodobně zcela gramaticky korektní, ovšem označní \uv{ti potomci},
+mluvíme-li o uzlech dataflow sítě, mi přijde poněkud směšné.
+
 \begin{figure}[h]
 \centerline{\epsfbox{network.eps}}
 \caption{Dataflow síť Rete algoritmu\cite{rete}}
@@ -51,7 +55,7 @@ Tyto už provádějí testy jednotlivých atomů, má-li atom požadovanou hodno
 předá uzel fakt svým potomkům a ty pokračují v~testování. Projde-li fakt
 všemi konstatními testy, aktivuje poslední testovací uzel fakterm k~němu
 přidružený paměťový alfa-uzel. Ten fakt uloží do své paměti a aktivuje
-jím své následníky v~beta částí sítě.
+jím své potomky v~beta částí sítě.
 
 Kořen alfa části sítě může ještě rozlišovat typ faktu (jde-li o~fakt
 jednoduchý či složený, ve druhém případě pak typ šablony). A~podle toho
@@ -74,7 +78,7 @@ to řeší až beta část dataflow sítě). Z~uzlu pro šablonu \verb|goal|
 povede hrana rovnou do alfa-paměti, všechny zbylé atomy podmínky jsou
 totiž proměnné. Z~uzlu pro šablonu povede také hrana do další alfa
 paměti, neboť totéž platí pro druhou podmínku. Bude mít ale i dalšího
-následníka a to testovací uzel, zda je slot \verb|object| roven hodnotě
+potomka a to testovací uzel, zda je slot \verb|object| roven hodnotě
 \verb|robot|. Ten pak už aktivuje poslední paměťový alfa-uzel.
 
 Máme tedy dva typové uzly (pro šablony \verb|goal| a \verb|in|, jeden
@@ -133,7 +137,7 @@ První bude testovat konzistenci vazeb mezi prvními dvěma podmínkami
 pravidla, druhý mezi třetí podmínkou a prvními dvěma, atd. Druhý i třetí
 spojovací uzel bude mít zprava připojen týž paměťový alfa-uzel (opět
 recyklace uzlu, tentokrát dokonce v~rámci jednoho pravidla). Ke každému
-spojovacímu uzlu je jako následník připojen paměťový beta-uzel, který
+spojovacímu uzlu je jako potomek připojen paměťový beta-uzel, který
 uchovává tokeny s~částečnými (v~prvních třech případech) či úplnými
 (ve čtvrtém případě) shodami.
 
