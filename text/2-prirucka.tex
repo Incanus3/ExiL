@@ -141,11 +141,11 @@ smysl používat samostatně, její volání je ale někdy vhodné zařadit do s
 aktivací některých pravidel. Tím signalizujeme, že jsou-li podmínky pravidla
 splněny, dosáhli jsme, čeho jsme chtěli a výpočet může skončit.
 
-\subsubsection{Strategie výběru pravidla k~aktivaci}
+\subsection{Strategie výběru pravidla k~aktivaci}
 Výběr následujícího pravidla k~aktivaci je ovlivněn zvolenou strategií.
 K~výběru strategie slouží makro \verb|set-strategy|, jehož jediným parametrem je
 název kýžené strategie.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Kromě vestavěných strategií je možné definovat také strategie vlastní. To se
 provádí makrem \verb|defstrategy|, jemuž předáme název nové strategie a
 funkci, která z~agendy, již dostane parametrem vybere jednu z~aktivací a tu

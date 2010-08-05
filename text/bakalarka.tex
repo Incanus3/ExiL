@@ -1,24 +1,26 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8x]{inputenc}
 \usepackage{czech}
-%\usepackage[czech]{babel}
-\usepackage[]{updiplom}
+\usepackage[figures]{updiplom}
 \usepackage{epsfig}
 \usepackage{url}
 \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
 
-%opening
+\newcommand{\registered}{\textsuperscript{\textregistered}}
+
 \title{Implementace expertního systému s~dopředným řetězením}
 \subtitle{Forward-chaining Expert System Implementation}
 \author{Jakub Kaláb}
 \year{2010}
 %\date{\today}
 \date{5.8.2010}
-\annotation{Expertní systémy mají v~praxi bohaté využití. Jejich smyslem je
+\annotation{
+Expertní systémy mají v~praxi bohaté využití. Jejich smyslem je
 asistovat expertovi na danou problematiku, či jej plně nahradit. V~příloze
 bakalářské práce implementuji prázdný expertní systém s~dopředným řetězením
 inspirovaný systémem CLIPS jako knihovnu v~programovacím jazyku \emph{Common
-Lisp} tak, aby jej bylo možno plně integrovat do dalších programů.}
+Lisp} tak, aby jej bylo možno plně integrovat do dalších programů.
+}
 \thanks{Děkuji Mgr. Martinu Dostálovi, Ph.D. za vedení této bakalářské práce.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -27,23 +29,16 @@ Lisp} tak, aby jej bylo možno plně integrovat do dalších programů.}
 \maketitle
 
 \include{1-teorie}
-
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \include{2-prirucka}
-
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \include{3-algoritmy}
-
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \include{4-implementace}
-
 \newpage
+\include{5-zaver}
+\newpage
+
 \bibliographystyle{czechiso}
 \bibliography{bakalarka}
 \end{document}

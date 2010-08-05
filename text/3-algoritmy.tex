@@ -6,9 +6,8 @@ matching podmínek odvozovacích pravidel proti faktům znalostní baze, tedy
 o~zjišťování, která odvozovací pravidla je možno aplikovat v~dalším kroku výpočtu.
 Poté je použito několik velice jednoduchých algoritmů pro výběr pravidla, jenž
 bude jako další aktivováno.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Algoritmus Rete}
-
 Algoritmus Rete (materiály nabízí několik alternativ čtení názvu tohoto algoritmu,
 mezi nimi \uv{reet} [rýt] či \uv{ree-tee} [rýtý] \cite{doorenbos}) kontroluje
 splnění podmínek inferenčních pravidel fakty znalostní baze. Použití naivního
@@ -45,7 +44,7 @@ Na obrázku \ref{network} je znázorněna dataflow síť Rete algoritmu.
 Pokud by ovšem mělo znázornění odpovídat používané terminologii, měla
 by být alfa část sítě na pravé straně. To si ale čtenář jistě snadno
 představí.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Alfa síť}
 Alfa část sítě řeší konstantní porovnávání přidávaných faktů s~patterny
 v~podmínkách pravidel, ignoruje tedy vazby proměnných a jejich konzistenci.
@@ -91,7 +90,7 @@ jen testovací uzly pro atomy patternu, které se budou lišit.
 Zde je možno pozorovat první z~výhod oproti naivnímu přístupu. Totiž
 máme-li pravidla se stejnými či podobnými podmínkami, velká část testů
 se provádí jen jednou, což nám markantně snižuje časovou náročnost výpočtu.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Beta síť}
 Beta část sítě je opět tvořena několika typy uzlů. Kromě uzlů paměťových
 jsou zde uzly, které testují konzistenci vazeb proměnných mezi jednotlivými
@@ -123,7 +122,7 @@ může být aktivován dvěma způsoby - buď nově přidaným či ubraným
 zleva}). V~obou případech ale spojovací uzel prohledá druhou paměť toho
 druhého rodičovského uzlu pro získání konzistentních tokenů (resp. faktů)
 a při nalezení shody aktivuje potomky.
-
+nnn
 Speciálním případem spojovacích uzlů jsou uzly s~negativními testy. Tyto
 mohou být, stejně jako běžné spojovací uzly, aktivovány z~obou stran.
 Podstatný rozdíl je ale v~tom, že negativní spojovací uzel aktivuje své
@@ -146,8 +145,8 @@ uchovává tokeny s~částečnými (v~prvních třech případech) či úplnými
 \caption{Spojovací uzly mezi jednotlivými podmínkami inferenčního pravidla\cite{doorenbos}}
 \label{condition-joining}
 \end{figure}
-
-\subsubsection{Přidání/odebrání inferenčních pravidel}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Přidání a odebrání inferenčních pravidel}
 Definuje-li uživatel nové inferenční pravidlo je třeba pro něj vytvořit
 nové či pospojovat již existující uzly dataflow sítě. Algoritmus postupně
 prochází podmínky pravidla, vytváří (či recykluje) pro každou paměťový
@@ -159,7 +158,7 @@ spolu s~tokenem zpět prostředí a zařazeno do agendy.
 
 Při odstranění pravidla ze systému je pravidlo odstraněno také z~odpovídajícího
 produkčního uzlu a všechny nyní zbytečné uzly jsou ze sítě odstraněny.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Strategie pro výběr pravidla k~aktivaci}
 Expertní systém je velice obecný výpočetní mechanismus a proto není možné
 určit jednu odvozovací strategii, která by pokrývala všechny domény problémů,
