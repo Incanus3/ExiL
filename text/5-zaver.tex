@@ -1,0 +1,17 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Závěr}
+Má implementace prázdného expertního systému podává (při použití stejné
+inferenční strategie) stejné výsledky jako systém \textsf{CLIPS}, jímž byla
+inspirována. Neposkytuje ale všechny jeho možonsti a nedosahuje, pochopitelně,
+zdaleka takovéhu výpočetního výkonu. V~dalším studiu bych se rád zabýval právě
+zvyšováním efektivity výpočtů a tedy snižováním reakční doby systému. Věnovat
+bych se chtěl také rozšíření systému o~další inferenční strategie (např.
+\textsf{LEX} a \textsf{MEA}), které podobné systémy často poskytují,
+a rozšiřováním syntaxe pravidel. Systém \textsf{CLIPS} např. poskytuje
+možnost \uv{uložení} fakta, jež vyhovuje dané podmínce pravidla, do proměnné
+a následné práce s~ním. Při rozhodování o~použité syntaxi, se kterou se
+knihovní funkce volají, jsem se snažil co nejvíce přiblížit lispovým idiomům
+(volání makra \verb|deftemplate| je např. velice podobné volání \verb|defclass|
+standardního objektového systému \textsf{CLOS}),
+rád bych v~dalším studiu poskytl rozšíření syntaxe tak, aby bylo možno
+programy vytvrořené pro systém \textsf{CLIPS} přímo použít v~mé implementaci.
