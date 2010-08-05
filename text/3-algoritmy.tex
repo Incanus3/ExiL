@@ -2,7 +2,7 @@
 \section{Použité algoritmy}
 Přiložená implementace expertního systému zahrnuje několik z~literatury
 čerpaných algoritmů. V~prvé řadě je to algoritmus Rete, který se stará o~pattern
-matching podmínek odvozovacích pravidel proti faktům znalostní baze, tedy
+matching podmínek odvozovacích pravidel proti faktům znalostní báze, tedy
 o~zjišťování, která odvozovací pravidla je možno aplikovat v~dalším kroku výpočtu.
 Poté je použito několik velice jednoduchých algoritmů pro výběr pravidla, jenž
 bude jako další aktivováno.
@@ -10,9 +10,9 @@ bude jako další aktivováno.
 \subsection{Algoritmus Rete}
 Algoritmus Rete (materiály nabízí několik alternativ čtení názvu tohoto algoritmu,
 mezi nimi \uv{reet} [rýt] či \uv{ree-tee} [rýtý] \cite{doorenbos}) kontroluje
-splnění podmínek inferenčních pravidel fakty znalostní baze. Použití naivního
+splnění podmínek inferenčních pravidel fakty znalostní báze. Použití naivního
 přístupu, tedy zkoušení platnosti všech podmínek proti všem faktům při každé
-změně znalostní baze není možné, neboť tato kontrola se již při několika stovkách
+změně znalostní báze není možné, neboť tato kontrola se již při několika stovkách
 faktů či desítkách pravidel (závisí samozřejmě na výkonu výpočetního hardware, jeho
 zatížení, atd.) stává příliš časově náročnou.
 
@@ -71,7 +71,7 @@ Pro lepší představu uvedu příklad. Mějme následující pravidlo:
   (modify (in :object robot :location ?z)
   (in :object robot :location ?y)))
 \end{verbatim}
-Kořen alfa sítě tedy bude mít dva potomky - pro šablony \verb|goal|
+Kořen alfa sítě tedy bude mít dva potomky -- pro šablony \verb|goal|
 a \verb|in| (ignorujme prozatím, že třetí podmínka pravidla je negovaná,
 to řeší až beta část dataflow sítě). Z~uzlu pro šablonu \verb|goal|
 povede hrana rovnou do alfa-paměti, všechny zbylé atomy podmínky jsou
@@ -103,10 +103,10 @@ inferenčního pravidla (tzv. \emph{partial match}). Máme-li tedy pravidlo
 o~čtyřech podmínkách, budeme pro něj potřebovat čtyři paměťové beta-uzly.
 První uzel uchovává jednomístné tokeny s~fakty, které prošly první podmínkou.
 Neliší se tedy příliš od paměťového alfa-uzlu. Druhý už ale uchovává tokeny
-s~dvojicí faktů - faktem, jenž prošel první podmínkou a faktem, který prošel
+s~dvojicí faktů -- faktem, jenž prošel první podmínkou a faktem, který prošel
 druhou. Takto se fakta v~tokenech nabalují, až máme konečně v~posledním uzlu
 token stejné délky, jako je počet podmínek inferenčního pravidla. Tento uzel
-označíme jako produkční - je-li aktivován tokenem, našli jsme kompletní
+označíme jako produkční -- je-li aktivován tokenem, našli jsme kompletní
 shodu faktů s~podmínkami pravidal (\emph{complete match}), v~tuto chvíli
 algoritmus Rete ohlásí nalezení shody (dvojice pravidlo-token) prostředí
 a ta je přidána do seznamu aktivací.
@@ -115,7 +115,7 @@ Hybnou silou beta síťě jsou spojovací uzly (tzv. \emph{join node}). Ty
 testují konzistenci vazeb proměnných mezi fakty splňujícími jednotlivé
 podmínky inferenčního pravidla. Jsou-li vazby konzistentní, uzel vytvoří
 nový token a aktivuje jím přidružený paměťový beta-uzel. Spojovací uzel
-může být aktivován dvěma způsoby - buď nově přidaným či ubraným
+může být aktivován dvěma způsoby -- buď nově přidaným či ubraným
 (a konstantními testy prošlým) faktem z~paměťového alfa-uzlu (tzv.
 \emph{aktivace zprava}; toto je místo, kde beta část sítě navazuje na alfa
 část), nebo tokenem z~nadřazeného paměťového beta-uzlu (\emph{aktivace

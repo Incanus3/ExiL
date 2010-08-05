@@ -71,10 +71,10 @@ První z~nich, \verb|rete-generic-node| definuje třídu \verb|node|, která je
 základem všech uzlů dataflow sítě algoritmu. Tím je zajištěno, že každý uzel
 sítě uchovává seznam svých potomků a implementuje metody \verb|activate|
 a \verb|inactivate|, skrze něž je svým rodičem upozorňován na změny ve znalostní
-bazi. Každý typ uzlu na tyto aktivace reaguje jinak.
+bázi. Každý typ uzlu na tyto aktivace reaguje jinak.
 
 Implementace aktivací konkrétních souborů zabírá většinu kódu následujícíh dvou
-souborů - \verb|rete-alpha-part| a \verb|rete-beta-part|. Kořenem celé dataflow
+souborů -- \verb|rete-alpha-part| a \verb|rete-beta-part|. Kořenem celé dataflow
 sítě algoritmu Rete je \verb|alpha-top-node|. Ten uchovává hashovací tabulku
 jednotlivých podsítí alfa-sítě podle typu šablony faktů, které ta která síť
 testuje. Je zde navíc jedna podsíť pro fakta jednoduchá (ta nemají šablonu).
@@ -94,7 +94,7 @@ aktivaci spojovacího uzlu (\verb|beta-join-node| a \verb|beta-negative-node|)
 vůbec nehledí na konkrétní proměnné, jak by čtenář mohl očekávat. Při tvorbě
 dataflow sítě je totiž pro každý spojovací uzel vytvořen seznam objektů typu
 \verb|test|. Každý test slouží k~otestování konzistence jednoho pole aktuální
-podmínky s~předchozími podmínkami. Test obsahuje tři hodnoty - název (v~případě
+podmínky s~předchozími podmínkami. Test obsahuje tři hodnoty -- název (v~případě
 strukturovaného patternu podmínky) či index (v~případě nestrukturovaného)
 pole aktuálně testované podmínky, číslo značící, o~kolik podmínek zpět má hledat
 konzistentní pole a název či index tohoto pole.
@@ -128,7 +128,7 @@ Testování se poněkud komplikuje u~negativních spojovacích uzlů
 faktu) zkontrolovat, zde není konzistetní s~některými z~dosud prošlých faktů.
 Pokud takovou shodu nalezneme, je třeba informovat potomky, aby všechny
 tokeny s~těmito fakty ze svých proměnných odstranily. Při inaktivaci
-(odstranění faktu ze znalostní baze) je naopak třeba zkontrolovat, zda toho
+(odstranění faktu ze znalostní báze) je naopak třeba zkontrolovat, zda toho
 nebyl poslední fakt, který danému tokenu v~nesplnění testu bránil (nezapomínejme
 že je řeč o~negativních uzlech). Pokud tomu tak je, je třeba tokenem aktivovat
 potomky uzlu.
@@ -139,12 +139,12 @@ v~rodičovské beta-paměti proti všem faktům z~alfa-paměti. Toto je ale
 neúnosně časově náročné. Přidal jsem proto k~tomuto účelu do třídy \verb|token|
 ještě slot, v~němž si token v~paměti negativního spojovacího uzlu uchovává
 seznam konzistentních faktů, jež mu brání v~úspěšném nesplnění testů. Když
-je negativní uzel inaktivován odebráním faktu ze znalostní baze, stačí tedy
+je negativní uzel inaktivován odebráním faktu ze znalostní báze, stačí tedy
 jen odstranit fakt z~těchto seznamů v~tokenech a je-li po tomto odstranění
 seznam některého tokenu prázdný, může tento pokračovat dataflow sítí níže.
 
-\verb|Beta-memory-node| má kromě uchovávání tokenů ještě jednu funkci -
-slouží jako produkční uzel - lze v~něm uložit seznam pravidel, která jsou
+\verb|Beta-memory-node| má kromě uchovávání tokenů ještě jednu funkci --
+slouží jako produkční uzel -- lze v~něm uložit seznam pravidel, která jsou
 uloženými tokeny splněna. Uzel tedy v~případě aktivace novým tokenem
 zkontroluje, zda nějaká pravidla v~seznamu má a pokud ano, zavolá metodu
 \verb|add-match| a předá jí splněné pravidlo a token, jenž jeho podmínkami
@@ -175,7 +175,7 @@ vrátí. Ten je poté z~agendy odstraněn.
 \subsection{Environment}
 V~souboru \verb|environment| definuji třídu stejného jména, která pouze
 zastřešuje všechny doposud definované konstrukty. Obsahuje seznam definovaných
-šablon, znalostní bazi faktů, definované skupiny faktů, seznam pravidel
+šablon, znalostní bázi faktů, definované skupiny faktů, seznam pravidel
 a agendu. Kromě toho obsahuje instanci třídy \verb|rete|, jejíž jediným
 zajímavým prvkem je odkaz na kořen stromu dataflow sítě, seznam definovaných
 strategií a název aktuálně zvolené strategie. Posledním prvkem prostředí

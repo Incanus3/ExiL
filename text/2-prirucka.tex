@@ -17,7 +17,7 @@ dokumentace. Čtenář, který tuto číst nehodlá je může směle přeskakova
 \subsection{Použité datové struktury}
 Uživatel knihovny Exil (dále jen knihovny) se nejčasteji setká se dvěma datovými
 strukturami, jsou to fakta (třída \emph{fact}) a pravidla (třída \emph{rule}).
-Fakta znalostní baze mohou být buď jednoduchá (třída \emph{simple-fact}),
+Fakta znalostní báze mohou být buď jednoduchá (třída \emph{simple-fact}),
 specifikovaná prostým seznamem atomů (např. \verb|(on book table)|), či
 strukturovaná (třída \emph{template-fact}. Pro použití strukturovaných fakt je
 třeba nejdříve definovat šablonu makrem \verb|deftemplate| následovně:
@@ -33,7 +33,7 @@ Prvním parametrem je jméno šablony, dalším pak seznam slotů (pojmenované
 
 Pozn.: Při opakovaném volání \verb|deftemplate| se stejným jménem šablony
 dochází k~přepsání původní definice. Má-li nově definovaná šablona jiné sloty
-než šablona původní a existují-li ve znalostní bazi fakta vytvořená pomocí
+než šablona původní a existují-li ve znalostní bázi fakta vytvořená pomocí
 původní šablony, vzniká nekonzistence. Makro je tedy třeba volat s~rozmyslem.
 
 Kromě fakt se uživatel setká ještě s~tzv. \emph{patterny} (pro neznalost
@@ -46,17 +46,17 @@ faktu skončí vyhodnocení výrazu chybou.
 
 Odvozovací pravidlo je druhým stavebním kamenem expertního systému. Umožňuje
 inferenčnímu mechanismu vyvozovat ze zadaných fakt fakta nová. Pravidlo sestává
-ze dvou částí - podmínkek a aktivací. Podmínky určují, za jakých okolností je 
-pravidlo splněno fakty znalostní baze a je jej možno zařadit do seznamu pravidel
+ze dvou částí -- podmínkek a aktivací. Podmínky určují, za jakých okolností je 
+pravidlo splněno fakty znalostní báze a je jej možno zařadit do seznamu pravidel
 k~aktivaci (tento seznam budu dále označovat jako \emph{agenda}). Seznam
 aktivací je tvořen libovolným počtem lispových výrazů (jež pochopitelně mohou,
 a velmi často budou, zahrnovat i knihovnou definované metody a makra), které se
 při aktivaci pravidla vyhodnotí. Pravidlo tedy typicky při platnosti nějakých
-fakt či neplatnosti jiných přidá do znalostní baze nějaká další fakta, či
-některerá z~baze odebere.
+fakt či neplatnosti jiných přidá do znalostní báze nějaká další fakta, či
+některerá z~báze odebere.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Manipulace s~fakty znalostní baze}
-K~přidání faktu do znalostní baze souží makro \verb|assert|, přidání tedy
+\subsection{Manipulace s~fakty znalostní báze}
+K~přidání faktu do znalostní báze souží makro \verb|assert|, přidání tedy
 vypadá následovně:
 \begin{verbatim}
 (assert (on book table))
@@ -64,7 +64,7 @@ vypadá následovně:
 \end{verbatim}
 Při pokusu o~opětované přidání již existujícího faktu se nestane nic.
 
-Odebrání faktu z~baze se provádí makrem \verb|retract| se stejnou syntaxí.
+Odebrání faktu z~báze se provádí makrem \verb|retract| se stejnou syntaxí.
 Při pokusu o~odebrání neexistujícího faktu se opět nic nestane.
 
 Posledním makrem z~této skupiny je \verb|modify| to slouží k~modifikaci
@@ -75,7 +75,7 @@ faktu (jeho nahrazení jiným) a používá se takto:
 \end{verbatim}
 Toto makro je ve skutečnosti jen zkratkou pro postupné volání \verb|assert|
 a \verb|retract|. Neslouží ani tak k~ušetření zdrojového kódu, jako spíš
-ke zčitelnění aktivací pravidla - z~jeho použití je evidentní vztah dvou
+ke zčitelnění aktivací pravidla -- z~jeho použití je evidentní vztah dvou
 faktů.
 
 \subsubsection{Definice skupiny faktů}
@@ -91,10 +91,10 @@ název skupiny faktů náledovaný jejich seznamem:
         ...
   )
 \end{verbatim}
-Takto definovaná fakta se ve znalostní bazi neobjeví hned, nýbrž až po zavolání
-makra \verb|reset| (bez parametrů). Toto makro odstraní ze znalostní baze
+Takto definovaná fakta se ve znalostní bázi neobjeví hned, nýbrž až po zavolání
+makra \verb|reset| (bez parametrů). Toto makro odstraní ze znalostní báze
 všechna fakta a poté ji naplní fakty definovanými ve skupinách makrem
-\verb|deffacts|. K~pouhému vyčištění znalostní baze slouží makro \verb|clear|
+\verb|deffacts|. K~pouhému vyčištění znalostní báze slouží makro \verb|clear|
 (opět bez parametrů).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Manipulace s~odvozovacími pravidly}
@@ -114,8 +114,8 @@ symbolem \verb|=>|. Vypadá to tedy nějak takto:
 \end{verbatim}
 Jak je z~příkladu zřejmé, podmínky pravidel mohou obsahovat proměnné, jde tedy
 o~patterny. Podmínky mohou být také negované, pak se ověřuje neexistence
-odpovídajícího faktu ve znalostní bazi. Negované podmínky jsou specifikovány
-symbolem - (minus) ještě před prvním atomem (či před názvem šablony u~složených
+odpovídajícího faktu ve znalostní bázi. Negované podmínky jsou specifikovány
+symbolem '-' (minus) ještě před prvním atomem (či před názvem šablony u~složených
 patternů).
 
 Při opakovaném volání \verb|defrule| se stejným jménem pravidla dochází 
@@ -162,8 +162,8 @@ O~vestavěných strategiích budu hovořit v~následující části textu.
 \subsection{Sledování změn prostředí}
 \label{watchers}
 Poslední věcí sloužící k~zefektivnění práce s~knihovnou je možnost sledovat
-změny ve znalostní bazi či agendě. Sledovat je možno přidávání či ubíraní faktů
-do a ze znalostní baze, definice a zneplatnění pravidel a změny v~agendě.
+změny ve znalostní bázi či agendě. Sledovat je možno přidávání či ubíraní faktů
+do a ze znalostní báze, definice a zneplatnění pravidel a změny v~agendě.
 
 Sledování se zapíná makrem \verb|watch| a vypíná makrem \verb|unwatch|. Obě
 makra berou očekávají jako parametr předmět sledování, tedy jeden ze symbolů
