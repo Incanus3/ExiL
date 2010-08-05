@@ -15,26 +15,27 @@ tříd či metod. Je to kvůli snadnější orientaci při následné četbě pr
 dokumentace. Čtenář, který tuto číst nehodlá je může směle přeskakovat.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Použité datové struktury}
-Uživatel knihovny Exil (dále jen knihovny) se nejčasteji setká se dvěma datovými
-strukturami, jsou to fakta (třída \emph{fact}) a pravidla (třída \emph{rule}).
-Fakta znalostní báze mohou být buď jednoduchá (třída \emph{simple-fact}),
-specifikovaná prostým seznamem atomů (např. \verb|(on book table)|), či
-strukturovaná (třída \emph{template-fact}. Pro použití strukturovaných fakt je
-třeba nejdříve definovat šablonu makrem \verb|deftemplate| následovně:
+Uživatel knihovny \textsf{EXiL} (dále jen knihovny; ta je přílohou této práce)
+se nejčasteji setká se dvěma datovými strukturami, jsou to fakta (třída
+\emph{fact}) a pravidla (třída \emph{rule}). Fakta znalostní báze mohou být buď
+jednoduchá (třída \emph{simple-fact}), specifikovaná prostým seznamem atomů (např.
+\verb|(on book table)|), či strukturovaná (třída \emph{template-fact}. Pro
+použití strukturovaných fakt je třeba nejdříve definovat šablonu makrem
+\verb|deftemplate| následovně:
 \begin{verbatim}
 (deftemplate in (object location (ammount :default 1)))
 \end{verbatim}
-Volání makra je velice podobné volání vestavěného makra Common lispu
-\verb|defclass|, jen neobsahuje seznam tříd, neboť neposkytuje dědičnost.
-Prvním parametrem je jméno šablony, dalším pak seznam slotů (pojmenované
-části faktu) s~případnými implicitními hodnotami. Specifikace takovéhoto
- strukturovaného faktu pak vypadá takto:
+Volání makra je velice podobné volání makra \verb|defclass| systému \textsf{CLOS}
+(Common Lisp Object System), jen neobsahuje seznam nadřazených tříd, neboť neposkytuje
+dědičnost. Prvním parametrem je jméno šablony, dalším pak seznam slotů (pojmenovaných
+částí fakta) s~případnými implicitními hodnotami. Specifikace takovéhoto
+strukturovaného fakta pak vypadá např. takto:
 \verb|(in :object fridge :location kitchen)|.
 
 Pozn.: Při opakovaném volání \verb|deftemplate| se stejným jménem šablony
 dochází k~přepsání původní definice. Má-li nově definovaná šablona jiné sloty
 než šablona původní a existují-li ve znalostní bázi fakta vytvořená pomocí
-původní šablony, vzniká nekonzistence. Makro je tedy třeba volat s~rozmyslem.
+původní šablony, vzniká nekonzistence. Makro je tedy třeba používat s~rozmyslem.
 
 Kromě fakt se uživatel setká ještě s~tzv. \emph{patterny} (pro neznalost
 výstižného českého ekvivalentu se budu držet dobře zažitého výrazu anglického).
@@ -42,7 +43,7 @@ Tyto jsou faktům velmi podobné, jen se v~nich mohou vyskytovat proměnné.
 Název proměnné v~mé implementaci vždy začíná otazníkem (stejně jako v~systému
 CLIPS) a je tedy od běžného atomu jasně patrný. Patterny mohou být, stejně
 jako fakta, jednoduché či strukturované. Při snaze použít proměnnou v~popisu
-faktu skončí vyhodnocení výrazu chybou.
+fakta skončí vyhodnocení výrazu chybou.
 
 Odvozovací pravidlo je druhým stavebním kamenem expertního systému. Umožňuje
 inferenčnímu mechanismu vyvozovat ze zadaných fakt fakta nová. Pravidlo sestává
@@ -62,13 +63,13 @@ vypadá následovně:
 (assert (on book table))
 (assert (in :object fridge :location kitchen))
 \end{verbatim}
-Při pokusu o~opětované přidání již existujícího faktu se nestane nic.
+Při pokusu o~opětované přidání již existujícího fakta se nestane nic.
 
-Odebrání faktu z~báze se provádí makrem \verb|retract| se stejnou syntaxí.
-Při pokusu o~odebrání neexistujícího faktu se opět nic nestane.
+Odebrání fakta z~báze se provádí makrem \verb|retract| se stejnou syntaxí.
+Při pokusu o~odebrání neexistujícího fakta se opět nic nestane.
 
 Posledním makrem z~této skupiny je \verb|modify| to slouží k~modifikaci
-faktu (jeho nahrazení jiným) a používá se takto:
+fakta (jeho nahrazení jiným) a používá se takto:
 \begin{verbatim}
 (modify (in :object snack :location fridge)
         (in :object snack :location schoolbag))
@@ -76,12 +77,12 @@ faktu (jeho nahrazení jiným) a používá se takto:
 Toto makro je ve skutečnosti jen zkratkou pro postupné volání \verb|assert|
 a \verb|retract|. Neslouží ani tak k~ušetření zdrojového kódu, jako spíš
 ke zčitelnění aktivací pravidla -- z~jeho použití je evidentní vztah dvou
-faktů.
+fakt.
 
-\subsubsection{Definice skupiny faktů}
-Pro pohodlnější práci s~větším množstvím faktů jsem (stejně jako systém
+\subsubsection{Definice skupiny fakt}
+Pro pohodlnější práci s~větším množstvím fakt jsem (stejně jako systém
 CLIPS) implementoval makro \verb|deffacts|. Volání tohoto makra obsahuje
-název skupiny faktů náledovaný jejich seznamem:
+název skupiny fakt náledovaný jejich seznamem:
 \begin{verbatim}
 (deffacts stuff-i-ve-got-in-me-fridge
   (in :object coke :location fridge)
@@ -114,7 +115,7 @@ symbolem \verb|=>|. Vypadá to tedy nějak takto:
 \end{verbatim}
 Jak je z~příkladu zřejmé, podmínky pravidel mohou obsahovat proměnné, jde tedy
 o~patterny. Podmínky mohou být také negované, pak se ověřuje neexistence
-odpovídajícího faktu ve znalostní bázi. Negované podmínky jsou specifikovány
+odpovídajícího fakta ve znalostní bázi. Negované podmínky jsou specifikovány
 symbolem '-' (minus) ještě před prvním atomem (či před názvem šablony u~složených
 patternů).
 
@@ -162,7 +163,7 @@ O~vestavěných strategiích budu hovořit v~následující části textu.
 \subsection{Sledování změn prostředí}
 \label{watchers}
 Poslední věcí sloužící k~zefektivnění práce s~knihovnou je možnost sledovat
-změny ve znalostní bázi či agendě. Sledovat je možno přidávání či ubíraní faktů
+změny ve znalostní bázi či agendě. Sledovat je možno přidávání či ubíraní fakt
 do a ze znalostní báze, definice a zneplatnění pravidel a změny v~agendě.
 
 Sledování se zapíná makrem \verb|watch| a vypíná makrem \verb|unwatch|. Obě
