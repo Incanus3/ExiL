@@ -26,8 +26,9 @@ použití strukturovaných fakt je třeba nejdříve definovat šablonu makrem
 (deftemplate in (object location (ammount :default 1)))
 \end{verbatim}
 Volání makra je velice podobné volání makra \verb|defclass| systému \textsf{CLOS}
-(Common Lisp Object System), jen neobsahuje seznam nadřazených tříd, neboť neposkytuje
-dědičnost. Prvním parametrem je jméno šablony, dalším pak seznam slotů (pojmenovaných
+(Common Lisp Object System), jen neobsahuje seznam nadřazených tříd, neboť makro
+\verb|deftemplate| neumožnuje novým šablonám dědit z~již existujících.
+Prvním parametrem je jméno šablony, dalším pak seznam slotů (pojmenovaných
 částí fakta) s~případnými implicitními hodnotami. Specifikace takovéhoto
 strukturovaného fakta pak vypadá např. takto:
 \verb|(in :object fridge :location kitchen)|.
@@ -41,11 +42,11 @@ Kromě fakt se uživatel setká ještě s~tzv. \emph{patterny} (pro neznalost
 výstižného českého ekvivalentu se budu držet dobře zažitého výrazu anglického).
 Tyto jsou faktům velmi podobné, jen se v~nich mohou vyskytovat proměnné.
 Název proměnné v~mé implementaci vždy začíná otazníkem (stejně jako v~systému
-CLIPS) a je tedy od běžného atomu jasně patrný. Patterny mohou být, stejně
+\textsf{CLIPS}) a lze jej tedy od běžného atomu jasně odlišit. Patterny mohou být, stejně
 jako fakta, jednoduché či strukturované. Při snaze použít proměnnou v~popisu
 fakta skončí vyhodnocení výrazu chybou.
 
-Odvozovací pravidlo je druhým stavebním kamenem expertního systému. Umožňuje
+Odvozovací (\emph{inferenční}) pravidlo (třída \emph{rule}) je druhým stavebním kamenem expertního systému. Umožňuje
 inferenčnímu mechanismu vyvozovat ze zadaných fakt fakta nová. Pravidlo sestává
 ze dvou částí -- podmínkek a aktivací. Podmínky určují, za jakých okolností je 
 pravidlo splněno fakty znalostní báze a je jej možno zařadit do seznamu pravidel
@@ -57,7 +58,7 @@ fakt či neplatnosti jiných přidá do znalostní báze nějaká další fakta,
 některerá z~báze odebere.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Manipulace s~fakty znalostní báze}
-K~přidání faktu do znalostní báze souží makro \verb|assert|, přidání tedy
+K~přidání faktu do znalostní báze slouží makro \verb|assert|, přidání tedy
 vypadá následovně:
 \begin{verbatim}
 (assert (on book table))
@@ -81,7 +82,7 @@ fakt.
 
 \subsubsection{Definice skupiny fakt}
 Pro pohodlnější práci s~větším množstvím fakt jsem (stejně jako systém
-CLIPS) implementoval makro \verb|deffacts|. Volání tohoto makra obsahuje
+\textsf{CLIPS}) implementoval makro \verb|deffacts|. Volání tohoto makra obsahuje
 název skupiny fakt náledovaný jejich seznamem:
 \begin{verbatim}
 (deffacts stuff-i-ve-got-in-me-fridge
@@ -129,7 +130,7 @@ parametrem je název pravidla.
 Jakmile jsou systému zadána inicializační fakta a pravidla, je třeba spustit
 výpočet. Ten pak probíhá v~kolech, kde se střídají dvě akce. Nejdříve inferenční
 machanismus zjistí, která pravidla mají splněné podmínky a jakým faktem je ta
-která podmínka splněna. Následně je ze seznamu splněných pravidel (\emph{agendy}
+která podmínka splněna. Následně je ze seznamu splněných pravidel (\emph{agendy})
 vybráno pravidlo a toto je aktivováno. Po vyhodnocení aktivací pravidla se opět
 aktualizuje seznam splněných pravidel atd.
 
@@ -167,7 +168,7 @@ změny ve znalostní bázi či agendě. Sledovat je možno přidávání či ub�
 do a ze znalostní báze, definice a zneplatnění pravidel a změny v~agendě.
 
 Sledování se zapíná makrem \verb|watch| a vypíná makrem \verb|unwatch|. Obě
-makra berou očekávají jako parametr předmět sledování, tedy jeden ze symbolů
+makra očekávají jako parametr předmět sledování, tedy jeden ze symbolů
 \verb|facts|, \verb|rules| či \verb|activations|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Příklad práce s~knihovnou}

@@ -12,7 +12,7 @@ Algoritmus Rete (materiály nabízí několik alternativ čtení názvu tohoto a
 mezi nimi \uv{reet} [rýt] či \uv{ree-tee} [rýtý] \cite{doorenbos}) kontroluje
 splnění podmínek inferenčních pravidel fakty znalostní báze. Použití naivního
 přístupu, tedy zkoušení platnosti všech podmínek proti všem faktům při každé
-změně znalostní báze není možné, neboť tato kontrola se již při několika stovkách
+změně znalostní báze, není možné, neboť tato kontrola se již při několika stovkách
 faktů či desítkách pravidel (závisí samozřejmě na výkonu výpočetního hardware, jeho
 zatížení, atd.) stává příliš časově náročnou.
 
@@ -31,8 +31,8 @@ sítě Rete algoritmu nazýváme aktivací. Některé uzly mohou být aktivován
 i více způsoby.
 
 Pozn.: V~této práci budu slovo potomek používat v~neživotném tvaru. Není to
-pravděpodobně zcela gramaticky korektní, ovšem označní \uv{ti potomci},
-mluvíme-li o~uzlech dataflow sítě, mi přijde poněkud směšné.
+pravděpodobně zcela gramaticky korektní, ovšem označení \uv{ti potomci},
+mluvíme-li o~uzlech dataflow sítě, zdá se mi poněkud směšným.
 
 \begin{figure}[h]
 \centerline{\epsfbox{network.eps}}
@@ -49,10 +49,10 @@ představí.
 Alfa část sítě řeší konstantní porovnávání přidávaných faktů s~patterny
 v~podmínkách pravidel, ignoruje tedy vazby proměnných a jejich konzistenci.
 Jde v~podstatě o~strom, jehož každý uzel testuje právě jeden atom faktu.
-Kořen alfa sítě je aktivován faktem, faktem aktivuje všechny své potomky.
+Je-li kořen alfa sítě aktivován faktem, aktivuje jím i všechny své potomky.
 Tyto už provádějí testy jednotlivých atomů, má-li atom požadovanou hodnotu,
 předá uzel fakt svým potomkům a ty pokračují v~testování. Projde-li fakt
-všemi konstatními testy, aktivuje poslední testovací uzel fakterm k~němu
+všemi konstatními testy, aktivuje poslední testovací uzel faktem k~němu
 přidružený paměťový alfa-uzel. Ten fakt uloží do své paměti a aktivuje
 jím své potomky v~beta částí sítě.
 
@@ -77,7 +77,7 @@ to řeší až beta část dataflow sítě). Z~uzlu pro šablonu \verb|goal|
 povede hrana rovnou do alfa-paměti, všechny zbylé atomy podmínky jsou
 totiž proměnné. Z~uzlu pro šablonu povede také hrana do další alfa
 paměti, neboť totéž platí pro druhou podmínku. Bude mít ale i dalšího
-potomka a to testovací uzel, zda je slot \verb|object| roven hodnotě
+potomka a to uzel testující, zda je slot \verb|object| roven hodnotě
 \verb|robot|. Ten pak už aktivuje poslední paměťový alfa-uzel.
 
 Máme tedy dva typové uzly (pro šablony \verb|goal| a \verb|in|, jeden
@@ -106,9 +106,9 @@ Neliší se tedy příliš od paměťového alfa-uzlu. Druhý už ale uchovává
 s~dvojicí faktů -- faktem, jenž prošel první podmínkou a faktem, který prošel
 druhou. Takto se fakta v~tokenech nabalují, až máme konečně v~posledním uzlu
 token stejné délky, jako je počet podmínek inferenčního pravidla. Tento uzel
-označíme jako produkční -- je-li aktivován tokenem, našli jsme kompletní
-shodu faktů s~podmínkami pravidal (\emph{complete match}), v~tuto chvíli
-algoritmus Rete ohlásí nalezení shody (dvojice pravidlo-token) prostředí
+označíme jako produkční -- je-li aktivován tokenem, nalezli jsme kompletní
+shodu skupiny faktů s~podmínkami pravidla (\emph{complete match}). V~tuto chvíli
+algoritmus Rete ohlásí nalezení shody (dvojice pravidlo--token) prostředí
 a ta je přidána do seznamu aktivací.
 
 Hybnou silou beta síťě jsou spojovací uzly (tzv. \emph{join node}). Ty
@@ -119,15 +119,15 @@ může být aktivován dvěma způsoby -- buď nově přidaným či ubraným
 (a konstantními testy prošlým) faktem z~paměťového alfa-uzlu (tzv.
 \emph{aktivace zprava}; toto je místo, kde beta část sítě navazuje na alfa
 část), nebo tokenem z~nadřazeného paměťového beta-uzlu (\emph{aktivace
-zleva}). V~obou případech ale spojovací uzel prohledá druhou paměť toho
+zleva}). V~obou případech ale spojovací uzel prohledá paměť toho
 druhého rodičovského uzlu pro získání konzistentních tokenů (resp. faktů)
 a při nalezení shody aktivuje potomky.
-nnn
+
 Speciálním případem spojovacích uzlů jsou uzly s~negativními testy. Tyto
 mohou být, stejně jako běžné spojovací uzly, aktivovány z~obou stran.
 Podstatný rozdíl je ale v~tom, že negativní spojovací uzel aktivuje své
 potomky jedině tehdy, nenalezl-li pro daný token žádný konzistentní fakt
-ve paměti svého rodičovského alfa-uzlu.
+v~paměti svého rodičovského alfa-uzlu.
 
 Opět uvedu příklad. Zůstaňme u~pravidla z~příkladu předchozího. Alfa část
 dataflow sítě pro uvedené pravidlo má tři paměťové uzly. V~beta části
@@ -135,7 +135,7 @@ budeme potřebovat tři spojovací uzly (z~nichž jeden bude negativní).
 První bude testovat konzistenci vazeb mezi prvními dvěma podmínkami
 pravidla, druhý mezi třetí podmínkou a prvními dvěma, atd. Druhý i třetí
 spojovací uzel bude mít zprava připojen týž paměťový alfa-uzel (opět
-recyklace uzlu, tentokrát dokonce v~rámci jednoho pravidla). Ke každému
+\uv{recyklace} uzlu, tentokrát dokonce v~rámci jednoho pravidla). Ke každému
 spojovacímu uzlu je jako potomek připojen paměťový beta-uzel, který
 uchovává tokeny s~částečnými (v~prvních třech případech) či úplnými
 (ve čtvrtém případě) shodami.

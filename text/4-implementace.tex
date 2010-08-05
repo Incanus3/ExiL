@@ -34,7 +34,7 @@ jsem během vývoje pro zjednodušení další práce napsal.
 poskytuje uživateli. Tyto jsou z~package \verb|exil| exportovány, lze je
 tedy volat bez nutnosti vstupu do package (před název je třeba připojit
 ``\verb|exil:|'').
-\item Ve zbytku souborů definuji jednotlivé třídy a metdody. Kód v~každém ze
+\item Ve zbytku souborů definuji jednotlivé třídy a metody. Kód v~každém ze
 souborů staví na konstruktech definovaných v~předchozích souborech. Prostředí
 (třída \verb|environment|), definovaná ve stejnojmenném souboru nakonec všechny
 dříve definované třídy zakomponuje do jednoho celku a vytvoří celek, na kterém
@@ -55,7 +55,7 @@ patternu) určí, jde-li o~fakt jednoduchý či strukturovaný.
 \subsection{Facts a Patterns}
 Definice základních datových struktur \verb|fact| a \verb|pattern| a od nich
 odvozených \verb|simple-fact|, \verb|template-fact|, \verb|simple-pattern|
-a \verb|template-pattern|. Nevyžaduje hlubší popis.
+a \verb|template-pattern|. Nevyžaduje hlubšího popisu.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Rules}
 Definice třídy \verb|rule| pro uchování inferenčních pravidel. Třída nese
@@ -82,13 +82,13 @@ testuje. Je zde navíc jedna podsíť pro fakta jednoduchá (ta nemají šablonu
 Jakmile je určena podsíť, jíž bude nově přidaný (resp. odebraný) fakt procházet,
 je aktivovaný příslušný \uv{podkořen} (\verb|alpha-subtop-node|), ten už má
 potomky typu \verb|alpha-test-node|. Při průchodu každým testovacím uzlem je
-otestován jeden atom faktu. Poslední testovací uzel předá při kladném výsledku
+otestován jeden atom fakta. Poslední testovací uzel předá při kladném výsledku
 testu fakt paměťovému uzlu (\verb|alpha-memory-node|), ten si jej uloží
 a pošle ho beta části sítě.
 
 V~souboru \verb|rete-beta-part| je kromě jednotlivých typů uzlů definována třída
 \verb|token|, uchovávající skupinu faktů prošlých podmínkami inferenčního 
-pravidla. Relativně zajímavým prvkej je zde také přístup k~testování  kozistence
+pravidla. Relativně zajímavým prvkem je zde také přístup k~testování  kozistence
 vazeb proměnných mezi jednotlivými podmínkami pravidla. Algoritmus zde při
 aktivaci spojovacího uzlu (\verb|beta-join-node| a \verb|beta-negative-node|)
 vůbec nehledí na konkrétní proměnné, jak by čtenář mohl očekávat. Při tvorbě
@@ -106,7 +106,7 @@ Pro lepší porozumnění uvedu příklad. Mějme pravidlo
   (red ?y)
   (on ?x ?y)
 =>
-  ; zde budou aktivace)
+  ; aktivace nas nezajimaji)
 \end{verbatim}
 a sestavme testy pro \verb|beta-join-node| testující konzistenci mezi vazbami
 proměnných ve třetí podmínce proti podmínkám předchozím. Podmínky jsou typu
@@ -121,14 +121,14 @@ hodnoty \verb|(2 1 1)|.
 Jak tedy vidíme, hotový \verb|beta-join-node| na proměnné už vůbec nehledí,
 jen mechanicky vykoná testy a skončí-li všechny úspěšně, přidá k~tokenu
 fakt prošlý aktuální podmínkou a aktivuje jím své potomky (ty jsou typu
-\verb|beta-memory-node|.
+\verb|beta-memory-node|).
 
 Testování se poněkud komplikuje u~negativních spojovacích uzlů
 (\verb|beta-negative-node|). Zde musíme při každé aktivaci (přidání nového
-faktu) zkontrolovat, zde není konzistetní s~některými z~dosud prošlých faktů.
+faktu) zkontrolovat, zde není konzistetní s~některými z~dosud prošlých tokenů.
 Pokud takovou shodu nalezneme, je třeba informovat potomky, aby všechny
 tokeny s~těmito fakty ze svých proměnných odstranily. Při inaktivaci
-(odstranění faktu ze znalostní báze) je naopak třeba zkontrolovat, zda toho
+(odstranění faktu ze znalostní báze) je naopak třeba zkontrolovat, zda to
 nebyl poslední fakt, který danému tokenu v~nesplnění testu bránil (nezapomínejme
 že je řeč o~negativních uzlech). Pokud tomu tak je, je třeba tokenem aktivovat
 potomky uzlu.
@@ -139,7 +139,7 @@ v~rodičovské beta-paměti proti všem faktům z~alfa-paměti. Toto je ale
 neúnosně časově náročné. Přidal jsem proto k~tomuto účelu do třídy \verb|token|
 ještě slot, v~němž si token v~paměti negativního spojovacího uzlu uchovává
 seznam konzistentních faktů, jež mu brání v~úspěšném nesplnění testů. Když
-je negativní uzel inaktivován odebráním faktu ze znalostní báze, stačí tedy
+je negativní uzel inaktivován odebráním faktu ze znalostní báze, stačí
 jen odstranit fakt z~těchto seznamů v~tokenech a je-li po tomto odstranění
 seznam některého tokenu prázdný, může tento pokračovat dataflow sítí níže.
 
@@ -153,7 +153,7 @@ prošel. Tento pár (označovaný jako \verb|match|) je poté přidán k~agendě
 \subsection{Matches}
 Soubor \verb|matches| definuje třídu \verb|match|. Dokud jsem nezačal
 implementovat různé strategie pro výběr pravidla k~aktivaci, ukládal jsem
-v~agendě jen (pravidlo . token) a této třídy nebylo třeba. Některé strategie ale
+v~agendě jen páry (pravidlo . token) a této třídy nebylo třeba. Některé strategie ale
 při výběru pravidla zkoumají, kdy bylo pravidlo na agendu přidáno. To si
 vyžádalo definici vlastní třídy \verb|match|, která tuto informaci kromě
 pravidla a tokenu uchovává.
@@ -176,8 +176,8 @@ vrátí. Ten je poté z~agendy odstraněn.
 V~souboru \verb|environment| definuji třídu stejného jména, která pouze
 zastřešuje všechny doposud definované konstrukty. Obsahuje seznam definovaných
 šablon, znalostní bázi faktů, definované skupiny faktů, seznam pravidel
-a agendu. Kromě toho obsahuje instanci třídy \verb|rete|, jejíž jediným
-zajímavým prvkem je odkaz na kořen stromu dataflow sítě, seznam definovaných
+a agendu. Kromě toho obsahuje instanci třídy \verb|rete| (jejíž jediným
+zajímavým prvkem je odkaz na kořen stromu dataflow sítě) seznam definovaných
 strategií a název aktuálně zvolené strategie. Posledním prvkem prostředí
 je seznam aktuálně aktivních \emph{watcherů}, tedy sledovaných objektů
 (viz \ref{watchers}).
