@@ -1,4 +1,4 @@
-(in-package :exil)
+
 
 #|
 (deffacts blah
@@ -169,9 +169,11 @@
 (print-memories)
 
 (run)
+(pprint (facts))
 
 (completely-reset-environment)
 
+POSTUP:
 1)
 (in :obj robot :loc A)
 (in :obj box :loc B)

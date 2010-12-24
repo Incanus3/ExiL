@@ -13,9 +13,11 @@
 			 collect (field->slot-designator field)))))
        (add-template ,template))))
 
-(defmacro assert (fact-spec)
+(defmacro assert (&rest fact-specs)
   "Add fact into working memory"
-  `(assert% ',fact-spec))
+  (let ((fact-spec (gensym "fact-spec")))
+    `(dolist (,fact-spec ',fact-specs)
+       (assert% ,fact-spec))))
 
 (defmacro retract (fact-spec)
   "Remove fact from working memory"

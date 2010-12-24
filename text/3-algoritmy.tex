@@ -80,7 +80,7 @@ paměti, neboť totéž platí pro druhou podmínku. Bude mít ale i dalšího
 potomka a to uzel testující, zda je slot \verb|object| roven hodnotě
 \verb|robot|. Ten pak už aktivuje poslední paměťový alfa-uzel.
 
-Máme tedy dva typové uzly (pro šablony \verb|goal| a \verb|in|, jeden
+Máme tedy dva typové uzly (pro šablony \verb|goal| a \verb|in|), jeden
 testovací uzel a tři uzly paměťové. To zatím není tak působivé,
 uvědomme si ale, že definujeme-li další pravidlo, které bude mít
 některé podmínky stejné jako výše uvedené, žádné uzly nám pro tyto
@@ -153,7 +153,7 @@ prochází podmínky pravidla, vytváří (či recykluje) pro každou paměťov�
 beta-uzel a spojovací beta-uzel, který napojí na následující paměťový beta-uzel.
 Ke každému spojovacímu uzlu také vytvoří (či plně nebo částečně recykluje)
 cestu v~alfa části sítě. Poslední paměťový uzel označí jako produkční
-a uloží v~něm pravidlo aby mohlo být při splnění všech podmínek předáno
+a uloží v~něm pravidlo, aby mohlo být při splnění všech podmínek předáno
 spolu s~tokenem zpět prostředí a zařazeno do agendy.
 
 Při odstranění pravidla ze systému je pravidlo odstraněno také z~odpovídajícího

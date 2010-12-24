@@ -97,7 +97,7 @@ dataflow sítě je totiž pro každý spojovací uzel vytvořen seznam objektů 
 podmínky s~předchozími podmínkami. Test obsahuje tři hodnoty -- název (v~případě
 strukturovaného patternu podmínky) či index (v~případě nestrukturovaného)
 pole aktuálně testované podmínky, číslo značící, o~kolik podmínek zpět má hledat
-konzistentní pole a název či index tohoto pole.
+konzistentní pole, a název či index tohoto pole.
 
 Pro lepší porozumnění uvedu příklad. Mějme pravidlo
 \begin{verbatim}
@@ -125,7 +125,7 @@ fakt prošlý aktuální podmínkou a aktivuje jím své potomky (ty jsou typu
 
 Testování se poněkud komplikuje u~negativních spojovacích uzlů
 (\verb|beta-negative-node|). Zde musíme při každé aktivaci (přidání nového
-faktu) zkontrolovat, zde není konzistetní s~některými z~dosud prošlých tokenů.
+faktu) zkontrolovat, zde není konzistentní s~některými z~dosud prošlých tokenů.
 Pokud takovou shodu nalezneme, je třeba informovat potomky, aby všechny
 tokeny s~těmito fakty ze svých proměnných odstranily. Při inaktivaci
 (odstranění faktu ze znalostní báze) je naopak třeba zkontrolovat, zda to
@@ -162,7 +162,7 @@ pravidla a tokenu uchovává.
 Metody definované v~souboru \verb|activations| řeší samotnou aktivaci pravidla.
 Výrazy v~seznamu aktivací totiž není možné bez předchozí úpravy vyhodnotit,
 neboť velice často obsahují proměnné navázané v~podmínkách. Je tedy třeba
-z~kombinace seznamu podmínek pravidla a tokenu, který pravidlo splnil dostat
+z~kombinace seznamu podmínek pravidla a tokenu, který pravidlo splnil, dostat
 vazby těchto proměnných. Proměnné v~aktivacích jsou poté nahrazeny takto
 zjištěnými atomy a teprve tehdy je možno aktivace vyhodnotit.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -39,27 +39,45 @@
   (let ((env (gethash (symbol-name name) *environments*)))
     (when env (setf *current-environment* env))))
 
+(defmacro exil-env-reader (slot-name)
+  `(progn
+     ,(unless (equalp slot-name 'agenda)
+	      `(defgeneric ,slot-name (&optional environment)))
+     (defmethod ,slot-name (&optional (environment *current-environment*))
+       (slot-value environment ',slot-name))))
+
+(defmacro exil-env-writer (slot-name)
+  `(defsetf ,slot-name (&optional (environment *current-environment*)) (value)
+     `(setf (slot-value ,environment ',',slot-name) ,value)))
+
 ;; creates reader function <slot-name> and writer function set-<slot-name>
 ;; for the environment class, also creates setf macro
 ;; i used this instead of easier :accessor possibility, for this way
 ;; i could supply a default value for the environment parameter
 (defmacro exil-env-accessor (slot-name)
   `(progn
-     ,(unless (equalp slot-name 'agenda)
-	      `(defgeneric ,slot-name (&optional environment)))
-     (defmethod ,slot-name (&optional (environment *current-environment*))
-       (slot-value environment ',slot-name))
-     (defsetf ,slot-name (&optional (environment *current-environment*)) (value)
-       `(setf (slot-value ,environment ',',slot-name) ,value))))
+     (exil-env-reader ,slot-name)
+     (exil-env-writer ,slot-name)))
 
 (defmacro exil-env-accessors (&rest slot-names)
   `(progn ,@(loop for slot-name in slot-names
 	       collect `(exil-env-accessor ,slot-name))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors facts fact-groups templates rules rete agenda
-		      strategies current-strategy-name watchers))
+  (exil-env-accessors fact-groups templates rules rete agenda
+		      strategies current-strategy-name watchers)
+  (exil-env-writer facts))
 ;; rete should be removed after proper DEBUG
+
+;; should support environment specification, but don't know, how to combine
+;; &optional and &rest, ask someone smarter
+(defmethod facts (&rest fact-nums)
+  (let ((facts (slot-value *current-environment* 'facts))
+	 ;; workaround to at least ignore the environment argument
+	(fact-nums (delete-if-not #'numberp fact-nums)))
+    (if fact-nums
+	(mapcar (lambda (num) (nth num facts)) fact-nums)
+	facts)))
 
 (defun add-fact (fact &optional (environment *current-environment*))
   (when (nth-value 1 (ext-pushnew fact (facts environment) :test #'fact-equal-p))

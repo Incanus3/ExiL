@@ -1,0 +1,2 @@
+- assert extended to accept more than one fact at a time
+- 
