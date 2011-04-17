@@ -1,0 +1,14 @@
+Source: albert
+Section: devel
+Priority: optional
+Maintainer: Kevin M. Rosenberg <kmr@debian.org>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+
+Package: albert
+Architecture: any
+Depends: ${shlibs:Depends}, common-lisp-controller (>= 3.47), docbook-dsssl
+Recommends: jade|openjade
+Description: Common Lisp -> DocBook documenter
+ This package provides a relatively simple CL -> DocBook documenter
+ that is fairly similar to e.g javadoc.

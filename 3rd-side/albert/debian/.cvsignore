@@ -1,0 +1,6 @@
+*.debhelper
+albert
+files
+*substvars
+tmp
+

@@ -1,0 +1,10 @@
+*.la
+.libs
+*.lo
+*.o
+.deps
+xml2esis
+xml2sexp
+alb_xml2esis
+alb_xml2sexp
+

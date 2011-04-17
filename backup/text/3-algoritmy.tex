@@ -1,0 +1,183 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Použité algoritmy}
+Přiložená implementace expertního systému zahrnuje několik z~literatury
+čerpaných algoritmů. V~prvé řadě je to algoritmus Rete, který se stará o~pattern
+matching podmínek odvozovacích pravidel proti faktům znalostní báze, tedy
+o~zjišťování, která odvozovací pravidla je možno aplikovat v~dalším kroku výpočtu.
+Poté je použito několik velice jednoduchých algoritmů pro výběr pravidla, jenž
+bude jako další aktivováno.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Algoritmus Rete}
+Algoritmus Rete (materiály nabízí několik alternativ čtení názvu tohoto algoritmu,
+mezi nimi \uv{reet} [rýt] či \uv{ree-tee} [rýtý] \cite{doorenbos}) kontroluje
+splnění podmínek inferenčních pravidel fakty znalostní báze. Použití naivního
+přístupu, tedy zkoušení platnosti všech podmínek proti všem faktům při každé
+změně znalostní báze, není možné, neboť tato kontrola se již při několika stovkách
+faktů či desítkách pravidel (závisí samozřejmě na výkonu výpočetního hardware, jeho
+zatížení, atd.) stává příliš časově náročnou.
+
+Algoritmus pracuje na základě dataflow sítě (či chcete-li sítě toku dat),
+kterou průběžne konstruuje a upravuje při každém přidání či odebrání
+inferenčního pravidla. Přepočet splněných pravidel algoritmem Rete je o~tolik
+rychlejší díky tomu, že tato síť uchovává v~každém uzlu výsledky z~minulých
+výpočtů a nově přidaný (či odebraný) fakt touto sítí jen velice rychle
+\uv{proteče} a aktualizuje výsledky jen ve velmi malé části uzlů.
+
+Dataflow síť algoritmu je z~pohledu teorie grafů spojitý orientovaný graf.
+Máme-li dva uzly a orientovanou hranu, která je spojuje, budu uzel, z~nějž
+hrana vede, označovat jako rodiče a uzel, do nějž vede, jako potomka.
+Síť je tvořena dvěma částmi označovanými jako alfa a beta. Navštívení uzlu
+sítě Rete algoritmu nazýváme aktivací. Některé uzly mohou být aktivovány
+i více způsoby.
+
+Pozn.: V~této práci budu slovo potomek používat v~neživotném tvaru. Není to
+pravděpodobně zcela gramaticky korektní, ovšem označení \uv{ti potomci},
+mluvíme-li o~uzlech dataflow sítě, zdá se mi poněkud směšným.
+
+\begin{figure}[h]
+\centerline{\epsfbox{network.eps}}
+\caption{Dataflow síť Rete algoritmu\cite{rete}}
+\label{network}
+\end{figure}
+
+Na obrázku \ref{network} je znázorněna dataflow síť Rete algoritmu.
+Pokud by ovšem mělo znázornění odpovídat používané terminologii, měla
+by být alfa část sítě na pravé straně. To si ale čtenář jistě snadno
+představí.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Alfa síť}
+Alfa část sítě řeší konstantní porovnávání přidávaných faktů s~patterny
+v~podmínkách pravidel, ignoruje tedy vazby proměnných a jejich konzistenci.
+Jde v~podstatě o~strom, jehož každý uzel testuje právě jeden atom faktu.
+Je-li kořen alfa sítě aktivován faktem, aktivuje jím i všechny své potomky.
+Tyto už provádějí testy jednotlivých atomů, má-li atom požadovanou hodnotu,
+předá uzel fakt svým potomkům a ty pokračují v~testování. Projde-li fakt
+všemi konstatními testy, aktivuje poslední testovací uzel faktem k~němu
+přidružený paměťový alfa-uzel. Ten fakt uloží do své paměti a aktivuje
+jím své potomky v~beta částí sítě.
+
+Kořen alfa části sítě může ještě rozlišovat typ faktu (jde-li o~fakt
+jednoduchý či složený, ve druhém případě pak typ šablony). A~podle toho
+aktivovat faktem jen část potomků.
+
+Pro lepší představu uvedu příklad. Mějme následující pravidlo:
+\begin{verbatim}
+(defrule move
+  (goal :object ?x :from ?y)
+  (in :object ?x :location ?y)
+  (- in :object robot :location ?y)
+  (in :object robot :location ?z)
+  =>
+  (modify (in :object robot :location ?z)
+  (in :object robot :location ?y)))
+\end{verbatim}
+Kořen alfa sítě tedy bude mít dva potomky -- pro šablony \verb|goal|
+a \verb|in| (ignorujme prozatím, že třetí podmínka pravidla je negovaná,
+to řeší až beta část dataflow sítě). Z~uzlu pro šablonu \verb|goal|
+povede hrana rovnou do alfa-paměti, všechny zbylé atomy podmínky jsou
+totiž proměnné. Z~uzlu pro šablonu povede také hrana do další alfa
+paměti, neboť totéž platí pro druhou podmínku. Bude mít ale i dalšího
+potomka a to uzel testující, zda je slot \verb|object| roven hodnotě
+\verb|robot|. Ten pak už aktivuje poslední paměťový alfa-uzel.
+
+Máme tedy dva typové uzly (pro šablony \verb|goal| a \verb|in|), jeden
+testovací uzel a tři uzly paměťové. To zatím není tak působivé,
+uvědomme si ale, že definujeme-li další pravidlo, které bude mít
+některé podmínky stejné jako výše uvedené, žádné uzly nám pro tyto
+podmínky nepřibudou. A~budou-li podmínky alespoň podobné, přibudou
+jen testovací uzly pro atomy patternu, které se budou lišit.
+
+Zde je možno pozorovat první z~výhod oproti naivnímu přístupu. Totiž
+máme-li pravidla se stejnými či podobnými podmínkami, velká část testů
+se provádí jen jednou, což nám markantně snižuje časovou náročnost výpočtu.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Beta síť}
+Beta část sítě je opět tvořena několika typy uzlů. Kromě uzlů paměťových
+jsou zde uzly, které testují konzistenci vazeb proměnných mezi jednotlivými
+podmínkami inferenčního pravidla, uzly negativních testů a produkční uzly.
+
+Paměťové beta-uzly už neuchovávají jednotlivá fakta, jako je tomu v~alfa
+části dataflow sítě, nýbrž tzv. \emph{tokeny}, tedy skupiny faktů. Každý
+paměťový uzel udržuje seznam tokenů, jimiž byly splněny dosavadní podmínky
+inferenčního pravidla (tzv. \emph{partial match}). Máme-li tedy pravidlo
+o~čtyřech podmínkách, budeme pro něj potřebovat čtyři paměťové beta-uzly.
+První uzel uchovává jednomístné tokeny s~fakty, které prošly první podmínkou.
+Neliší se tedy příliš od paměťového alfa-uzlu. Druhý už ale uchovává tokeny
+s~dvojicí faktů -- faktem, jenž prošel první podmínkou a faktem, který prošel
+druhou. Takto se fakta v~tokenech nabalují, až máme konečně v~posledním uzlu
+token stejné délky, jako je počet podmínek inferenčního pravidla. Tento uzel
+označíme jako produkční -- je-li aktivován tokenem, nalezli jsme kompletní
+shodu skupiny faktů s~podmínkami pravidla (\emph{complete match}). V~tuto chvíli
+algoritmus Rete ohlásí nalezení shody (dvojice pravidlo--token) prostředí
+a ta je přidána do seznamu aktivací.
+
+Hybnou silou beta síťě jsou spojovací uzly (tzv. \emph{join node}). Ty
+testují konzistenci vazeb proměnných mezi fakty splňujícími jednotlivé
+podmínky inferenčního pravidla. Jsou-li vazby konzistentní, uzel vytvoří
+nový token a aktivuje jím přidružený paměťový beta-uzel. Spojovací uzel
+může být aktivován dvěma způsoby -- buď nově přidaným či ubraným
+(a konstantními testy prošlým) faktem z~paměťového alfa-uzlu (tzv.
+\emph{aktivace zprava}; toto je místo, kde beta část sítě navazuje na alfa
+část), nebo tokenem z~nadřazeného paměťového beta-uzlu (\emph{aktivace
+zleva}). V~obou případech ale spojovací uzel prohledá paměť toho
+druhého rodičovského uzlu pro získání konzistentních tokenů (resp. faktů)
+a při nalezení shody aktivuje potomky.
+
+Speciálním případem spojovacích uzlů jsou uzly s~negativními testy. Tyto
+mohou být, stejně jako běžné spojovací uzly, aktivovány z~obou stran.
+Podstatný rozdíl je ale v~tom, že negativní spojovací uzel aktivuje své
+potomky jedině tehdy, nenalezl-li pro daný token žádný konzistentní fakt
+v~paměti svého rodičovského alfa-uzlu.
+
+Opět uvedu příklad. Zůstaňme u~pravidla z~příkladu předchozího. Alfa část
+dataflow sítě pro uvedené pravidlo má tři paměťové uzly. V~beta části
+budeme potřebovat tři spojovací uzly (z~nichž jeden bude negativní).
+První bude testovat konzistenci vazeb mezi prvními dvěma podmínkami
+pravidla, druhý mezi třetí podmínkou a prvními dvěma, atd. Druhý i třetí
+spojovací uzel bude mít zprava připojen týž paměťový alfa-uzel (opět
+\uv{recyklace} uzlu, tentokrát dokonce v~rámci jednoho pravidla). Ke každému
+spojovacímu uzlu je jako potomek připojen paměťový beta-uzel, který
+uchovává tokeny s~částečnými (v~prvních třech případech) či úplnými
+(ve čtvrtém případě) shodami.
+
+\begin{figure}[h]
+\centerline{\epsfbox{condition-joining.eps}}
+\caption{Spojovací uzly mezi jednotlivými podmínkami inferenčního pravidla\cite{doorenbos}}
+\label{condition-joining}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Přidání a odebrání inferenčních pravidel}
+Definuje-li uživatel nové inferenční pravidlo je třeba pro něj vytvořit
+nové či pospojovat již existující uzly dataflow sítě. Algoritmus postupně
+prochází podmínky pravidla, vytváří (či recykluje) pro každou paměťový
+beta-uzel a spojovací beta-uzel, který napojí na následující paměťový beta-uzel.
+Ke každému spojovacímu uzlu také vytvoří (či plně nebo částečně recykluje)
+cestu v~alfa části sítě. Poslední paměťový uzel označí jako produkční
+a uloží v~něm pravidlo, aby mohlo být při splnění všech podmínek předáno
+spolu s~tokenem zpět prostředí a zařazeno do agendy.
+
+Při odstranění pravidla ze systému je pravidlo odstraněno také z~odpovídajícího
+produkčního uzlu a všechny nyní zbytečné uzly jsou ze sítě odstraněny.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Strategie pro výběr pravidla k~aktivaci}
+Expertní systém je velice obecný výpočetní mechanismus a proto není možné
+určit jednu odvozovací strategii, která by pokrývala všechny domény problémů,
+v~nichž ho lze využít. Implementace proto poskytuje několik vestavěných
+strategií pro výběr pravidla z~agendy k~následné aktivaci a umožňuje i
+definici uživatelských strategií.
+\begin{itemize}
+\item {\bf{}Strategie nejnovější aktivace (\emph{depth strategy})} vybírá z~agendy
+pravidlo, které sem bylo přidáno jako poslední. Inferenční mechanismus tedy
+provádí jakýsi výpočet do hloubky, spouští nově aktivovaná pravidla dokud to
+lze a teprve při jejich vyčerpání se ve výpočtu vrací k~pravidlům aktivovaným
+dříve.
+\item {\bf{}Strategie nejstarší aktivace (\emph{breadth strategy})} vybírá z~agendy
+pravidlo, které sem bylo přidáno jako první. Je tedy přesným opakem strategie
+předchozí, provádí výpočet \uv{do šířky}.
+\item {\bf{}Strategie nejobecnějšího pravidla (\emph{simplicity strategy})} vybírá
+pravidlo s~nejnižším počtem podmínek, tedy obecnější (statisticky čím méně je podmínek,
+tím více najdeme shod, které pravidlo splní).
+\item {\bf{}Strategie nejkonkrétnějšího pravidla (\emph{complexity strategy})} vybírá
+pravidlo s~nejvyšším počtem podmínek, tedy specifičtější.
+\end{itemize}
+-- Volně převzato z~\cite{introduction}.

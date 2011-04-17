@@ -1,0 +1,8 @@
+To make expat easily integrated into SDS, it's file structure and makefile
+has been restructured and is now a part of SDS.
+
+Expat is included under GPL and not MPL.
+
+I have moved the "documentation" of expat to to the SDS doc-directory
+in the subdir 'expat'
+

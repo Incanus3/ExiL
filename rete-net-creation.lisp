@@ -1,5 +1,27 @@
-(in-package :exil)
+(in-package :exil-rete)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; compound rete class and methods for export
+
+(defgeneric rete ())
+
+(defclass rete () ((alpha-top-node :reader alpha-top-node
+				   :initform (make-instance 'alpha-top-node))
+		   (beta-top-node  :accessor beta-top-node
+				   :initform (make-instance 'beta-top-node))))
+
+(defmethod add-wme ((fact fact) &optional (rete (rete)))
+  (activate (alpha-top-node rete) fact))
+
+(defmethod rem-wme ((fact fact) &optional (rete (rete)))
+  (inactivate (alpha-top-node rete) fact)
+  (inactivate (beta-top-node rete) fact))
+
+(defun make-rete ()
+  (make-instance 'rete))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; net creation
 ;; parent can be either alpha-test-node or simple/pattern-fact-subtop-node
 (defmethod find-test-node ((parent alpha-node) field value)
   (dolist (child (children parent) nil)
@@ -65,9 +87,9 @@
 (defun find-atom-in-cond-list% (atom cond-list)
   (loop for condition in (reverse cond-list)
      for i = 1 then (1+ i)
-     until (find-atom atom condition)
+     until (find-atom condition atom)
      finally
-       (let ((position (atom-postition atom condition)))
+       (let ((position (atom-position atom condition)))
 	 (when position (return (cons i position))))))
 
 (defmethod get-intercondition-tests% ((condition simple-pattern) (prev-conds list))
@@ -153,10 +175,10 @@
        for current-mem-node = (beta-top-node rete) then
 	 (beta-memory current-join-node)
        for current-join-node
-	 = (if (negated current-cond)
+	 = (if (negated-p current-cond)
 	       (find/create-neg-node current-mem-node tests alpha-memory)
 	       (find/create-join-node current-mem-node tests alpha-memory)) then
-	 (if (negated current-cond)
+	 (if (negated-p current-cond)
 	     (find/create-neg-node current-mem-node tests alpha-memory)
 	     (find/create-join-node current-mem-node tests alpha-memory))
        finally

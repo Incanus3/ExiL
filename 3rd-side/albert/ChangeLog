@@ -1,0 +1,142 @@
+2004-04-20	Stig E Sandø <stig@users.sourceforge.net>
+	* These changes have happened between last release and today.
+	* New albert-setting, ("albert" "lisp2csf" "display-progress") to
+	show which files are processed.
+	* Fixed embarrassing bug that stopped albert from working on newer
+	sbcl versions.
+	* Started work on internal ids and ids in generated docbook, must
+	preserve more info than just use @ or X
+	* Made lisp2csf more failsafe when checking files
+	* After testing on Maxima, avoid some bugs from happening when
+	working on improper lists.
+	* Currently does wrong on macros that needs destructuring, just
+	flattens them now.
+	* Added actual handling of &rest and &body
+	* Made asdf/defsystem more robust and it needs not be available
+	when albert is compiled.
+	* minor tweaking.
+	* tagged tree VER_0_4_10
+	
+2003-10-27	Stig E Sandø <stig@users.sourceforge.net>
+	* New file spres/files.lisp for file-related stuff in
+	presentation code.
+	* New file tools/docme.lisp to document albert itself.
+	* Two new icons exported.png and internal.png added to data/icons/
+	and are referred to by data/albert.dsl wrt export-status.
+	* Made class-hierarchy setting numeric instead of boolean, see
+	settings.lisp
+	* Added preliminary support for listing 'related methods' in
+	classes and structs.  Related methods are methods that dispatch on
+	that particular class or struct. Can be controlled via a setting.
+	* Can make a separate page for variables in a package if they're
+	many.  Controlled by a setting.
+	* Can now control where slot-accessors and readers/writers are
+	listed in the data (in the class they refer to or in the package
+	itself or even both).
+	* Now uses proper parent-info in the sdoc-handling in spres
+	* Have improved lisp2csf handling of complex source, and it will
+	be less likely to crash and get the accurate info.  Now uses a
+	testsuite to ensure that things remain solid and liberal.  Are
+	looking for more code to add to testsuite.
+	* lisp2csf will now handle defparameter, keyword-parameters and
+	optional parameters correctly.  lisp2csf will also understand more
+	calls to EXPORT and use that info.  lisp2csf allows you to control
+	how to prepare the readtable, e.g sbcl needs several tweaks there.
+	* spres will try to put more info in other xml-files than
+	book.xml, improving debugging and overview of generated data.
+	This is the first step in making albert produce output that allows
+	easy inclusion of other docs and easy inclusion of albert api docs in
+	other docs.
+	* Changes lookup of names to use new parent-info in the
+	presentation.  This may cause problems in some cases, but in the
+	testsuite it is more correct and flexible than the old lookups.
+	* Added back in locations in presentations of methods, also with
+	cvsview support.
+	* Removed caching and several other faster tricks in code,
+	resulting in slower, but more correct code.
+	* Many other bugfixes, cleanups, improvements and stuff behind the
+	scenes. 
+	* Tagged tree VER_0_4_9
+	
+2003-10-20	Stig E Sandø <stig@users.sourceforge.net>
+	* Added printout of the class-hierarchy Albert already used
+	internally.  This closes a feature request.
+	* Added settings to control if index or class-hierarchy should
+	be printed in docs.
+	* Fixed package-nickname bug which might've screwed up people's
+	documentation in nasty ways. 
+	* Fixed a few show-stopper bugs for some people, also fixed a few
+	slightly embarassing issues.
+	* Tagged tree VER_0_4_8
+	
+2003-10-18	Stig E Sandø <stig@users.sourceforge.net>
+	* Added preliminary MK-DEFSYSTEM support with albert.system and
+	allowing sds-asdf.lisp handle mk-defsystem in certain cases.
+	Thanks to Enometh for exploring this option.
+	* Added several new configurable albert-settings, see
+	web/properties.html and settings.lisp for documentation.
+	* Updated clisp's EAT-FILE to work in CRLF environment.
+	* Added support for filtering non-exported symbols, also added
+	support for using CSS to separate exported from non-exported data.
+	* User can now control <title> of HTML-pages in Lisp, see
+	web/faq.html
+	* Updated gnome-icons to work with IE
+	* In Lisp2Csf, added handling of defconstant and did some work on
+	defstructs.
+	* Added support for inclusion of licence-file in documentation.
+	* Can now control TOC entries for classes, gfs, .. either via
+	settings or via @purpose in docstrings.
+	* Now allows use of Albert without using intermediate files or
+	xml-parser.
+	* Several other minor bugs and issues fixed.
+	* Tagged tree VER_0_4_7
+	
+2003-08-07	Stig E Sandø <stig@users.sourceforge.net>
+	* Added hack to let lisp2csf skip dispatch-macro-characters and
+	carry on READing.
+	* Made EAT-FILE use EXCL:OCTETS-TO-STRING for all allegro
+	versions.
+	* Fixed crashing bug for calls/calledby gathering in lisp2csf,
+	will use more lenient (FORMAT NIL "~A" X) instead of (STRING X)
+	now.
+	* Minor fixes, tweaking and improved error messages.
+	
+2003-07-11	Stig E Sandø <stig@users.sourceforge.net>
+	* Improved navigation-bars for header and footer in the albert.dsl
+	file, and added icons that are used in data/icons/
+	* Improved documentation with a separate howto.html and several
+	improvements in the other docs.
+	* Added a preliminary DSSSL file for printable albert output, e.g
+	for generating pdf or postscript files via jadetex.
+	* Made quickindex and when to show calls-info configurable via
+	settings.
+	* Tweaked the albert.css file a lot
+	* Tweaked and partly commented the albert.dsl file for HTML output and
+	deprecated several parts of the old DSSSL code.  It should be much
+	easier to configure the albert.dsl behaviour now.
+	* Improved the code in several places, as well as the docbook
+	output, but nothing major.
+	* Tagged tree VER_0_4_6
+	
+2003-07-05	Stig E Sandø <stig@users.sourceforge.net>
+	* Improved compilation settings and order, and reduced verbosity
+	and warnings when compiling.
+	* Removed many unused/obsolete files
+	* Renamed sdoc.css and sdoc.dsl to albert.css and albert.dsl in
+	the data/ directory (I've updated debian/rules for this change too)
+	* Tweaked exports from SPRES-IMPL package
+	* Added support for linking to viewcvs.cgi scripts when displaying
+	filename for e.g classes, structs, ..
+	* Will now by default generate output in the directory where the
+	ASDF-file was found, if the old behaviour using current directory
+	as default is wanted, that can also be set.  See
+	web/properties.html Thanks to Erik Enge for reporting this.
+	* Can now control verbosity of albert via settings.
+	* Kevin Rosenberg has updated debian/ directory to be better fit
+	for debian unstable.  He is maintaining that directory.
+	* Fixed :CONC-NAME behaviour in defstructs for argument
+	NIL. (Thanks to nikodemus on freenode #lisp for testing and
+	finding the bug)
+	* Fix a bug in hovertext getting bad data, e.g & instead of &amp;
+	* Updated documentation and added FAQ.
+	* Tagged tree VER_0_4_5

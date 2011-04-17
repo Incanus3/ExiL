@@ -1,17 +1,25 @@
 (in-package :exil)
 
+(defparameter *clips-mode* nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
 
 (defmacro deftemplate (name fields)
-  (let ((template (gensym "template")))
-    `(let ((,template
-	    (make-instance
-	     'template
-	     :name ',name
-	     :slots ',(loop for field in (to-list-of-lists fields)
-			 collect (field->slot-designator field)))))
-       (add-template ,template))))
+  (flet ((field->slot-designator (field)
+	   (destructuring-bind (name &key (default nil)) field
+	     `(,name . (:default ,default)))))
+
+    (let ((template (gensym "template")))
+
+      `(let ((,template
+	      (make-template ',name
+			     ',(loop for field in (to-list-of-lists fields)
+				  collect (field->slot-designator field)))))
+	 (add-template ,template)))))
+
+(defun assert% (fact-spec)
+  (add-fact (make-fact fact-spec)))
 
 (defmacro assert (&rest fact-specs)
   "Add fact into working memory"
@@ -19,9 +27,16 @@
     `(dolist (,fact-spec ',fact-specs)
        (assert% ,fact-spec))))
 
+(defun retract% (fact-spec)
+  (rem-fact (make-fact fact-spec)))
+
 (defmacro retract (fact-spec)
   "Remove fact from working memory"
   `(retract% ',fact-spec))
+
+(defun modify% (old-fact-spec new-fact-spec)
+  (retract% old-fact-spec)
+  (assert% new-fact-spec))
 
 (defmacro modify (old-fact-spec new-fact-spec)
   "Replace old-fact by new-fact"
@@ -35,11 +50,15 @@
   "Create group of facts to be asserted after (reset)"
   `(add-fact-group ',name ',fact-descriptions))
 
+(defun assert-group% (fact-descriptions)
+  (dolist (desc fact-descriptions)
+    (assert% desc)))
+
 (defun reset ()
   "Clear all facts and add all fact groups"
   (clear)
   (dolist (group (fact-groups))
-    (assert-group (cdr group))))
+    (assert-group% (cdr group))))
 
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 (defmacro defrule (name &body rule)
@@ -49,11 +68,9 @@
     (cl:assert =>-position ()
 	    "rule definition must include =>")
     `(let ((,rule-symbol
-	    (make-instance
-	     'rule
-	     :name ',name
-	     :conditions (mapcar #'make-pattern ',(subseq rule 0 =>-position))
-	     :activations ',(subseq rule (1+ =>-position)))))
+	    (make-rule ',name
+		       (mapcar #'make-pattern ',(subseq rule 0 =>-position))
+		       ',(subseq rule (1+ =>-position)))))
        (add-rule ,rule-symbol))))
 
 (defmacro undefrule (name)
@@ -64,11 +81,11 @@
 
 (defmacro defstrategy (name function)
   "Define strategy"
-  `(defstrategy% ',name ,function))
+  `(add-strategy ',name ,function))
 
-(defmacro set-strategy (name)
+(defmacro setstrategy (name)
   "Set strategy to use"
-  `(set-strategy% ',name))
+  `(set-strategy ',name))
 
 (defun step ()
   "Run inference engine for one turn"
@@ -90,9 +107,9 @@
 
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(watch% ',watcher))
+  `(set-watcher ',watcher))
 
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(unwatch% ',watcher))
+  `(unset-watcher ',watcher))
 

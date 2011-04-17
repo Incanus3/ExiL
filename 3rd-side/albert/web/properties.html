@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+<link rel="stylesheet" type="text/css" href="albdocs.css">
+<title>Albert settings/properties</title>
+</head>
+
+<body>
+<h1>Albert settings properties</h1>
+
+<p>Albert understands various settings and properties, these can be
+set with <code>(SETF ALBERT-SETTING)</code> or via
+<code>:PROPERTIES</code> slot in an ASDF sysdef.</p> 
+
+<table>
+  <tr valign=top><td width="40%"><b>Setting</b></td><td><b>Description</b></td></tr>
+  <tr valign=top><td class="settingkey">("albert"
+    "use-temporary-files")</td><td class="settingdesc"> Should Albert
+      use temporary files for intermediate results.  This requires you
+      to compile the accompanying xml2sexp parser.  If this value is
+      <code>NIL</code>, no intermediate files will be used and you
+      will go directly from source to docbook outpur.  Default is
+      <code>NIL</code> (might change).</td></tr>
+
+  <tr valign=top><td class="settingkey">("system" "name")</td><td class="settingdesc"> Name of system being
+    documented. Taken from <code>(asdf:defsystem :name ...)</code></td></tr>
+  <tr valign=top><td class="settingkey">("system" "author" "name")</td><td class="settingdesc"> Name of system author. Taken from <code>(asdf:defsystem :author ...)</code> </td></tr>
+  <tr valign=top><td class="settingkey">("system" "author" "email")</td><td class="settingdesc"> The system author's
+    email-address.  Default is <code>""</code>.</td></tr>
+  <tr valign=top><td class="settingkey">("system" "date")</td><td class="settingdesc"> Date to be put in e.g
+    book-headers/front-page.  If this value is <code>NIL</code> it
+    will make a date-string from the day the docs were generated on,
+    e.g like <code>12 Jul 2003</code>.  Default is <code>NIL</code></td></tr>
+  <tr valign=top><td class="settingkey">("system" "maintainer" "name")</td><td class="settingdesc"> Name of
+    system-maintainer, in case it is separate from author. Taken from <code>(asdf:defsystem :maintainer ...)</code></td></tr>
+  <tr valign=top><td class="settingkey">("system" "licence")</td><td class="settingdesc"> Licence of the system.  Taken from <code>(asdf:defsystem :licence ...)</code></td></tr>
+  <tr valign=top><td class="settingkey">("system" "licencefile")</td><td class="settingdesc"> Filename to the
+      licencefile that should be inluded verbatim as legal notice in
+      the API docs.  Default is <code>NIL</code>.  See also
+    <code>%generate-legalnotice-link%</code> in
+    <tt>data/albert.dsl</tt> on whether to present file verbatim in
+    docs or on a separate page. </td></tr>
+  <tr valign=top><td class="settingkey">("system" "version" "number")</td><td class="settingdesc"> Version number for
+    the system, can be a string. Licence of the system.  Taken from <code>(asdf:defsystem :version ...)</code></td></tr>
+  <tr valign=top><td class="settingkey">("system" "description")</td><td class="settingdesc"> Description of the
+    system. Taken from <code>(asdf:defsystem :description
+    ...)</code></td></tr>
+  <tr valign=top><td class="settingkey">("system" "directory")</td><td class="settingdesc"> The path where
+    the system-files can be loaded from and which output should be
+    relative to.  Will be calculated automatically, but a setting in
+    the asdf-file will override this. Default is <code>""</code>.</td></tr>    
+  <tr valign=top><td class="settingkey">("albert" "verbose")</td><td class="settingdesc"> Should Albert be verbose?
+    (Good for tracking problems)  Default is <code>NIL</code>. </td></tr>
+  <tr valign=top><td class="settingkey">("albert" "lisp2csf"
+    "display-progress")</td><td class="settingdesc"> Should the Albert
+      Lisp-reader display how it is progressing, good for tracking
+      which file has problems.  Default is <code>NIL</code>. </td></tr>
+  <tr valign=top><td class="settingkey">("albert" "presentation" "formats")</td><td class="settingdesc"> List of output
+    formats to generate.  Default is <code>("docbook")</code>. </td></tr>
+  <tr valign=top><td class="settingkey">("albert" "presentation" "output-dir")</td><td class="settingdesc"> The
+    output-directory for any presentations.  Default is <code>"Generated-Docs/"</code></td></tr>
+  <tr valign=top><td class="settingkey">("albert" "presentation" "language")</td><td class="settingdesc"> Language used
+    in presentation. Default is <code>"english"</code>.</td></tr>
+  <tr valign=top><td class="settingkey">("albert" "docbook" "baseurl")</td><td class="settingdesc"> The base URL used
+    when calculating URLs to other documentation pages.  Default is <code>""</code>.</td></tr>
+  <tr valign=top><td class="settingkey">("albert" "docbook" "bgcolor")</td><td class="settingdesc"> Background colour of
+  docs.  Default is <code>"white"</code>.</td></tr>
+  <tr valign=top><td class="settingkey">("albert" "docbook" "textcolor")</td><td class="settingdesc"> Colour of
+    text. Default is <code>"black"</code>.</td></tr>
+  <tr valign=top><td class="settingkey">("albert" "docbook" "generate")</td><td class="settingdesc"> What docbook style
+    to use. Default is <code>"book"</code>.</td></tr>
+  <tr valign=top><td class="settingkey">("albert" "docbook" "dtd")</td><td class="settingdesc"> The DTD the output
+    should be verified against. Default is <code>"/usr/lib/sgml/dtd/docbook-xml/4.1.2/docbookx.dtd"</code></td></tr>
+  <tr valign=top><td class="settingkey">("albert" "docbook" "output-dir")</td><td class="settingdesc"> The output
+    directory for the docbook presentation.  If not given, or set to
+    <code>NIL</code>, it uses the <code>("albert" "presentation"
+    "output-dir")</code> setting. </td></tr>
+    
+  <tr valign=top><td class="settingkey">("albert" "docbook"
+    "cvs-viewurl")</td><td class="settingdesc"> URL for a CVS-view
+      program that can display a file. Default is
+      <code>""</code>. </td></tr>
+      
+  <tr valign=top><td class="settingkey">("albert" "docbook"
+    "cvs-tag")</td><td class="settingdesc"> Tag used when accessing
+      cvsview packages. Default value is <code>"HEAD"</code> and for
+      CVS, it refers to the latest version. </td></tr>
+    
+  <tr valign=top><td class="settingkey">("hyperspec" "root")</td><td class="settingdesc"> The URL root which should be
+    used when linking in the hyperspec. Default is <code>"http://www.lispworks.com/reference/HyperSpec/Body/"</code>.</td></tr>
+</table>
+
+<h3>Internal settings</h3>
+
+<table>
+  <tr valign=top><td width="40%"><b>Setting</b></td><td><b>Description</b></td></tr>
+  <tr valign=top><td class="settingkey">("albert" "presentation" "index" "global-index")</td><td class="settingdesc">
+    Should a global index of symbols be generated in the index
+    section?  Default is <code>T</code>.
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "presentation" "index" "class-hierarchy")</td><td class="settingdesc">
+    Should a class-index/hierarchy be generated in the index section?
+    If the value is T, a class-hierarchy will be generated if there
+    are classes or structs.  If the value is an integer, that is the
+    number of classes needed before a hierarchy is printed.  Default is <code>8</code>.
+  </td></tr>
+  
+  <tr valign=top><td class="settingkey">("albert" "presentation" "class" "related-methods")</td><td class="settingdesc">
+    Should a list of 'related methods' (ie methods that dispatch on that class)
+in the class description be included.  Still has issues and is fairly slow.  Might later become default.  Default is <code>NIL</code>.
+  </td></tr>
+  
+  <tr valign=top><td class="settingkey">("albert" "presentation" "class" "quickindex")</td><td class="settingdesc">
+    Default number of entries in a class before a quickindex is
+    generated for the class. Default is <code>100</code>.
+  </td></tr>
+  
+  <tr valign=top><td class="settingkey">("albert" "presentation" "gf" "separatepage")
+  </td><td class="settingdesc">
+    How many methods does a generic function need to get a separate
+    page?  Default is <code>2</code>.
+  </td></tr>
+  
+  <tr valign=top><td class="settingkey">("albert" "presentation" "variables" "separatepage")
+  </td><td class="settingdesc">
+    How many variables in a package 'full listing' is needed to make a
+    separate page in the generated docs for variables.  Default is <code>5</code>.
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "presentation" "only-exported")
+  </td><td class="settingdesc">
+    Will only exported methods and variables be presented in the API
+    docs?  Default is <code>NIL</code>. 
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "presentation" "funcallable" "calls")
+  </td><td class="settingdesc">
+    Will funcallable objects (functions, methods, ..) present a list
+    of whom it calls/is calling?  Default is <code>T</code>.
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "presentation" "funcallable" "calls-num")
+  </td><td class="settingdesc">
+    How many objects are needed in the CALLS-list before it uses a
+    table to display it, instead of a sentence?  Default is <code>12</code>.
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "presentation" "funcallable" "calledby")</td>
+  <td class="settingdesc">
+    Will funcallable objects (functions, methods, ..) present a list
+    (based on other methods' "calls" info) of who calls/is calling it?
+    Default is <code>NIL</code>. 
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "lisp2csf" "accessors" "class")</td>
+  <td class="settingdesc">
+    If this is positive, accessors/readers/writers for slots will be included in the info for a
+    class, which is usually where you would look for it. Default is <code>T</code>. 
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "lisp2csf" "accessors" "package")</td>
+  <td class="settingdesc">
+    If this is positive, accessors/readers/writers for slots will be
+    added to the package content list, which might be useful if you
+    want all methods in one list.  This will also help GF grouping
+    slightly.  However, the package content-list is already long and
+    fairly cluttered so the default is <code>NIL</code>. 
+  </td></tr>
+  
+  <tr valign=top><td class="settingkey">("albert" "presentation" "trace-rules")</td>
+  <td class="settingdesc">
+    Albert uses presentation rules and sometimes it is interesting to
+    trace them.  If you want tracing, set this setting to <code>T</code>.
+    Default is <code>NIL</code>. 
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "presentation" "to-current-dir")</td>
+  <td class="settingdesc">
+    Albert will use paths relative to the <code>("system"
+    "directory")</code> path when generating presentations, where you
+    might not have write-access.  Setting this option to
+    <code>T</code> will ensure that the current directory
+    <code>CL:*DEFAULT-PATHNAME-DEFAULTS*</code> is used instead.
+    Default is <code>NIL</code>. 
+  </td></tr>
+
+  <tr valign=top><td class="settingkey">("albert" "presentation" "default-purpose-string" "class")
+  </td><td class="settingdesc">
+    If no <code>@purpose</code> field is found in class-documentation, what will
+    the default purpose-string be? Default is <code>"class"</code>.
+  </td></tr>
+ 
+  <tr valign=top><td class="settingkey">("albert" "presentation" "default-purpose-string" "struct")
+  </td><td class="settingdesc">
+    If no <code>@purpose</code> field is found in struct-documentation, what will
+    the default purpose-string be? Default is <code>"struct"</code>.
+  </td></tr>
+ 
+  <tr valign=top><td class="settingkey">("albert" "presentation" "default-purpose-string" "generic")
+  </td><td class="settingdesc">
+    If no <code>@purpose</code> field is found in GF-documentation, what will
+    the default purpose-string be? Default is <code>"generic function"</code>.
+  </td></tr>
+ 
+  <tr valign=top><td class="settingkey">("albert" "presentation" "default-purpose-string" "method")
+  </td><td class="settingdesc">
+    If no <code>@purpose</code> field is found in method-documentation, what will
+    the default purpose-string be? Default is <code>"method"</code>.
+  </td></tr>
+  
+  <tr valign=top><td class="settingkey">("albert" "presentation" "legalnotice" "title")
+  </td><td class="settingdesc">
+    Title for the "Legal Notice" part (if it is included). Default is
+    <code>"Legal Notice"</code>.
+  </td></tr>
+ 
+  <tr valign=top><td class="settingkey">("albert" "lisp2csf" "outfile")</td><td class="settingdesc"> Default outfile for
+    calls to lisp2csf. Default is <code>"lispy-csf.xml"</code>.
+  </td></tr>
+  <tr valign=top><td class="settingkey">("albert" "csf2csf" "outfile")</td><td class="settingdesc"> Default outfile for
+    calls to csf2csf (a linker rarely used).  Default is
+    <code>"linked.xml"</code>.
+  </td></tr>
+  <tr valign=top><td class="settingkey">("albert" "csf2sdoc" "outfile")</td><td class="settingdesc"> Default outfile for
+    the <tt>CSF-&gt;SDOC</tt> tool. Default is
+    <code>"converted.xml"</code>.
+  </td></tr>
+</table>
+<p align=center>[<a href="index.html">Back to index</a>]</p>
+
+<hr>
+
+<table width="100%">
+  <tr valign=top>
+    <td>
+      <address>stig@users.sourceforge.net</address>
+    </td>
+    <td>
+      <div align=right><a href="http://sourceforge.net"><img
+      src="http://sourceforge.net/sflogo.php?group_id=84355&amp;type=5" width="105" height="31" border="0" alt="SourceForge.net Logo" /></a></div>
+    </td>
+  </tr>
+</table>
+</body> </html>

@@ -1,0 +1,14 @@
+Albert is a Common Lisp doc-generator, comparable to Javadoc and
+Doxygen.  Currently it generates DocBook.  It reads an ASDF system
+definition and documents the system.  It is an experimental system
+which may or may not work for you.  It's just a tool I use, which
+others might have an interest in.
+
+See web/index.html for more information and documentation.
+
+NOTE:
+You might want/need to tweak the settings in settings.lisp, 
+possibly checking the path to xml2sexp. (Ignore xml2esis)
+To compile the xml2sexp program, run 'make'. 
+
+Feedback/questions/etc can be sent to stig@users.sourceforge.net

@@ -1,0 +1,64 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experní systém}
+Expertní systém je počítačový program, který se pokouší nalézt řešení problému
+v~situaci, kde by jinak bylo zapotřebí jednoho či několika odborníků.
+Idea expertního systému byla představena vývojáři ze Standfordského projektu
+\emph{Heuristic programming} v~čele s~Edwardem A. Feigenbaumem na systémech
+\textsf{Dendral} a \textsf{MYCIN}. Hlavními přispěvateli tohoto projektu byli
+Bruce Buchanan, Edward Shortliffe, Randall Davis, William vanMelle a Carli
+Scott (\cite{expert-system}).
+
+Expertní systém patří do skupin KBS (Knowledge-Based System, \uv{systém
+založený na znalostech}) a RBS (Rule-Based System, \uv{systém založený na
+pravidlech}), spadá tedy do odvětví informatiky označované jako umělá
+inteligence.
+
+Vývojář expertního systému nejprve definuje vhodnou reprezentaci znalostí nějaké
+domény a zákonitostí mezi těmito znalostmi. Poté probíhá proces učení systému --
+odborníci na danou problematiku buď sami, nebo (časteji) skrze znalostního
+inženýra (\emph{knowledge engineer}) zadají systému základní informace
+o~problematice, čímž sestaví tzv. vědomostní bázi (\emph{knowledge base})
+a bázi pravidel (\emph{rule base}). V~provozu pak systém ze zadaných znalostí
+pomocí sestavených pravidel odvozuje nová fakta. Díky tomu je jej možno využít
+v~praxi jako asistenta odborníka v~daném oboru, jehož práce je tímto značně
+zefektivněna, nebo odborníka, v~ideálním případě, zcela nahradit.
+
+Pro lepší představu uvedu příklad -- program na bázi expertního systému
+v~ordinaci praktického lékaře. Na začátku zadá lékař expertnímu systému
+informace o~příznacích známých chorob, možnostech jejich léčby, medikaci,
+konfliktních lécích, atd. Expertní systém potom při zadání příznaků pacienta
+s~jistou pravděpodobností (odvislou od pravděpodobností zadaných v~jednotlivých
+pravidlech příznak $\rightarrow$ choroba) určí možné příčiny, alternativy léčby,
+apod. Takto nějak právě funguje zmíněný systém \textsf{MYCIN}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Charakteristické vlastnosti expertních systémů}
+Expertní systémy typicky
+\begin{itemize}
+\item simulují lidské usuzování na základě dedukce
+  -- systém neprovádí nad množinou znalostí algebraické výpočty
+\item usuzují nad libovolnou množinou správně reprezentovaných znalostí
+  -- tato znalostní báze je zcela oddělena od odvozovacího (\emph
+  {inferenčního}) mechanismu a není na něm nijak závislá
+\item problémy řeší heuristickým přístupem, často také jen na
+  základě pravděpodobností -- úspěch tedy není vždy zaručen. Díky tomu tyto
+  systémy na druhou stranu nevyžadují perfektní data, pokud se uživatel
+  spokojí s~jistou pravděpodobností správného výsledku
+\end{itemize}
+--- Citováno z~\cite{introduction}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Dopředné a zpětné řetězení}
+\begin{itemize}
+\item systém s~\textbf{dopředným řetězením} vyvozuje z~poskytnutých dat možné
+závěry -- jako v~systém asistující lékaři ve výše uvedeném příkladu --
+lékař při zadávání dat systému ještě pochopitelně neví, co bude výsledkem
+-- jaké příčiny problému systém vyhodnotí a jaké možnosti léčby pacientu doporučí
+\item u~systému se \textbf{zpětným řetězením} je tomu naopak -- systému
+zadáme cíle, jichž bychom rádi dosáhli, např. \uv{rád bych založil softwarovou
+firmu}. Vědomostní báze systému musí disponovat informacemi o~tom, co je
+pro založení takové firmy potřeba, tyto informace budou pravděpodobně větvené
+-- pro firmu potřebuji prostory, zaměstnance, potřebné úřední formality.
+Vyřízení formalit obnáší podnikatelský záměr, návrh rozvahy rozpočtu, \ldots.
+Systém z~těchto dat vyhodnotí, zda je zadaný cíl možno rovnou provést, či
+co je k~jeho splnění ještě potřeba. V~příkladu u~lékaře by byl takovýto
+systém nepoužitelný.
+\end{itemize}

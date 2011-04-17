@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE api SYSTEM "api.dtd">
+
+<api name="ApiSpec">
+
+  <constant name="API"      val="api"/>
+  <constant name="CONSTANT" val="constant"/>
+  <constant name="CLASS"    val="class"/>
+  <constant name="VAR"      val="var"/>
+  <constant name="ATTR"     val="attr"/>
+  <constant name="SUBELEM"  val="subelem"/>
+  <constant name="DOC"      val="doc"/>
+  <constant name="INFODOC"  val="infodoc"/>
+  <constant name="EXPL"     val="expl"/>
+
+  
+  <class name="TopLevel" elmname="api">
+    <var type="string"  name="name"/>
+    <var type="ptrlist" name="constants"/>
+    <var type="ptrlist" name="classes"/>
+    
+    <attr    type="string"  name="name"     var="name"/>
+    <subelem type="ptrlist" name="constant" var="constants"/>
+    <subelem type="ptrlist" name="class"    var="classes"/>
+  </class>  
+
+  <class name="Constant" elmname="constant">
+    <var type="string" name="name"/>
+    <var type="string" name="val"/>
+    
+    <attr type="string"  name="name"  var="name"/>
+    <attr type="string"  name="val"   var="val"/>
+  </class>  
+
+  <class name="Class" elmname="class">
+    <doc>This element describes a class-abstraction and is represented
+      as an element in XML</doc>
+    
+    <var type="string"  name="name"/>
+    <var type="string"  name="elmname"/>
+    <var type="string"  name="doc"/>
+    <var type="ptrlist" name="vars"/>
+    <var type="ptrlist" name="attrs"/>
+    <var type="ptrlist" name="subelems"/>
+    <var type="ptrlist" name="infodoc"/>
+    
+    <attr    type="string"  name="name"    var="name"/>
+    <attr    type="string"  name="elmname" var="elmname"/>
+    <subelem type="string"  name="doc"     var="doc"/>
+    <subelem type="ptrlist" name="var"     var="vars"/>
+    <subelem type="ptrlist" name="attr"    var="attrs"/>
+    <subelem type="ptrlist" name="subelem" var="subelems"/>
+    <subelem type="ptrlist" name="infodoc" var="infodoc"/>
+  </class>  
+    
+  <class name="Var" elmname="var">
+    <doc>This is a variable within a class which is a placeholder for
+    the data for one or more attributes and/or subelements</doc>
+    
+    <var type="string" name="name"/>
+    <var type="string" name="type"/>
+    <var type="string"  name="doc"/>
+    <attr type="string"  name="name" var="name"/>
+    <attr type="string"  name="type" var="type"/>
+    <attr type="string"  name="doc"  var="doc"/>
+  </class>  
+
+  <class name="Attr" elmname="attr">
+    <doc>This is information about a legal attribute for a class.</doc>
+    <var type="string" name="name"/>
+    <var type="string" name="type"/>
+    <var type="string" name="var"/>
+    <var type="string"  name="doc"/>
+    
+    <attr type="string"  name="name" var="name"/>
+    <attr type="string"  name="type" var="type"/>
+    <attr type="string"  name="var"  var="var"/>
+    <attr type="string"  name="doc"  var="doc"/>
+  </class>  
+
+  <class name="SubElem" elmname="subelem">
+    <doc>This is information about a legal subelement for a
+    class/element.  The name should have a matching global constant to
+    make lookups and code faster.</doc>
+    
+    <var type="string" name="name"/>
+    <var type="string" name="type"/>
+    <var type="string" name="var"/>
+    <var type="string"  name="doc"/>
+    <attr type="string"  name="name" var="name"/>
+    <attr type="string"  name="type" var="type"/>
+    <attr type="string"  name="var"  var="var"/>
+    <attr type="string"  name="doc"  var="doc"/>
+  </class>  
+
+  <class name="InfoDoc" elmname="infodoc">
+    <doc>This one has documentation for an info-field in a class.</doc>
+    <var type="string" name="type"/>
+    <var type="string" name="value"/>
+    <var type="string"  name="info"/>
+    <var type="string"  name="expl"/>
+
+    <attr type="string"  name="type" var="type"/>
+    <attr type="string"  name="value" var="value"/>
+    <attr type="string"  name="doc"  var="info"/>
+    <subelem type="string"  name="expl"  var="expl"/>
+  </class>  
+
+  
+</api>

@@ -1,0 +1,138 @@
+<!--
+      DTD for proposed Code Structure Format (CSF 2)
+      
+      November 99
+ -->
+ 
+<!-- <?xml version="1.0" encoding="ISO-8859-1"?> -->
+
+<!ENTITY % text " #PCDATA ">
+
+<!-- add preproc? -->
+<!-- these may occur anywhere in a csf-document -->
+<!ENTITY % freeforall " package | class | method | enum | variable | typespec | comment | directive ">
+
+<!-- the element -->
+<!ELEMENT csf ((%freeforall;)*)>
+<!ATTLIST csf
+       language CDATA ""
+       >
+
+<!-- describes a location -->
+<!ELEMENT location EMPTY>
+<!ATTLIST location
+       file CDATA ""
+       startline CDATA "-1"
+       startcol CDATA "-1"
+       endline CDATA "-1"
+       endcol CDATA "-1"
+       >
+
+<!ENTITY % infoattrs " type CDATA #IMPLIED value CDATA #IMPLIED info CDATA #IMPLIED ">
+       
+<!-- describes some namespace/package, needs more work -->              
+<!ELEMENT package (location?,packinfo*,(%freeforall;)*) >
+<!ATTLIST package
+     id CDATA #REQUIRED
+     name CDATA #IMPLIED
+     >
+
+<!ELEMENT packinfo EMPTY>
+<!ATTLIST packinfo %infoattrs;>
+
+<!-- The class abstraction -->
+<!ELEMENT class (location,access,inherit*,classinfo*,(%freeforall;)*) >
+<!ATTLIST class
+     id CDATA #REQUIRED
+     name CDATA #IMPLIED
+     >
+
+<!ELEMENT classinfo EMPTY>
+<!ATTLIST classinfo %infoattrs;>
+
+<!-- function/method -->
+<!-- itsdecl should be changed.. may be more than one decl -->       
+<!ELEMENT method (where+,access,methinfo*,retval*,arg*) >
+<!ATTLIST method
+    id CDATA #REQUIRED
+    name CDATA ""
+    >
+
+<!ELEMENT methinfo EMPTY>
+<!ATTLIST methinfo %infoattrs;>
+
+<!ELEMENT where (location)>
+<!ATTLIST where type (declaration|definition|unknown) "unknown">
+
+    
+<!-- this is prettier in sgml -->
+<!-- <!ENTITY % parameter " param | retval | arg "> -->
+<!ENTITY % paramattrs " name CDATA #IMPLIED type CDATA #IMPLIED defvalue CDATA #IMPLIED passedby CDATA #IMPLIED special CDATA #IMPLIED ">
+<!-- <!ELEMENT param EMPTY> -->
+<!ELEMENT retval EMPTY>
+<!ELEMENT arg EMPTY>
+<!-- <!ATTLIST param %paramattrs;> -->
+<!ATTLIST retval %paramattrs;>
+<!ATTLIST arg %paramattrs;>
+
+
+<!-- some variable -->      
+<!ELEMENT variable (location,access,varinfo*) >
+<!ATTLIST variable
+    id CDATA #REQUIRED
+    name CDATA ""
+    >
+    
+<!ELEMENT varinfo EMPTY>
+<!ATTLIST varinfo %infoattrs;>
+
+	   
+<!ELEMENT enum (location,access,enumval*) >
+<!ATTLIST enum
+    id CDATA #REQUIRED
+    name CDATA ""
+    >
+
+<!ELEMENT enumval EMPTY>
+<!ATTLIST enumval
+    name CDATA ""
+    value CDATA ""
+    >
+
+<!ELEMENT typespec (location,access) >
+<!ATTLIST typespec
+    id CDATA #REQUIRED
+    name CDATA #REQUIRED
+    values CDATA ""
+    >
+
+<!ELEMENT access EMPTY>
+<!ATTLIST access
+     type (public|protected|private|package|global) "public"
+     scope (file|class) "file"
+     >
+
+<!ELEMENT inherit EMPTY>
+<!ATTLIST inherit
+    name CDATA ""
+    type (public|protected|private|interface) "public"
+    modifier (none | virtual) "none"
+    >
+
+<!ELEMENT comment (location,text)>
+
+<!ELEMENT directive (location)>
+<!ATTLIST directive
+    type CDATA ""
+    value CDATA ""
+    info CDATA ""
+    >
+ 
+<!ELEMENT text (%text;)>
+<!--
+<!ELEMENT import (%text;)>
+<!ELEMENT throw (%text;)>
+<!ELEMENT friend (%text;)> 
+<!ELEMENT calls (%text;)> 
+<!ELEMENT calledby (%text;)>
+-->

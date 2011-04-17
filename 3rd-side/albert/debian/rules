@@ -1,0 +1,78 @@
+#!/usr/bin/make -f
+
+pkg	:= albert
+debpkg  := albert
+
+clc-source	:= usr/share/common-lisp/source
+clc-systems	:= usr/share/common-lisp/systems
+clc-albert	:= $(clc-source)/$(pkg)
+
+doc-dir		:= usr/share/doc/$(debpkg)
+data-dir	:= usr/share/$(pkg)
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: configure-stamp 
+	dh_testdir
+	# Add here commands to compile the package.
+	make all
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+	# Add here commands to clean up after the build process.
+	rm -f debian/albert.postinst.* debian/albert.prerm.*
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	# Add here commands to install the package into debian/png.
+	dh_installdirs $(clc-systems) $(clc-albert)
+	dh_install albert.asd $(shell echo *.lisp) $(clc-albert)
+	dh_install apispec/*.lisp $(clc-albert)/apispec
+	dh_install base/*.lisp $(clc-albert)/base
+	dh_install lisp2csf/*.lisp $(clc-albert)/lisp2csf
+	dh_install specs/*.lisp $(clc-albert)/specs
+	dh_install spres/*.lisp $(clc-albert)/spres
+	dh_install spres/rules/*.lisp $(clc-albert)/spres/rules
+	dh_install tools/*.lisp $(clc-albert)/tools
+	dh_install expat/alb_xml2sexp usr/bin
+	dh_link $(clc-albert)/albert.asd $(clc-systems)/albert.asd
+	dh_install data/albert.dsl data/print-albert.dsl data/xml.soc data/xml.dcl data/albert.css $(data-dir)
+	dh_install data/*.dtd $(data-dir)
+	dh_install data/icons/README data/icons/*.png $(data-dir)/icons
+
+# Build architecture-independent files here.
+binary-indep: build install
+
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installchangelogs
+	dh_installman expat/alb_xml2sexp.1
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure
+
