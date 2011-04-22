@@ -74,10 +74,10 @@
   `(progn ,@(loop for slot-name in slot-names
 	       collect `(exil-env-accessor ,slot-name))))
 
+; always put exil-env-* calls on one line, for the automated package creator to work
 ; public
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors fact-groups templates rules rete agenda
-		      strategies current-strategy-name watchers)
+  (exil-env-accessors fact-groups templates rules rete agenda strategies current-strategy-name watchers)
   (exil-env-writer facts))
 ;; rete should be removed after proper DEBUG
 
