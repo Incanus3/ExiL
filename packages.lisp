@@ -12,17 +12,18 @@
 (defpackage :exil-core
   (:use :common-lisp :exil-utils)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :variable-p :template :name :slots :make-tamplate :find-atom
+  (:export :variable-p :template :tmpl-name :slots :make-tamplate :find-atom
 	   :fact :fact-equal-p :simple-fact :find-atom :atom-position
 	   :template-fact :tmpl-fact-slot-value :fact-slot :make-fact
-	   :atom-equal-p :constant-test :pattern :pattern-equal-p
+	   :atom-equal-p :constant-test :pattern :negated-p :pattern-equal-p
 	   :simple-pattern :var-or-equal-p :template-pattern :make-pattern
-	   :rule :rule-equal-p :make-rule))
+	   :rule :rule-equal-p :make-rule :name :conditions :activations))
 
 (defpackage :exil-rete
   (:use :common-lisp :exil-utils :exil-core)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :add-wme :rem-wme :add-production :rem-production :make-rete))
+  (:export :add-wme :rem-wme :new-production :remove-production :make-rete
+	   :token->list :token-equal-p))
 
 (defpackage :exil-env
   (:use :common-lisp :exil-utils :exil-core :exil-rete)
@@ -30,7 +31,8 @@
   (:export :add-template :add-fact :rem-fact :reset-environment
 	   :add-fact-group :add-rule :rem-fule :find-rule
 	   :add-strategy :set-strategy :select-activation
-	   :set-watcher :unset-watcher))
+	   :set-watcher :unset-watcher :activate-rule
+	   :agenda :fact-groups))
 
 (defpackage :exil
   (:use :common-lisp :exil-utils :exil-core :exil-env)
