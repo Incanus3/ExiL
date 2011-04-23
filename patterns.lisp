@@ -55,15 +55,14 @@
 	   (variable-p atom2))
       (atom-equal-p atom1 atom2)))
 
-#| OBSOLETE:
+; OBSOLETE:
 ;; checks pattern constant equivalency, ignores variables
-(defmethod pattern-const-equal-p ((pattern1 simple-pattern)
-				  (pattern2 simple-pattern))
-  (and (equalp (negated-p pattern1) (negated-p pattern2))
-       (every #'var-or-equal-p
-	      (pattern pattern1)
-	      (pattern pattern2))))
-|#
+;(defmethod pattern-const-equal-p ((pattern1 simple-pattern)
+;				  (pattern2 simple-pattern))
+;  (and (equalp (negated-p pattern1) (negated-p pattern2))
+;       (every #'var-or-equal-p
+;	      (pattern pattern1)
+;	      (pattern pattern2))))
 
 ; public, used by rete
 (defmethod find-atom (atom (pattern simple-pattern))
@@ -90,15 +89,13 @@
   (and (equalp (negated-p pattern1) (negated-p pattern2))
        (tmpl-object-equal-p pattern1 pattern2)))
 
-#|
 ; not in use
-(defgeneric pattern-slot (pattern slot-spec)
-  (:documentation "returns pattern's slot specified by slot-spec")
-  (:method ((pattern simple-pattern) (slot-spec integer))
-    (nth slot-spec (pattern pattern)))
-  (:method ((pattern template-pattern) (slot-spec symbol))
-    (tmpl-pattern-slot-value pattern slot-spec)))
-|#
+;(defgeneric pattern-slot (pattern slot-spec)
+;  (:documentation "returns pattern's slot specified by slot-spec")
+;  (:method ((pattern simple-pattern) (slot-spec integer))
+;    (nth slot-spec (pattern pattern)))
+;  (:method ((pattern template-pattern) (slot-spec symbol))
+;    (tmpl-pattern-slot-value pattern slot-spec)))
 
 ; private
 (defun make-tmpl-pattern (pattern-spec &optional (negated nil))

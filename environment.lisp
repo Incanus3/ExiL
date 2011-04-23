@@ -90,6 +90,10 @@
 	(select facts fact-nums)
 	facts)))
 
+; private
+(defmethod watched-p (watcher)
+  (assoc-value watcher (watchers)))
+
 ; public
 (defun add-fact (fact)
   (when (nth-value 1 (ext-pushnew fact (facts) :test #'fact-equal-p))
@@ -208,10 +212,6 @@
   (cl:assert (find watcher (mapcar #'car (watchers)))
 	     () "I don't know how to watch ~A" watcher)
   (setf (assoc-value watcher (watchers)) nil))
-
-; private
-(defmethod watched-p (watcher)
-  (assoc-value watcher (watchers)))
 
 ; public
 (defun reset-environment ()

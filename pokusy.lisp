@@ -1,3 +1,23 @@
+#|
+(load "packages.lisp")
+(load "utils.lisp")
+(load "templates.lisp")
+(load "facts.lisp")
+(load "patterns.lisp")
+(load "rules.lisp")
+(load "tokens.lisp")
+(load "rete-generic-node.lisp")
+(load "rete-alpha-part.lisp")
+(load "rete-beta-part.lisp")
+(load "rete-net-creation.lisp")
+(load "matches.lisp")
+(load "activations.lisp")
+(load "strategies.lisp")
+(load "environment.lisp")
+(load "export.lisp")
+|#
+
+
 (in-package :exil)
 
 (in-package :exil-rete)

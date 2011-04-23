@@ -27,6 +27,7 @@
      (:file "strategies"        :depends-on ("activations"))       ; | environment
      (:file "environment"       :depends-on ("strategies"))        ; v
      (:file "export"            :depends-on ("environment"))       ; front-end
+     (:file "test-package"      :depends-on ("export"))
 #|     (:file "print-tree"        :depends-on ("environment"))
      (:file "pokusy"            :depends-on ("export"))|#)
     :properties ((:author-email . "jakubkalab@gmail.com")

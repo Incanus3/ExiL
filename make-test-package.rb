@@ -7,10 +7,11 @@ def load_package_file(filename) # array<array<string>>
 end
 
 def load_defs_from_file(filename) # array<string>
-  output = `egrep '^[^;]*(defun|defmethod|defmacro|defclass|defvar|defgeneric)' #{filename} \
+  remove_comments = "sed 's/;.*//g' #{filename}"
+  output = `#{remove_comments} | egrep '^.*(defun|defmethod|defmacro|defclass|defvar|defgeneric)' \
     | awk '{ print $2 }' | grep '^[[:alpha:]*]'`
-  accessors = `egrep -o '^[^;]*\;?' #{filename} | egrep -o ':(reader|writer|accessor) [^[:space:])]*' | egrep -o ' .*'`
-  env_acc = `grep -o '\(exil-env-[^)]*\)' #{filename} | grep -v ',' | grep -o ' [^)]*'`
+  accessors = `#{remove_comments} | egrep -o '^.*\;?' | egrep -o ':(reader|writer|accessor) [^[:space:])]*' | egrep -o ' .*'`
+  env_acc = `#{remove_comments} | grep -o '\(exil-env-[^)]*\)' | grep -v ',' | grep -o ' [^)]*'`
   output.split("\n") - ['print-object','initialize-instance'] + accessors.split + env_acc.chomp.split
 end
 

@@ -24,16 +24,14 @@
    (slots :reader slots :initarg :slots
 	  :initform (error "slots slot has to be specified"))))
 
-#|
 ; not in use
-(defmethod tmpl-slot-spec ((template template) slot-name)
-  (assoc-value slot-name (slots template)))
+;(defmethod tmpl-slot-spec ((template template) slot-name)
+;  (assoc-value slot-name (slots template)))
 
 ; not in use
-(defmethod tmpl-equal-p ((tmpl1 template) (tmpl2 template))
-  (and (equalp (name tmpl1) (name tmpl2))
-       (equalp (slots tmpl1) (slots tmpl2))))
-|#
+;(defmethod tmpl-equal-p ((tmpl1 template) (tmpl2 template))
+;  (and (equalp (name tmpl1) (name tmpl2))
+;       (equalp (slots tmpl1) (slots tmpl2))))
 
 ; public
 (defmethod print-object ((tmpl template) stream)
