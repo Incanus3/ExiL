@@ -99,7 +99,7 @@
 
 ;; forward declaration, real one will appear in environment.lisp
 ; private for package, forward declaration of environment:find-template
-(defgeneric find-template (name))
+;(defgeneric find-template (name))
 
 ;; tmpl-object function searches template's slot list, finds values from them
 ;; in specification or falls back to default values if it finds nothing
@@ -108,7 +108,7 @@
 ; private for package
 (defun make-tmpl-object (specification object-type)
   "creates template-object of given type from its specification"
-  (let ((template (find-template (first specification))))
+  (let ((template (exil-env:find-template (first specification))))
     (cl:assert template () "can't find template ~A" (first specification))
     (make-instance
      object-type ;; >>>>>>>>>>>>>> cat's standing on my keyboard
@@ -126,7 +126,7 @@
 (defun tmpl-object-specification-p (specification)
   "is this a template-object specification?"
   (and (listp specification)
-       (find-template (first specification))
+       (exil-env:find-template (first specification))
        (or (null (rest specification))
 	   ;; probably faster than (= (length specification) 1)
 	   (keywordp (second specification)))))

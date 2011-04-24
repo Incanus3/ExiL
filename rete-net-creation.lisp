@@ -10,10 +10,10 @@
 		   (beta-top-node  :accessor beta-top-node
 				   :initform (make-instance 'beta-top-node))))
 
-(defmethod add-wme ((fact fact) &optional (rete (rete)))
+(defmethod add-wme ((fact fact) &optional (rete (exil-env:rete)))
   (activate (alpha-top-node rete) fact))
 
-(defmethod rem-wme ((fact fact) &optional (rete (rete)))
+(defmethod rem-wme ((fact fact) &optional (rete (exil-env:rete)))
   (inactivate (alpha-top-node rete) fact)
   (inactivate (beta-top-node rete) fact))
 
@@ -77,10 +77,10 @@
 			 (make-instance 'alpha-memory-node
 					:description pattern))))))
 
-(defmethod create-alpha-net ((pattern simple-pattern) &optional (rete (rete)))
+(defmethod create-alpha-net ((pattern simple-pattern) &optional (rete (exil-env:rete)))
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete))))
 
-(defmethod create-alpha-net ((pattern template-pattern) &optional (rete (rete)))
+(defmethod create-alpha-net ((pattern template-pattern) &optional (rete (exil-env:rete)))
   (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete)
 					  (tmpl-name pattern))))
 
@@ -89,7 +89,7 @@
      for i = 1 then (1+ i)
      until (find-atom condition atom)
      finally
-       (let ((position (atom-position atom condition)))
+       (let ((position (atom-position condition atom)))
 	 (when position (return (cons i position))))))
 
 (defmethod get-intercondition-tests% ((condition simple-pattern) (prev-conds list))
@@ -162,7 +162,7 @@
 	       neg-node))))
 
 ;; DODELAT NEGATIVE NODY
-(defmethod new-production ((rule rule) &optional (rete (rete)))
+(defmethod new-production ((rule rule) &optional (rete (exil-env:rete)))
   (with-slots (conditions) rule
     (loop
        for current-cond in conditions
@@ -185,7 +185,7 @@
 	 (add-production (beta-memory current-join-node)
 			 rule))))
 	 
-(defmethod remove-production ((rule rule) &optional (rete (rete)))
+(defmethod remove-production ((rule rule) &optional (rete (exil-env:rete)))
   (labels ((walk-through (node)
 	     (when (typep node 'beta-memory-node)
 	       (delete-production node rule))

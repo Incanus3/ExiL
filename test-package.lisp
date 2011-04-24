@@ -3,11 +3,12 @@
   (:use :common-lisp :exil-utils :exil-core :exil-rete :exil-env)
   (:shadowing-import-from :exil-utils exil-utils::intern
   exil-utils::string-append exil-utils::symbol-name exil-utils::symbol-append
-  exil-utils::to-keyword exil-utils::from-keyword exil-utils::mac-exp
-  exil-utils::subsets exil-utils::assoc-value exil-utils::assoc-key
-  exil-utils::to-list exil-utils::to-list-of-lists exil-utils::my-pushnew
-  exil-utils::ext-pushnew exil-utils::ext-delete exil-utils::diff-delete
-  exil-utils::push-update exil-utils::class-slot-value exil-utils::select)
+  exil-utils::to-keyword exil-utils::from-keyword
+  exil-utils::weak-symbol-equal-p exil-utils::mac-exp exil-utils::subsets
+  exil-utils::assoc-value exil-utils::assoc-key exil-utils::to-list
+  exil-utils::to-list-of-lists exil-utils::my-pushnew exil-utils::ext-pushnew
+  exil-utils::ext-delete exil-utils::diff-delete exil-utils::push-update
+  exil-utils::class-slot-value exil-utils::select)
   (:shadowing-import-from :exil-core exil-core::variable-p exil-core::template
   exil-core::make-template exil-core::template-object
   exil-core::tmpl-object-slot-value exil-core::tmpl-object-equal-p
@@ -80,7 +81,7 @@
   exil-env::strategies exil-env::current-strategy-name exil-env::watchers)
   (:shadowing-import-from :exil exil::deftemplate exil::assert% exil::assert
   exil::retract% exil::retract exil::modify% exil::modify exil::clear
-  exil::deffacts exil::assert-group% exil::reset exil::defrule exil::undefrule
-  exil::defstrategy exil::setstrategy exil::step exil::*exil-running* exil::halt
-  exil::run exil::watch exil::unwatch))
+  exil::deffacts exil::assert-group% exil::reset exil::my-position exil::defrule
+  exil::undefrule exil::defstrategy exil::setstrategy exil::step
+  exil::*exil-running* exil::halt exil::run exil::watch exil::unwatch))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

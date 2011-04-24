@@ -60,11 +60,15 @@
   (dolist (group (fact-groups))
     (assert-group% (cdr group))))
 
+(defun my-position (atom list)
+  (position atom list))
+
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 (defmacro defrule (name &body rule)
   "Define rule"
-  (let ((=>-position (position '=> rule))
+  (let ((=>-position (position '=> rule :test #'weak-symbol-equal-p))
 	(rule-symbol (gensym)))
+    (format t "=>-position: ~A~%" =>-position)
     (cl:assert =>-position ()
 	    "rule definition must include =>")
     `(let ((,rule-symbol

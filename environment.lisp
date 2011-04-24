@@ -16,9 +16,9 @@
 			     (simplicity-strategy . ,#'simplicity-strategy)
 			     (complexity-strategy . ,#'complexity-strategy)))
      (current-strategy-name :initform 'default)
-     (watchers :initform '((facts . nil)
-			   (rules . nil)
-			   (activations . nil)))))
+     (watchers :initform '((:facts . nil)
+			   (:rules . nil)
+			   (:activations . nil)))))
 
 
 ; not in use
@@ -92,7 +92,7 @@
 
 ; private
 (defmethod watched-p (watcher)
-  (assoc-value watcher (watchers)))
+  (assoc-value (to-keyword watcher) (watchers)))
 
 ; public
 (defun add-fact (fact)
@@ -201,17 +201,20 @@
 			   :test #'match-equal-p))
     activation))
 
+(defmethod is-watcher ((watcher symbol))
+  (find (to-keyword watcher) (watchers) :key #'car))
+
 ; public
 (defmethod set-watcher (watcher)
-  (cl:assert (find watcher (mapcar #'car (watchers)))
+  (cl:assert (is-watcher watcher)
 	     () "I don't know how to watch ~A" watcher)
-  (setf (assoc-value watcher (watchers)) t))
+  (setf (assoc-value (to-keyword watcher) (watchers)) t))
 
 ; public
 (defmethod unset-watcher (watcher)
-  (cl:assert (find watcher (mapcar #'car (watchers)))
+  (cl:assert (is-watcher watcher)
 	     () "I don't know how to watch ~A" watcher)
-  (setf (assoc-value watcher (watchers)) nil))
+  (setf (assoc-value (to-keyword watcher) (watchers)) nil))
 
 ; public
 (defun reset-environment ()

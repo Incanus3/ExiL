@@ -13,13 +13,13 @@
 		:initform ())))
 
 ;; forward declarations, real ones will appear in environment.lisp
-(defgeneric agenda ())
-(defgeneric add-match (rule token))
-(defgeneric remove-match (rule token))
+;(defgeneric agenda ())
+;(defgeneric add-match (rule token))
+;(defgeneric remove-match (rule token))
 
 (defmethod complete-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (add-match production token)))
+    (exil-env:add-match production token)))
 
 (defmethod activate ((node beta-memory-node) (token token))
 ;  (fresh-line t)
@@ -32,7 +32,7 @@
 
 (defmethod broken-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (remove-match production token)))
+    (exil-env:remove-match production token)))
 
 (defmethod inactivate :before ((node beta-memory-node) (fact fact))
   (multiple-value-bind (new-items deleted) 

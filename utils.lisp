@@ -35,6 +35,12 @@
   (intern key package))
 ;; (from-keyword :a) => a
 
+(defgeneric weak-symbol-equal-p (sym1 sym2)
+  (:documentation "Test if the symbol name is equal, omits the package name")
+  (:method ((sym1 symbol) (sym2 symbol))
+    (equalp (to-keyword sym1) (to-keyword sym2)))
+  (:method (sym1 sym2) nil))
+
 (defmacro mac-exp (&body body)
   "shortcut for calling macroexpand-1"
   `(pprint (macroexpand-1 ',@body)))

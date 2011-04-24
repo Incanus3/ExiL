@@ -1,78 +1,8 @@
+(in-package :exil-test)
+
 #|
-(load "packages.lisp")
-(load "utils.lisp")
-(load "templates.lisp")
-(load "facts.lisp")
-(load "patterns.lisp")
-(load "rules.lisp")
-(load "tokens.lisp")
-(load "rete-generic-node.lisp")
-(load "rete-alpha-part.lisp")
-(load "rete-beta-part.lisp")
-(load "rete-net-creation.lisp")
-(load "matches.lisp")
-(load "activations.lisp")
-(load "strategies.lisp")
-(load "environment.lisp")
-(load "export.lisp")
-|#
-
-
-(in-package :exil)
-
-(in-package :exil-rete)
-
-(defmethod get-alpha-memories ((node alpha-subtop-node))
-  (let (memories)
-    (labels ((walk-through (node)
-	       (if (typep node 'alpha-memory-node)
-		   (push node memories)
-		   (dolist (child (node-children node))
-		     (walk-through child)))))
-      (walk-through node)
-      memories)))
-
-(defmethod get-beta-memories ((node beta-top-node))
-  (let (memories)
-    (labels ((walk-through (node)
-	       (when (typep node 'beta-memory-node)
-		 (push node memories))
-	       (dolist (child (children node))
-		 (walk-through child))))
-      (walk-through node)
-      (nreverse memories))))
-	  
-(defmethod print-memory ((memory memory-node))
-  (format t "~A:~%  ~A~%~%" memory (items memory)))
-
-(export '(:get-alpha-memories :get-beta-memories :print-memory) :exil-rete)
-
-(in-package :exil-env)
-
-(defun print-alpha-mems (&optional (rete (rete)))
-  (let ((nets
-	 (loop for net being the hash-values in (networks (alpha-top-node rete))
-	    collect net)))
-    (dolist (net nets)
-      (dolist (mem (get-alpha-memories net))
-	(print-memory mem)))))
-
-(defun print-beta-mems (&optional (rete (rete)))
-  (dolist (mem (get-beta-memories (beta-top-node rete)))
-    (print-memory mem)))
-
-(defun print-memories (&optional (rete (rete)))
-  (fresh-line t)
-  (terpri t)
-  (print-alpha-mems rete)
-  (terpri t)
-  (print-beta-mems rete))
-
-(export :print-memories :exil-env)
-
-(in-package :exil)
-#|
-   ROBOTS:
+(in-package :exil-user)
+;   ROBOTS:
 (deftemplate goal (action object from to))
 (deftemplate in (object location))
 
@@ -225,3 +155,46 @@ fire PUSH
 (reset-environment)
 (defvar *conds* (conditions *rule*))
 |#
+
+
+(defmethod get-alpha-memories ((node alpha-subtop-node))
+  (let (memories)
+    (labels ((walk-through (node)
+	       (if (typep node 'alpha-memory-node)
+		   (push node memories)
+		   (dolist (child (node-children node))
+		     (walk-through child)))))
+      (walk-through node)
+      memories)))
+
+(defmethod get-beta-memories ((node beta-top-node))
+  (let (memories)
+    (labels ((walk-through (node)
+	       (when (typep node 'beta-memory-node)
+		 (push node memories))
+	       (dolist (child (children node))
+		 (walk-through child))))
+      (walk-through node)
+      (nreverse memories))))
+	  
+(defmethod print-memory ((memory memory-node))
+  (format t "~A:~%  ~A~%~%" memory (items memory)))
+
+(defun print-alpha-mems (&optional (rete (rete)))
+  (let ((nets
+	 (loop for net being the hash-values in (networks (alpha-top-node rete))
+	    collect net)))
+    (dolist (net nets)
+      (dolist (mem (get-alpha-memories net))
+	(print-memory mem)))))
+
+(defun print-beta-mems (&optional (rete (rete)))
+  (dolist (mem (get-beta-memories (beta-top-node rete)))
+    (print-memory mem)))
+
+(defun print-memories (&optional (rete (rete)))
+  (fresh-line t)
+  (terpri t)
+  (print-alpha-mems rete)
+  (terpri t)
+  (print-beta-mems rete))

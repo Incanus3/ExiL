@@ -69,7 +69,7 @@
   (find atom (pattern pattern)))
 
 ; public, used by rete
-(defmethod atom-position (atom (pattern simple-pattern))
+(defmethod atom-position ((pattern simple-pattern) atom)
   (position atom (pattern pattern)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
