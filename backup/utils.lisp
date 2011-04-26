@@ -1,4 +1,4 @@
-(in-package :exil)
+(in-package :exil-utils)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; various general purpose utilities
@@ -34,6 +34,12 @@
   "get sybol from key"
   (intern key package))
 ;; (from-keyword :a) => a
+
+(defgeneric weak-symbol-equal-p (sym1 sym2)
+  (:documentation "Test if the symbol name is equal, omits the package name")
+  (:method ((sym1 symbol) (sym2 symbol))
+    (equalp (to-keyword sym1) (to-keyword sym2)))
+  (:method (sym1 sym2) nil))
 
 (defmacro mac-exp (&body body)
   "shortcut for calling macroexpand-1"
@@ -130,7 +136,7 @@
   "get a class-slot value from class-name"
   (slot-value (make-instance class-name) slot-name))
 
-(defun select (list &rest indices)
+(defun select (list indices)
   "get a list of values from list according to the list of indices"
   (mapcar (lambda (i)
 	    (nth i list))

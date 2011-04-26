@@ -77,18 +77,9 @@
 ; always put exil-env-* calls on one line, for the automated package creator to work
 ; public
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors fact-groups templates rules rete agenda strategies current-strategy-name watchers)
+  (exil-env-accessors facts fact-groups templates rules rete agenda strategies current-strategy-name watchers)
   (exil-env-writer facts))
 ;; rete should be removed after proper DEBUG
-
-;; should support environment specification, but don't know, how to combine
-;; &optional and &rest, ask someone smarter
-; public
-(defmethod facts (&rest fact-nums)
-  (let ((facts (slot-value *current-environment* 'facts)))
-    (if fact-nums
-	(select facts fact-nums)
-	facts)))
 
 ; private
 (defmethod watched-p (watcher)

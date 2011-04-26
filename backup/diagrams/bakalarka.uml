@@ -58,7 +58,7 @@
 			CodeGeneration
 		</plugin>
 </profile>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Wed Mar 30 19:11:16 CEST 2011'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Sun Apr 03 01:02:23 CEST 2011'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
       <XMI.exporterVersion>0.32.1(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
@@ -1379,6 +1379,21 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
                     </UML:Parameter>
                   </UML:BehavioralFeature.parameter>
                 </UML:Operation>
+                <UML:Attribute xmi.id = '-98--62--87-47-26e23b9a:12f15b485f6:-8000:0000000000000B57'
+                  name = 'environment' visibility = 'private' isSpecification = 'false' ownerScope = 'instance'
+                  changeability = 'changeable' targetScope = 'instance'>
+                  <UML:StructuralFeature.multiplicity>
+                    <UML:Multiplicity xmi.id = '-98--62--87-47-26e23b9a:12f15b485f6:-8000:0000000000000B58'>
+                      <UML:Multiplicity.range>
+                        <UML:MultiplicityRange xmi.id = '-98--62--87-47-26e23b9a:12f15b485f6:-8000:0000000000000B59'
+                          lower = '1' upper = '1'/>
+                      </UML:Multiplicity.range>
+                    </UML:Multiplicity>
+                  </UML:StructuralFeature.multiplicity>
+                  <UML:StructuralFeature.type>
+                    <UML:Class xmi.idref = '-98--62--87-47-2e6d0adc:12ef6f21bc5:-8000:0000000000000A77'/>
+                  </UML:StructuralFeature.type>
+                </UML:Attribute>
               </UML:Classifier.feature>
             </UML:Class>
             <UML:Association xmi.id = '-98--62--87-47-2e6d0adc:12ef6f21bc5:-8000:0000000000000A34'
@@ -3686,7 +3701,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       justification="Center"
     >+ Fact</text>
     <group name="Fig3.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[857, 641, 113, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[809, 641, 113, 0]"
          href="-98--62--87-47-d2dd984:12ef24cefbb:-8000:0000000000000A9B"
          fill="0"
          fillcolor="white"
@@ -3698,7 +3713,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       </private>
       
       <rectangle name="Fig3.2.0"
-        x="857"
+        x="809"
         y="641"
         width="113"
         height="0"
@@ -5197,7 +5212,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
     ></text>
   </group>
   <group name="Fig18"
-       description="org.argouml.uml.diagram.static_structure.ui.FigClass[2328, 544, 429, 309]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[2328, 544, 429, 312]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
        href="-98--62--87-47-2e6d0adc:12ef6f21bc5:-8000:0000000000000A29"
        fill="1"
        fillcolor="white"
@@ -5212,7 +5227,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       x="2328"
       y="544"
       width="429"
-      height="309"
+      height="312"
       fill="1"
       fillcolor="white"
       stroke="1"
@@ -5268,7 +5283,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       strokecolor="black"
     />
     <group name="Fig18.4"
-         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[2329, 568, 427, 21]"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[2329, 568, 427, 24]"
          href="-98--62--87-47-2e6d0adc:12ef6f21bc5:-8000:0000000000000A29"
          fill="0"
          fillcolor="white"
@@ -5282,16 +5297,32 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
         x="2329"
         y="568"
         width="427"
-        height="21"
+        height="24"
         fill="0"
         fillcolor="white"
         stroke="0"
         strokecolor="black"
       />
+      <text name="Fig18.4.1"
+        x="2329"
+        y="568"
+        width="427"
+        height="22"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >-environment : Environment</text>
     </group>
     <rectangle name="Fig18.5"
       x="2328"
-      y="588"
+      y="591"
       width="429"
       height="1"
       fill="1"
@@ -5300,7 +5331,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       strokecolor="black"
     />
     <group name="Fig18.6"
-         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[2329, 589, 427, 264]"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[2329, 592, 427, 264]"
          href="-98--62--87-47-2e6d0adc:12ef6f21bc5:-8000:0000000000000A29"
          fill="0"
          fillcolor="white"
@@ -5312,7 +5343,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       
       <rectangle name="Fig18.6.0"
         x="2329"
-        y="589"
+        y="592"
         width="427"
         height="264"
         fill="0"
@@ -5322,7 +5353,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       />
       <text name="Fig18.6.1"
         x="2329"
-        y="589"
+        y="592"
         width="427"
         height="16"
         fill="0"
@@ -5338,7 +5369,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+defTemplate(name : String,fields : FieldSpecification)</text>
       <text name="Fig18.6.2"
         x="2329"
-        y="605"
+        y="608"
         width="427"
         height="16"
         fill="0"
@@ -5354,7 +5385,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+assert(factSpecification : FactSpecification)</text>
       <text name="Fig18.6.3"
         x="2329"
-        y="621"
+        y="624"
         width="427"
         height="16"
         fill="0"
@@ -5370,7 +5401,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+retract(factSpecification : FactSpecification)</text>
       <text name="Fig18.6.4"
         x="2329"
-        y="637"
+        y="640"
         width="427"
         height="16"
         fill="0"
@@ -5386,7 +5417,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+modify(oldFactSpec : FactSpecification,newFactSpec : FactSpecification)</text>
       <text name="Fig18.6.5"
         x="2329"
-        y="653"
+        y="656"
         width="427"
         height="16"
         fill="0"
@@ -5402,7 +5433,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+defFacts(groupName : String,facts : FactSpecification)</text>
       <text name="Fig18.6.6"
         x="2329"
-        y="669"
+        y="672"
         width="427"
         height="16"
         fill="0"
@@ -5418,7 +5449,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+defRule(name : String,ruleSpecification : RuleSpecification)</text>
       <text name="Fig18.6.7"
         x="2329"
-        y="685"
+        y="688"
         width="427"
         height="16"
         fill="0"
@@ -5434,7 +5465,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+undefRule(name : String)</text>
       <text name="Fig18.6.8"
         x="2329"
-        y="701"
+        y="704"
         width="427"
         height="16"
         fill="0"
@@ -5450,7 +5481,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+defStrategy(name : String,specification : StrategySpecification)</text>
       <text name="Fig18.6.9"
         x="2329"
-        y="717"
+        y="720"
         width="427"
         height="16"
         fill="0"
@@ -5466,7 +5497,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+setStrategy(name : String)</text>
       <text name="Fig18.6.10"
         x="2329"
-        y="733"
+        y="736"
         width="427"
         height="16"
         fill="0"
@@ -5482,7 +5513,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+clear()</text>
       <text name="Fig18.6.11"
         x="2329"
-        y="749"
+        y="752"
         width="427"
         height="16"
         fill="0"
@@ -5498,7 +5529,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+reset()</text>
       <text name="Fig18.6.12"
         x="2329"
-        y="765"
+        y="768"
         width="427"
         height="16"
         fill="0"
@@ -5514,7 +5545,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+step()</text>
       <text name="Fig18.6.13"
         x="2329"
-        y="781"
+        y="784"
         width="427"
         height="16"
         fill="0"
@@ -5530,7 +5561,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+halt()</text>
       <text name="Fig18.6.14"
         x="2329"
-        y="797"
+        y="800"
         width="427"
         height="16"
         fill="0"
@@ -5546,7 +5577,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+run()</text>
       <text name="Fig18.6.15"
         x="2329"
-        y="813"
+        y="816"
         width="427"
         height="16"
         fill="0"
@@ -5562,7 +5593,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
       >+watch(watcherName : String)</text>
       <text name="Fig18.6.16"
         x="2329"
-        y="829"
+        y="832"
         width="427"
         height="22"
         fill="0"
@@ -11257,7 +11288,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
                         offset="5" />
     </private>
     <path name="Fig76.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
@@ -11314,7 +11345,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
                         offset="5" />
     </private>
     <path name="Fig77.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
@@ -11371,7 +11402,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
                         offset="5" />
     </private>
     <path name="Fig78.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
@@ -11428,7 +11459,7 @@ e.g (DOG :has ?limb)</UML:TaggedValue.dataValue>
                         offset="5" />
     </private>
     <path name="Fig79.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"

@@ -32,15 +32,15 @@
 	   :add-fact-group :add-rule :rem-fule :find-rule
 	   :add-strategy :set-strategy :select-activation
 	   :set-watcher :unset-watcher :watched-p :activate-rule
-	   :agenda :fact-groups :find-template :rete :add-match :remove-match))
+	   :facts :agenda :fact-groups :find-template :rete :add-match :remove-match))
 
 (defpackage :exil
   (:use :common-lisp :exil-utils :exil-core :exil-env)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :deftemplate :assert :retract :modify :clear :deffacts :reset
 	   :defrule :undefrule :defstrategy :setstrategy :watch :unwatch
-	   :step :halt :run)
-  (:shadow :assert :step))
+	   :step :halt :run :facts)
+  (:shadow :assert :step :facts))
 
 (defpackage :exil-user
   (:use :common-lisp :exil)

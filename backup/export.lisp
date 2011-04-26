@@ -13,11 +13,9 @@
     (let ((template (gensym "template")))
 
       `(let ((,template
-	      (make-instance
-	       'template
-	       :name ',name
-	       :slots ',(loop for field in (to-list-of-lists fields)
-			   collect (field->slot-designator field)))))
+	      (make-template ',name
+			     ',(loop for field in (to-list-of-lists fields)
+				  collect (field->slot-designator field)))))
 	 (add-template ,template)))))
 
 (defun assert% (fact-spec)
@@ -52,7 +50,7 @@
   "Create group of facts to be asserted after (reset)"
   `(add-fact-group ',name ',fact-descriptions))
 
-(defun assert-group (fact-descriptions)
+(defun assert-group% (fact-descriptions)
   (dolist (desc fact-descriptions)
     (assert% desc)))
 
@@ -60,21 +58,23 @@
   "Clear all facts and add all fact groups"
   (clear)
   (dolist (group (fact-groups))
-    (assert-group (cdr group))))
+    (assert-group% (cdr group))))
+
+(defun my-position (atom list)
+  (position atom list))
 
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 (defmacro defrule (name &body rule)
   "Define rule"
-  (let ((=>-position (position '=> rule))
+  (let ((=>-position (position '=> rule :test #'weak-symbol-equal-p))
 	(rule-symbol (gensym)))
+    (format t "=>-position: ~A~%" =>-position)
     (cl:assert =>-position ()
 	    "rule definition must include =>")
     `(let ((,rule-symbol
-	    (make-instance
-	     'rule
-	     :name ',name
-	     :conditions (mapcar #'make-pattern ',(subseq rule 0 =>-position))
-	     :activations ',(subseq rule (1+ =>-position)))))
+	    (make-rule ',name
+		       (mapcar #'make-pattern ',(subseq rule 0 =>-position))
+		       ',(subseq rule (1+ =>-position)))))
        (add-rule ,rule-symbol))))
 
 (defmacro undefrule (name)
@@ -85,11 +85,11 @@
 
 (defmacro defstrategy (name function)
   "Define strategy"
-  `(defstrategy% ',name ,function))
+  `(add-strategy ',name ,function))
 
-(defmacro set-strategy (name)
+(defmacro setstrategy (name)
   "Set strategy to use"
-  `(set-strategy% ',name))
+  `(set-strategy ',name))
 
 (defun step ()
   "Run inference engine for one turn"
@@ -111,9 +111,9 @@
 
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(watch% ',watcher))
+  `(set-watcher ',watcher))
 
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(unwatch% ',watcher))
+  `(unset-watcher ',watcher))
 

@@ -1,8 +1,9 @@
-(in-package :exil)
+(in-package :exil-core)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rules
 
+; public
 (defclass rule ()
   ((name :initarg :name :reader name)
    (conditions :initarg :conditions :reader conditions)
@@ -21,9 +22,11 @@
 	   (   )))))
 |#
 
+; public
 (defmethod rule-equal-p ((rule1 rule) (rule2 rule))
   (equalp (name rule1) (name rule2)))
 
+; public
 (defmethod print-object ((rule rule) stream)
   (if *print-escape*
       (print-unreadable-object (rule stream :type t)
@@ -31,3 +34,7 @@
       (format stream "Rule ~A:~%~{~A~%~}=>~%~{~A~}" (name rule) (conditions rule)
 	      (activations rule)))
   rule)
+
+;public
+(defmethod make-rule (name conditions activations)
+  (make-instance 'rule :name name :conditions conditions :activations activations))

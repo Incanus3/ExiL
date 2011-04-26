@@ -1,4 +1,77 @@
-(in-package :exil)
+(in-package :exil-test)
+
+#|
+(in-package :exil-user)
+;   ROBOTS:
+(deftemplate goal (action object from to))
+(deftemplate in (object location))
+
+(deffacts world
+  (in :object robot :location A)
+  (in :object box :location B)
+  (goal :action push :object box :from B :to A))
+
+(defrule stop
+  (goal :object ?x :to ?y)
+  (in :object ?x :location ?y)
+  =>
+  (halt)
+  )
+
+(defrule move
+  (goal :object ?x :from ?y)
+  (in :object ?x :location ?y)
+  (- in :object robot :location ?y)
+  (in :object robot :location ?z)
+  =>
+  (modify (in :object robot :location ?z)
+	  (in :object robot :location ?y)))
+
+(defrule push
+  (goal :object ?x :from ?y :to ?z)
+  (in :object ?x :location ?y)
+  (in :object robot :location ?y)
+  =>
+  (modify (in :object robot :location ?y)
+	  (in :object robot :location ?z))
+  (modify (in :object ?x :location ?y)
+	  (in :object ?x :location ?z)))
+
+(watch facts)
+(watch activations)
+
+(reset)
+(step)
+(print-memories)
+
+(run)
+(pprint (facts))
+
+(completely-reset-environment)
+
+POSTUP:
+1)
+(in :obj robot :loc A)
+(in :obj box :loc B)
+(goal :act push :obj box :from B :to A)
+
+fire MOVE
+
+2)
+(in :obj robot :loc B)
+(in :obj box :loc B)
+(goal :act push :obj box :from B :to A)
+
+fire PUSH
+
+3)
+(in :obj robot :loc A)
+(in :obj box :loc A)
+(goal :act push :obj box :from B :to A)
+
+|#
+
+;DEBUG:
 
 #|
 (deffacts blah
@@ -83,6 +156,7 @@
 (defvar *conds* (conditions *rule*))
 |#
 
+
 (defmethod get-alpha-memories ((node alpha-subtop-node))
   (let (memories)
     (labels ((walk-through (node)
@@ -124,74 +198,3 @@
   (print-alpha-mems rete)
   (terpri t)
   (print-beta-mems rete))
-
-#|
-   ROBOTS:
-(deftemplate goal (action object from to))
-(deftemplate in (object location))
-
-(deffacts world
-  (in :object robot :location A)
-  (in :object box :location B)
-  (goal :action push :object box :from B :to A))
-
-(defrule stop
-  (goal :object ?x :to ?y)
-  (in :object ?x :location ?y)
-  =>
-  (halt)
-  )
-
-(defrule move
-  (goal :object ?x :from ?y)
-  (in :object ?x :location ?y)
-  (- in :object robot :location ?y)
-  (in :object robot :location ?z)
-  =>
-  (modify (in :object robot :location ?z)
-	  (in :object robot :location ?y)))
-
-(defrule push
-  (goal :object ?x :from ?y :to ?z)
-  (in :object ?x :location ?y)
-  (in :object robot :location ?y)
-  =>
-  (modify (in :object robot :location ?y)
-	  (in :object robot :location ?z))
-  (modify (in :object ?x :location ?y)
-	  (in :object ?x :location ?z)))
-
-(watch facts)
-(watch activations)
-
-(reset)
-(step)
-(print-memories)
-
-(run)
-(pprint (facts))
-
-(completely-reset-environment)
-
-POSTUP:
-1)
-(in :obj robot :loc A)
-(in :obj box :loc B)
-(goal :act push :obj box :from B :to A)
-
-fire MOVE
-
-2)
-(in :obj robot :loc B)
-(in :obj box :loc B)
-(goal :act push :obj box :from B :to A)
-
-fire PUSH
-
-3)
-(in :obj robot :loc A)
-(in :obj box :loc A)
-(goal :act push :obj box :from B :to A)
-
-|#
-

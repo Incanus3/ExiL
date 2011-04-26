@@ -1,63 +1,10 @@
-(in-package :exil)
+(in-package :exil-rete)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; beta memory classes
 
 (defclass beta-node (node) ((parent :accessor parent :initarg :parent
 				    :initform nil)))
-
-;; could be changed to cons to be more effective
-(defclass token () ((parent :reader parent :initarg :parent :initform nil)
-		    (wme :reader wme :initarg :wme
-			 :initform (error "wme slot has to be specified"))
-		    (negative-wmes :initform nil :accessor negative-wmes)))
-
-(defclass empty-token (token) ((wme :initform nil)))
-
-(defmethod token (wme &optional parent)
-  (make-instance 'token :wme wme :parent parent))
-
-(defmethod previous-wme ((token token) &optional (n 1))
-  "gives wme from token n wmes back"
-  (dotimes (i n (wme token))
-    (setf token (parent token))
-    (unless token (return))))
-
-;; it would be more logical if the arguements were switched, but this is
-;; more convenient, when i supply this predicate as a test to delete
-(defmethod includes-p ((fact fact) (token token))
-  (loop for tkn = token then (parent tkn)
-     unless tkn do (return nil)
-     when (fact-equal-p fact (wme tkn)) do
-       (return t)))
-
-(defmethod includes-p ((included-token token) (token token))
-  (loop for tkn = token then (parent tkn)
-     unless tkn do (return nil)
-     when (token-equal-p tkn included-token) do
-       (return t)))
-
-(defmethod print-object ((token token) stream)
-  (print-unreadable-object (token stream :type t)
-    (format stream "~A"
-	    (nreverse
-	     (loop for tkn = token then (parent tkn)
-		while tkn
-		collect (wme tkn))))))
-
-(defgeneric token-equal-p (token1 token2)
-  (:documentation "token equality predicate")
-  (:method (token1 token2) nil)
-  (:method ((token1 empty-token) (token2 empty-token)) t)
-  (:method ((token1 token) (token2 token))
-    (and (fact-equal-p (wme token1) (wme token2))
-	 (token-equal-p (parent token1) (parent token2)))))
-
-(defmethod token->list ((token token))
-  (loop with list = ()
-     for tkn = token then (parent tkn)
-     when (typep tkn 'empty-token) do (return list)
-     do (push (wme tkn) list)))
 
 ;; children are beta-join-nodes
 (defclass beta-memory-node (beta-node memory-node)
@@ -66,13 +13,13 @@
 		:initform ())))
 
 ;; forward declarations, real ones will appear in environment.lisp
-(defgeneric agenda ())
-(defgeneric add-match (rule token))
-(defgeneric remove-match (rule token))
+;(defgeneric agenda ())
+;(defgeneric add-match (rule token))
+;(defgeneric remove-match (rule token))
 
 (defmethod complete-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (add-match production token)))
+    (exil-env:add-match production token)))
 
 (defmethod activate ((node beta-memory-node) (token token))
 ;  (fresh-line t)
@@ -85,7 +32,7 @@
 
 (defmethod broken-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (remove-match production token)))
+    (exil-env:remove-match production token)))
 
 (defmethod inactivate :before ((node beta-memory-node) (fact fact))
   (multiple-value-bind (new-items deleted) 
@@ -240,20 +187,3 @@
       (unless (negative-wmes token)
 	(activate-children node token))))
   nil)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; compound rete class and methods for export
-
-(defgeneric rete ())
-
-(defclass rete () ((alpha-top-node :reader alpha-top-node
-				   :initform (make-instance 'alpha-top-node))
-		   (beta-top-node  :accessor beta-top-node
-				   :initform (make-instance 'beta-top-node))))
-
-(defmethod add-wme ((fact fact) &optional (rete (rete)))
-  (activate (alpha-top-node rete) fact))
-
-(defmethod remove-wme ((fact fact) &optional (rete (rete)))
-  (inactivate (alpha-top-node rete) fact)
-  (inactivate (beta-top-node rete) fact))

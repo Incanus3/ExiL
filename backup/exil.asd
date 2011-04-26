@@ -12,23 +12,24 @@
     :long-description ""
     :components
     ((:file "packages")
-     (:file "utils"             :depends-on ("packages"))
-     (:file "templates"         :depends-on ("utils"))
-     (:file "facts"             :depends-on ("templates"))
-     (:file "patterns"          :depends-on ("facts"))
-     (:file "rules"             :depends-on ("patterns"))
-     (:file "rete-generic-node" :depends-on ("rules"))
-     (:file "rete-alpha-part"   :depends-on ("rete-generic-node"))
-     (:file "rete-beta-part"    :depends-on ("rete-alpha-part"))
-     (:file "rete-net-creation" :depends-on ("rete-beta-part"))
-     (:file "matches"           :depends-on ("rete-net-creation"))
-     (:file "activations"       :depends-on ("matches"))
-     (:file "strategies"        :depends-on ("activations"))
-     (:file "environment"       :depends-on ("strategies"))
-     (:file "print-tree"        :depends-on ("environment"))
-     (:file "export"            :depends-on ("environment"))
-;   (:file "pokusy"            :depends-on ("export"))
-     )
+     (:file "utils"             :depends-on ("packages"))  ; utils
+     (:file "templates"         :depends-on ("utils"))     ; ^
+     (:file "facts"             :depends-on ("templates")) ; |
+     (:file "patterns"          :depends-on ("facts"))     ; | core
+     (:file "rules"             :depends-on ("patterns"))  ; v
+     (:file "tokens"            :depends-on ("rules"))             ; ^
+     (:file "rete-generic-node" :depends-on ("tokens"))            ; |
+     (:file "rete-alpha-part"   :depends-on ("rete-generic-node")) ; | rete
+     (:file "rete-beta-part"    :depends-on ("rete-alpha-part"))   ; |
+     (:file "rete-net-creation" :depends-on ("rete-beta-part"))    ; v
+     (:file "matches"           :depends-on ("rete-net-creation")) ; ^
+     (:file "activations"       :depends-on ("matches"))           ; |
+     (:file "strategies"        :depends-on ("activations"))       ; | environment
+     (:file "environment"       :depends-on ("strategies"))        ; v
+     (:file "export"            :depends-on ("environment"))       ; front-end
+     (:file "test-package"      :depends-on ("export"))
+#|     (:file "print-tree"        :depends-on ("environment"))
+     (:file "pokusy"            :depends-on ("export"))|#)
     :properties ((:author-email . "jakubkalab@gmail.com")
 		 (:date . "4.9.2010")
 		 ((:albert :output-dir) . "doc")

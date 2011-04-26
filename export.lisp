@@ -18,13 +18,19 @@
 				  collect (field->slot-designator field)))))
 	 (add-template ,template)))))
 
+(defun facts (&optional (start-index 0) (end-index (length (exil-env:facts)))
+			(at-most end-index))
+  (let ((facts (exil-env:facts)))
+    (loop for i from start-index to (min end-index (+ start-index at-most -1))
+       collect (nth i facts))))
+
 (defun assert% (fact-spec)
   (add-fact (make-fact fact-spec)))
 
 (defmacro assert (&rest fact-specs)
   "Add fact into working memory"
   (let ((fact-spec (gensym "fact-spec")))
-    `(dolist (,fact-spec ',fact-specs)
+    `(dolist (,fact-spec ',(reverse fact-specs))
        (assert% ,fact-spec))))
 
 (defun retract% (fact-spec)
