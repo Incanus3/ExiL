@@ -77,8 +77,7 @@
 ; always put exil-env-* calls on one line, for the automated package creator to work
 ; public
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors facts fact-groups templates rules rete agenda strategies current-strategy-name watchers)
-  (exil-env-writer facts))
+  (exil-env-accessors facts fact-groups templates rules rete agenda strategies current-strategy-name watchers))
 ;; rete should be removed after proper DEBUG
 
 ; private
@@ -87,7 +86,7 @@
 
 ; public
 (defun add-fact (fact)
-  (when (nth-value 1 (ext-pushnew fact (facts) :test #'fact-equal-p))
+  (when (nth-value 1 (pushnew-end fact (facts) :test #'fact-equal-p))
     (when (watched-p 'facts)
       (format t "==> ~A~%" fact))
     (add-wme fact)))

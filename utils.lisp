@@ -107,6 +107,17 @@
 	   (,new-list (pushnew ,item ,place :test ,test :key ,key)))
        (values ,new-list (not (= (length ,new-list) ,length))))))
 
+(defmacro push-end (item list)
+  `(progn (if ,list (nconc ,list (cons ,item nil)) (setf ,list (list ,item)))
+	  ,list))
+
+(defmacro pushnew-end (item list &key (key '#'identity) (test '#'equalp))
+  (string-append "pushes the item at the end of list, it it's not yet in the list"
+		 "as a second value, returns whether the list was actualy altered")
+  `(if (find ,item ,list :key ,key :test ,test)
+       (values ,list nil)
+       (values (push-end ,item ,list) t)))
+
 (defmacro ext-delete (item place &key (test '#'equalp) (key '#'identity))
   "like delete, but as a second value returns, whether the list was actualy altered"
   (let ((length (gensym "length"))

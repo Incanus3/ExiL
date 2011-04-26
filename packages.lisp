@@ -6,8 +6,9 @@
   (:shadow :intern :symbol-name)
   (:export :intern :string-append :symbol-name :symbol-append :to-keyword
 	   :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
-	   :to-list-of-lists :my-pushnew :ext-pushnew :ext-delete :diff-delete
-	   :push-update :class-slot-value :select :weak-symbol-equal-p))
+	   :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
+	   :ext-delete :diff-delete :push-update :class-slot-value :select
+	   :weak-symbol-equal-p))
 
 (defpackage :exil-core
   (:use :common-lisp :exil-utils)

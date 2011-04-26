@@ -1,6 +1,11 @@
 (in-package :exil)
 
+; private
 (defparameter *clips-mode* nil)
+
+; public
+(defun set-clips-mode (val)
+  (setf *clips-mode* val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
@@ -30,15 +35,22 @@
 (defmacro assert (&rest fact-specs)
   "Add fact into working memory"
   (let ((fact-spec (gensym "fact-spec")))
-    `(dolist (,fact-spec ',(reverse fact-specs))
+    `(dolist (,fact-spec ',fact-specs)
        (assert% ,fact-spec))))
 
-(defun retract% (fact-spec)
-  (rem-fact (make-fact fact-spec)))
+(defun retract% (fact-specs)
+  (let (facts-to-remove)
+    (dolist (fact-spec fact-specs)
+      (typecase fact-spec
+	(list (pushnew (make-fact fact-spec) facts-to-remove))
+	(integer (pushnew (nth (1- fact-spec) (facts)) facts-to-remove))
+	(t (error "Type ~A not supported by retract" (type-of fact-spec)))))
+    (dolist (fact facts-to-remove)
+      (rem-fact fact))))
 
-(defmacro retract (fact-spec)
+(defmacro retract (&rest fact-specs)
   "Remove fact from working memory"
-  `(retract% ',fact-spec))
+  `(retract% ',fact-specs))
 
 (defun modify% (old-fact-spec new-fact-spec)
   (retract% old-fact-spec)
