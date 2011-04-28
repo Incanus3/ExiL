@@ -1,8 +1,5 @@
-(in-package :exil-test)
-
-#|
 (in-package :exil-user)
-;   ROBOTS:
+
 (deftemplate goal (action object from to))
 (deftemplate in (object location))
 
@@ -15,8 +12,7 @@
   (goal :object ?x :to ?y)
   (in :object ?x :location ?y)
   =>
-  (halt)
-  )
+  (halt))
 
 (defrule move
   (goal :object ?x :from ?y)
@@ -41,10 +37,11 @@
 (watch activations)
 
 (reset)
-(step)
-(print-memories)
+;(step)
 
 (run)
+
+#|
 (pprint (facts))
 
 (completely-reset-environment)
@@ -156,7 +153,7 @@ fire PUSH
 (defvar *conds* (conditions *rule*))
 |#
 
-
+#|
 (defmethod get-alpha-memories ((node alpha-subtop-node))
   (let (memories)
     (labels ((walk-through (node)
@@ -198,3 +195,4 @@ fire PUSH
   (print-alpha-mems rete)
   (terpri t)
   (print-beta-mems rete))
+|#
