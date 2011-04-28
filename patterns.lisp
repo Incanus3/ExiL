@@ -40,10 +40,10 @@
 (defmethod print-object ((pattern simple-pattern) stream)
   (if *print-escape*
       (print-unreadable-object (pattern stream :type t)
-	(format stream "~:[~;NOT ~]~S" (negated-p pattern)
-		(pattern pattern)))
-      (format stream "~:[~;NOT ~]~S" (negated-p pattern)
-	      (pattern pattern)))
+	(format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
+		(negated-p pattern) (pattern pattern)))
+      (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
+	      (negated-p pattern) (pattern pattern)))
   pattern)
 
 ;; checks pattern equivalency
@@ -68,7 +68,7 @@
 ;	      (pattern pattern2))))
 
 ; public, used by rete
-(defmethod find-atom (atom (pattern simple-pattern))
+(defmethod find-atom ((pattern simple-pattern) atom)
   (find atom (pattern pattern)))
 
 ; public, used by rete
@@ -101,9 +101,10 @@
 ;    (tmpl-pattern-slot-value pattern slot-spec)))
 
 ; private
-(defun make-tmpl-pattern (pattern-spec &optional (negated nil))
+(defun make-tmpl-pattern (pattern-spec &optional (negated nil) (match-var nil))
   (let ((pattern (make-tmpl-object pattern-spec 'template-pattern)))
     (setf (negated-p pattern) negated)
+    (setf (match-var pattern) match-var)
     pattern))
 
 ; private
@@ -114,12 +115,13 @@
 ; TODO:
 ; make-pattern should support the ?fact <- <pattern> notation
 ; it should also support the ~, | and & notations in variable matching
-(defun make-pattern (specification)
+(defun make-pattern (specification &key (match-var nil))
   (let* ((negated (equalp (first specification) '-))
 	 (spec (if negated (rest specification) specification)))
     (if (tmpl-pattern-specification-p spec)
-	(make-tmpl-pattern spec negated)
-	(make-instance 'simple-pattern :pattern spec :negated negated))))
+	(make-tmpl-pattern spec negated match-var)
+	(make-instance 'simple-pattern :pattern spec :negated negated
+		       :match-var match-var))))
 
 ; public
 (defmethod print-object ((object template-pattern) stream)
