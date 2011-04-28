@@ -29,18 +29,18 @@
 (defpackage :exil-env
   (:use :common-lisp :exil-utils :exil-core :exil-rete)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :add-template :add-fact :rem-fact :reset-environment
-	   :add-fact-group :add-rule :rem-fule :find-rule
+  (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
+	   :add-fact-group :rem-fact-group :add-rule :rem-fule :find-rule
 	   :add-strategy :set-strategy :select-activation
-	   :set-watcher :unset-watcher :watched-p :activate-rule
+	   :set-watcher :unset-watcher :watched-p :watch-all :unwatch-all :activate-rule
 	   :facts :agenda :fact-groups :find-template :rete :add-match :remove-match))
 
 (defpackage :exil
   (:use :common-lisp :exil-utils :exil-core :exil-env)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :deftemplate :assert :retract :modify :clear :deffacts :reset
-	   :defrule :undefrule :defstrategy :setstrategy :watch :unwatch
-	   :step :halt :run :facts)
+  (:export :deftemplate :assert :retract :retract-all :modify :clear
+	   :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
+	   :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule)
   (:shadow :assert :step :facts))
 
 (defpackage :exil-user

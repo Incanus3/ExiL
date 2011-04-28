@@ -110,6 +110,9 @@
 	    (fact-groups)))
   nil)
 
+(defun rem-fact-group (name)
+  (setf (fact-groups) (delete name (fact-groups) :key #'car)))
+
 ; public
 (defun add-template (template)
   (setf (gethash (symbol-name (name template)) (templates)) template)
@@ -206,6 +209,12 @@
 	     () "I don't know how to watch ~A" watcher)
   (setf (assoc-value (to-keyword watcher) (watchers)) nil))
 
+(defmethod watch-all ()
+  (setf (watchers) (mapcar (lambda (pair) (cons (car pair) t)) (watchers))))
+
+(defmethod unwatch-all ()
+  (setf (watchers) (mapcar (lambda (pair) (cons (car pair) nil)) (watchers))))
+
 ; public
 (defun reset-environment ()
   (setf (facts) ()
@@ -214,6 +223,11 @@
   (loop for rule being the hash-values in (rules)
      do (add-rule rule))
   nil)
+
+; public
+(defun reset-facts ()
+  (dolist (fact (facts))
+    (rem-fact fact)))
 
 ; public, not in use
 (defun completely-reset-environment ()

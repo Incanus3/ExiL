@@ -43,7 +43,7 @@
     (format stream "~A"
 	    (nreverse
 	     (loop for tkn = token then (parent tkn)
-		while tkn
+		until (typep tkn 'empty-token)
 		collect (wme tkn))))))
 
 (defmethod token->list ((token token))

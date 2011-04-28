@@ -48,12 +48,19 @@
     (dolist (fact facts-to-remove)
       (rem-fact fact))))
 
+; retract supports either full fact specification e.g. (retract (is-animal duck))
+; or number indices (starting with 1) for clips compatitibity.
+; It can't support * to retract all facts as clips does, cause this symbol has
+; a special meaning in lisp. retract-all does this instead.
 (defmacro retract (&rest fact-specs)
   "Remove fact from working memory"
   `(retract% ',fact-specs))
 
+(defun retract-all ()
+  (reset-facts))
+
 (defun modify% (old-fact-spec new-fact-spec)
-  (retract% old-fact-spec)
+  (retract% (list old-fact-spec))
   (assert% new-fact-spec))
 
 (defmacro modify (old-fact-spec new-fact-spec)
@@ -66,7 +73,12 @@
 
 (defmacro deffacts (name &body fact-descriptions)
   "Create group of facts to be asserted after (reset)"
+  (if (stringp (first fact-descriptions)) (pop fact-descriptions))
   `(add-fact-group ',name ',fact-descriptions))
+
+(defmacro undeffacts (name)
+  "Delete fact group"
+  `(rem-fact-group ',name))
 
 (defun assert-group% (fact-descriptions)
   (dolist (desc fact-descriptions)
@@ -84,9 +96,10 @@
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 (defmacro defrule (name &body rule)
   "Define rule"
+  (when (stringp (first rule))
+    (setf rule (rest rule))) ;; ignore the clips rule header
   (let ((=>-position (position '=> rule :test #'weak-symbol-equal-p))
 	(rule-symbol (gensym)))
-    (format t "=>-position: ~A~%" =>-position)
     (cl:assert =>-position ()
 	    "rule definition must include =>")
     `(let ((,rule-symbol
@@ -94,6 +107,14 @@
 		       (mapcar #'make-pattern ',(subseq rule 0 =>-position))
 		       ',(subseq rule (1+ =>-position)))))
        (add-rule ,rule-symbol))))
+
+(defun ppdefrule% (name)
+  (let ((rule (find-rule name)))
+    (format t "(defrule ~A~{~%  ~A~}~%  =>~{~%  ~S~})"
+	    name (conditions rule) (activations rule))))
+
+(defmacro ppdefrule (name)
+  `(ppdefrule% ',name))
 
 (defmacro undefrule (name)
   "Undefine rule"
@@ -129,9 +150,15 @@
 
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(set-watcher ',watcher))
+  `(progn (if (weak-symbol-equal-p ',watcher 'all)
+	      (watch-all)
+	      (set-watcher ',watcher))
+	  nil))
 
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(unset-watcher ',watcher))
+  `(progn (if (weak-symbol-equal-p ',watcher 'all)
+	      (unwatch-all)
+	      (unset-watcher ',watcher))
+	  nil))
 
