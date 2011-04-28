@@ -17,7 +17,10 @@
 ; public
 (defclass pattern () ((negated :initform nil
 			       :initarg :negated
-			       :accessor negated-p)))
+			       :accessor negated-p)
+		      (match-variable :initform nil
+				      :initarg :match-var
+				      :accessor match-var)))
 
 ;; pattern equality predicate
 ; public, used by rules
@@ -108,6 +111,9 @@
   (tmpl-object-specification-p specification))
 
 ; public, used by front-end
+; TODO:
+; make-pattern should support the ?fact <- <pattern> notation
+; it should also support the ~, | and & notations in variable matching
 (defun make-pattern (specification)
   (let* ((negated (equalp (first specification) '-))
 	 (spec (if negated (rest specification) specification)))

@@ -97,15 +97,16 @@
 (defmacro defrule (name &body rule)
   "Define rule"
   (when (stringp (first rule))
-    (setf rule (rest rule))) ;; ignore the clips rule header
-  (let ((=>-position (position '=> rule :test #'weak-symbol-equal-p))
-	(rule-symbol (gensym)))
+    (pop rule)) ;; ignore the clips rule header
+  (let* ((=>-position (position '=> rule :test #'weak-symbol-equal-p))
+	 (conditions (subseq rule 0 =>-position))
+	 (activations (subseq rule (1+ =>-position)))
+	 (rule-symbol (gensym "rule")))
     (cl:assert =>-position ()
 	    "rule definition must include =>")
     `(let ((,rule-symbol
 	    (make-rule ',name
-		       (mapcar #'make-pattern ',(subseq rule 0 =>-position))
-		       ',(subseq rule (1+ =>-position)))))
+		       (mapcar #'make-pattern ',conditions) ',activations)))
        (add-rule ,rule-symbol))))
 
 (defun ppdefrule% (name)
