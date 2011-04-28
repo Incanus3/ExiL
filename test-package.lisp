@@ -42,8 +42,7 @@
   exil-rete::get/initialize-network exil-rete::alpha-memory-node
   exil-rete::tested-field exil-rete::value exil-rete::memory exil-rete::networks
   exil-rete::simple-fact-key-name exil-rete::beta-node
-  exil-rete::beta-memory-node
-  exil-rete::remove-match exil-rete::complete-match exil-rete::broken-match
+  exil-rete::beta-memory-node exil-rete::complete-match exil-rete::broken-match
   exil-rete::add-production exil-rete::delete-production
   exil-rete::beta-top-node exil-rete::make-test exil-rete::test-equal-p
   exil-rete::tests-equal-p exil-rete::beta-join-node exil-rete::beta-memory
