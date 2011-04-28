@@ -33,8 +33,9 @@
   (modify (in :object ?x :location ?y)
 	  (in :object ?x :location ?z)))
 
+(unwatch all)
 (watch facts)
-(watch activations)
+;(watch activations)
 
 (reset)
 ;(step)
