@@ -1,2 +1,22 @@
-- assert extended to accept more than one fact at a time
-- 
+CHANGES LIST:
+facts: supports multiple listing (through start- and end-index and at-most value)
+assert: supports multiple assertions
+retract: supports multiple retractions, supports fact specification through its index
+watch: supports (watch all)
+unwatch: supports (unwatch all)
+defrule: supports optional rule title string
+
+added retract-all (to replace clips (retract *))
+added ppdefrule
+added undeffacts
+
+TODO:
+modify defrule to support:
+?fact <- <pattern> => (retract ?fact) notation
+the singleton ? variable
+the ~ (negative) | (alternative) and & (conective) notations
+dribble-on, dribble-off
+set-break, remove-break, show-breaks
+matches (rule) - shows partial matches of rule conditions against working memory
+list-deffacts, ppdeffacts
+deffact should check, that all variables appearing in RHS are bound in LHS

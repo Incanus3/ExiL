@@ -77,18 +77,8 @@
 ; always put exil-env-* calls on one line, for the automated package creator to work
 ; public
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors fact-groups templates rules rete agenda strategies current-strategy-name watchers)
-  (exil-env-writer facts))
+  (exil-env-accessors facts fact-groups templates rules rete agenda strategies current-strategy-name watchers))
 ;; rete should be removed after proper DEBUG
-
-;; should support environment specification, but don't know, how to combine
-;; &optional and &rest, ask someone smarter
-; public
-(defmethod facts (&rest fact-nums)
-  (let ((facts (slot-value *current-environment* 'facts)))
-    (if fact-nums
-	(select facts fact-nums)
-	facts)))
 
 ; private
 (defmethod watched-p (watcher)
@@ -96,7 +86,7 @@
 
 ; public
 (defun add-fact (fact)
-  (when (nth-value 1 (ext-pushnew fact (facts) :test #'fact-equal-p))
+  (when (nth-value 1 (pushnew-end fact (facts) :test #'fact-equal-p))
     (when (watched-p 'facts)
       (format t "==> ~A~%" fact))
     (add-wme fact)))
@@ -119,6 +109,9 @@
       (push (cons group-name fact-descriptions)
 	    (fact-groups)))
   nil)
+
+(defun rem-fact-group (name)
+  (setf (fact-groups) (delete name (fact-groups) :key #'car)))
 
 ; public
 (defun add-template (template)
@@ -216,6 +209,12 @@
 	     () "I don't know how to watch ~A" watcher)
   (setf (assoc-value (to-keyword watcher) (watchers)) nil))
 
+(defmethod watch-all ()
+  (setf (watchers) (mapcar (lambda (pair) (cons (car pair) t)) (watchers))))
+
+(defmethod unwatch-all ()
+  (setf (watchers) (mapcar (lambda (pair) (cons (car pair) nil)) (watchers))))
+
 ; public
 (defun reset-environment ()
   (setf (facts) ()
@@ -224,6 +223,11 @@
   (loop for rule being the hash-values in (rules)
      do (add-rule rule))
   nil)
+
+; public
+(defun reset-facts ()
+  (dolist (fact (facts))
+    (rem-fact fact)))
 
 ; public, not in use
 (defun completely-reset-environment ()

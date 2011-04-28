@@ -6,8 +6,9 @@
   (:shadow :intern :symbol-name)
   (:export :intern :string-append :symbol-name :symbol-append :to-keyword
 	   :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
-	   :to-list-of-lists :my-pushnew :ext-pushnew :ext-delete :diff-delete
-	   :push-update :class-slot-value :select :weak-symbol-equal-p))
+	   :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
+	   :ext-delete :diff-delete :push-update :class-slot-value :select
+	   :weak-symbol-equal-p))
 
 (defpackage :exil-core
   (:use :common-lisp :exil-utils)
@@ -28,19 +29,19 @@
 (defpackage :exil-env
   (:use :common-lisp :exil-utils :exil-core :exil-rete)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :add-template :add-fact :rem-fact :reset-environment
-	   :add-fact-group :add-rule :rem-fule :find-rule
+  (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
+	   :add-fact-group :rem-fact-group :add-rule :rem-fule :find-rule
 	   :add-strategy :set-strategy :select-activation
-	   :set-watcher :unset-watcher :watched-p :activate-rule
-	   :agenda :fact-groups :find-template :rete :add-match :remove-match))
+	   :set-watcher :unset-watcher :watched-p :watch-all :unwatch-all :activate-rule
+	   :facts :agenda :fact-groups :find-template :rete :add-match :remove-match))
 
 (defpackage :exil
   (:use :common-lisp :exil-utils :exil-core :exil-env)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :deftemplate :assert :retract :modify :clear :deffacts :reset
-	   :defrule :undefrule :defstrategy :setstrategy :watch :unwatch
-	   :step :halt :run)
-  (:shadow :assert :step))
+  (:export :deftemplate :assert :retract :retract-all :modify :clear
+	   :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
+	   :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule)
+  (:shadow :assert :step :facts))
 
 (defpackage :exil-user
   (:use :common-lisp :exil)
