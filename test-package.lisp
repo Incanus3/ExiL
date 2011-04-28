@@ -7,15 +7,16 @@
   exil-utils::weak-symbol-equal-p exil-utils::mac-exp exil-utils::subsets
   exil-utils::assoc-value exil-utils::assoc-key exil-utils::to-list
   exil-utils::to-list-of-lists exil-utils::my-pushnew exil-utils::ext-pushnew
-  exil-utils::ext-delete exil-utils::diff-delete exil-utils::push-update
-  exil-utils::class-slot-value exil-utils::select)
+  exil-utils::push-end exil-utils::pushnew-end exil-utils::ext-delete
+  exil-utils::diff-delete exil-utils::push-update exil-utils::class-slot-value
+  exil-utils::select)
   (:shadowing-import-from :exil-core exil-core::variable-p exil-core::template
   exil-core::make-template exil-core::template-object
   exil-core::tmpl-object-slot-value exil-core::tmpl-object-equal-p
-  exil-core::find-atom exil-core::atom-position exil-core::find-template
-  exil-core::make-tmpl-object exil-core::tmpl-object-specification-p
-  exil-core::name exil-core::slots exil-core::tmpl-name exil-core::fact
-  exil-core::fact-equal-p exil-core::simple-fact exil-core::template-fact
+  exil-core::find-atom exil-core::atom-position exil-core::make-tmpl-object
+  exil-core::tmpl-object-specification-p exil-core::name exil-core::slots
+  exil-core::tmpl-name exil-core::fact exil-core::fact-equal-p
+  exil-core::simple-fact exil-core::template-fact
   exil-core::tmpl-fact-slot-value exil-core::fact-slot exil-core::make-tmpl-fact
   exil-core::tmpl-fact-specification-p exil-core::make-fact
   exil-core::atom-equal-p exil-core::constant-test exil-core::pattern
@@ -68,19 +69,23 @@
   exil-env::exil-environment exil-env::*environments* exil-env::defenv
   exil-env::setenv exil-env::*current-environment* exil-env::exil-env-reader
   exil-env::exil-env-writer exil-env::exil-env-accessor
-  exil-env::exil-env-accessors exil-env::facts exil-env::watched-p
-  exil-env::add-fact exil-env::rem-fact exil-env::add-fact-group
+  exil-env::exil-env-accessors exil-env::watched-p exil-env::add-fact
+  exil-env::rem-fact exil-env::add-fact-group exil-env::rem-fact-group
   exil-env::add-template exil-env::find-template exil-env::add-rule
   exil-env::remove-matches exil-env::rem-rule exil-env::find-rule
   exil-env::add-match exil-env::remove-match exil-env::add-strategy
   exil-env::set-strategy exil-env::current-strategy exil-env::select-activation
-  exil-env::set-watcher exil-env::unset-watcher exil-env::reset-environment
-  exil-env::completely-reset-environment exil-env::fact-groups
-  exil-env::templates exil-env::rules exil-env::rete exil-env::agenda
-  exil-env::strategies exil-env::current-strategy-name exil-env::watchers)
-  (:shadowing-import-from :exil exil::deftemplate exil::assert% exil::assert
-  exil::retract% exil::retract exil::modify% exil::modify exil::clear
-  exil::deffacts exil::assert-group% exil::reset exil::my-position exil::defrule
-  exil::undefrule exil::defstrategy exil::setstrategy exil::step
-  exil::*exil-running* exil::halt exil::run exil::watch exil::unwatch))
+  exil-env::is-watcher exil-env::set-watcher exil-env::unset-watcher
+  exil-env::watch-all exil-env::unwatch-all exil-env::reset-environment
+  exil-env::reset-facts exil-env::completely-reset-environment exil-env::facts
+  exil-env::fact-groups exil-env::templates exil-env::rules exil-env::rete
+  exil-env::agenda exil-env::strategies exil-env::current-strategy-name
+  exil-env::watchers)
+  (:shadowing-import-from :exil exil::set-clips-mode exil::deftemplate
+  exil::facts exil::assert% exil::assert exil::retract% exil::retract
+  exil::retract-all exil::modify% exil::modify exil::clear exil::deffacts
+  exil::undeffacts exil::assert-group% exil::reset exil::my-position
+  exil::defrule exil::ppdefrule% exil::ppdefrule exil::undefrule
+  exil::defstrategy exil::setstrategy exil::step exil::*exil-running* exil::halt
+  exil::run exil::watch exil::unwatch))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
