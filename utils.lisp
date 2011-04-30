@@ -152,3 +152,13 @@
   (mapcar (lambda (i)
 	    (nth i list))
 	  indices))
+
+(defun every-couple (predicate list)
+  (when (evenp (length list))
+    (loop with lst-copy = (copy-list list)
+       while lst-copy
+       for first = (pop lst-copy) then (pop lst-copy)
+       for second = (pop lst-copy) then (pop lst-copy)
+       unless (funcall predicate first second)
+         return nil
+       finally (return t))))

@@ -23,10 +23,10 @@
 				  collect (field->slot-designator field)))))
 	 (add-template ,template)))))
 
-(defun facts (&optional (start-index 0) (end-index (length (exil-env:facts)))
+(defun facts (&optional (start-index 1) (end-index (length (exil-env:facts)))
 			(at-most end-index))
   (let ((facts (exil-env:facts)))
-    (loop for i from start-index to (min end-index (+ start-index at-most -1))
+    (loop for i from (1- start-index) to (min (1- end-index) (+ start-index at-most -1))
        collect (nth i facts))))
 
 (defun assert% (fact-spec)
@@ -59,13 +59,25 @@
 (defun retract-all ()
   (reset-facts))
 
-(defun modify% (old-fact-spec new-fact-spec)
-  (retract% (list old-fact-spec))
-  (assert% new-fact-spec))
+(defmethod modify% ((fact-spec list) mod-list)
+  (let ((mod-fact (make-fact fact-spec)))
+    (unless (typep mod-fact 'template-fact)
+      (error "modify: ~A is not a template fact specification" fact-spec))
+    (modify-fact mod-fact mod-list)))
 
-(defmacro modify (old-fact-spec new-fact-spec)
+(defmethod modify% ((fact-spec integer) mod-list)
+  (let ((mod-fact (nth (1- fact-spec) (facts))))
+    (unless (typep mod-fact 'template-fact)
+      (error "modify: ~A is not a template fact" mod-fact)) 
+    (modify-fact mod-fact mod-list)))
+
+(defmacro modify (fact-spec &rest mod-list)
   "Replace old-fact by new-fact"
-  `(modify% ',old-fact-spec ',new-fact-spec))
+  (typecase fact-spec
+    (list `(modify% ',fact-spec ',mod-list))
+    (integer `(modify% ,fact-spec ',mod-list))
+    (t (error "modify doesn't support fact specification of type ~A"
+	      (type-of fact-spec)))))
 
 (defun clear ()
   "Delete all facts"

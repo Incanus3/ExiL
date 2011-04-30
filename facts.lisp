@@ -46,6 +46,9 @@
 (defmethod atom-position ((fact simple-fact) atom)
   (position atom (fact fact)))
 
+(defmethod fact-description ((fact simple-fact))
+  (fact fact))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; stores template fact
 ;; slot slots holds alist of slot names and values
@@ -61,9 +64,20 @@
 (defmethod tmpl-fact-slot-value ((fact template-fact) slot-name)
   (tmpl-object-slot-value fact slot-name))
 
+(defmethod (setf tmpl-fact-slot-value) (val (fact template-fact) slot-name)
+  (setf (tmpl-object-slot-value fact slot-name) val))
+
 ; public
 (defmethod fact-equal-p ((fact1 template-fact) (fact2 template-fact))
   (tmpl-object-equal-p fact1 fact2))
+
+(defmethod fact-description ((fact template-fact))
+  (cons (tmpl-name fact)
+	(loop for (slot . val) in (slots fact)
+	   append (list (to-keyword slot) val))))
+
+(defmethod copy-fact ((fact fact))
+  (make-fact (fact-description fact)))
 
 ; public
 (defgeneric fact-slot (fact slot-spec)

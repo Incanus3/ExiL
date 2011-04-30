@@ -2,16 +2,24 @@
 
 ; private
 (defmethod variable-bindings ((pattern simple-pattern) (fact simple-fact))
-  (loop for atom in (pattern pattern)
-     for i = 0 then (1+ i)
-     when (variable-p atom)
-       collect (cons atom (fact-slot fact i))))
+  (let ((var-bindings (loop for atom in (pattern pattern)
+			 for i = 0 then (1+ i)
+			 when (variable-p atom)
+			 collect (cons atom (fact-slot fact i))))
+	(match-var (match-var pattern)))
+    (if match-var
+	(cons (cons match-var (fact-description fact)) var-bindings)
+	var-bindings)))
 
 ; private
 (defmethod variable-bindings ((pattern template-pattern) (fact template-fact))
-  (loop for (slot-name . slot-val) in (slots pattern)
-     when (variable-p slot-val)
-       collect (cons slot-val (fact-slot fact slot-name))))
+  (let ((var-bindings (loop for (slot-name . slot-val) in (slots pattern)
+			 when (variable-p slot-val)
+			 collect (cons slot-val (fact-slot fact slot-name))))
+	(match-var (match-var pattern)))
+    (if match-var
+	(cons (cons match-var (fact-description fact)) var-bindings)
+	var-bindings)))
 
 ;; if the variable bindings of particular patter-fact pairs aren't consistent
 ;; resulting binding list will include more than one binding for that variable

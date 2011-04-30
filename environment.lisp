@@ -101,6 +101,13 @@
 	(format t "<== ~A~%" fact))
       (rem-wme fact))))
 
+(defun modify-fact (fact mod-list)
+  (loop with new-fact = (copy-fact fact)
+     for (slot-name val) in mod-list
+     do (setf (tmpl-fact-slot-value new-fact slot-name) val)
+     finally (progn (rem-fact fact)
+		   (add-fact new-fact))))
+
 ; public
 (defun add-fact-group (group-name fact-descriptions)
   (if (assoc group-name (fact-groups))
@@ -148,6 +155,10 @@
       (format t "<== ~A" old-rule))
     (remove-production rule (rete))
     (remove-matches rule)))
+
+; public
+(defun find-fact (fact)
+  (find-if (lambda (fct) (fact-equal-p fact fct)) (facts)))
 
 ; public
 (defun find-rule (name)

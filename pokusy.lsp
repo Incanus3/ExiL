@@ -1,5 +1,8 @@
 (in-package :exil-user)
 
+; TEMPLATE FACTS:
+(clear)
+
 (deftemplate goal (action object from to))
 (deftemplate in (object location))
 
@@ -18,20 +21,17 @@
   (goal :object ?x :from ?y)
   (in :object ?x :location ?y)
   (- in :object robot :location ?y)
-  (in :object robot :location ?z)
+  ?robot <- (in :object robot :location ?z)
   =>
-  (modify (in :object robot :location ?z)
-	  (in :object robot :location ?y)))
+  (modify ?robot (location ?y)))
 
 (defrule push
   (goal :object ?x :from ?y :to ?z)
-  (in :object ?x :location ?y)
-  (in :object robot :location ?y)
+  ?object <- (in :object ?x :location ?y)
+  ?robot <- (in :object robot :location ?y)
   =>
-  (modify (in :object robot :location ?y)
-	  (in :object robot :location ?z))
-  (modify (in :object ?x :location ?y)
-	  (in :object ?x :location ?z)))
+  (modify ?robot (location ?z))
+  (modify ?object (location ?z)))
 
 (unwatch all)
 (watch facts)
@@ -41,6 +41,49 @@
 ;(step)
 
 (run)
+#|
+; SIMPLE FACTS:
+;(clear)
+
+(deffacts world
+  (in robot A)
+  (in box B)
+  (goal push box B A))
+
+(defrule stop
+  (goal ?action ?object ?from ?to)
+  (in ?object ?to)
+  =>
+  (halt))
+
+(defrule move
+  (goal ?action ?object ?from ?to)
+  (in ?object ?from)
+  (- in robot ?from)
+  (in robot ?z)
+  =>
+  (modify (in robot ?z)
+	  (in robot ?from)))
+
+(defrule push
+  (goal ?action ?object ?from ?to)
+  (in ?object ?from)
+  (in robot ?from)
+  =>
+  (modify (in robot ?from)
+	  (in robot ?to))
+  (modify (in ?object ?from)
+	  (in ?object ?to)))
+
+(unwatch all)
+(watch facts)
+;(watch activations)
+
+(reset)
+;(step)
+
+(run)
+|#
 
 #|
 (pprint (facts))

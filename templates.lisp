@@ -72,6 +72,12 @@
   "get the template-object slot value according to the slot name"
   (assoc-value slot-name (slots object)))
 
+(defmethod (setf tmpl-object-slot-value) (val (object template-object) slot-name)
+  (unless (has-slot-p object slot-name)
+    (error "setf tmpl-object-slot-value: ~A doesn't have slot called ~A"
+	   object slot-name))
+  (setf (assoc-value slot-name (slots object)) val))
+
 ; private for package
 (defmethod tmpl-object-equal-p ((object1 template-object) (object2 template-object))
   "template-object equality predicate"
@@ -87,6 +93,10 @@
       (format stream "~A" (cons (tmpl-name object) (slots object))))
   object)
 
+; public
+(defmethod has-slot-p ((object template-object) slot-name)
+  (find slot-name (slots object) :key #'car :test #'weak-symbol-equal-p))
+
 ; public, called by rete
 (defmethod find-atom ((object template-object) atom)
   "find the given atom in template-object slots"
@@ -97,9 +107,22 @@
   "get the atom position in template-object slots"
   (assoc-key atom (slots object)))
 
-;; forward declaration, real one will appear in environment.lisp
-; private for package, forward declaration of environment:find-template
-;(defgeneric find-template (name))
+; TODO: supply tmpl-object creation for clips-based slot-spec notation
+(defun make-tmpl-obj-clips (object-type tmpl-name slot-spec)
+  )
+
+; TODO: rewrite using destructuring capabilities of loop
+(defun make-tmpl-obj-nonclips (object-type tmpl-name slot-spec)
+  (make-instance
+   object-type :tmpl-name tmpl-name
+   :slots (loop with initargs = slot-spec
+	     for slot-spec in (slots (exil-env:find-template tmpl-name)
+	     collect (cons (car slot-spec)
+			   (or (getf initargs
+				     (to-keyword (car slot-spec)))
+			       (getf (cdr slot-spec)
+				     :default)
+			       (class-slot-value object-type 'slot-default))))))
 
 ;; tmpl-object function searches template's slot list, finds values from them
 ;; in specification or falls back to default values if it finds nothing
@@ -108,19 +131,28 @@
 ; private for package
 (defun make-tmpl-object (specification object-type)
   "creates template-object of given type from its specification"
-  (let ((template (exil-env:find-template (first specification))))
-    (cl:assert template () "can't find template ~A" (first specification))
-    (make-instance
-     object-type ;; >>>>>>>>>>>>>> cat's standing on my keyboard
-     :tmpl-name (first specification)
-     :slots (loop with initargs = (rest specification)
-		 for slot-spec in (slots template)
-		 collect (cons (car slot-spec)
-			       (or (getf initargs
-					 (to-keyword (car slot-spec)))
-				   (getf (cdr slot-spec)
-					 :default)
-				   (class-slot-value object-type 'slot-default)))))))
+  (let* ((tmpl-name (first specification))
+	 (slot-spec (rest specification))
+	 (template (exil-env:find-template tmpl-name)))
+    (cl:assert template () "can't find template ~A" tmpl-name)
+    (if (tmpl-slot-spec-p slot-spec)
+	(make-tmpl-obj-nonclips object-type tmpl-name slot-spec)
+	(make-tmpl-obj-clips object-type tmpl-name slot-spec))))
+
+
+; private
+(defun clips-tmpl-slot-spec-p (specification)
+  (every (lambda (slot-spec)
+	   (and (listp slot-spec)
+		(= (length slot-spec) 2)
+		(symbolp (first slot-spec))))
+	 specification))
+
+(defun tmpl-slot-spec-p (specification)
+  (every-couple (lambda (slot-name slot-val)
+		  (declare (ignore slot-val))
+		  (keywordp slot-name))
+		specification))
 
 ; private for package
 (defun tmpl-object-specification-p (specification)
@@ -128,5 +160,5 @@
   (and (listp specification)
        (exil-env:find-template (first specification))
        (or (null (rest specification))
-	   ;; probably faster than (= (length specification) 1)
-	   (keywordp (second specification)))))
+	   (tmpl-slot-spec-p (rest specification))
+	   (clips-tmpl-slot-spec-p (rest specification)))))

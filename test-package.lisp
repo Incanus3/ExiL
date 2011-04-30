@@ -80,7 +80,7 @@
   exil-env::reset-facts exil-env::completely-reset-environment exil-env::facts
   exil-env::fact-groups exil-env::templates exil-env::rules exil-env::rete
   exil-env::agenda exil-env::strategies exil-env::current-strategy-name
-  exil-env::watchers)
+  exil-env::watchers exil-env::find-fact)
   (:shadowing-import-from :exil exil::set-clips-mode exil::deftemplate
   exil::facts exil::assert% exil::assert exil::retract% exil::retract
   exil::retract-all exil::modify% exil::modify exil::clear exil::deffacts
