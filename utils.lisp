@@ -75,6 +75,14 @@
   (car (rassoc value alist)))
 ;; (assoc-key 2 '((a . 1) (b . 2))) => b
 
+(defun cpl-assoc-val (key cpl-list)
+  "get value from couple list according to the key"
+  (second (assoc key cpl-list)))
+;; (cpl-assoc-val 'b '((a 1) (b 2))) => 2
+
+(defun (setf cpl-assoc-val) (new-val key cpl-list)
+  (setf (second (assoc key cpl-list)) new-val))
+
 (defun to-list (x)
   "when given an atom, returns list containing it, when given a list, just returns it"
   (if (listp x)

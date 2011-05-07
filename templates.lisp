@@ -72,6 +72,10 @@
   "get the template-object slot value according to the slot name"
   (assoc-value slot-name (slots object)))
 
+; public
+(defmethod has-slot-p ((object template-object) slot-name)
+  (find slot-name (slots object) :key #'car :test #'weak-symbol-equal-p))
+
 (defmethod (setf tmpl-object-slot-value) (val (object template-object) slot-name)
   (unless (has-slot-p object slot-name)
     (error "setf tmpl-object-slot-value: ~A doesn't have slot called ~A"
@@ -93,10 +97,6 @@
       (format stream "~A" (cons (tmpl-name object) (slots object))))
   object)
 
-; public
-(defmethod has-slot-p ((object template-object) slot-name)
-  (find slot-name (slots object) :key #'car :test #'weak-symbol-equal-p))
-
 ; public, called by rete
 (defmethod find-atom ((object template-object) atom)
   "find the given atom in template-object slots"
@@ -108,20 +108,35 @@
   (assoc-key atom (slots object)))
 
 ; TODO: supply tmpl-object creation for clips-based slot-spec notation
-(defun make-tmpl-obj-clips (object-type tmpl-name slot-spec)
-  )
+(defun make-tmpl-obj-clips (object-type template slot-specs)
+  (make-instance
+   object-type :tmpl-name (name template)
+   :slots (loop for (slot-name &key default) in (slots template)
+	     collect (cons slot-name
+			   (or (cpl-assoc-val slot-name slot-specs)
+			       default
+			       (class-slot-value object-type 'slot-default))))))
 
 ; TODO: rewrite using destructuring capabilities of loop
-(defun make-tmpl-obj-nonclips (object-type tmpl-name slot-spec)
+; OBSOLETE
+;(defun make-tmpl-obj-nonclips (object-type template slot-specs)
+;  (make-instance
+;   object-type :tmpl-name (name template)
+;   :slots (loop for tmpl-slot-spec in (slots template)
+;	     collect (cons (car tmpl-slot-spec)
+;			   (or (getf slot-specs
+;				     (to-keyword (car tmpl-slot-spec)))
+;			       (getf (cdr tmpl-slot-spec)
+;				     :default)
+;			       (class-slot-value object-type 'slot-default))))))
+
+(defun make-tmpl-obj-nonclips (object-type template slot-specs)
   (make-instance
-   object-type :tmpl-name tmpl-name
-   :slots (loop with initargs = slot-spec
-	     for slot-spec in (slots (exil-env:find-template tmpl-name)
-	     collect (cons (car slot-spec)
-			   (or (getf initargs
-				     (to-keyword (car slot-spec)))
-			       (getf (cdr slot-spec)
-				     :default)
+   object-type :tmpl-name (name template)
+   :slots (loop for (slot-name &key default) in (slots template)
+	     collect (cons slot-name
+			   (or (getf slot-specs (to-keyword slot-name))
+			       default
 			       (class-slot-value object-type 'slot-default))))))
 
 ;; tmpl-object function searches template's slot list, finds values from them
@@ -136,8 +151,8 @@
 	 (template (exil-env:find-template tmpl-name)))
     (cl:assert template () "can't find template ~A" tmpl-name)
     (if (tmpl-slot-spec-p slot-spec)
-	(make-tmpl-obj-nonclips object-type tmpl-name slot-spec)
-	(make-tmpl-obj-clips object-type tmpl-name slot-spec))))
+	(make-tmpl-obj-nonclips object-type template slot-spec)
+	(make-tmpl-obj-clips object-type template slot-spec))))
 
 
 ; private

@@ -10,18 +10,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
 
-(defmacro deftemplate (name fields)
-  (flet ((field->slot-designator (field)
-	   (destructuring-bind (name &key (default nil)) field
-	     `(,name . (:default ,default)))))
+(defun nonclips-slot-spec-p (slot-spec)
+  (declare (ignore slot-spec)))
 
-    (let ((template (gensym "template")))
+(defun clips-slot-spec-p (slot-spec)
+  (declare (ignore slot-spec)))
 
-      `(let ((,template
-	      (make-template ',name
-			     ',(loop for field in (to-list-of-lists fields)
-				  collect (field->slot-designator field)))))
-	 (add-template ,template)))))
+(defun slot-spec-p (slot-spec)
+  (or (nonclips-slot-spec-p slot-spec)
+      (clips-slot-spec-p slot-spec)))
+
+(defun clips-slot->slot-des% (slot-spec)
+  (declare (ignore slot-spec)))
+
+(defun nonclips-slot->slot-des% (slot-spec)
+  (destructuring-bind (slot-name &key (default nil)) slot-spec
+    `(,slot-name . (:default ,default))))
+
+(defun slot->slot-designator% (slot-spec)
+  (cond 
+    ((nonclips-slot-spec-p slot-spec) (nonclips-slot->slot-des% slot-spec))
+    ((clips-slot-spec-p slot-spec) (clips-slot->slot-des% slot-spec))))
+
+(defun slots->slot-designators% (slots)
+  (loop for slot in (to-list-of-lists slots)
+       collect (slot->slot-designator% slot)))
+
+(defmacro deftemplate (name slots)
+  (let ((template (gensym "template")))
+    `(let ((,template
+	    (make-template ',name
+			   ',(slots->slot-designators% slots))))
+       (add-template ,template))))
 
 (defun facts (&optional (start-index 1) (end-index (length (exil-env:facts)))
 			(at-most end-index))

@@ -1,0 +1,3 @@
+retract% will have to take the whole list. if it doesn't and retract is called with
+list of numbers, it can act very strangely, because after each retraction, the list
+is reindexed.

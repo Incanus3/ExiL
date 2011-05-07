@@ -3,12 +3,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export
 
-(defgeneric rete ())
+;(defgeneric rete ())
 
-(defclass rete () ((alpha-top-node :reader alpha-top-node
-				   :initform (make-instance 'alpha-top-node))
-		   (beta-top-node  :accessor beta-top-node
-				   :initform (make-instance 'beta-top-node))))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defclass rete () ((alpha-top-node :reader alpha-top-node
+				     :initform (make-instance 'alpha-top-node))
+		     (beta-top-node  :accessor beta-top-node
+				     :initform (make-instance 'beta-top-node))))
+
+  (defun make-rete ()
+    (make-instance 'rete)))
 
 (defmethod add-wme ((fact fact) &optional (rete (exil-env:rete)))
   (activate (alpha-top-node rete) fact))
@@ -16,9 +20,6 @@
 (defmethod rem-wme ((fact fact) &optional (rete (exil-env:rete)))
   (inactivate (alpha-top-node rete) fact)
   (inactivate (beta-top-node rete) fact))
-
-(defun make-rete ()
-  (make-instance 'rete))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; net creation
