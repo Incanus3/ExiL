@@ -106,7 +106,7 @@
   (let ((mod-fact (make-fact fact-spec)))
     (unless (typep mod-fact 'template-fact)
       (error "modify: ~A is not a template fact specification" fact-spec))
-    (modify-fact mod-fact mod-list)))
+    (modify-fact mod-fact (to-mod-spec-list mod-list))))
 
 (defmethod modify% ((fact-spec integer) mod-list)
   (let ((mod-fact (nth (1- fact-spec) (facts))))

@@ -102,6 +102,8 @@
       (rem-wme fact))))
 
 (defun modify-fact (fact mod-list)
+  (assert (find fact (facts) :test #'fact-equal-p) ()
+	  "modify: fact ~A not found in (facts)" fact)
   (let ((new-fact (copy-fact fact)))
     (doplist (slot-name val mod-list)
       (setf (tmpl-fact-slot-value new-fact slot-name) val))

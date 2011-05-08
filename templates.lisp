@@ -70,7 +70,7 @@
 ; private for package
 (defmethod tmpl-object-slot-value ((object template-object) slot-name)
   "get the template-object slot value according to the slot name"
-  (assoc-value slot-name (slots object)))
+  (assoc-value slot-name (slots object) :test #'weak-symbol-equal-p))
 
 ; public
 (defmethod has-slot-p ((object template-object) slot-name)
@@ -80,13 +80,13 @@
   (unless (has-slot-p object slot-name)
     (error "setf tmpl-object-slot-value: ~A doesn't have slot called ~A"
 	   object slot-name))
-  (setf (assoc-value slot-name (slots object)) val))
+  (setf (assoc-value slot-name (slots object) :test #'weak-symbol-equal-p) val))
 
 ; private for package
 (defmethod tmpl-object-equal-p ((object1 template-object) (object2 template-object))
   "template-object equality predicate"
-  (and (equalp (tmpl-name object1) (tmpl-name object2))
-       (equalp (slots object1) (slots object2))))
+  (and (exil-weak-equal-p (tmpl-name object1) (tmpl-name object2))
+       (exil-weak-equal-p (slots object1) (slots object2))))
 
 ; public
 (defmethod print-object ((object template-object) stream)

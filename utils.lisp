@@ -61,14 +61,14 @@
 					 subsets))))))
 ;; (subsets '(1 2)) = ((1 2) (1) (2) ())
 
-(defun assoc-value (key alist)
+(defun assoc-value (the-key alist &key (key #'identity) (test #'equalp))
   "get value from assoc-list according to the key"
-  (cdr (assoc key alist)))
+  (cdr (assoc the-key alist :key key :test test)))
 ;; (assoc-value 'b '((a . 1) (b . 2))) => 2
 
-(defun (setf assoc-value) (value key alist)
+(defun (setf assoc-value) (value the-key alist &key (key #'identity) (test #'equalp))
   "set value in assoc-list according to the key"
-  (setf (cdr (assoc key alist)) value))
+  (setf (cdr (assoc the-key alist :key key :test test)) value))
 
 (defun assoc-key (value alist)
   "get key from assoc-list according to the value"
@@ -191,5 +191,34 @@
 		  "doplist: ~A not a plist" ,plist)
        (do ((,key (pop ,sym-plist) (pop ,sym-plist))
 	    (,val (pop ,sym-plist) (pop ,sym-plist)))
-	   ((null ,sym-plist) ,retval)
+	   ((not ,key) ,retval)
 	 ,@body))))
+
+(defgeneric exil-equal-p (obj1 obj2)
+  (:documentation "ExiL default equality predicate")
+  (:method (obj1 obj2) nil)
+  (:method ((obj1 null) (obj2 null)) t))
+
+(defmethod exil-equal-p ((obj1 string) (obj2 string))
+  (string= obj1 obj2))
+
+(defmethod exil-equal-p ((obj1 symbol) (obj2 symbol))
+  (equalp obj1 obj2))
+
+(defmethod exil-equal-p ((obj1 number) (obj2 number))
+  (= obj1 obj2))
+
+(defmethod exil-equal-p ((obj1 cons) (obj2 cons))
+  (and (exil-equal-p (car obj1) (car obj2))
+       (exil-equal-p (cdr obj1) (cdr obj2))))
+
+(defgeneric exil-weak-equal-p (obj1 obj2)
+  (:documentation "ExiL default weak equality predicate")
+  (:method (obj1 obj2) (exil-equal-p obj1 obj2)))
+
+(defmethod exil-weak-equal-p ((obj1 symbol) (obj2 symbol))
+  (weak-symbol-equal-p obj1 obj2))
+
+(defmethod exil-weak-equal-p ((obj1 cons) (obj2 cons))
+  (and (exil-weak-equal-p (car obj1) (car obj2))
+       (exil-weak-equal-p (cdr obj1) (cdr obj2))))
