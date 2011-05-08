@@ -93,7 +93,7 @@
   (alistp mod-list))
 
 (defun clips->nonclips-mod-list (mod-list)
-  (loop for (slot-name . new-val) in mod-list
+  (loop for (slot-name new-val) in mod-list
      append (list (to-keyword slot-name) new-val)))
 
 (defun to-mod-spec-list (mod-list)
