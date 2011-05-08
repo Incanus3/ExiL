@@ -11,17 +11,23 @@
 ;; application macros
 
 (defun nonclips-slot-spec-p (slot-spec)
-  (declare (ignore slot-spec)))
+  (and (symbolp (first slot-spec))
+       (or (null (rest slot-spec))
+	   (keywordp (second slot-spec)))))
 
 (defun clips-slot-spec-p (slot-spec)
-  (declare (ignore slot-spec)))
+  (and (weak-symbol-equal-p (first slot-spec) 'slot))
+       (symbolp (second slot-spec))
+       (listp (nthcdr 2 slot-spec)))
 
 (defun slot-spec-p (slot-spec)
   (or (nonclips-slot-spec-p slot-spec)
       (clips-slot-spec-p slot-spec)))
 
 (defun clips-slot->slot-des% (slot-spec)
-  (declare (ignore slot-spec)))
+  (destructuring-bind (slot slot-name &optional (modifiers nil)) slot-spec
+    (declare (ignore slot))
+    `(,slot-name . (:default ,(second modifiers)))))
 
 (defun nonclips-slot->slot-des% (slot-spec)
   (destructuring-bind (slot-name &key (default nil)) slot-spec
@@ -30,13 +36,14 @@
 (defun slot->slot-designator% (slot-spec)
   (cond 
     ((nonclips-slot-spec-p slot-spec) (nonclips-slot->slot-des% slot-spec))
-    ((clips-slot-spec-p slot-spec) (clips-slot->slot-des% slot-spec))))
+    ((clips-slot-spec-p slot-spec) (clips-slot->slot-des% slot-spec))
+    (t (error "~A not a valid template slot specifier~%" slot-spec))))
 
 (defun slots->slot-designators% (slots)
   (loop for slot in (to-list-of-lists slots)
-       collect (slot->slot-designator% slot)))
+     collect (slot->slot-designator% slot)))
 
-(defmacro deftemplate (name slots)
+(defmacro deftemplate (name &body slots)
   (let ((template (gensym "template")))
     `(let ((,template
 	    (make-template ',name
@@ -78,6 +85,22 @@
 
 (defun retract-all ()
   (reset-facts))
+
+(defun nonclips-mod-list-p (mod-list)
+  (plistp mod-list))
+
+(defun clips-mod-list-p (mod-list)
+  (alistp mod-list))
+
+(defun clips->nonclips-mod-list (mod-list)
+  (loop for (slot-name . new-val) in mod-list
+     append (list (to-keyword slot-name) new-val)))
+
+(defun to-mod-spec-list (mod-list)
+  (cond
+    ((nonclips-mod-list-p mod-list) mod-list)
+    ((clips-mod-list-p mod-list) (clips->nonclips-mod-list mod-list))
+    (t (error "~A not a valid modify specifier" mod-list))))
 
 (defmethod modify% ((fact-spec list) mod-list)
   (let ((mod-fact (make-fact fact-spec)))

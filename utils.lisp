@@ -170,3 +170,26 @@
        unless (funcall predicate first second)
          return nil
        finally (return t))))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun plistp (list)
+    (and (evenp (length list))
+	 (every-couple (lambda (key val)
+			 (declare (ignore val))
+			 (keywordp key))
+		       list))))
+
+(defun alistp (list)
+  (every (lambda (elem)
+	   (and (listp elem) (= (length elem) 2)))
+	 list))
+
+(defmacro doplist ((key val plist &optional (retval nil)) &body body)
+  (let ((sym-plist (gensym "plist")))
+    `(let ((,sym-plist (copy-list ,plist)))
+       (cl:assert (plistp ,plist) ()
+		  "doplist: ~A not a plist" ,plist)
+       (do ((,key (pop ,sym-plist) (pop ,sym-plist))
+	    (,val (pop ,sym-plist) (pop ,sym-plist)))
+	   ((null ,sym-plist) ,retval)
+	 ,@body))))

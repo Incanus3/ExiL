@@ -102,11 +102,11 @@
       (rem-wme fact))))
 
 (defun modify-fact (fact mod-list)
-  (loop with new-fact = (copy-fact fact)
-     for (slot-name val) in mod-list
-     do (setf (tmpl-fact-slot-value new-fact slot-name) val)
-     finally (progn (rem-fact fact)
-		   (add-fact new-fact))))
+  (let ((new-fact (copy-fact fact)))
+    (doplist (slot-name val mod-list)
+      (setf (tmpl-fact-slot-value new-fact slot-name) val))
+    (rem-fact fact)
+    (add-fact new-fact)))
 
 ; public
 (defun add-fact-group (group-name fact-descriptions)

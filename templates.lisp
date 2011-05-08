@@ -117,19 +117,6 @@
 			       default
 			       (class-slot-value object-type 'slot-default))))))
 
-; TODO: rewrite using destructuring capabilities of loop
-; OBSOLETE
-;(defun make-tmpl-obj-nonclips (object-type template slot-specs)
-;  (make-instance
-;   object-type :tmpl-name (name template)
-;   :slots (loop for tmpl-slot-spec in (slots template)
-;	     collect (cons (car tmpl-slot-spec)
-;			   (or (getf slot-specs
-;				     (to-keyword (car tmpl-slot-spec)))
-;			       (getf (cdr tmpl-slot-spec)
-;				     :default)
-;			       (class-slot-value object-type 'slot-default))))))
-
 (defun make-tmpl-obj-nonclips (object-type template slot-specs)
   (make-instance
    object-type :tmpl-name (name template)

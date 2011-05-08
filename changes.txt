@@ -5,6 +5,7 @@ retract: supports multiple retractions, supports fact specification through its 
 watch: supports (watch all)
 unwatch: supports (unwatch all)
 defrule: supports optional rule title string
+defrule: supports the &fact <- <pattern> notation
 
 added retract-all (to replace clips (retract *))
 added ppdefrule
@@ -12,11 +13,15 @@ added undeffacts
 
 TODO:
 modify defrule to support:
-?fact <- <pattern> => (retract ?fact) notation
-the singleton ? variable
-the ~ (negative) | (alternative) and & (conective) notations
+  the singleton ? variable
+  the ~ (negative) | (alternative) and & (conective) notations
 dribble-on, dribble-off
 set-break, remove-break, show-breaks
 matches (rule) - shows partial matches of rule conditions against working memory
 list-deffacts, ppdeffacts
 deffact should check, that all variables appearing in RHS are bound in LHS
+wildcards
+
+CLIPS FEATURES NOT INTENDED TO SUPPORT:
+not all clips functions are supported on the RHS (e.g. printout)
+template slot types

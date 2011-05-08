@@ -8,7 +8,8 @@
 	   :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
 	   :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
 	   :ext-delete :diff-delete :push-update :class-slot-value :select
-	   :weak-symbol-equal-p :every-couple :cpl-assoc-val))
+	   :weak-symbol-equal-p :every-couple :cpl-assoc-val :plistp :alistp
+	   :doplist))
 
 (defpackage :exil-core
   (:use :common-lisp :exil-utils)

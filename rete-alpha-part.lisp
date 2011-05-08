@@ -125,13 +125,14 @@
   (initialize-network node))
 
 (defmethod activate ((node alpha-top-node) (wme fact))
-  (activate
-   (gethash
-    (typecase wme
-      (simple-fact (simple-fact-key-name node))
-      (template-fact (tmpl-name wme)))
-    (networks node))
-   wme))
+  (let ((network (get/initialize-network
+		  node (typecase wme
+			 (simple-fact (simple-fact-key-name node))
+			 (template-fact (tmpl-name wme))))))
+    (unless network
+;      (print "activate alpha-top-node: no network found~%returning networks hash for debug")
+      (inspect node))
+    (activate network wme)))
 
 (defmethod inactivate ((node alpha-top-node) (wme fact))
   (loop for child being the hash-values in (networks node)
