@@ -14,7 +14,7 @@
 (defpackage :exil-core
   (:use :common-lisp :exil-utils)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :variable-p :template :tmpl-name :slots :make-tamplate :find-atom
+  (:export :variable-p :template :tmpl-name :slots :find-atom
 	   :has-slot-p :make-template :fact :fact-equal-p :simple-fact
 	   :atom-position :template-fact :tmpl-fact-slot-value :fact-slot
 	   :make-fact :match-var :atom-equal-p :constant-test :pattern

@@ -43,13 +43,6 @@
 (defun make-template (name slots)
   (make-instance 'template :name name :slots slots))
 
-;; creates instance of template class with given name and slot specification
-;; and pushes it into *templates*.
-;; it is to consider whether lambda list (name slots)
-;; or (name &body slots) is better
-;; for the former possibility, the call is more similar to defclass
-;; for the latter, the call is more like defstruct call
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template-object class
 
@@ -107,28 +100,46 @@
   "get the atom position in template-object slots"
   (assoc-key atom (slots object)))
 
-; TODO: supply tmpl-object creation for clips-based slot-spec notation
+; private
 (defun make-tmpl-obj-clips (object-type template slot-specs)
   (make-instance
    object-type :tmpl-name (name template)
-   :slots (loop for (slot-name &key default) in (slots template)
-	     collect (cons slot-name
-			   (or (cpl-assoc-val slot-name slot-specs)
-			       default
-			       (class-slot-value object-type 'slot-default))))))
+   :slots (loop for slot in (slots template)
+                collect (destructuring-bind (slot-name &key default) slot
+                            (cons slot-name
+                              (or (cpl-assoc-val slot-name slot-specs) ;
+                                  default
+                                  (class-slot-value object-type 'slot-default)))))))
 
+; private
 (defun make-tmpl-obj-nonclips (object-type template slot-specs)
   (make-instance
    object-type :tmpl-name (name template)
-   :slots (loop for (slot-name &key default) in (slots template)
-	     collect (cons slot-name
-			   (or (getf slot-specs (to-keyword slot-name))
-			       default
-			       (class-slot-value object-type 'slot-default))))))
+   :slots (loop for slot in (slots template)
+                collect (destructuring-bind (slot-name &key default) slot
+                          (cons slot-name
+                                (or (getf slot-specs (to-keyword slot-name))
+                                    default
+                                    (class-slot-value object-type 'slot-default)))))))
+
+; private
+(defun tmpl-slot-spec-p (specification)
+  (every-couple (lambda (slot-name slot-val)
+		  (declare (ignore slot-val))
+		  (keywordp slot-name))
+		specification))
+
+; private
+(defun clips-tmpl-slot-spec-p (specification)
+  (every (lambda (slot-spec)
+	   (and (listp slot-spec)
+		(= (length slot-spec) 2)
+		(symbolp (first slot-spec))))
+	 specification))
 
 ;; tmpl-object function searches template's slot list, finds values from them
 ;; in specification or falls back to default values if it finds nothing
-;; if there's some other crap in specification, tmpl-object doesn't care,
+;; if there's some other junk in specification, tmpl-object doesn't care,
 ;; the only condition is, that (rest specification) has to be plist
 ; private for package
 (defun make-tmpl-object (specification object-type)
@@ -140,21 +151,6 @@
     (if (tmpl-slot-spec-p slot-spec)
 	(make-tmpl-obj-nonclips object-type template slot-spec)
 	(make-tmpl-obj-clips object-type template slot-spec))))
-
-
-; private
-(defun clips-tmpl-slot-spec-p (specification)
-  (every (lambda (slot-spec)
-	   (and (listp slot-spec)
-		(= (length slot-spec) 2)
-		(symbolp (first slot-spec))))
-	 specification))
-
-(defun tmpl-slot-spec-p (specification)
-  (every-couple (lambda (slot-name slot-val)
-		  (declare (ignore slot-val))
-		  (keywordp slot-name))
-		specification))
 
 ; private for package
 (defun tmpl-object-specification-p (specification)
