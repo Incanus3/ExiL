@@ -7,7 +7,7 @@
 		       "tokens" "rete-generic-node" "rete-alpha-part"
 		       "rete-beta-part" "rete-net-creation"
                        "matches" "activations" "strategies" "environment"
-                       "export" "test-package")
+                       "export" "gui")
   :rules
    ((:load :all (:requires (:load :previous)))
     (:compile :all (:requires (:load :previous)))))

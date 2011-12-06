@@ -9,7 +9,7 @@
 	   :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
 	   :ext-delete :diff-delete :push-update :class-slot-value :select
 	   :weak-symbol-equal-p :every-couple :cpl-assoc-val :plistp :alistp
-	   :doplist :exil-equal-p :exil-weak-equal-p))
+	   :doplist :exil-equal-p :exil-weak-equal-p :hash->list))
 
 (defpackage :exil-core
   (:use :common-lisp :exil-utils)
@@ -32,10 +32,11 @@
   (:use :common-lisp :exil-utils :exil-core :exil-rete)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
-	   :add-fact-group :rem-fact-group :add-rule :rem-fule :find-rule
+	   :add-fact-group :rem-fact-group :add-rule :rem-rule :find-rule
 	   :add-strategy :set-strategy :select-activation :find-fact :modify-fact
 	   :set-watcher :unset-watcher :watched-p :watch-all :unwatch-all :activate-rule
-	   :facts :agenda :fact-groups :find-template :rete :add-match :remove-match))
+	   :facts :rules :templates :agenda :fact-groups :find-template :rete
+           :add-match :remove-match))
 
 (defpackage :exil
   (:use :common-lisp :exil-utils :exil-core :exil-env)
@@ -44,6 +45,12 @@
 	   :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
 	   :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule)
   (:shadow :assert :step :facts))
+
+#+lispworks (defpackage :exil-gui
+              (:use :common-lisp :capi)
+              (:import-from :exil-env :facts :templates :rules :agenda :rem-fact :rem-rule)
+              (:import-from :exil-utils :hash->list)
+              (:export :show-gui :update-lists))
 
 (defpackage :exil-user
   (:use :common-lisp :exil)

@@ -49,6 +49,7 @@
 ;; or (name &body slots) is better
 ;; for the former possibility, the call is more similar to defclass
 ;; for the latter, the call is more like defstruct call
+; public
 (defmacro deftemplate (name &body slots)
   (let ((template (gensym "template")))
     `(let ((,template
@@ -56,6 +57,7 @@
 			   ',(slots->slot-designators% slots))))
        (add-template ,template))))
 
+; public
 (defun facts (&optional (start-index 1) (end-index (length (exil-env:facts)))
 			(at-most end-index))
   (let ((facts (exil-env:facts)))
@@ -65,6 +67,7 @@
 (defun assert% (fact-spec)
   (add-fact (make-fact fact-spec)))
 
+; public
 (defmacro assert (&rest fact-specs)
   "Add fact into working memory"
   (let ((fact-spec (gensym "fact-spec")))
@@ -85,10 +88,12 @@
 ; or number indices (starting with 1) for clips compatitibity.
 ; It can't support * to retract all facts as clips does, cause this symbol has
 ; a special meaning in lisp. retract-all does this instead.
+; public
 (defmacro retract (&rest fact-specs)
   "Remove fact from working memory"
   `(retract% ',fact-specs))
 
+; public
 (defun retract-all ()
   (reset-facts))
 
@@ -120,6 +125,7 @@
       (error "modify: ~A is not a template fact" mod-fact)) 
     (modify-fact mod-fact mod-list)))
 
+; public
 (defmacro modify (fact-spec &rest mod-list)
   "Replace old-fact by new-fact"
   (typecase fact-spec
@@ -128,15 +134,18 @@
     (t (error "modify doesn't support fact specification of type ~A"
 	      (type-of fact-spec)))))
 
+; public
 (defun clear ()
   "Delete all facts"
   (reset-environment))
 
+; public
 (defmacro deffacts (name &body fact-descriptions)
   "Create group of facts to be asserted after (reset)"
   (if (stringp (first fact-descriptions)) (pop fact-descriptions))
   `(add-fact-group ',name ',fact-descriptions))
 
+; public
 (defmacro undeffacts (name)
   "Delete fact group"
   `(rem-fact-group ',name))
@@ -145,6 +154,7 @@
   (dolist (desc fact-descriptions)
     (assert% desc)))
 
+; public
 (defun reset ()
   "Clear all facts and add all fact groups"
   (clear)
@@ -170,6 +180,7 @@
        do (incf i 2)))
 
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
+; public
 (defmacro defrule (name &body rule)
   "Define rule"
   (when (stringp (first rule))
@@ -193,23 +204,28 @@
     (format t "(defrule ~A~{~%  ~A~}~%  =>~{~%  ~S~})"
 	    name (conditions rule) (activations rule))))
 
+; public
 (defmacro ppdefrule (name)
   `(ppdefrule% ',name))
 
+; public
 (defmacro undefrule (name)
   "Undefine rule"
   (let ((rule (gensym "rule")))
     `(let ((,rule (find-rule ',name)))
        (when ,rule (rem-rule ,rule)))))
 
+; public
 (defmacro defstrategy (name function)
   "Define strategy"
   `(add-strategy ',name ,function))
 
+; public
 (defmacro setstrategy (name)
   "Set strategy to use"
   `(set-strategy ',name))
 
+; public
 (defun step ()
   "Run inference engine for one turn"
   (when (agenda)
@@ -218,16 +234,19 @@
 
 (defvar *exil-running* nil)
 
+; public
 (defun halt ()
   "Stop the inference engine"
   (format t "Halting~%")
   (setf *exil-running* nil))
 
+; public
 (defun run ()
   "Run the infenece engine"
   (setf *exil-running* t)
   (loop while (and *exil-running* (step))))
 
+; public
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
   `(progn (if (weak-symbol-equal-p ',watcher 'all)
@@ -235,6 +254,7 @@
 	      (set-watcher ',watcher))
 	  nil))
 
+; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
   `(progn (if (weak-symbol-equal-p ',watcher 'all)

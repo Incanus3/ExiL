@@ -222,3 +222,7 @@
 (defmethod exil-weak-equal-p ((obj1 cons) (obj2 cons))
   (and (exil-weak-equal-p (car obj1) (car obj2))
        (exil-weak-equal-p (cdr obj1) (cdr obj2))))
+
+(defmethod hash->list ((hash hash-table))
+  (loop for val being the hash-value of hash
+        collect val))
