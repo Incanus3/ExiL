@@ -1,5 +1,0 @@
-utils utils.lisp
-core templates.lisp facts.lisp patterns.lisp rules.lisp
-rete tokens.lisp rete-generic-node.lisp rete-alpha-part.lisp rete-beta-part.lisp rete-net-creation.lisp
-env matches.lisp activations.lisp strategies.lisp environment.lisp
-"" export.lisp
