@@ -40,7 +40,7 @@
 (reset)
 ;(step)
 
-(run)
+;(run)
 
 #|
 ; SIMPLE FACTS:

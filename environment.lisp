@@ -89,7 +89,8 @@
   (when (nth-value 1 (pushnew-end fact (facts) :test #'fact-equal-p))
     (when (watched-p 'facts)
       (format t "==> ~A~%" fact))
-    (add-wme fact)))
+    (add-wme fact)
+    #+lispworks(exil-gui:update-lists)))
 
 ; public
 (defun rem-fact (fact)
@@ -99,7 +100,8 @@
       (setf (facts) new-list)
       (when (watched-p 'facts)
 	(format t "<== ~A~%" fact))
-      (rem-wme fact))))
+      (rem-wme fact)
+      #+lispworks(exil-gui:update-lists))))
 
 (defun modify-fact (fact mod-list)
   (assert (find fact (facts) :test #'fact-equal-p) ()
@@ -125,6 +127,7 @@
 ; public
 (defun add-template (template)
   (setf (gethash (symbol-name (name template)) (templates)) template)
+  #+lispworks(exil-gui:update-lists)
   template)
 
 ; public
@@ -139,13 +142,15 @@
     (format t "==> ~A" rule))
   (dolist (fact (facts))
     (add-wme fact))
+  #+lispworks(exil-gui:update-lists)
   rule)
 
 ; private
 (defmethod remove-matches (rule)
   (setf (agenda)
 	(delete rule (agenda)
-		:test #'rule-equal-p :key #'match-rule)))
+		:test #'rule-equal-p :key #'match-rule))
+  #+lispworks(exil-gui:update-lists))
 
 ;; ODSTRANIT Z AGENDY VSECHNY MATCHE TYKAJICI SE RULE
 ; public
@@ -172,7 +177,8 @@
     (when (and (nth-value 1 (ext-pushnew match (agenda)
 					 :test #'match-equal-p))
 	       (watched-p 'activations))
-      (format t "==> ~A~%" match))))
+      (format t "==> ~A~%" match)
+      #+lispworks(exil-gui:update-lists))))
 
 ; public, used by rete
 (defmethod remove-match (production token)
@@ -182,7 +188,8 @@
     (when altered-p
       (setf (agenda) new-list)
       (when (watched-p 'activations)
-	(format t "<== ~A~%" match))))))
+	(format t "<== ~A~%" match))
+      #+lispworks(exil-gui:update-lists)))))
 
 ; public
 (defmethod add-strategy (name function)
@@ -235,6 +242,7 @@
 	(rete) (make-rete))
   (loop for rule being the hash-values in (rules)
      do (add-rule rule))
+  #+lispworks(exil-gui:update-lists)
   nil)
 
 ; public
@@ -250,4 +258,5 @@
 	(templates) (make-hash-table :test 'equalp)
 	(rules) (make-hash-table :test 'equalp)
 	(rete) (make-rete))
+  #+lispworks(exil-gui:update-lists)
   nil)

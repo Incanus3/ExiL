@@ -38,7 +38,7 @@
                      :text "Undefine rule"
                      :callback 'undef-rule
                      :callback-type :interface))
-  (:default-initargs :title "ExiL Facts"
+  (:default-initargs :title "ExiL Rules"
    :visible-min-height 100
    :visible-min-width 300))
 
@@ -49,12 +49,19 @@
   (rem-rule (selected-rule interface))
   (update-lists))
 
+(defun pprint->string (obj)
+  (let ((s (with-output-to-string (s)
+             (pprint obj s)
+             s)))
+    (subseq s 1 (length s))))
+
 (define-interface agenda-gui () ()
   (:panes
    (agenda-list list-panel
               :items (agenda)
-              :reader agenda-list))
-  (:default-initargs :title "ExiL Facts"
+              :reader agenda-list
+              :print-function #'pprint->string))
+  (:default-initargs :title "ExiL Agenda"
    :visible-min-height 100
    :visible-min-width 300))
 
