@@ -51,6 +51,7 @@
 ;; for the latter, the call is more like defstruct call
 ; public
 (defmacro deftemplate (name &body slots)
+  "define a fact template"
   (let ((template (gensym "template")))
     `(let ((,template
 	    (make-template ',name
@@ -206,6 +207,7 @@
 
 ; public
 (defmacro ppdefrule (name)
+  "pretty prints rule definition"
   `(ppdefrule% ',name))
 
 ; public

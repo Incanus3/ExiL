@@ -1,5 +1,7 @@
 (require :asdf)
-(defpackage :exil-system (:use :asdf :cl))
+(defpackage :exil-system
+  (:documentation "contains the ExiL ASDF system")
+  (:use :asdf :cl))
 (in-package :exil-system)
 
 (defsystem exil

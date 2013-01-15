@@ -4,46 +4,51 @@
 ; public
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defclass exil-environment ()
-    ((facts :initform ())
-     (fact-groups :initform ())
-     (templates :initform (make-hash-table :test 'equalp))
-     (rules :initform (make-hash-table :test 'equalp))
-     (rete :initform (make-rete))
-     (agenda :initform ())
+    ((facts :initform () :documentation "list of fact instances")
+     (fact-groups :initform ()
+                  :documentation "((group-name fact-description*)*)")
+     (templates :initform (make-hash-table :test 'equalp)
+                :documentation "hash table, assigns template instance to name")
+     (rules :initform (make-hash-table :test 'equalp)
+            :documentation "hash table, assigns rule instance to name")
+     (rete :initform (make-rete) :documentation "the rete singleton instance")
+     (agenda :initform () :documentation "list of matches")
      (strategies :initform `((default . ,#'depth-strategy)
-			     (depth-strategy . ,#'depth-strategy)
-			     (breadth-strategy . ,#'breadth-strategy)
-			     (simplicity-strategy . ,#'simplicity-strategy)
-			     (complexity-strategy . ,#'complexity-strategy)))
-     (current-strategy-name :initform 'default)
+                             (depth-strategy . ,#'depth-strategy)
+                             (breadth-strategy . ,#'breadth-strategy)
+                             (simplicity-strategy . ,#'simplicity-strategy)
+                             (complexity-strategy . ,#'complexity-strategy))
+                 :documentation "alist, assigns strategy function to name symbol")
+     (current-strategy-name :initform 'default :documentation "symbol")
      (watchers :initform '((:facts . nil)
-			   (:rules . nil)
-			   (:activations . nil)))))
+                           (:rules . nil)
+                           (:activations . nil))
+               :documentation "alist, (:facts, :rules, :activations) -> t/nil"))
+    (:documentation "keeps track of defined fact-groups, templates, rules, strategies and watchers and stores the asserted facts and the agenda"))
 
-
-; not in use
+                                        ; not in use
   (defvar *environments*
     (let ((table (make-hash-table :test #'equalp)))
       (setf (gethash "default" table)
-	    (make-instance 'exil-environment))
+            (make-instance 'exil-environment))
       table))
 
-; not in use
-(defmacro defenv (name &key (redefine nil))
-  (let ((sym-name (gensym "sym-name")))
-    `(let ((,sym-name (symbol-name ,name)))
-       (when (or (not (gethash ,name *environments*))
-                 ,redefine)
-         (setf (gethash ,name *environments*)
-               (make-instance 'exil-environment))))))
+                                        ; not in use
+  (defmacro defenv (name &key (redefine nil))
+    (let ((sym-name (gensym "sym-name")))
+      `(let ((,sym-name (symbol-name ,name)))
+         (when (or (not (gethash ,name *environments*))
+                   ,redefine)
+           (setf (gethash ,name *environments*)
+                 (make-instance 'exil-environment))))))
 
-; not in use
-(defmacro setenv (name)
-  (let ((env (gensym "env")))
-    `(let ((,env (gethash (symbol-name ,name) *environments*)))
-       (when ,env (setf *current-environment* ,env)))))
+                                        ; not in use
+  (defmacro setenv (name)
+    (let ((env (gensym "env")))
+      `(let ((,env (gethash (symbol-name ,name) *environments*)))
+         (when ,env (setf *current-environment* ,env)))))
 
-; public
+                                        ; public
   (defvar *current-environment*
     (gethash "default" *environments*)))
 

@@ -2,6 +2,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defpackage :exil-utils
+  (:documentation "general purpose utilities used in the rest of the code")
   (:use :common-lisp)
   (:shadow :intern :symbol-name)
   (:export :intern :string-append :symbol-name :symbol-append :to-keyword
@@ -12,6 +13,7 @@
 	   :doplist :exil-equal-p :exil-weak-equal-p :hash->list))
 
 (defpackage :exil-core
+  (:documentation "core functionality of the expert system library - facts, templates, patterns and rules")
   (:use :common-lisp :exil-utils)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :variable-p :template :tmpl-name :slots :find-atom
@@ -23,12 +25,14 @@
 	   :name :conditions :activations :fact-description :copy-fact))
 
 (defpackage :exil-rete
+  (:documentation "the rete algorithm for matching facts against rule conditions")
   (:use :common-lisp :exil-utils :exil-core)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
 	   :token->list :token-equal-p))
 
 (defpackage :exil-env
+  (:documentation "the exil environment, keeps track of the defined templates and rules and stores the asserted facts")
   (:use :common-lisp :exil-utils :exil-core :exil-rete)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
@@ -39,6 +43,7 @@
            :add-match :remove-match))
 
 (defpackage :exil
+  (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-utils :exil-core :exil-env)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
@@ -47,11 +52,13 @@
   (:shadow :assert :step :facts))
 
 #+lispworks (defpackage :exil-gui
+              (:documentation "the ExiL GUI for LispWorks")
               (:use :common-lisp :capi)
               (:import-from :exil-env :facts :templates :rules :agenda :rem-fact :rem-rule)
               (:import-from :exil-utils :hash->list)
               (:export :show-gui :update-lists))
 
 (defpackage :exil-user
+  (:documentation "the user program is defined in this package")
   (:use :common-lisp :exil)
   (:shadowing-import-from :exil :assert :step))

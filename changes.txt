@@ -21,6 +21,8 @@ matches (rule) - shows partial matches of rule conditions against working memory
 list-deffacts, ppdeffacts
 deffact should check, that all variables appearing in RHS are bound in LHS
 wildcards
+redefine initialize-instance methods as after, if possible
+add documentation to classes, functions, methods, macros and slots (using :documentation in slot definition)
 
 CLIPS FEATURES NOT INTENDED TO SUPPORT:
 not all clips functions are supported on the RHS (e.g. printout)

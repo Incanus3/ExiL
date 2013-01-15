@@ -36,7 +36,7 @@
 ;; (from-keyword :a) => a
 
 (defgeneric weak-symbol-equal-p (sym1 sym2)
-  (:documentation "Test if the symbol name is equal, omits the package name")
+  (:documentation "test if the symbol name is equal, omits the package name")
   (:method ((sym1 symbol) (sym2 symbol))
     (equalp (to-keyword sym1) (to-keyword sym2)))
   (:method (sym1 sym2) nil))
@@ -51,8 +51,7 @@
   "get a list of all subsets of given list"
   (cl:assert (<= (length list) 20)
 	  ()
-	  (string-append "subsets: Can't generate subsets of list longer then 20,"
-			 "not enough memory!"))
+	  "subsets: Can't generate subsets of list longer then 20, not enough memory!")
   (case (length list)
     (0 ())
     (1 (list () list))
@@ -101,11 +100,12 @@
 ;; i could shadow the pushnew from common-lisp package and name this just
 ;; pushnew, but since this one is 2x slower, i'll keep both of them and
 ;; use this only when appropriate
-(defmacro my-pushnew (item place &key (test '#'equalp) (key '#'identity))
-  "slightly altered pushnew"
-  `(progn
-     (pushnew ,item ,place :test ,test :key ,key)
-     (find (funcall ,key ,item) ,place :test ,test :key ,key)))
+; not used any more
+;(defmacro my-pushnew (item place &key (test '#'equalp) (key '#'identity))
+;  "slightly altered pushnew"
+;  `(progn
+;     (pushnew ,item ,place :test ,test :key ,key)
+;     (find (funcall ,key ,item) ,place :test ,test :key ,key)))
 
 (defmacro ext-pushnew (item place &key (test '#'equalp) (key '#'identity))
   "like pushnew, but as a second value returns, whether the list was actualy altered"
@@ -116,12 +116,12 @@
        (values ,new-list (not (= (length ,new-list) ,length))))))
 
 (defmacro push-end (item list)
+  "pushes item at the end of the list"
   `(progn (if ,list (nconc ,list (cons ,item nil)) (setf ,list (list ,item)))
 	  ,list))
 
 (defmacro pushnew-end (item list &key (key '#'identity) (test '#'equalp))
-  (string-append "pushes the item at the end of list, it it's not yet in the list"
-		 "as a second value, returns whether the list was actualy altered")
+  "pushes the item at the end of list, it it's not yet in the list as a second value, returns whether the list was actualy altered"
   `(if (find ,item ,list :key ,key :test ,test)
        (values ,list nil)
        (values (push-end ,item ,list) t)))
@@ -162,6 +162,7 @@
 	  indices))
 
 (defun every-couple (predicate list)
+  "applies 2-parameter predicate to every couple of items in the list, returns true if all the return values are true"
   (when (evenp (length list))
     (loop with lst-copy = (copy-list list)
        while lst-copy
@@ -173,6 +174,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun plistp (list)
+    "is the list a property list?"
     (and (evenp (length list))
 	 (every-couple (lambda (key val)
 			 (declare (ignore val))
@@ -180,19 +182,21 @@
 		       list))))
 
 (defun alistp (list)
+  "is the list an assoc-list?"
   (every (lambda (elem)
-	   (and (listp elem) (= (length elem) 2)))
-	 list))
+           (and (listp elem) (= (length elem) 2)))
+         list))
 
 (defmacro doplist ((key val plist &optional (retval nil)) &body body)
+  "iterates over plist setting key and val variables for each iteration"
   (let ((sym-plist (gensym "plist")))
     `(let ((,sym-plist (copy-list ,plist)))
        (cl:assert (plistp ,plist) ()
-		  "doplist: ~A not a plist" ,plist)
+                  "doplist: ~A not a plist" ,plist)
        (do ((,key (pop ,sym-plist) (pop ,sym-plist))
-	    (,val (pop ,sym-plist) (pop ,sym-plist)))
-	   ((not ,key) ,retval)
-	 ,@body))))
+            (,val (pop ,sym-plist) (pop ,sym-plist)))
+           ((not ,key) ,retval)
+         ,@body))))
 
 (defgeneric exil-equal-p (obj1 obj2)
   (:documentation "ExiL default equality predicate")
@@ -224,5 +228,6 @@
        (exil-weak-equal-p (cdr obj1) (cdr obj2))))
 
 (defmethod hash->list ((hash hash-table))
+  "returns list of all values in the hash"
   (loop for val being the hash-value of hash
         collect val))
