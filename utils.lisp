@@ -50,14 +50,15 @@
 (defun subsets (list)
   "get a list of all subsets of given list"
   (cl:assert (<= (length list) 20)
-	  ()
-	  "subsets: Can't generate subsets of list longer then 20, not enough memory!")
+             ()
+             (string-append "subsets: Can't generate subsets of list longer"
+                            "then 20, not enough memory!"))
   (case (length list)
     (0 ())
     (1 (list () list))
     (otherwise (let ((subsets (subsets (rest list))))
-		 (append subsets (mapcar (lambda (x) (cons (first list) x))
-					 subsets))))))
+                 (append subsets (mapcar (lambda (x) (cons (first list) x))
+                                         subsets))))))
 ;; (subsets '(1 2)) = ((1 2) (1) (2) ())
 
 (defun assoc-value (the-key alist &key (key #'identity) (test #'equalp))
@@ -107,15 +108,15 @@
   "like pushnew, but as a second value returns,
    whether the list was actualy altered"
   (let ((length (gensym "length"))
-	(new-list (gensym "new-list")))
+        (new-list (gensym "new-list")))
     `(let ((,length (length ,place))
-	   (,new-list (pushnew ,item ,place :test ,test :key ,key)))
+           (,new-list (pushnew ,item ,place :test ,test :key ,key)))
        (values ,new-list (not (= (length ,new-list) ,length))))))
 
 (defmacro push-end (item list)
   "pushes item at the end of the list"
   `(progn (if ,list (nconc ,list (cons ,item nil)) (setf ,list (list ,item)))
-	  ,list))
+          ,list))
 
 (defmacro pushnew-end (item list &key (key '#'identity) (test '#'equalp))
   "pushes the item at the end of list, if it's not yet in the list
@@ -153,15 +154,11 @@
      (setf ,place (delete ,item ,place :test ,test :key ,key))
      (push ,item ,place)))
 
-(defun class-slot-value (class-name slot-name)
-  "get a class-slot value from class-name"
-  (slot-value (make-instance class-name) slot-name))
-
 (defun select (list indices)
   "get a list of values from list according to the list of indices"
   (mapcar (lambda (i)
-	    (nth i list))
-	  indices))
+            (nth i list))
+          indices))
 
 (defun every-couple (predicate list)
   "applies 2-parameter predicate to every couple of items in the list,
@@ -171,18 +168,17 @@
        while lst-copy
        for first = (pop lst-copy) then (pop lst-copy)
        for second = (pop lst-copy) then (pop lst-copy)
-       unless (funcall predicate first second)
-         return nil
+       unless (funcall predicate first second) return nil
        finally (return t))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun plistp (list)
     "is the list a property list?"
     (and (evenp (length list))
-	 (every-couple (lambda (key val)
-			 (declare (ignore val))
-			 (keywordp key))
-		       list))))
+         (every-couple (lambda (key val)
+                         (declare (ignore val))
+                         (keywordp key))
+                       list))))
 
 (defun alistp (list)
   "is the list an assoc-list?"
@@ -200,6 +196,11 @@
             (,val (pop ,sym-plist) (pop ,sym-plist)))
            ((not ,key) ,retval)
          ,@body))))
+
+(defmethod hash->list ((hash hash-table))
+  "returns list of all values in the hash"
+  (loop for val being the hash-value of hash
+     collect val))
 
 (defgeneric exil-equal-p (obj1 obj2)
   (:documentation "ExiL default equality predicate")
@@ -230,7 +231,6 @@
   (and (exil-weak-equal-p (car obj1) (car obj2))
        (exil-weak-equal-p (cdr obj1) (cdr obj2))))
 
-(defmethod hash->list ((hash hash-table))
-  "returns list of all values in the hash"
-  (loop for val being the hash-value of hash
-        collect val))
+(defun class-slot-value (class-name slot-name)
+  "get a class-slot value from class-name"
+  (slot-value (make-instance class-name) slot-name))

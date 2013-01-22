@@ -111,4 +111,60 @@
     (ensure-same (diff-delete 2 list) (values (list 1) (list 2)))
     (ensure-same (diff-delete 2 list) (values (list 1) ()))))
 
+; by default ensure-same tests by equalp and
+; (equalp (list "BLAH" "FOO") (list "blah" "FOO")) returns true, so it wouldn't
+; really test that "BLAH" was replaced by "blah"
+(addtest (utils-tests)
+  test-push-update
+  (let ((list (list "BLAH" "FOO")))
+    (ensure-same (push-update "blah" list) (list "blah" "FOO") :test #'equal)))
+
+(addtest (utils-tests)
+  test-select
+  (ensure-same (select '(a b c d) '(1 3)) '(b d)))
+
+(addtest (utils-tests)
+  test-every-couple
+  (flet ((even-sum (a b) (evenp (+ a b))))
+    (ensure (every-couple #'even-sum '(1 1 2 2)))
+    (ensure (not (every-couple #'even-sum '(1 1 2 3))))))
+
+(addtest (utils-tests)
+  test-plistp
+  (ensure (plistp '(:a 1 :b 2)))
+  (ensure (not (plistp '(1 2 3 4)))))
+
+(addtest (utils-tests)
+  test-alistp
+  (ensure (alistp '((a 1) (b 2))))
+  (ensure (not (alistp '(a))))
+  (ensure (not (alistp '((a)))))
+  (ensure (not (alistp '((a b c))))))
+
+(addtest (utils-tests)
+  test-doplist
+  (let ((plist '(:a 1 :b 2)) list)
+    (doplist (key val plist)
+      (push-end key list)
+      (push-end val list))
+    (ensure-same list '(:a 1 :b 2)))
+  (ensure-error (doplist (key val '(1 2 3))))) ; not a plist
+
+(addtest (utils-tests)
+  test-hash->list
+  (let ((hash (make-hash-table)) list)
+    (setf (gethash :a hash) 1)
+    (setf (gethash :b hash) 2)
+    (setf list (hash->list hash))
+    (ensure (member 1 list)) ; list should have both values in it
+    (ensure (member 2 list))
+    (setf list (delete 1 (delete 2 list)))
+    (ensure-null list))) ; and nothing more
+
+(defclass blah () ((slot :allocation :class :initform 1)))
+
+(addtest (utils-tests)
+  test-class-slot-value
+  (ensure-same (class-slot-value 'blah 'slot) 1))
+
 (print (run-tests :suite 'utils-tests))
