@@ -1,6 +1,0 @@
-*.la
-.libs
-*.lo
-.deps
-
-
