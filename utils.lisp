@@ -65,7 +65,8 @@
   (cdr (assoc the-key alist :key key :test test)))
 ;; (assoc-value 'b '((a . 1) (b . 2))) => 2
 
-(defun (setf assoc-value) (value the-key alist &key (key #'identity) (test #'equalp))
+(defun (setf assoc-value) (value the-key alist &key (key #'identity)
+                                                 (test #'equalp))
   "set value in assoc-list according to the key"
   (let ((pair (assoc the-key alist :key key :test test)))
     (if pair
@@ -89,7 +90,8 @@
         (error "Key ~s not present in ~s" key cpl-list))))
 
 (defun to-list (x)
-  "when given an atom, returns list containing it, when given a list, just returns it"
+  "when given an atom, returns list containing it,
+   when given a list, just returns it"
   (if (listp x)
       x
       (list x)))
@@ -101,20 +103,9 @@
   (mapcar #'to-list list))
 ;; (to-list-of-lists '(a (b :default 10))) => ((a) (b :default 10))
 
-;; like pushnew, but returns the test-equivalent object, which actualy resides
-;; in the place (if there already was a test-equivalent object, returns it)
-;; i could shadow the pushnew from common-lisp package and name this just
-;; pushnew, but since this one is 2x slower, i'll keep both of them and
-;; use this only when appropriate
-; not used any more
-;(defmacro my-pushnew (item place &key (test '#'equalp) (key '#'identity))
-;  "slightly altered pushnew"
-;  `(progn
-;     (pushnew ,item ,place :test ,test :key ,key)
-;     (find (funcall ,key ,item) ,place :test ,test :key ,key)))
-
 (defmacro ext-pushnew (item place &key (test '#'equalp) (key '#'identity))
-  "like pushnew, but as a second value returns, whether the list was actualy altered"
+  "like pushnew, but as a second value returns,
+   whether the list was actualy altered"
   (let ((length (gensym "length"))
 	(new-list (gensym "new-list")))
     `(let ((,length (length ,place))
@@ -127,32 +118,37 @@
 	  ,list))
 
 (defmacro pushnew-end (item list &key (key '#'identity) (test '#'equalp))
-  "pushes the item at the end of list, it it's not yet in the list as a second value, returns whether the list was actualy altered"
+  "pushes the item at the end of list, if it's not yet in the list
+   as a second value, returns whether the list was actualy altered"
   `(if (find ,item ,list :key ,key :test ,test)
        (values ,list nil)
        (values (push-end ,item ,list) t)))
 
 (defmacro ext-delete (item place &key (test '#'equalp) (key '#'identity))
-  "like delete, but as a second value returns, whether the list was actualy altered"
+  "like delete, but as a second value returns,
+   whether the list was actualy altered"
   (let ((length (gensym "length"))
-	(new-list (gensym "new-list")))
+        (new-list (gensym "new-list")))
     `(let ((,length (length ,place))
-	   (,new-list (delete ,item ,place :test ,test :key ,key)))
+           (,new-list (delete ,item ,place :test ,test :key ,key)))
        (values ,new-list (not (= (length ,new-list) ,length))))))
 
 (defmacro diff-delete (item sequence &key (test '#'equalp) (key '#'identity))
   "like delete, but as a second value returns list of deleted items"
   (let ((new-list (gensym "new-list"))
-	(deleted (gensym "deleted"))
-	(elem (gensym "elem")))
+        (deleted (gensym "deleted"))
+        (elem (gensym "elem")))
     `(let (,new-list ,deleted)
-       (dolist (,elem ,sequence (values (nreverse ,new-list) ,deleted))
-	 (if (funcall ,test ,item (funcall ,key ,elem))
-	     (push ,elem ,deleted)
-	   (push ,elem ,new-list))))))
+       (dolist (,elem ,sequence)
+         (if (funcall ,test ,item (funcall ,key ,elem))
+             (push ,elem ,deleted)
+             (push ,elem ,new-list)))
+       (setf ,sequence (nreverse ,new-list))
+       (values ,sequence ,deleted))))
 
 (defmacro push-update (item place &key (test '#'equalp) (key '#'identity))
-  "like pushnew, but if there is test-equal atom in the place, replaces it by item"
+  "like pushnew, but if there is test-equal atom in the place,
+   replaces it by item"
   `(progn
      (setf ,place (delete ,item ,place :test ,test :key ,key))
      (push ,item ,place)))
@@ -168,7 +164,8 @@
 	  indices))
 
 (defun every-couple (predicate list)
-  "applies 2-parameter predicate to every couple of items in the list, returns true if all the return values are true"
+  "applies 2-parameter predicate to every couple of items in the list,
+   returns true if all the return values are true"
   (when (evenp (length list))
     (loop with lst-copy = (copy-list list)
        while lst-copy

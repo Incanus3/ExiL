@@ -40,7 +40,7 @@
 (reset)
 ;(step)
 
-;(run)
+(run)
 
 #|
 ; SIMPLE FACTS:
@@ -91,22 +91,22 @@
 
 (completely-reset-environment)
 
-POSTUP:
-1)
+;POSTUP:
+;1)
 (in :obj robot :loc A)
 (in :obj box :loc B)
 (goal :act push :obj box :from B :to A)
 
-fire MOVE
+;fire MOVE
 
-2)
+;2)
 (in :obj robot :loc B)
 (in :obj box :loc B)
 (goal :act push :obj box :from B :to A)
 
-fire PUSH
+;fire PUSH
 
-3)
+;3)
 (in :obj robot :loc A)
 (in :obj box :loc A)
 (goal :act push :obj box :from B :to A)

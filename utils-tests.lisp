@@ -1,6 +1,8 @@
 (in-package :exil-utils)
-;(ql:quickload "lift")
-(use-package :lift)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ql:quickload "lift")
+  (use-package :lift))
+
 (setf *test-describe-if-not-successful?* t)
 
 (deftestsuite utils-tests () ())
@@ -78,6 +80,35 @@
   (ensure-same '((a) (b :default 10))
                (to-list-of-lists '(a (b :default 10)))))
 
+(addtest (utils-tests)
+  test-ext-pushnew
+  (let (list)
+    (ensure-same (ext-pushnew 1 list) (values '(1) t)) ; list has been altered
+    (ensure-same (ext-pushnew 1 list) (values '(1) nil)))) ; not this time
 
+(addtest (utils-tests)
+  test-push-end
+  (let ((list (list 1 2))
+        (empty-list ()))
+    (ensure-same (push-end 3 list) (list 1 2 3))
+    (ensure-same (push-end 1 empty-list) (list 1))))
+
+(addtest (utils-tests)
+  test-pushnew-end
+  (let ((list (list 1 2)))
+    (ensure-same (pushnew-end 3 list) (values (list 1 2 3) t))
+    (ensure-same (pushnew-end 3 list) (values (list 1 2 3) nil))))
+
+(addtest (utils-tests)
+  test-ext-delete
+  (let ((list (list 1 2)))
+    (ensure-same (ext-delete 2 list) (values (list 1) t))
+    (ensure-same (ext-delete 2 list) (values (list 1) nil))))
+
+(addtest (utils-tests)
+  test-diff-delete
+  (let ((list (list 1 2)))
+    (ensure-same (diff-delete 2 list) (values (list 1) (list 2)))
+    (ensure-same (diff-delete 2 list) (values (list 1) ()))))
 
 (print (run-tests :suite 'utils-tests))
