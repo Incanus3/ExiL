@@ -1,5 +1,5 @@
 (in-package :exil-utils)
-(ql:quickload "lift")
+;(ql:quickload "lift")
 (use-package :lift)
 (setf *test-describe-if-not-successful?* t)
 
@@ -45,11 +45,39 @@
 
 (addtest (utils-tests)
   test-assoc-value
-  (let ((alist '((a . 1))))
+  (let ((alist (list (cons 'a 1))))
     (ensure-same 1 (assoc-value 'a alist))
     (ensure-same nil (assoc-value 'b alist))
     (setf (assoc-value 'a alist) 2)
     (ensure-same 2 (assoc-value 'a alist))
     (ensure-error (setf (assoc-value 'b alist) 3))))
+
+(addtest (utils-tests)
+  test-assoc-key
+  (let ((alist (list (cons 'a 1))))
+    (ensure-same 'a (assoc-key 1 alist))
+    (ensure-same nil (assoc-key 2 alist))))
+
+(addtest (utils-tests)
+  test-cpl-assoc-val
+  (let ((cpl-list (list (list 'a 1))))
+    (ensure-same 1 (cpl-assoc-val 'a cpl-list))
+    (ensure-same nil (cpl-assoc-val 'b cpl-list))
+    (setf (cpl-assoc-val 'a cpl-list) 2)
+    (ensure-same 2 (cpl-assoc-val 'a cpl-list))
+    (ensure-error (setf (cpl-assoc-val 'b cpl-list) 2))))
+
+(addtest (utils-tests)
+  test-to-list
+  (ensure-same '(a) (to-list 'a))
+  (ensure-same '(a) (to-list '(a)))
+  (ensure-same () (to-list ())))
+
+(addtest (utils-tests)
+  test-to-list-of-lists
+  (ensure-same '((a) (b :default 10))
+               (to-list-of-lists '(a (b :default 10)))))
+
+
 
 (print (run-tests :suite 'utils-tests))

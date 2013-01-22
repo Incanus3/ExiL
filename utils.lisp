@@ -83,7 +83,10 @@
 ;; (cpl-assoc-val 'b '((a 1) (b 2))) => 2
 
 (defun (setf cpl-assoc-val) (new-val key cpl-list)
-  (setf (second (assoc key cpl-list)) new-val))
+  (let ((couple (assoc key cpl-list)))
+    (if couple
+        (setf (second couple) new-val)
+        (error "Key ~s not present in ~s" key cpl-list))))
 
 (defun to-list (x)
   "when given an atom, returns list containing it, when given a list, just returns it"
