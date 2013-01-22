@@ -67,7 +67,10 @@
 
 (defun (setf assoc-value) (value the-key alist &key (key #'identity) (test #'equalp))
   "set value in assoc-list according to the key"
-  (setf (cdr (assoc the-key alist :key key :test test)) value))
+  (let ((pair (assoc the-key alist :key key :test test)))
+    (if pair
+        (setf (cdr pair) value)
+        (error "Key ~s not present in ~s" the-key alist))))
 
 (defun assoc-key (value alist)
   "get key from assoc-list according to the value"
