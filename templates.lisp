@@ -124,7 +124,7 @@
                                  (class-slot-value object-type 'slot-default)))))))
 
 ; private
-(defun tmpl-slot-spec-p (specification)
+(defun tmpl-slots-spec-p (specification)
   (every-couple (lambda (slot-name slot-val)
                   (declare (ignore slot-val))
                   (keywordp slot-name))
@@ -149,12 +149,14 @@
 (defun make-tmpl-object (specification object-type)
   "creates template-object of given type from its specification"
   (let* ((tmpl-name (first specification))
-         (slot-spec (rest specification))
+         (slots-spec (rest specification))
          (template (exil-env:find-template tmpl-name)))
     (cl:assert template () "can't find template ~A" tmpl-name)
-    (if (tmpl-slot-spec-p slot-spec)
-        (make-tmpl-obj-nonclips object-type template slot-spec)
-        (make-tmpl-obj-clips object-type template slot-spec))))
+    (cond ((tmpl-slots-spec-p slots-spec)
+           (make-tmpl-obj-nonclips object-type template slots-spec))
+          ((clips-tmpl-slot-spec-p slots-spec)
+           (make-tmpl-obj-clips object-type template slots-spec))
+          (t (error "~S is not a valid slots specification" slots-spec)))))
 
 ; private for package
 (defun tmpl-object-specification-p (specification)
