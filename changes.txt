@@ -23,6 +23,8 @@ deffact should check, that all variables appearing in RHS are bound in LHS
 wildcards
 redefine initialize-instance methods as after, if possible
 add documentation to classes, functions, methods, macros and slots (using :documentation in slot definition)
+templates.lisp:make-tmpl-object: remove call to exil-env:find-template, this function should
+be called with the template object directly (otherwise this introduces a cyclic dependency 
 
 CLIPS FEATURES NOT INTENDED TO SUPPORT:
 not all clips functions are supported on the RHS (e.g. printout)

@@ -20,7 +20,8 @@
 ;  (load-system :exil)
               (compile-system :exil :load t))
 
-(print (lift:run-tests :suite 'utils-tests))
+(setf lift:*test-print-test-case-names* t)
+(print (lift:run-tests :suite 'tests))
 
 ;; (require :albert (merge-pathnames "3rd-side/albert/construct.lisp" *path*))
 ;(load (merge-pathnames "exil.asd" *path*))

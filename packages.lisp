@@ -30,6 +30,10 @@
 	   :template-pattern :make-pattern :rule :rule-equal-p :make-rule
 	   :name :conditions :activations :fact-description :copy-fact))
 
+(defpackage :core-tests
+  (:documentation "tests for the utils package")
+  (:use :common-lisp :exil-core :lift))
+
 (defpackage :exil-rete
   (:documentation "the rete algorithm for matching facts against rule conditions")
   (:use :common-lisp :exil-utils :exil-core)
