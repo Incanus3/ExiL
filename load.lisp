@@ -7,7 +7,9 @@
 
 ;; (print (merge-pathnames "3rd-side/asdf.lisp" *path*))
 ;; nefunguje uvnitr #-lispworks (progn ... )
-(require :asdf (merge-pathnames "3rd-side/asdf.lisp" *path*))
+(require :asdf) ; (merge-pathnames "3rd-side/asdf.lisp" *path*))
+
+(ql:quickload "lift")
 
 #-lispworks (progn
               (push *path* asdf:*central-registry*)
@@ -17,6 +19,8 @@
               (load (merge-pathnames "defsys.lisp" *path*))
 ;  (load-system :exil)
               (compile-system :exil :load t))
+
+(print (lift:run-tests :suite 'utils-tests))
 
 ;; (require :albert (merge-pathnames "3rd-side/albert/construct.lisp" *path*))
 ;(load (merge-pathnames "exil.asd" *path*))

@@ -14,7 +14,9 @@
   :long-description ""
   :components
   ((:file "packages")
+   (:file "tests")
    (:file "utils"             :depends-on ("packages"))  ; utils
+   (:file "utils-tests"       :depends-on ("utils" "tests"))
    (:file "templates"         :depends-on ("utils"))     ; ^
    (:file "facts"             :depends-on ("templates")) ; |
    (:file "patterns"          :depends-on ("facts"))     ; | core
@@ -33,10 +35,6 @@
 ;   (:file "test-package"      :depends-on ("export"))
    #|     (:file "print-tree"        :depends-on ("environment"))
      (:file "pokusy"            :depends-on ("export"))|#)
-  :properties ((:author-email . "jakubkalab@gmail.com")
-               (:date . "4.9.2010")
-               ((:albert :output-dir) . "doc")
-               ((:albert :formats) . ("docbook"))
-               ((:albert :docbook :template) . "book")
-               ((:albert :docbook :bgcolor) . "white")
-               ((:albert :docbook :textcolor) . "black")))
+;  :properties ((:author-email . "jakubkalab@gmail.com")
+;               (:date . "4.9.2010")
+  )

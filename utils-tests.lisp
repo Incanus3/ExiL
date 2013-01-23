@@ -1,15 +1,10 @@
-(in-package :exil-utils)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload "lift")
-  (use-package :lift))
+(in-package :utils-tests)
 
-(setf *test-describe-if-not-successful?* t)
-
-(deftestsuite utils-tests () ())
+(deftestsuite utils-tests (tests) ())
 
 (addtest (utils-tests)
   test-intern
-  (ensure-same 'ABC (intern "abc")))
+  (ensure-same (cl:intern "ABC") (intern "abc") :ignore-multiple-values? t))
 
 (addtest (utils-tests)
   test-string-append
@@ -22,7 +17,8 @@
 
 (addtest (utils-tests)
   test-symbol-append
-  (ensure-same 'ABCDEF (symbol-append "ABC" 'def)))
+  (ensure-same (cl:intern "ABCDEF") (symbol-append "ABC" 'def)
+               :ignore-multiple-values? t))
 
 (addtest (utils-tests)
   test-to-keyword
@@ -31,7 +27,7 @@
 
 (addtest (utils-tests)
   test-from-keyword
-  (ensure-same 'abc (from-keyword :abc)))
+  (ensure-same (cl:intern "ABC") (from-keyword :abc)))
 
 (addtest (utils-tests)
   test-weak-symbol-equal-p
@@ -166,5 +162,3 @@
 (addtest (utils-tests)
   test-class-slot-value
   (ensure-same (class-slot-value 'blah 'slot) 1))
-
-(print (run-tests :suite 'utils-tests))

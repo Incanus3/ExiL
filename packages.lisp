@@ -12,8 +12,14 @@
 	   :weak-symbol-equal-p :every-couple :cpl-assoc-val :plistp :alistp
 	   :doplist :exil-equal-p :exil-weak-equal-p :hash->list))
 
+(defpackage :utils-tests
+  (:documentation "tests for the utils package")
+  (:use :common-lisp :exil-utils :lift)
+  (:shadowing-import-from :exil-utils :intern :symbol-name))
+
 (defpackage :exil-core
-  (:documentation "core functionality of the expert system library - facts, templates, patterns and rules")
+  (:documentation "core functionality of the expert system library - facts,
+                   templates, patterns and rules")
   (:use :common-lisp :exil-utils)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :variable-p :template :tmpl-name :slots :find-atom
@@ -32,7 +38,8 @@
 	   :token->list :token-equal-p))
 
 (defpackage :exil-env
-  (:documentation "the exil environment, keeps track of the defined templates and rules and stores the asserted facts")
+  (:documentation "the exil environment, keeps track of the defined templates
+                   and rules and stores the asserted facts")
   (:use :common-lisp :exil-utils :exil-core :exil-rete)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
