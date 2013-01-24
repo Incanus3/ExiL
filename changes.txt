@@ -1,4 +1,4 @@
-CHANGES LIST:
+=== CHANGES LIST:
 facts: supports multiple listing (through start- and end-index and at-most value)
 assert: supports multiple assertions
 retract: supports multiple retractions, supports fact specification through its index
@@ -11,7 +11,10 @@ added retract-all (to replace clips (retract *))
 added ppdefrule
 added undeffacts
 
-TODO:
+make-tmpl-object, make-tmpl-fact, make-tmpl-pattern: specification param replaced by template and slots-spec, it no longer gets template name, but the template object itself
+make-fact, make-pattern, copy-fact: moved to exil-env, as it depends on exil-env:find-template
+
+=== TODO:
 modify defrule to support:
   the singleton ? variable
   the ~ (negative) | (alternative) and & (conective) notations
@@ -26,6 +29,6 @@ add documentation to classes, functions, methods, macros and slots (using :docum
 templates.lisp:make-tmpl-object: remove call to exil-env:find-template, this function should
 be called with the template object directly (otherwise this introduces a cyclic dependency 
 
-CLIPS FEATURES NOT INTENDED TO SUPPORT:
+=== CLIPS FEATURES NOT INTENDED TO SUPPORT:
 not all clips functions are supported on the RHS (e.g. printout)
 template slot types

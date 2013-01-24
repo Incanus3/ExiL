@@ -1,5 +1,102 @@
 (in-package :exil-env)
 
+;; template and generic fact and pattern makers - front-end template-object
+;; specification parsing
+
+; private
+(defun tmpl-slots-spec-p (slots-spec)
+  (every-couple (lambda (slot-name slot-val)
+                  (declare (ignore slot-val))
+                  (keywordp slot-name))
+                slots-spec))
+
+; private
+(defun clips-tmpl-slots-spec-p (slots-spec)
+  (every (lambda (slot-spec)
+           (and (listp slot-spec)
+                (= (length slot-spec) 2)
+                (symbolp (first slot-spec))))
+         slots-spec))
+
+; private
+(defun tmpl-object-specification-p (specification)
+  "is this a template-object specification?"
+  (and (listp specification)
+       (find-template (first specification))
+       (or (null (rest specification))
+           (tmpl-slots-spec-p (rest specification))
+           (clips-tmpl-slots-spec-p (rest specification)))))
+
+; private
+(defun make-tmpl-obj-nonclips (object-type template slots-spec)
+  (make-instance
+   object-type :tmpl-name (name template)
+   :slots (loop for slot in (slots template)
+             collect (destructuring-bind (slot-name &key default) slot
+                       (cons slot-name
+                             (or (getf slots-spec (to-keyword slot-name))
+                                 default
+                                 (class-slot-value object-type 'slot-default)))))))
+
+; private
+(defun make-tmpl-obj-clips (object-type template slots-spec)
+  (make-instance
+   object-type :tmpl-name (name template)
+   :slots (loop for slot in (slots template)
+             collect (destructuring-bind (slot-name &key default) slot
+                       (cons slot-name
+                             (or (cpl-assoc-val slot-name slots-spec) ;
+                                 default
+                                 (class-slot-value object-type 'slot-default)))))))
+
+;; tmpl-object function searches template's slot list, finds values for slots
+;; in specification or falls back to default values if it finds nothing
+; private for package
+(defun make-tmpl-object (template slots-spec object-type)
+  "creates template-object of given type from its specification"
+  (cond ((tmpl-slots-spec-p slots-spec)
+         (make-tmpl-obj-nonclips object-type template slots-spec))
+        ((clips-tmpl-slots-spec-p slots-spec)
+         (make-tmpl-obj-clips object-type template slots-spec))
+        (t (error "~S is not a valid slots specification" slots-spec))))
+
+; private
+(defun make-tmpl-fact (template slots-spec)
+  (make-tmpl-object template slots-spec 'template-fact))
+
+; private
+(defun make-tmpl-pattern (template slots-spec
+                          &optional (negated nil) (match-var nil))
+  (let ((pattern (make-tmpl-object template slots-spec 'template-pattern)))
+    (setf (negated-p pattern) negated)
+    (setf (match-var pattern) match-var)
+    pattern))
+
+; public, used by export
+(defun make-fact (fact-spec)
+  (if (tmpl-object-specification-p fact-spec)
+      (let ((template (find-template (first fact-spec))))
+        (cl:assert template () "can't find template ~A" (first fact-spec))
+        (make-tmpl-fact template (rest fact-spec)))
+      (make-simple-fact fact-spec)))
+
+; private, used by modify-fact
+(defmethod copy-fact ((fact fact))
+  (make-fact (fact-description fact)))
+
+; public, used by export
+; TODO:
+; make-pattern should support the ?fact <- <pattern> notation
+; it should also support the ~, | and & notations in variable matching
+(defun make-pattern (specification &key (match-var nil))
+  (let* ((negated (equalp (first specification) '-))
+         (spec (if negated (rest specification) specification)))
+    (if (tmpl-object-specification-p spec)
+        (let ((template (find-template (first spec))))
+          (cl:assert template () "can't find template ~A" (first spec))
+          (make-tmpl-pattern template (rest spec) negated match-var))
+        (make-simple-pattern spec negated match-var))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; public
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -24,7 +121,9 @@
                            (:rules . nil)
                            (:activations . nil))
                :documentation "alist, (:facts, :rules, :activations) -> t/nil"))
-    (:documentation "keeps track of defined fact-groups, templates, rules, strategies and watchers and stores the asserted facts and the agenda"))
+    (:documentation "keeps track of defined fact-groups, templates, rules,
+                     strategies and watchers and stores the asserted facts
+                     and the agenda"))
 
                                         ; not in use
   (defvar *environments*
@@ -64,8 +163,6 @@
 
 ;; creates reader function <slot-name> and writer function set-<slot-name>
 ;; for the environment class, also creates setf macro
-
-
 ;; i used this instead of easier :accessor possibility, for this way
 ;; i could supply a default value for the environment parameter
 ; private
@@ -77,12 +174,12 @@
 ; private
 (defmacro exil-env-accessors (&rest slot-names)
   `(progn ,@(loop for slot-name in slot-names
-	       collect `(exil-env-accessor ,slot-name))))
+               collect `(exil-env-accessor ,slot-name))))
 
-; always put exil-env-* calls on one line, for the automated package creator to work
 ; public
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (exil-env-accessors facts fact-groups templates rules rete agenda strategies current-strategy-name watchers))
+  (exil-env-accessors facts fact-groups templates rules rete agenda strategies
+                      current-strategy-name watchers))
 ;; rete should be removed after proper DEBUG
 
 ; private
@@ -104,13 +201,13 @@
     (when altered-p
       (setf (facts) new-list)
       (when (watched-p 'facts)
-	(format t "<== ~A~%" fact))
+        (format t "<== ~A~%" fact))
       (rem-wme fact)
       #+lispworks(exil-gui:update-lists))))
 
 (defun modify-fact (fact mod-list)
   (assert (find fact (facts) :test #'fact-equal-p) ()
-	  "modify: fact ~A not found in (facts)" fact)
+          "modify: fact ~A not found in (facts)" fact)
   (let ((new-fact (copy-fact fact)))
     (doplist (slot-name val mod-list)
       (setf (tmpl-fact-slot-value new-fact slot-name) val))
@@ -121,9 +218,9 @@
 (defun add-fact-group (group-name fact-descriptions)
   (if (assoc group-name (fact-groups))
       (setf (assoc-value group-name (fact-groups))
-	    fact-descriptions)
+            fact-descriptions)
       (push (cons group-name fact-descriptions)
-	    (fact-groups)))
+            (fact-groups)))
   nil)
 
 (defun rem-fact-group (name)
@@ -153,15 +250,14 @@
 ; private
 (defmethod remove-matches (rule)
   (setf (agenda)
-	(delete rule (agenda)
-		:test #'rule-equal-p :key #'match-rule))
+        (delete rule (agenda)
+                :test #'rule-equal-p :key #'match-rule))
   #+lispworks(exil-gui:update-lists))
 
-;; ODSTRANIT Z AGENDY VSECHNY MATCHE TYKAJICI SE RULE
 ; public
 (defun rem-rule (rule)
   (let* ((name (symbol-name (name rule)))
-	 (old-rule (gethash name (rules))))
+         (old-rule (gethash name (rules))))
     (remhash (symbol-name (name rule)) (rules))
     (when (and old-rule (watched-p 'rules))
       (format t "<== ~A" old-rule))
@@ -180,21 +276,21 @@
 (defmethod add-match (production token)
   (let ((match (make-match production token)))
     (when (and (nth-value 1 (ext-pushnew match (agenda)
-					 :test #'match-equal-p))
-	       (watched-p 'activations))
+                                         :test #'match-equal-p))
+               (watched-p 'activations))
       (format t "==> ~A~%" match)
       #+lispworks(exil-gui:update-lists))))
 
 ; public, used by rete
 (defmethod remove-match (production token)
   (let ((match (make-match production token)))
-  (multiple-value-bind (new-list altered-p)
-      (ext-delete match (agenda) :test #'match-equal-p)
-    (when altered-p
-      (setf (agenda) new-list)
-      (when (watched-p 'activations)
-	(format t "<== ~A~%" match))
-      #+lispworks(exil-gui:update-lists)))))
+    (multiple-value-bind (new-list altered-p)
+        (ext-delete match (agenda) :test #'match-equal-p)
+      (when altered-p
+        (setf (agenda) new-list)
+        (when (watched-p 'activations)
+          (format t "<== ~A~%" match))
+        #+lispworks(exil-gui:update-lists)))))
 
 ; public
 (defmethod add-strategy (name function)
@@ -205,8 +301,8 @@
 ; public
 (defmethod set-strategy (&optional (name 'default))
   (if (find name (strategies) :key #'car)
-    (setf (current-strategy-name) name)
-    (warn "unknown strategy ~A" name)))
+      (setf (current-strategy-name) name)
+      (warn "unknown strategy ~A" name)))
 
 ; private
 (defmethod current-strategy ()
@@ -216,7 +312,7 @@
 (defmethod select-activation ()
   (let ((activation (funcall (current-strategy) (agenda))))
     (setf (agenda) (delete activation (agenda)
-			   :test #'match-equal-p))
+                           :test #'match-equal-p))
     activation))
 
 (defmethod is-watcher ((watcher symbol))
@@ -225,13 +321,13 @@
 ; public
 (defmethod set-watcher (watcher)
   (cl:assert (is-watcher watcher)
-	     () "I don't know how to watch ~A" watcher)
+             () "I don't know how to watch ~A" watcher)
   (setf (assoc-value (to-keyword watcher) (watchers)) t))
 
 ; public
 (defmethod unset-watcher (watcher)
   (cl:assert (is-watcher watcher)
-	     () "I don't know how to watch ~A" watcher)
+             () "I don't know how to watch ~A" watcher)
   (setf (assoc-value (to-keyword watcher) (watchers)) nil))
 
 (defmethod watch-all ()
@@ -243,8 +339,8 @@
 ; public
 (defun reset-environment ()
   (setf (facts) ()
-	(agenda) ()
-	(rete) (make-rete))
+        (agenda) ()
+        (rete) (make-rete))
   (loop for rule being the hash-values in (rules)
      do (add-rule rule))
   #+lispworks(exil-gui:update-lists)
@@ -258,10 +354,10 @@
 ; public, not in use
 (defun completely-reset-environment ()
   (setf (facts) ()
-	(agenda) ()
-	(fact-groups) ()
-	(templates) (make-hash-table :test 'equalp)
-	(rules) (make-hash-table :test 'equalp)
-	(rete) (make-rete))
+        (agenda) ()
+        (fact-groups) ()
+        (templates) (make-hash-table :test 'equalp)
+        (rules) (make-hash-table :test 'equalp)
+        (rete) (make-rete))
   #+lispworks(exil-gui:update-lists)
   nil)

@@ -17,20 +17,23 @@
 ; public, used by rete
 (defclass simple-fact (fact)
   ((fact :initform (error "Fact slot must be specified")
-	 :initarg :fact
-	 :reader fact)))
+         :initarg :fact
+         :reader fact)))
 
 ; private
 (defmethod initialize-instance :after ((simple-fact simple-fact) &key)
   (cl:assert (notany #'variable-p (fact simple-fact))
-	     () "fact can't include variables"))
+             () "fact can't include variables"))
+
+(defmethod make-simple-fact (fact-spec)
+  (make-instance 'simple-fact :fact fact-spec))
 
 ;; prints facts
 ; public
 (defmethod print-object ((fact simple-fact) stream)
   (if *print-escape*
       (print-unreadable-object (fact stream :type t :identity t)
-	(format stream "~s" (fact fact)))
+        (format stream "~s" (fact fact)))
       (format stream "~s" (fact fact)))
   fact)
 
@@ -58,7 +61,7 @@
 ; private
 (defmethod initialize-instance :after ((fact template-fact) &key)
   (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
-	     () "fact can't include variables"))
+             () "fact can't include variables"))
 
 ; public, used by rete
 (defmethod tmpl-fact-slot-value ((fact template-fact) slot-name)
@@ -73,11 +76,8 @@
 
 (defmethod fact-description ((fact template-fact))
   (cons (tmpl-name fact)
-	(loop for (slot . val) in (slots fact)
-	   append (list (to-keyword slot) val))))
-
-(defmethod copy-fact ((fact fact))
-  (make-fact (fact-description fact)))
+        (loop for (slot . val) in (slots fact)
+           append (list (to-keyword slot) val))))
 
 ; public
 (defgeneric fact-slot (fact slot-spec)
@@ -86,22 +86,3 @@
     (nth slot-spec (fact fact)))
   (:method ((fact template-fact) (slot-spec symbol))
     (tmpl-fact-slot-value fact slot-spec)))
-
-;; tmpl-fact searches template's slot list, finds values from them in
-;; fact-spec or falls back to default values if he finds nothing
-;; if there's some other crap in fact-spec, tmpl-fact doesn't care,
-;; the only condition is, that (rest fact-spec) has to be plist
-; private
-(defun make-tmpl-fact (fact-spec)
-  (make-tmpl-object fact-spec 'template-fact))
-
-; private for package
-(defun tmpl-fact-specification-p (fact-spec)
-  (tmpl-object-specification-p fact-spec))
-
-; public
-(defun make-fact (fact-spec)
-  (if (tmpl-fact-specification-p fact-spec)
-      (make-tmpl-fact fact-spec)
-      (make-instance 'simple-fact :fact fact-spec)))
-

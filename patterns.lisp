@@ -16,11 +16,11 @@
 ;; virtual class pattern
 ; public
 (defclass pattern () ((negated :initform nil
-			       :initarg :negated
-			       :accessor negated-p)
-		      (match-variable :initform nil
-				      :initarg :match-var
-				      :accessor match-var)))
+                               :initarg :negated
+                               :accessor negated-p)
+                      (match-variable :initform nil
+                                      :initarg :match-var
+                                      :accessor match-var)))
 
 ;; pattern equality predicate
 ; public, used by rules
@@ -32,18 +32,22 @@
 ; public
 (defclass simple-pattern (pattern)
   ((pattern :initform (error "pattern slot must be specified")
-	    :initarg :pattern
-	    :reader pattern)))
+            :initarg :pattern
+            :reader pattern)))
+
+(defun make-simple-pattern (spec &optional negated match-var)
+  (make-instance 'simple-pattern :pattern spec :negated negated
+                 :match-var match-var))
 
 ;; prints patterns
 ; public
 (defmethod print-object ((pattern simple-pattern) stream)
   (if *print-escape*
       (print-unreadable-object (pattern stream :type t)
-	(format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
-		(negated-p pattern) (pattern pattern)))
+        (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
+                (negated-p pattern) (pattern pattern)))
       (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
-	      (negated-p pattern) (pattern pattern)))
+              (negated-p pattern) (pattern pattern)))
   pattern)
 
 ;; checks pattern equivalency
@@ -55,7 +59,7 @@
 ; public, used by rete
 (defun var-or-equal-p (atom1 atom2)
   (or (and (variable-p atom1)
-	   (variable-p atom2))
+           (variable-p atom2))
       (atom-equal-p atom1 atom2)))
 
 ; OBSOLETE:
@@ -88,7 +92,8 @@
   (tmpl-object-slot-value pattern slot-name))
 
 ; public, used by rules
-(defmethod pattern-equal-p ((pattern1 template-pattern) (pattern2 template-pattern))
+(defmethod pattern-equal-p ((pattern1 template-pattern)
+                            (pattern2 template-pattern))
   (and (equalp (negated-p pattern1) (negated-p pattern2))
        (tmpl-object-equal-p pattern1 pattern2)))
 
@@ -100,35 +105,12 @@
 ;  (:method ((pattern template-pattern) (slot-spec symbol))
 ;    (tmpl-pattern-slot-value pattern slot-spec)))
 
-; private
-(defun make-tmpl-pattern (pattern-spec &optional (negated nil) (match-var nil))
-  (let ((pattern (make-tmpl-object pattern-spec 'template-pattern)))
-    (setf (negated-p pattern) negated)
-    (setf (match-var pattern) match-var)
-    pattern))
-
-; private
-(defun tmpl-pattern-specification-p (specification)
-  (tmpl-object-specification-p specification))
-
-; public, used by front-end
-; TODO:
-; make-pattern should support the ?fact <- <pattern> notation
-; it should also support the ~, | and & notations in variable matching
-(defun make-pattern (specification &key (match-var nil))
-  (let* ((negated (equalp (first specification) '-))
-	 (spec (if negated (rest specification) specification)))
-    (if (tmpl-pattern-specification-p spec)
-	(make-tmpl-pattern spec negated match-var)
-	(make-instance 'simple-pattern :pattern spec :negated negated
-		       :match-var match-var))))
-
 ; public
 (defmethod print-object ((object template-pattern) stream)
   (if *print-escape*
       (print-unreadable-object (object stream :type t :identity t)
-	(format stream "~:[~;NOT ~]~A" (negated-p object)
-		(cons (tmpl-name object) (slots object))))
+        (format stream "~:[~;NOT ~]~A" (negated-p object)
+                (cons (tmpl-name object) (slots object))))
       (format stream "~:[~;NOT ~]~A" (negated-p object)
-	      (cons (tmpl-name object) (slots object))))
+              (cons (tmpl-name object) (slots object))))
   object)
