@@ -1,6 +1,6 @@
 (in-package :exil-env)
 
-;; template and generic fact and pattern makers - front-end template-object
+;; template- and generic fact and pattern makers - front-end template-object
 ;; specification parsing
 
 ; private
@@ -27,47 +27,46 @@
            (tmpl-slots-spec-p (rest specification))
            (clips-tmpl-slots-spec-p (rest specification)))))
 
+;; extracts slot value from lispy slots specification
+;; e.g. (:object box :location hall)
 ; private
-(defun make-tmpl-obj-nonclips (object-type template slots-spec)
-  (make-instance
-   object-type :tmpl-name (name template)
-   :slots (loop for slot in (slots template)
-             collect (destructuring-bind (slot-name &key default) slot
-                       (cons slot-name
-                             (or (getf slots-spec (to-keyword slot-name))
-                                 default
-                                 (class-slot-value object-type 'slot-default)))))))
+(defun get-slot-val-nonclips (slot-name slots-spec)
+  (getf slots-spec (to-keyword slot-name)))
 
+;; extracts slot value from clips-like slots specification
+;; e.g. ((object box) (location hall))
 ; private
-(defun make-tmpl-obj-clips (object-type template slots-spec)
-  (make-instance
-   object-type :tmpl-name (name template)
-   :slots (loop for slot in (slots template)
-             collect (destructuring-bind (slot-name &key default) slot
-                       (cons slot-name
-                             (or (cpl-assoc-val slot-name slots-spec) ;
-                                 default
-                                 (class-slot-value object-type 'slot-default)))))))
+(defun get-slot-val-clips (slot-name slots-spec)
+  (cpl-assoc-val slot-name slots-spec))
 
-;; tmpl-object function searches template's slot list, finds values for slots
-;; in specification or falls back to default values if it finds nothing
-; private for package
-(defun make-tmpl-object (template slots-spec object-type)
-  "creates template-object of given type from its specification"
+;; extracts slot value from slots specification (used in assert)
+; private
+(defun get-slot-val (slot-name slots-spec)
   (cond ((tmpl-slots-spec-p slots-spec)
-         (make-tmpl-obj-nonclips object-type template slots-spec))
+         (get-slot-val-nonclips slot-name slots-spec))
         ((clips-tmpl-slots-spec-p slots-spec)
-         (make-tmpl-obj-clips object-type template slots-spec))
+         (get-slot-val-clips slot-name slots-spec))
         (t (error "~S is not a valid slots specification" slots-spec))))
 
 ; private
+(defun make-tmpl-object (object-type template slots-spec)
+  (let (slots)
+    (doslots (slot-name default template)
+      (push (cons slot-name (or (get-slot-val slot-name slots-spec)
+                                default
+                                (slot-default object-type))) slots))
+    (make-instance object-type
+                   :tmpl-name (name template)
+                   :slots (nreverse slots))))
+
+; private
 (defun make-tmpl-fact (template slots-spec)
-  (make-tmpl-object template slots-spec 'template-fact))
+  (make-tmpl-object 'template-fact template slots-spec))
 
 ; private
 (defun make-tmpl-pattern (template slots-spec
                           &optional (negated nil) (match-var nil))
-  (let ((pattern (make-tmpl-object template slots-spec 'template-pattern)))
+  (let ((pattern (make-tmpl-object 'template-pattern template slots-spec)))
     (setf (negated-p pattern) negated)
     (setf (match-var pattern) match-var)
     pattern))

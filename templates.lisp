@@ -14,7 +14,7 @@
 
 ;; stores template for template facts and patterns
 ;; slot "slots" holds alist of slot specifiers (plists):
-;; (<name> . (:default <default> [:type <type> \ planned \])
+;; (<name> (:default <default> [:type <type> \ planned \]))
 ;; it is a bit redundant, since there's only one supported option
 ;; so far, but it's easily extensible
 ; public
@@ -43,6 +43,17 @@
 (defun make-template (name slots)
   (make-instance 'template :name name :slots slots))
 
+; iterates over template's slots, introducing variables (whose names are
+; given by name and default) in the body
+; public
+(defmacro doslots ((name default template &optional retval) &body body)
+  (let ((slot (gensym "slot")))
+    `(progn
+       (dolist (,slot (slots ,template))
+         (destructuring-bind (,name &key ((:default ,default))) ,slot
+           ,@body))
+       ,retval)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template-object class
 
@@ -59,6 +70,9 @@
                   :initform nil)
    (slot-default :initform nil :allocation :class)
    (slots :reader slots :initarg :slots :initform ())))
+
+(defun slot-default (object-type)
+  (class-slot-value object-type 'slot-default))
 
 ; public
 (defmethod has-slot-p ((object template-object) slot-name)
