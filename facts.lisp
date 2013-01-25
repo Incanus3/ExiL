@@ -26,7 +26,7 @@
              () "fact can't include variables"))
 
 (defmethod make-simple-fact (fact-spec)
-  (make-instance 'simple-fact :fact fact-spec))
+  (make-instance 'simple-fact :fact (copy-list fact-spec)))
 
 ;; prints facts
 ; public
@@ -51,6 +51,9 @@
 
 (defmethod fact-description ((fact simple-fact))
   (fact fact))
+
+(defmethod copy-fact ((fact simple-fact))
+  (make-simple-fact (fact fact)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; stores template fact
@@ -78,6 +81,13 @@
   (cons (tmpl-name fact)
         (loop for (slot . val) in (slots fact)
            append (list (to-keyword slot) val))))
+
+; public, used by exil-env:modify-fact
+(defmethod copy-fact ((fact template-fact))
+;  (make-fact (fact-description fact)))
+  (make-instance 'template-fact
+                 :tmpl-name (tmpl-name fact)
+                 :slots (copy-alist (slots fact))))
 
 ; public
 (defgeneric fact-slot (fact slot-spec)

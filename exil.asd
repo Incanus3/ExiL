@@ -30,8 +30,9 @@
    (:file "matches"           :depends-on ("rete-net-creation")) ; ^
    (:file "activations"       :depends-on ("matches"))           ; |
    (:file "strategies"        :depends-on ("activations"))       ; | environment
-   (:file "environment"       :depends-on ("strategies"))        ; v
-   (:file "export"            :depends-on ("environment"))       ; front-end
+   (:file "environment"       :depends-on ("strategies"))        ; |
+   (:file "object-makers"     :depends-on ("environment"))       ; v
+   (:file "export"            :depends-on ("object-makers"))     ; front-end
 ;   (:file "gui"               :depends-on ("export"))
 ;   (:file "test-package"      :depends-on ("export"))
    #|     (:file "print-tree"        :depends-on ("environment"))
