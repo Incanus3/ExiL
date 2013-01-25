@@ -49,52 +49,58 @@
         (t (error "~S is not a valid slots specification" slots-spec))))
 
 ; private
-(defun make-tmpl-object (object-type template slots-spec)
-  (let (slots)
+(defun tmpl-object-class (object-type)
+  (ecase object-type
+    (fact 'template-fact)
+    (pattern 'template-pattern)))
+
+; private
+(defun make-simple-object (object-type object-spec)
+  (ecase object-type
+    (fact (make-simple-fact object-spec))
+    (pattern (make-simple-pattern object-spec))))
+
+;; creates template object from generic template object specification
+; private
+(defun make-tmpl-object (object-type object-spec)
+  (let ((template (find-template (first object-spec)))
+        (slots-spec (rest object-spec))
+        slots)
+    (cl:assert template () "can't find template ~A" (first object-spec))
     (doslots (slot-name default template)
       (push (cons slot-name (or (get-slot-val slot-name slots-spec)
                                 default
-                                (slot-default object-type))) slots))
-    (make-instance object-type
+                                (slot-default object-type)))
+            slots))
+    (make-instance (tmpl-object-class object-type)
                    :tmpl-name (name template)
                    :slots (nreverse slots))))
 
+;; creates object from generic object specification - doesn't support
+;; pattern negation and match-var, implemented in make-pattern
 ; private
-(defun make-tmpl-fact (template slots-spec)
-  (make-tmpl-object 'template-fact template slots-spec))
+(defun make-object (object-type object-spec)
+  (if (tmpl-object-specification-p object-spec)
+      (make-tmpl-object object-type object-spec)
+      (make-simple-object object-type object-spec)))
 
-; private
-(defun make-tmpl-pattern (template slots-spec
-                          &optional (negated nil) (match-var nil))
-  (let ((pattern (make-tmpl-object 'template-pattern template slots-spec)))
+(defun make-fact (fact-spec)
+  (make-object 'fact fact-spec))
+
+; TODO:
+; make-pattern should support the ?fact <- <pattern> notation
+; it should also support the ~, | and & notations in variable matching
+(defun make-pattern (pattern-spec &key (match-var nil))
+  (let* ((negated (equalp (first pattern-spec) '-))
+         (spec (if negated (rest pattern-spec) pattern-spec))
+         (pattern (make-object 'pattern spec)))
     (setf (negated-p pattern) negated)
     (setf (match-var pattern) match-var)
     pattern))
 
-; public, used by export
-(defun make-fact (fact-spec)
-  (if (tmpl-object-specification-p fact-spec)
-      (let ((template (find-template (first fact-spec))))
-        (cl:assert template () "can't find template ~A" (first fact-spec))
-        (make-tmpl-fact template (rest fact-spec)))
-      (make-simple-fact fact-spec)))
-
 ; private, used by modify-fact
 (defmethod copy-fact ((fact fact))
   (make-fact (fact-description fact)))
-
-; public, used by export
-; TODO:
-; make-pattern should support the ?fact <- <pattern> notation
-; it should also support the ~, | and & notations in variable matching
-(defun make-pattern (specification &key (match-var nil))
-  (let* ((negated (equalp (first specification) '-))
-         (spec (if negated (rest specification) specification)))
-    (if (tmpl-object-specification-p spec)
-        (let ((template (find-template (first spec))))
-          (cl:assert template () "can't find template ~A" (first spec))
-          (make-tmpl-pattern template (rest spec) negated match-var))
-        (make-simple-pattern spec negated match-var))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; public

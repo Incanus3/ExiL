@@ -68,11 +68,10 @@
                   ;; wouldn't work, cause it doesn't provide the init value
                   ;; :initform (error "template-name has to be specified")
                   :initform nil)
-   (slot-default :initform nil :allocation :class)
    (slots :reader slots :initarg :slots :initform ())))
 
-(defun slot-default (object-type)
-  (class-slot-value object-type 'slot-default))
+(defgeneric slot-default (object-type)
+  (:method (type) nil))
 
 ; public
 (defmethod has-slot-p ((object template-object) slot-name)

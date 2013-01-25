@@ -84,8 +84,10 @@
 ;; because otherwise i'd have to copy a huge bunch of code, that would be
 ;; the same as for template-facts
 ; public
-(defclass template-pattern (pattern template-object)
-  ((slot-default :initform '? :allocation :class)))
+(defclass template-pattern (pattern template-object) ())
+
+(defmethod slot-default ((type (eql 'pattern)))
+  '?)
 
 ; private
 (defmethod tmpl-pattern-slot-value ((pattern template-pattern) slot-name)

@@ -16,6 +16,12 @@ make-tmpl-object, make-tmpl-fact, make-tmpl-pattern: specification param replace
   object itself - removed cyclic dependency on exil-env:find-template
 make-fact, make-pattern, copy-fact: moved to exil-env, as it depends on
   exil-env:find-template
+moved logic concerning slots representation in template from exil-env:make-tmpl-object
+- added (doslots name default template) and (slot-default tmpl-object) to templates.lisp
+- used these in exil-env:make-tmpl-object
+make-tmpl-object now makes clips/nonclips distinction only when extracting value
+from slots-specification (make-tmpl-obj-clips and make-tmpl-object-nonclips no longer needed,
+conditional moved to get-slot-val)
 
 === TODO:
 modify defrule to support:
