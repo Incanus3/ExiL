@@ -14,8 +14,8 @@
   :long-description ""
   :components
   ((:file "packages")
-   (:file "tests")
    (:file "utils"             :depends-on ("packages"))  ; utils
+   (:file "tests"             :depends-on ("utils"))
    (:file "utils-tests"       :depends-on ("utils" "tests"))
    (:file "templates"         :depends-on ("utils"))     ; ^
    (:file "templates-tests"   :depends-on ("templates" "tests"))

@@ -1,164 +1,151 @@
 (in-package :utils-tests)
+;; some macro tests result in code so trivial, that sbcl actually
+;; decides to optimize it so that it removes part of the code
+;; as unreachable, don't wonna see these warnings
+#+sbcl(declaim (sb-ext:muffle-conditions sb-ext:code-deletion-note))
 
-(deftestsuite utils-tests (tests) ())
+(defclass utils-tests (test-case) ())
 
-(addtest (utils-tests)
-  test-intern
-  (ensure-same (cl:intern "ABC") (intern "abc") :ignore-multiple-values? t))
+(def-test-method test-intern ((tests utils-tests) :run nil)
+  (assert-equal (cl:intern "ABC") (intern "abc")))
 
-(addtest (utils-tests)
-  test-string-append
-  (ensure-same "abcdef" (string-append "abc" "def")))
+(def-test-method test-string-append ((tests utils-tests) :run nil)
+  (assert-equal "abcdef" (string-append "abc" "def")))
 
-(addtest (utils-tests)
-  test-symbol-name
-  (ensure-same "ABC" (symbol-name 'abc))
-  (ensure-same "abc" (symbol-name "abc")))
+(def-test-method test-symbol-name ((tests utils-tests) :run nil)
+  (assert-equal "ABC" (symbol-name 'abc))
+  (assert-equal "abc" (symbol-name "abc")))
 
-(addtest (utils-tests)
-  test-symbol-append
-  (ensure-same (cl:intern "ABCDEF") (symbol-append "ABC" 'def)
-               :ignore-multiple-values? t))
+(def-test-method test-symbol-append ((tests utils-tests) :run nil)
+  (assert-equal (cl:intern "ABCDEF") (symbol-append "ABC" 'def)))
 
-(addtest (utils-tests)
-  test-to-keyword
-  (ensure-same :abc (to-keyword 'abc))
-  (ensure-same :abc (to-keyword "abc")))
+(def-test-method test-to-keyword ((tests utils-tests) :run nil)
+  (assert-equal :abc (to-keyword 'abc))
+  (assert-equal :abc (to-keyword "abc")))
 
-(addtest (utils-tests)
-  test-from-keyword
-  (ensure-same (cl:intern "ABC") (from-keyword :abc)))
+(def-test-method test-from-keyword ((tests utils-tests) :run nil)
+  (assert-equal (cl:intern "ABC") (from-keyword :abc)))
 
-(addtest (utils-tests)
-  test-weak-symbol-equal-p
-  (ensure (weak-symbol-equal-p 'exil-utils:intern 'cl:intern)))
+(def-test-method test-weak-symbol-equal-p ((tests utils-tests) :run nil)
+  (assert-true (weak-symbol-equal-p 'exil-utils:intern 'cl:intern)))
 
-(addtest (utils-tests)
-  test-subsets
+(def-test-method test-subsets ((tests utils-tests) :run nil)
   (let ((subsets (subsets '(1 2))))
     (dolist (i '(nil (1) (2) (1 2)))
-      (ensure (member i subsets :test #'equalp))
+      (assert-true (member i subsets :test #'equalp))
       (setf subsets (delete i subsets :test #'equalp)))
-    (ensure-null subsets)))
+    (assert-false subsets)))
 
-(addtest (utils-tests)
-  test-assoc-value
+(def-test-method test-assoc-value ((tests utils-tests) :run nil)
   (let ((alist (list (cons 'a 1))))
-    (ensure-same 1 (assoc-value 'a alist))
-    (ensure-same nil (assoc-value 'b alist))
+    (assert-equal 1 (assoc-value 'a alist))
+    (assert-equal nil (assoc-value 'b alist))
     (setf (assoc-value 'a alist) 2)
-    (ensure-same 2 (assoc-value 'a alist))
-    (ensure-error (setf (assoc-value 'b alist) 3))))
+    (assert-equal 2 (assoc-value 'a alist))
+    (assert-condition 'simple-error (setf (assoc-value 'b alist) 3))))
 
-(addtest (utils-tests)
-  test-assoc-key
+(def-test-method test-assoc-key ((tests utils-tests) :run nil)
   (let ((alist (list (cons 'a 1))))
-    (ensure-same 'a (assoc-key 1 alist))
-    (ensure-same nil (assoc-key 2 alist))))
+    (assert-equal 'a (assoc-key 1 alist))
+    (assert-equal nil (assoc-key 2 alist))))
 
-(addtest (utils-tests)
-  test-cpl-assoc-val
+(def-test-method test-cpl-assoc-val ((tests utils-tests) :run nil)
   (let ((cpl-list (list (list 'a 1))))
-    (ensure-same 1 (cpl-assoc-val 'a cpl-list))
-    (ensure-same nil (cpl-assoc-val 'b cpl-list))
+    (assert-equal 1 (cpl-assoc-val 'a cpl-list))
+    (assert-equal nil (cpl-assoc-val 'b cpl-list))
     (setf (cpl-assoc-val 'a cpl-list) 2)
-    (ensure-same 2 (cpl-assoc-val 'a cpl-list))
-    (ensure-error (setf (cpl-assoc-val 'b cpl-list) 2))))
+    (assert-equal 2 (cpl-assoc-val 'a cpl-list))
+    (assert-condition 'simple-error (setf (cpl-assoc-val 'b cpl-list) 2))))
 
-(addtest (utils-tests)
-  test-to-list
-  (ensure-same '(a) (to-list 'a))
-  (ensure-same '(a) (to-list '(a)))
-  (ensure-same () (to-list ())))
+(def-test-method test-to-list ((tests utils-tests) :run nil)
+  (assert-equal '(a) (to-list 'a))
+  (assert-equal '(a) (to-list '(a)))
+  (assert-equal () (to-list ())))
 
-(addtest (utils-tests)
-  test-to-list-of-lists
-  (ensure-same '((a) (b :default 10))
+(def-test-method test-to-list-of-lists ((tests utils-tests) :run nil)
+  (assert-equal '((a) (b :default 10))
                (to-list-of-lists '(a (b :default 10)))))
 
-(addtest (utils-tests)
-  test-ext-pushnew
+(def-test-method test-ext-pushnew ((tests utils-tests) :run nil)
   (let (list)
-    (ensure-same (ext-pushnew 1 list) (values '(1) t)) ; list has been altered
-    (ensure-same (ext-pushnew 1 list) (values '(1) nil)))) ; not this time
+    (assert-equal (multiple-value-list (ext-pushnew 1 list))
+                  (list '(1) t)) ; list has been altered
+    (assert-equal (multiple-value-list (ext-pushnew 1 list))
+                  (list '(1) nil)))) ; not this time
 
-(addtest (utils-tests)
-  test-push-end
+(def-test-method test-push-end ((tests utils-tests) :run nil)
   (let ((list (list 1 2))
         (empty-list ()))
-    (ensure-same (push-end 3 list) (list 1 2 3))
-    (ensure-same (push-end 1 empty-list) (list 1))))
+    (push-end 3 list)
+    (assert-equal list (list 1 2 3))
+    (push-end 1 empty-list)
+    (assert-equal empty-list (list 1))))
 
-(addtest (utils-tests)
-  test-pushnew-end
+(def-test-method test-pushnew-end ((tests utils-tests) :run nil)
   (let ((list (list 1 2)))
-    (ensure-same (pushnew-end 3 list) (values (list 1 2 3) t))
-    (ensure-same (pushnew-end 3 list) (values (list 1 2 3) nil))))
+    (assert-equal (multiple-value-list (pushnew-end 3 list))
+                  (list (list 1 2 3) t))
+    (assert-equal (multiple-value-list (pushnew-end 3 list))
+                  (list (list 1 2 3) nil))))
 
-(addtest (utils-tests)
-  test-ext-delete
+(def-test-method test-ext-delete ((tests utils-tests) :run nil)
   (let ((list (list 1 2)))
-    (ensure-same (ext-delete 2 list) (values (list 1) t))
-    (ensure-same (ext-delete 2 list) (values (list 1) nil))))
+    (assert-equal (multiple-value-list (ext-delete 2 list))
+                  (list (list 1) t))
+    (assert-equal (multiple-value-list (ext-delete 2 list))
+                  (list (list 1) nil))))
 
-(addtest (utils-tests)
-  test-diff-delete
+(def-test-method test-diff-delete ((tests utils-tests) :run nil)
   (let ((list (list 1 2)))
-    (ensure-same (diff-delete 2 list) (values (list 1) (list 2)))
-    (ensure-same (diff-delete 2 list) (values (list 1) ()))))
+    (assert-equal (multiple-value-list (diff-delete 2 list))
+                  (list (list 1) (list 2)))
+    (assert-equal (multiple-value-list (diff-delete 2 list))
+                  (list (list 1) ()))))
 
-; by default ensure-same tests by equalp and
-; (equalp (list "BLAH" "FOO") (list "blah" "FOO")) returns true, so it wouldn't
-; really test that "BLAH" was replaced by "blah"
-(addtest (utils-tests)
-  test-push-update
+(def-test-method test-push-update ((tests utils-tests) :run nil)
   (let ((list (list "BLAH" "FOO")))
-    (ensure-same (push-update "blah" list) (list "blah" "FOO") :test #'equal)))
+    (assert-equal (push-update "blah" list) (list "blah" "FOO"))))
 
-(addtest (utils-tests)
-  test-select
-  (ensure-same (select '(a b c d) '(1 3)) '(b d)))
+(def-test-method test-select ((tests utils-tests) :run nil)
+  (assert-equal (select '(a b c d) '(1 3)) '(b d)))
 
-(addtest (utils-tests)
-  test-every-couple
+(def-test-method test-every-couple ((tests utils-tests) :run nil)
   (flet ((even-sum (a b) (evenp (+ a b))))
-    (ensure (every-couple #'even-sum '(1 1 2 2)))
-    (ensure (not (every-couple #'even-sum '(1 1 2 3))))))
+    (assert-true (every-couple #'even-sum '(1 1 2 2)))
+    (assert-true (not (every-couple #'even-sum '(1 1 2 3))))))
 
-(addtest (utils-tests)
-  test-plistp
-  (ensure (plistp '(:a 1 :b 2)))
-  (ensure (not (plistp '(1 2 3 4)))))
+(def-test-method test-plistp ((tests utils-tests) :run nil)
+  (assert-true (plistp '(:a 1 :b 2)))
+  (assert-true (not (plistp '(1 2 3 4)))))
 
-(addtest (utils-tests)
-  test-alistp
-  (ensure (alistp '((a 1) (b 2))))
-  (ensure (not (alistp '(a))))
-  (ensure (not (alistp '((a)))))
-  (ensure (not (alistp '((a b c))))))
+(def-test-method test-alistp ((tests utils-tests) :run nil)
+  (assert-true (alistp '((a 1) (b 2))))
+  (assert-true (not (alistp '(a))))
+  (assert-true (not (alistp '((a)))))
+  (assert-true (not (alistp '((a b c))))))
 
-(addtest (utils-tests)
-  test-doplist
+(def-test-method test-doplist ((tests utils-tests) :run nil)
   (let ((plist '(:a 1 :b 2)) list)
     (doplist (key val plist)
       (push-end key list)
       (push-end val list))
-    (ensure-same list '(:a 1 :b 2)))
-  (ensure-error (doplist (key val '(1 2 3))))) ; not a plist
+    (assert-equal list '(:a 1 :b 2)))
+  (assert-condition 'simple-error (doplist (key val '(1 2 3))))) ; not a plist
 
-(addtest (utils-tests)
-  test-hash->list
+(def-test-method test-hash->list ((tests utils-tests) :run nil)
   (let ((hash (make-hash-table)) list)
     (setf (gethash :a hash) 1)
     (setf (gethash :b hash) 2)
     (setf list (hash->list hash))
-    (ensure (member 1 list)) ; list should have both values in it
-    (ensure (member 2 list))
+    (assert-true (member 1 list)) ; list should have both values in it
+    (assert-true (member 2 list))
     (setf list (delete 1 (delete 2 list)))
-    (ensure-null list))) ; and nothing more
+    (assert-false list))) ; and nothing more
 
 (defclass blah () ((slot :allocation :class :initform 1)))
 
-(addtest (utils-tests)
-  test-class-slot-value
-  (ensure-same (class-slot-value 'blah 'slot) 1))
+(def-test-method test-class-slot-value ((tests utils-tests) :run nil)
+  (assert-equal (class-slot-value 'blah 'slot) 1))
+
+;(textui-test-run (get-suite utils-tests))
+(add-test-suite 'utils-tests)

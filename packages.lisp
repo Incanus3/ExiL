@@ -12,9 +12,15 @@
            :weak-symbol-equal-p :every-couple :cpl-assoc-val :plistp :alistp
            :doplist :exil-equal-p :exil-weak-equal-p :hash->list))
 
+(defpackage :tests-base
+  (:use :common-lisp :xlunit :exil-utils)
+  (:shadowing-import-from :exil-utils :intern :symbol-name)
+  (:export :add-test-suite :run-suites))
+
 (defpackage :utils-tests
   (:documentation "tests for the utils package")
-  (:use :common-lisp :exil-utils :lift)
+  (:use :common-lisp :exil-utils :xlunit)
+  (:import-from :tests-base :add-test-suite)
   (:shadowing-import-from :exil-utils :intern :symbol-name))
 
 (defpackage :exil-core
@@ -26,7 +32,6 @@
            :has-slot-p :make-template :fact :fact-equal-p :simple-fact
            :atom-position :template-fact :tmpl-fact-slot-value :fact-slot
            :slot-default :doslots :copy-fact
-;           :tmpl-fact-specification-p :tmpl-pattern-specification-p
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern
            :negated-p :pattern-equal-p :simple-pattern :var-or-equal-p
@@ -35,7 +40,8 @@
 
 (defpackage :core-tests
   (:documentation "tests for the utils package")
-  (:use :common-lisp :exil-core :lift))
+  (:use :common-lisp :exil-core :xlunit)
+  (:import-from :tests-base :add-test-suite))
 
 (defpackage :exil-rete
   (:documentation "the rete algorithm for matching facts against rule conditions")

@@ -1,8 +1,12 @@
-(in-package :cl-user)
+(in-package :tests-base)
 
-(setf lift:*test-describe-if-not-successful?* t)
-
-(lift:deftestsuite tests () ())
+(defvar *test-suites* ())
+(defun add-test-suite (suite-name)
+  (push-end suite-name *test-suites*))
+(defun run-suites ()
+  (dolist (suite *test-suites*)
+    (format t "running test suite ~a " suite)
+    (textui-test-run (suite (make-instance suite)))))
 
 #|
 (defmacro with-function-patch (patch &rest body)

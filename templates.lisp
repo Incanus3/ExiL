@@ -41,7 +41,7 @@
 
 ; public
 (defun make-template (name slots)
-  (make-instance 'template :name name :slots slots))
+  (make-instance 'template :name name :slots (to-list-of-lists slots)))
 
 ; iterates over template's slots, introducing variables (whose names are
 ; given by name and default) in the body
@@ -71,7 +71,7 @@
    (slots :reader slots :initarg :slots :initform ())))
 
 (defgeneric slot-default (object-type)
-  (:method (type) nil))
+  (:method ((type symbol)) nil))
 
 ; public
 (defmethod has-slot-p ((object template-object) slot-name)
