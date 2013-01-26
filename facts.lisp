@@ -80,6 +80,8 @@
 (defmethod fact-equal-p ((fact1 template-fact) (fact2 template-fact))
   (tmpl-object-equal-p fact1 fact2))
 
+;; find-atom and atom-position inherited from template-object
+
 ; public
 (defmethod fact-description ((fact template-fact))
   (cons (tmpl-name fact)
