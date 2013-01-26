@@ -224,6 +224,9 @@
   (:documentation "ExiL default weak equality predicate")
   (:method (obj1 obj2) (exil-equal-p obj1 obj2)))
 
+(defmethod exil-weak-equal-p ((obj1 string) (obj2 string))
+  (string-equal obj1 obj2))
+
 (defmethod exil-weak-equal-p ((obj1 symbol) (obj2 symbol))
   (weak-symbol-equal-p obj1 obj2))
 

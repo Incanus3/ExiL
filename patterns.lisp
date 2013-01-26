@@ -1,20 +1,8 @@
 (in-package :exil-core)
 
-; public, used by rete
-(defgeneric atom-equal-p (object1 object2)
-  (:documentation "equality predicate for fact atoms")
-  (:method (object1 object2) (equalp object1 object2)))
-
-; public, used by rete
-(defun constant-test (desired-value real-value)
-  (or (variable-p desired-value)
-      (atom-equal-p desired-value real-value)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; pattern classes
 
-;; virtual class pattern
-; public
+; public, virtual
 (defclass pattern () ((negated :initform nil
                                :initarg :negated
                                :accessor negated-p)
@@ -22,45 +10,39 @@
                                       :initarg :match-var
                                       :accessor match-var)))
 
-;; pattern equality predicate
 ; public, used by rules
 (defgeneric pattern-equal-p (pattern1 pattern2)
   (:method ((pattern1 pattern) (pattern2 pattern)) nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; class simple-pattern
-; public
-(defclass simple-pattern (pattern)
-  ((pattern :initform (error "pattern slot must be specified")
-            :initarg :pattern
-            :reader pattern)))
 
-(defun make-simple-pattern (spec &optional negated match-var)
-  (make-instance 'simple-pattern :pattern spec :negated negated
+; public
+(defclass simple-pattern (pattern simple-object)
+  ((specifier :initform (error "pattern slot must be specified")
+              :initarg :pattern
+              :reader pattern)))
+
+(defun make-simple-pattern (pattern-spec &optional negated match-var)
+  (make-instance 'simple-pattern
+                 :pattern (copy-list pattern-spec)
+                 :negated negated
                  :match-var match-var))
 
-;; prints patterns
 ; public
 (defmethod print-object ((pattern simple-pattern) stream)
-  (if *print-escape*
-      (print-unreadable-object (pattern stream :type t)
-        (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
-                (negated-p pattern) (pattern pattern)))
-      (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
-              (negated-p pattern) (pattern pattern)))
+  (labels ((print-pattern ()
+             (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
+                     (negated-p pattern) (pattern pattern))))
+    (if *print-escape*
+        (print-unreadable-object (pattern stream :type t)
+          (print-pattern))
+        (print-pattern)))
   pattern)
 
-;; checks pattern equivalency
 ; public, used by rules
 (defmethod pattern-equal-p ((pattern1 simple-pattern) (pattern2 simple-pattern))
   (and (equalp (pattern pattern1) (pattern pattern2))
        (equalp (negated-p pattern1) (negated-p pattern2))))
-
-; public, used by rete
-(defun var-or-equal-p (atom1 atom2)
-  (or (and (variable-p atom1)
-           (variable-p atom2))
-      (atom-equal-p atom1 atom2)))
 
 ; OBSOLETE:
 ;; checks pattern constant equivalency, ignores variables
@@ -71,18 +53,8 @@
 ;	      (pattern pattern1)
 ;	      (pattern pattern2))))
 
-; public, used by rete
-(defmethod find-atom ((pattern simple-pattern) atom)
-  (find atom (pattern pattern)))
-
-; public, used by rete
-(defmethod atom-position ((pattern simple-pattern) atom)
-  (position atom (pattern pattern)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; although pattern is not fact, i inherit from template-fact class
-;; because otherwise i'd have to copy a huge bunch of code, that would be
-;; the same as for template-facts
+
 ; public
 (defclass template-pattern (pattern template-object) ())
 
@@ -116,3 +88,19 @@
       (format stream "~:[~;NOT ~]~A" (negated-p object)
               (cons (tmpl-name object) (slots object))))
   object)
+
+; public, used by rete
+(defgeneric atom-equal-p (object1 object2)
+  (:documentation "equality predicate for fact atoms")
+  (:method (object1 object2) (equalp object1 object2)))
+
+; public, used by rete
+(defun constant-test (desired-value real-value)
+  (or (variable-p desired-value)
+      (atom-equal-p desired-value real-value)))
+
+; public, used by rete
+(defun var-or-equal-p (atom1 atom2)
+  (or (and (variable-p atom1)
+           (variable-p atom2))
+      (atom-equal-p atom1 atom2)))

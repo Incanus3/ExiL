@@ -19,7 +19,8 @@
    (:file "utils-tests"       :depends-on ("utils" "tests"))
    (:file "templates"         :depends-on ("utils"))     ; ^
    (:file "templates-tests"   :depends-on ("templates" "tests"))
-   (:file "facts"             :depends-on ("templates")) ; |
+   (:file "base-objects"      :depends-on ("templates"))
+   (:file "facts"             :depends-on ("base-objects")) ; |
    (:file "facts-tests"       :depends-on ("facts" "tests"))
    (:file "patterns"          :depends-on ("facts"))     ; | core
    (:file "rules"             :depends-on ("patterns"))  ; v

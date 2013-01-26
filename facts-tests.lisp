@@ -4,7 +4,7 @@
   ((fact :accessor fact)))
 
 (defmethod set-up ((tests simple-fact-tests))
-  (setf (fact tests) (make-simple-fact (list 'in 'box 'hall))))
+  (setf (fact tests) (make-simple-fact '(in box hall))))
 
 ;; simple-fact tests
 (def-test-method test-fact-equal-p ((tests simple-fact-tests) :run nil)
@@ -47,8 +47,7 @@
   (setf (fact tests)
         (make-instance 'template-fact
                        :tmpl-name 'in
-                       :slots (list (cons 'object 'box)
-                                    (cons 'location 'hall)))))
+                       :slots (copy-alist '((object . box) (location . hall))))))
 
 (def-test-method test-fact-equal-p ((tests template-fact-tests) :run nil)
   (with-slots (fact) tests
@@ -74,5 +73,5 @@
 
 (add-test-suite 'simple-fact-tests)
 (add-test-suite 'template-fact-tests)
-(textui-test-run (get-suite simple-fact-tests))
-(textui-test-run (get-suite template-fact-tests))
+;(textui-test-run (get-suite simple-fact-tests))
+;(textui-test-run (get-suite template-fact-tests))
