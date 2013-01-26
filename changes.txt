@@ -1,7 +1,8 @@
 === CHANGES LIST:
 facts: supports multiple listing (through start- and end-index and at-most value)
 assert: supports multiple assertions
-retract: supports multiple retractions, supports fact specification through its index
+retract: supports multiple retractions,
+  supports fact specification through its index
 watch: supports (watch all)
 unwatch: supports (unwatch all)
 defrule: supports optional rule title string
@@ -16,11 +17,14 @@ make-tmpl-object, make-tmpl-fact, make-tmpl-pattern: specification param replace
   object itself - removed cyclic dependency on exil-env:find-template
 make-fact, make-pattern, copy-fact: moved to exil-env, as it depends on
   exil-env:find-template
-moved logic concerning slots representation in template from exil-env:make-tmpl-object
-- added (doslots name default template) and (slot-default tmpl-object) to templates.lisp
+moved logic concerning slots representation in template
+  from exil-env:make-tmpl-object
+- added (doslots name default template) and (slot-default tmpl-object)
+  to templates.lisp
 - used these in exil-env:make-tmpl-object
 make-tmpl-object now makes clips/nonclips distinction only when extracting value
-from slots-specification (make-tmpl-obj-clips and make-tmpl-object-nonclips no longer needed,
+  from slots-specification (make-tmpl-obj-clips and make-tmpl-object-nonclips
+  no longer needed,
 conditional moved to get-slot-val)
 
 === TODO:

@@ -70,6 +70,9 @@
                   :initform nil)
    (slots :reader slots :initarg :slots :initform ())))
 
+; public, used in exil-env:make-tmpl-object to determine value for a slot
+; whose value haven't been defined neither in the slots description, nor
+; as a template default; patterns make use of this by specifying '? as default
 (defgeneric slot-default (object-type)
   (:method ((type symbol)) nil))
 
@@ -77,18 +80,19 @@
 (defmethod has-slot-p ((object template-object) slot-name)
   (find slot-name (slots object) :key #'car :test #'weak-symbol-equal-p))
 
-; private for package
+; private
 (defmethod tmpl-object-slot-value ((object template-object) slot-name)
   "get the template-object slot value according to the slot name"
   (assoc-value slot-name (slots object) :test #'weak-symbol-equal-p))
 
+; private
 (defmethod (setf tmpl-object-slot-value) (val (object template-object) slot-name)
   (unless (has-slot-p object slot-name)
     (error "setf tmpl-object-slot-value: ~A doesn't have slot called ~A"
            object slot-name))
   (setf (assoc-value slot-name (slots object) :test #'weak-symbol-equal-p) val))
 
-; private for package
+; private
 (defmethod tmpl-object-equal-p ((object1 template-object)
                                 (object2 template-object))
   "template-object equality predicate"
@@ -104,7 +108,7 @@
       (format stream "~A" (cons (tmpl-name object) (slots object))))
   object)
 
-; public, called by rete
+; public, used by rete
 (defmethod find-atom ((object template-object) atom)
   "find the given atom in template-object slots"
   (find atom (mapcar #'cdr (slots object))))

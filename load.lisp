@@ -5,11 +5,13 @@
    (directory-namestring
     (or *load-truename* *compile-file-truename*))))
 
-;; (print (merge-pathnames "3rd-side/asdf.lisp" *path*))
-;; nefunguje uvnitr #-lispworks (progn ... )
-(require :asdf) ; (merge-pathnames "3rd-side/asdf.lisp" *path*))
+(require :asdf)
 
+(ql:update-all-dists)
 (ql:quickload "xlunit")
+
+#+sbcl (declaim (sb-ext:muffle-conditions sb-ext:code-deletion-note)
+                (sb-ext:muffle-conditions style-warning))
 
 #-lispworks (progn
               (push *path* asdf:*central-registry*)

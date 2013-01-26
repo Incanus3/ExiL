@@ -2,7 +2,7 @@
 ;; some macro tests result in code so trivial, that sbcl actually
 ;; decides to optimize it so that it removes part of the code
 ;; as unreachable, don't wonna see these warnings
-#+sbcl(declaim (sb-ext:muffle-conditions sb-ext:code-deletion-note))
+(declaim #+sbcl(sb-ext:muffle-conditions sb-ext:code-deletion-note))
 
 (defclass utils-tests (test-case) ())
 
@@ -112,17 +112,17 @@
 (def-test-method test-every-couple ((tests utils-tests) :run nil)
   (flet ((even-sum (a b) (evenp (+ a b))))
     (assert-true (every-couple #'even-sum '(1 1 2 2)))
-    (assert-true (not (every-couple #'even-sum '(1 1 2 3))))))
+    (assert-false (every-couple #'even-sum '(1 1 2 3)))))
 
 (def-test-method test-plistp ((tests utils-tests) :run nil)
   (assert-true (plistp '(:a 1 :b 2)))
-  (assert-true (not (plistp '(1 2 3 4)))))
+  (assert-false (plistp '(1 2 3 4))))
 
 (def-test-method test-alistp ((tests utils-tests) :run nil)
   (assert-true (alistp '((a 1) (b 2))))
-  (assert-true (not (alistp '(a))))
-  (assert-true (not (alistp '((a)))))
-  (assert-true (not (alistp '((a b c))))))
+  (assert-false (alistp '(a)))
+  (assert-false (alistp '((a))))
+  (assert-false (alistp '((a b c)))))
 
 (def-test-method test-doplist ((tests utils-tests) :run nil)
   (let ((plist '(:a 1 :b 2)) list)
