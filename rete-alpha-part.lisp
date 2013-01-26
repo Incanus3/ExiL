@@ -67,7 +67,7 @@
 (defclass template-fact-test-node (alpha-test-node template-fact-alpha-node) ())
 
 (defmethod test ((node template-fact-test-node) (wme template-fact))
-  (constant-test (value node) (tmpl-fact-slot-value wme (tested-field node))))
+  (constant-test (value node) (fact-slot wme (tested-field node))))
 
 ;; after alpha-top-node selects the right dataflow network according to fact type
 ;; and eventually template name, it activates the right subtop node

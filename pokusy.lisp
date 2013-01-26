@@ -1,4 +1,5 @@
 (in-package :exil-user)
+(declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
 ; TEMPLATE FACTS:
 (clear)

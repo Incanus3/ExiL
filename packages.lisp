@@ -30,7 +30,7 @@
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :variable-p :template :tmpl-name :slots :find-atom
            :has-slot-p :make-template :fact :fact-equal-p :simple-fact
-           :atom-position :template-fact :tmpl-fact-slot-value :fact-slot
+           :atom-position :template-fact :fact-slot
            :slot-default :doslots :copy-fact
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern

@@ -3,11 +3,16 @@
 (defclass facts-tests (test-case)
   ((template :initform (make-template 'test-template '(a (b :default 5)))
              :reader template)
-   (simple-fact :initform (make-simple-fact '(in box hall)) :reader simple-fact)))
+   (simple-fact :initform (make-simple-fact '(in box hall)) :reader simple-fact)
+   (template-fact :accessor template-fact)))
 
-(defmethod set-up ((tests templates-tests))
-  )
+(defmethod set-up ((tests facts-tests))
+  (setf (template-fact tests)
+        (make-instance 'template-fact
+                       :tmpl-name 'in
+                       :slots '((object . box) (location . hall)))))
 
+;; simple-fact tests
 (def-test-method test-fact-equal-p ((tests facts-tests) :run nil)
   (with-slots (simple-fact) tests
     (let ((fact2 (make-simple-fact '(in robot warehouse))))
@@ -33,6 +38,9 @@
     (let ((fact-copy (copy-fact simple-fact)))
       (assert-true (fact-equal-p simple-fact fact-copy))
       (assert-not-eql simple-fact fact-copy))))
+
+;;template-fact tests
+
 
 (add-test-suite 'facts-tests)
 (textui-test-run (get-suite facts-tests))

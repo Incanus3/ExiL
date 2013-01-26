@@ -7,10 +7,14 @@
 ; public
 (defclass fact () ())
 
-;; fact equality predicate
-; public
 (defgeneric fact-equal-p (fact1 fact2)
+  ;; exil-rete:includes-p (fact token) 
+  ;; calls (fact-equal-p fact (wme token)),
+  ;; when given empty-token, (wme token) is nil
   (:method (fact1 fact2) nil))
+(defgeneric fact-description (fact))
+(defgeneric copy-fact (fact))
+(defgeneric fact-slot (fact slot-spec))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; class simple-fact
@@ -25,7 +29,7 @@
   (cl:assert (notany #'variable-p (fact simple-fact))
              () "fact can't include variables"))
 
-(defmethod make-simple-fact (fact-spec)
+(defun make-simple-fact (fact-spec)
   (make-instance 'simple-fact :fact (copy-list fact-spec)))
 
 ;; prints facts
@@ -52,6 +56,12 @@
 (defmethod fact-description ((fact simple-fact))
   (fact fact))
 
+(defmethod fact-slot ((fact simple-fact) (slot-spec integer))
+  (nth slot-spec (fact fact)))
+
+(defmethod (setf fact-slot) (val (fact simple-fact) (slot-spec integer))
+  (setf (nth slot-spec (fact fact)) val))
+
 (defmethod copy-fact ((fact simple-fact))
   (make-simple-fact (fact fact)))
 
@@ -66,33 +76,25 @@
   (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
              () "fact can't include variables"))
 
-; public, used by rete
-(defmethod tmpl-fact-slot-value ((fact template-fact) slot-name)
-  (tmpl-object-slot-value fact slot-name))
-
-(defmethod (setf tmpl-fact-slot-value) (val (fact template-fact) slot-name)
-  (setf (tmpl-object-slot-value fact slot-name) val))
-
 ; public
 (defmethod fact-equal-p ((fact1 template-fact) (fact2 template-fact))
   (tmpl-object-equal-p fact1 fact2))
 
+; public
 (defmethod fact-description ((fact template-fact))
   (cons (tmpl-name fact)
         (loop for (slot . val) in (slots fact)
            append (list (to-keyword slot) val))))
 
+; public
+(defmethod fact-slot ((fact template-fact) (slot-spec symbol))
+  (tmpl-object-slot-value fact slot-spec))
+
+(defmethod (setf fact-slot) (val (fact template-fact) (slot-spec symbol))
+  (setf (tmpl-object-slot-value fact slot-spec) val))
+
 ; public, used by exil-env:modify-fact
 (defmethod copy-fact ((fact template-fact))
-;  (make-fact (fact-description fact)))
   (make-instance 'template-fact
                  :tmpl-name (tmpl-name fact)
                  :slots (copy-alist (slots fact))))
-
-; public
-(defgeneric fact-slot (fact slot-spec)
-  (:documentation "returns fact's slot specified by slot-spec")
-  (:method ((fact simple-fact) (slot-spec integer))
-    (nth slot-spec (fact fact)))
-  (:method ((fact template-fact) (slot-spec symbol))
-    (tmpl-fact-slot-value fact slot-spec)))
