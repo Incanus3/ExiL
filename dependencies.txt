@@ -48,7 +48,7 @@ rete:remove-production
 
 CALLED BY ACTIVATIONS:
 templates:variable-p
-facts:fact-slot
+base-objects:object-slot
 patterns:pattern
 patterns:slots
 patterns:negated-p

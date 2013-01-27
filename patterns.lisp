@@ -59,18 +59,6 @@
 (defmethod slot-default ((type (eql 'pattern)))
   '?)
 
-; private
-(defmethod tmpl-pattern-slot-value ((pattern template-pattern) slot-name)
-  (tmpl-object-slot-value pattern slot-name))
-
-; not in use
-;(defgeneric pattern-slot (pattern slot-spec)
-;  (:documentation "returns pattern's slot specified by slot-spec")
-;  (:method ((pattern simple-pattern) (slot-spec integer))
-;    (nth slot-spec (pattern pattern)))
-;  (:method ((pattern template-pattern) (slot-spec symbol))
-;    (tmpl-pattern-slot-value pattern slot-spec)))
-
 ; public
 (defmethod print-object ((object template-pattern) stream)
   (if *print-escape*

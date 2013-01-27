@@ -9,6 +9,12 @@
 (defmethod exil-equal-p and ((object1 simple-object) (object2 simple-object))
   (exil-equal-p (specifier object1) (specifier object2)))
 
+(defmethod object-slot ((object simple-object) (slot-spec integer))
+  (nth slot-spec (specifier object)))
+
+(defmethod (setf object-slot) (val (object simple-object) (slot-spec integer))
+  (setf (nth slot-spec (specifier object)) val))
+
 ; public, used by rete
 (defmethod find-atom ((object simple-object) atom)
   (find atom (specifier object)))
@@ -41,18 +47,6 @@
 (defmethod has-slot-p ((object template-object) slot-name)
   (find slot-name (slots object) :key #'car :test #'weak-symbol-equal-p))
 
-; private
-(defmethod tmpl-object-slot-value ((object template-object) slot-name)
-  "get the template-object slot value according to the slot name"
-  (assoc-value slot-name (slots object) :test #'weak-symbol-equal-p))
-
-; private
-(defmethod (setf tmpl-object-slot-value) (val (object template-object) slot-name)
-  (unless (has-slot-p object slot-name)
-    (error "setf tmpl-object-slot-value: ~A doesn't have slot called ~A"
-           object slot-name))
-  (setf (assoc-value slot-name (slots object) :test #'weak-symbol-equal-p) val))
-
 (defmethod exil-equal-p and ((object1 template-object)
                              (object2 template-object))
   (and (exil-weak-equal-p (tmpl-name object1) (tmpl-name object2))
@@ -66,6 +60,15 @@
         (format stream "~A" (cons (tmpl-name object) (slots object))))
       (format stream "~A" (cons (tmpl-name object) (slots object))))
   object)
+
+(defmethod object-slot ((object template-object) (slot-spec symbol))
+  (assoc-value slot-spec (slots object) :test #'weak-symbol-equal-p))
+
+(defmethod (setf object-slot) (val (object template-object) (slot-spec symbol))
+  (unless (has-slot-p object slot-spec)
+    (error "setf object-sloty: ~A doesn't have slot called ~A"
+           object slot-spec))
+  (setf (assoc-value slot-spec (slots object) :test #'weak-symbol-equal-p) val))
 
 ; public, used by rete
 (defmethod find-atom ((object template-object) atom)

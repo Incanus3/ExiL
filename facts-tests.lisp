@@ -10,12 +10,6 @@
   (with-slots (fact) tests
     (assert-equal (fact-description fact) '(in box hall))))
 
-(def-test-method test-fact-slot ((tests simple-fact-tests) :run nil)
-  (with-slots (fact) tests
-    (assert-equal (fact-slot fact 1) 'box)
-    (setf (fact-slot fact 1) 'blue-box)
-    (assert-equal (fact-slot fact 1) 'blue-box)))
-
 (def-test-method test-copy-fact ((tests simple-fact-tests) :run nil)
   (with-slots (fact) tests
     (let ((fact-copy (copy-fact fact)))
@@ -41,12 +35,6 @@
 (def-test-method test-fact-description ((tests template-fact-tests) :run nil)
   (with-slots (fact) tests
     (assert-equal (fact-description fact) '(in :object box :location hall))))
-
-(def-test-method test-fact-slot ((tests template-fact-tests) :run nil)
-  (with-slots (fact) tests
-    (assert-equal (fact-slot fact 'object) 'box)
-    (setf (fact-slot fact 'object) 'blue-box)
-    (assert-equal (fact-slot fact 'object) 'blue-box)))
 
 (def-test-method test-copy-fact ((tests template-fact-tests) :run nil)
   (with-slots (fact) tests

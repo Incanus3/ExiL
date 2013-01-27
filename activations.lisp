@@ -5,7 +5,7 @@
   (let ((var-bindings (loop for atom in (pattern pattern)
 			 for i = 0 then (1+ i)
 			 when (variable-p atom)
-			 collect (cons atom (fact-slot fact i))))
+			 collect (cons atom (object-slot fact i))))
 	(match-var (match-var pattern)))
     (if match-var
 	(cons (cons match-var (fact-description fact)) var-bindings)
@@ -15,7 +15,7 @@
 (defmethod variable-bindings ((pattern template-pattern) (fact template-fact))
   (let ((var-bindings (loop for (slot-name . slot-val) in (slots pattern)
 			 when (variable-p slot-val)
-			 collect (cons slot-val (fact-slot fact slot-name))))
+			 collect (cons slot-val (object-slot fact slot-name))))
 	(match-var (match-var pattern)))
     (if match-var
 	(cons (cons match-var (fact-description fact)) var-bindings)

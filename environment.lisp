@@ -113,7 +113,7 @@
           "modify: fact ~A not found in (facts)" fact)
   (let ((new-fact (copy-fact fact)))
     (doplist (slot-name val mod-list)
-      (setf (fact-slot new-fact slot-name) val))
+      (setf (object-slot new-fact slot-name) val))
     (rem-fact fact)
     (add-fact new-fact)))
 

@@ -7,7 +7,6 @@
 
 (defgeneric fact-description (fact))
 (defgeneric copy-fact (fact))
-(defgeneric fact-slot (fact slot-spec))
 
 ;; needed e.g. in tokens:includes-p which calls (exil-equal-p fact (wme token))
 ;; where for empty-token (wme token) is nil
@@ -43,12 +42,6 @@
 (defmethod fact-description ((fact simple-fact))
   (fact fact))
 
-(defmethod fact-slot ((fact simple-fact) (slot-spec integer))
-  (nth slot-spec (fact fact)))
-
-(defmethod (setf fact-slot) (val (fact simple-fact) (slot-spec integer))
-  (setf (nth slot-spec (fact fact)) val))
-
 (defmethod copy-fact ((fact simple-fact))
   (make-simple-fact (fact fact)))
 
@@ -69,13 +62,6 @@
   (cons (tmpl-name fact)
         (loop for (slot . val) in (slots fact)
            append (list (to-keyword slot) val))))
-
-; public
-(defmethod fact-slot ((fact template-fact) (slot-spec symbol))
-  (tmpl-object-slot-value fact slot-spec))
-
-(defmethod (setf fact-slot) (val (fact template-fact) (slot-spec symbol))
-  (setf (tmpl-object-slot-value fact slot-spec) val))
 
 ; public, used by exil-env:modify-fact
 (defmethod copy-fact ((fact template-fact))

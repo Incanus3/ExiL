@@ -1,18 +1,26 @@
 (in-package :core-tests)
 
 (defclass simple-object-tests (test-case)
-  ((object :reader object
-           :initform (make-instance 'exil-core::simple-object
-                                    :specifier '(in box hall)))
+  ((object :accessor object)
    (object2 :reader object2
             :initform (make-instance 'exil-core::simple-object
                                      :specifier '(in robot warehouse)))))
+
+(defmethod set-up ((tests simple-object-tests))
+  (setf (object tests) (make-instance 'exil-core::simple-object
+                                      :specifier (copy-list '(in box hall)))))
 
 ;; simple-fact tests
 (def-test-method test-exil-equal-p ((tests simple-object-tests) :run nil)
   (with-slots (object object2) tests
     (assert-true (exil-equal-p object object))
     (assert-false (exil-equal-p object object2))))
+
+(def-test-method test-object-slot ((tests simple-object-tests) :run nil)
+  (with-slots (object) tests
+    (assert-equal (object-slot object 1) 'box)
+    (setf (object-slot object 1) 'blue-box)
+    (assert-equal (object-slot object 1) 'blue-box)))
 
 (def-test-method test-find-atom ((tests simple-object-tests) :run nil)
   (with-slots (object) tests
@@ -39,11 +47,11 @@
     (assert-true (has-slot-p object 'a))
     (assert-false (has-slot-p object 'no-slot))))
 
-(def-test-method test-tmpl-object-slot-value ((tests template-object-tests) :run nil)
+(def-test-method test-object-slot ((tests template-object-tests) :run nil)
   (with-slots (object) tests
-    (assert-equal (exil-core::tmpl-object-slot-value object 'a) 1)
-    (setf (exil-core::tmpl-object-slot-value object 'a) 5)
-    (assert-equal (exil-core::tmpl-object-slot-value object 'a) 5)))
+    (assert-equal (object-slot object 'a) 1)
+    (setf (object-slot object 'a) 5)
+    (assert-equal (object-slot object 'a) '5)))
 
 (def-test-method test-exil-equal-p ((tests template-object-tests) :run nil)
   (with-slots (object) tests

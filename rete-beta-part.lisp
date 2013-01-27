@@ -121,8 +121,8 @@
 (defmethod perform-join-test ((test test) (token token) (wme fact))
   (let ((previous-wme (previous-wme token (1- (previous-condition test)))))
     (when previous-wme
-      (atom-equal-p (fact-slot wme (current-field test))
-		    (fact-slot previous-wme (previous-field test))))))
+      (atom-equal-p (object-slot wme (current-field test))
+		    (object-slot previous-wme (previous-field test))))))
 
 (defmethod perform-join-tests ((tests list) (token token) (wme fact))
   (dolist (test tests t)
