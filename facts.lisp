@@ -5,14 +5,14 @@
 ; public, virtual
 (defclass fact () ())
 
-(defgeneric fact-equal-p (fact1 fact2)
-  ;; exil-rete:includes-p (fact token) 
-  ;; calls (fact-equal-p fact (wme token)),
-  ;; when given empty-token, (wme token) is nil
-  (:method (fact1 fact2) nil))
 (defgeneric fact-description (fact))
 (defgeneric copy-fact (fact))
 (defgeneric fact-slot (fact slot-spec))
+
+;; needed e.g. in tokens:includes-p which calls (exil-equal-p fact (wme token))
+;; where for empty-token (wme token) is nil
+(defmethod exil-equal-p and ((fact fact) (null null))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -40,10 +40,6 @@
         (print-fact)))
   fact)
 
-; public
-(defmethod fact-equal-p ((fact1 simple-fact) (fact2 simple-fact))
-  (equalp (fact fact1) (fact fact2)))
-
 (defmethod fact-description ((fact simple-fact))
   (fact fact))
 
@@ -65,10 +61,6 @@
 (defmethod initialize-instance :after ((fact template-fact) &key)
   (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
              () "fact can't include variables"))
-
-; public
-(defmethod fact-equal-p ((fact1 template-fact) (fact2 template-fact))
-  (tmpl-object-equal-p fact1 fact2))
 
 ;; find-atom and atom-position inherited from template-object
 

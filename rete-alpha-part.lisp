@@ -7,18 +7,18 @@
 
 (defclass alpha-test-node (alpha-node)
   ((tested-field :reader tested-field :initarg :tested-field
-		 :initform (error "tested-field slot has to be specified"))
+                 :initform (error "tested-field slot has to be specified"))
    (desired-value :reader value :initarg :value
-		  :initform (error "desired-value slot has to be specified"))
+                  :initform (error "desired-value slot has to be specified"))
    (alpha-memory :accessor memory :initarg :memory
-		 :initform nil)))
+                 :initform nil)))
 
 (defmethod node-equal-p ((node1 alpha-test-node)
-			 (node2 alpha-test-node))
+                         (node2 alpha-test-node))
   (and (equalp (tested-field node1)
-	       (tested-field node2))
+               (tested-field node2))
        (constant-test (value node1)
-		      (value node2))))
+                      (value node2))))
 
 (defmethod print-object ((node alpha-test-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
@@ -92,7 +92,7 @@
 (defclass alpha-top-node (alpha-node)
   ((dataflow-networks :accessor networks :initform (make-hash-table))
    (simple-fact-key-name :reader simple-fact-key-name
-			 :initform (gensym "simple-fact"))))
+                         :initform (gensym "simple-fact"))))
 
 ;(defmethod initialize-instance :after ((node alpha-top-node) &key)
 ;  (setf (gethash (simple-fact-key-name node)
@@ -102,22 +102,23 @@
 ;; OR GET-NETWORK INITIALIZE-SUBNET
 
 (defmethod get-network ((node alpha-top-node)
-			&optional (template-name (simple-fact-key-name node)))
+                        &optional (template-name (simple-fact-key-name node)))
   (gethash template-name (networks node)))
 
-(defmethod (setf get-network) (value (node alpha-top-node)
-			       &optional (template-name (simple-fact-key-name node)))
+(defmethod (setf get-network)
+    (value (node alpha-top-node)
+     &optional (template-name (simple-fact-key-name node)))
   (setf (gethash template-name (networks node)) value))
 
-(defmethod initialize-network ((node alpha-top-node)
-			      &optional (template-name (simple-fact-key-name node)))
+(defmethod initialize-network
+    ((node alpha-top-node) &optional (template-name (simple-fact-key-name node)))
   (setf (get-network node template-name)
-	(make-instance (if (equalp template-name (simple-fact-key-name node))
-			   'simple-fact-subtop-node
-			   'template-fact-subtop-node))))
+        (make-instance (if (equalp template-name (simple-fact-key-name node))
+                           'simple-fact-subtop-node
+                           'template-fact-subtop-node))))
 
-(defmethod get/initialize-network ((node alpha-top-node)
-				   &optional (template-name (simple-fact-key-name node)))
+(defmethod get/initialize-network
+    ((node alpha-top-node) &optional (template-name (simple-fact-key-name node)))
   (or (get-network node template-name)
       (initialize-network node template-name)))
 
@@ -126,12 +127,13 @@
 
 (defmethod activate ((node alpha-top-node) (wme fact))
   (let ((network (get/initialize-network
-		  node (typecase wme
-			 (simple-fact (simple-fact-key-name node))
-			 (template-fact (tmpl-name wme))))))
-;    (unless network
-;      (print "activate alpha-top-node: no network found~%returning networks hash for debug")
-;      (inspect node))
+                  node (typecase wme
+                         (simple-fact (simple-fact-key-name node))
+                         (template-fact (tmpl-name wme))))))
+    ;; (unless network
+    ;; (print "activate alpha-top-node: no network found~%\
+    ;; returning networks hash for debug")
+    ;; (inspect node))
     (activate network wme)))
 
 (defmethod inactivate ((node alpha-top-node) (wme fact))
@@ -142,9 +144,9 @@
 (defclass alpha-memory-node (alpha-node memory-node) ())
 
 (defmethod activate ((node alpha-memory-node) (wme fact))
-  (pushnew wme (items node) :test #'fact-equal-p)
+  (pushnew wme (items node) :test #'exil-equal-p)
   (activate-children node wme))
 
 (defmethod inactivate ((node alpha-memory-node) (wme fact))
-  (setf (items node) (delete wme (items node) :test #'fact-equal-p)))
+  (setf (items node) (delete wme (items node) :test #'exil-equal-p)))
 

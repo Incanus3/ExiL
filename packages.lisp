@@ -29,18 +29,19 @@
   (:use :common-lisp :exil-utils)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :variable-p :template :tmpl-name :slots :find-atom
-           :has-slot-p :make-template :fact :fact-equal-p :simple-fact
+           :has-slot-p :make-template :fact :simple-fact
            :atom-position :template-fact :fact-slot
            :slot-default :doslots :copy-fact
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern
-           :negated-p :pattern-equal-p :simple-pattern :var-or-equal-p
+           :negated-p :simple-pattern :var-or-equal-p
            :template-pattern :rule :rule-equal-p :make-rule
            :name :conditions :activations :fact-description))
 
 (defpackage :core-tests
   (:documentation "tests for the utils package")
   (:use :common-lisp :exil-core :xlunit)
+  (:import-from :exil-utils :exil-equal-p)
   (:import-from :tests-base :add-test-suite))
 
 (defpackage :exil-rete

@@ -31,17 +31,17 @@
     (setf (exil-core::tmpl-object-slot-value object 'a) 5)
     (assert-equal (exil-core::tmpl-object-slot-value object 'a) 5)))
 
-(def-test-method test-tmpl-object-equal-p ((tests templates-tests) :run nil)
+(def-test-method test-exil-equal-p ((tests templates-tests) :run nil)
   (with-slots (object) tests
-    (assert-true (exil-core::tmpl-object-equal-p object object))
+    (assert-true (exil-equal-p object object))
     (let ((object2 (make-instance 'exil-core::template-object
                                   :tmpl-name 'other-template
                                   :slots (slots object)))
           (object3 (make-instance 'exil-core::template-object
                                   :tmpl-name (tmpl-name object)
                                   :slots '((a . 1) (b . 3)))))
-      (assert-false (exil-core::tmpl-object-equal-p object object2))
-      (assert-false (exil-core::tmpl-object-equal-p object object3)))))
+      (assert-false (exil-equal-p object object2))
+      (assert-false (exil-equal-p object object3)))))
 
 (def-test-method test-find-atom ((tests templates-tests) :run nil)
   (with-slots (object) tests

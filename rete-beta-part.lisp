@@ -174,7 +174,7 @@
     (when (perform-join-tests (tests node) token wme)
       (unless (negative-wmes token)
 	(inactivate-children node token))
-      (pushnew wme (negative-wmes token) :test #'fact-equal-p)))
+      (pushnew wme (negative-wmes token) :test #'exil-equal-p)))
   nil)
 
 (defmethod inactivate ((node beta-negative-node) (wme fact))
@@ -183,7 +183,7 @@
     (when (and (negative-wmes token)
 	       (perform-join-tests (tests node) token wme))
       (setf (negative-wmes token)
-	    (delete wme (negative-wmes token) :test #'fact-equal-p))
+	    (delete wme (negative-wmes token) :test #'exil-equal-p))
       (unless (negative-wmes token)
 	(activate-children node token))))
   nil)

@@ -7,11 +7,11 @@
   (setf (fact tests) (make-simple-fact '(in box hall))))
 
 ;; simple-fact tests
-(def-test-method test-fact-equal-p ((tests simple-fact-tests) :run nil)
+(def-test-method test-exil-equal-p ((tests simple-fact-tests) :run nil)
   (with-slots (fact) tests
     (let ((fact2 (make-simple-fact '(in robot warehouse))))
-      (assert-true (fact-equal-p fact fact))
-      (assert-false (fact-equal-p fact fact2)))))
+      (assert-true (exil-equal-p fact fact))
+      (assert-false (exil-equal-p fact fact2)))))
 
 (def-test-method test-find-atom ((tests simple-fact-tests) :run nil)
   (with-slots (fact) tests
@@ -36,7 +36,7 @@
 (def-test-method test-copy-fact ((tests simple-fact-tests) :run nil)
   (with-slots (fact) tests
     (let ((fact-copy (copy-fact fact)))
-      (assert-true (fact-equal-p fact fact-copy))
+      (assert-true (exil-equal-p fact fact-copy))
       (assert-not-eql fact fact-copy))))
 
 ;;template-fact tests
@@ -49,10 +49,10 @@
                        :tmpl-name 'in
                        :slots (copy-alist '((object . box) (location . hall))))))
 
-(def-test-method test-fact-equal-p ((tests template-fact-tests) :run nil)
+(def-test-method test-exil-equal-p ((tests template-fact-tests) :run nil)
   (with-slots (fact) tests
     (let ((fact2 (copy-fact fact)))
-      (assert-true (fact-equal-p fact fact2))
+      (assert-true (exil-equal-p fact fact2))
       (assert-not-eql fact fact2))))
 
 (def-test-method test-fact-description ((tests template-fact-tests) :run nil)
@@ -68,7 +68,7 @@
 (def-test-method test-copy-fact ((tests template-fact-tests) :run nil)
   (with-slots (fact) tests
     (let ((fact-copy (copy-fact fact)))
-      (assert-true (fact-equal-p fact fact-copy))
+      (assert-true (exil-equal-p fact fact-copy))
       (assert-not-eql fact fact-copy))))
 
 (add-test-suite 'simple-fact-tests)

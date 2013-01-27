@@ -36,7 +36,7 @@ environment:set-watcher
 environment:unset-watcher
 
 CALLED BY ENVIRONMENT:
-facts:fact-equal-p
+utils:exil-equal-p
 rules:rule-equal-p
 matches:make-match
 matches:match-equal-p

@@ -39,6 +39,9 @@
   (:documentation "test if the symbol name is equal, omits the package name")
   (:method ((sym1 symbol) (sym2 symbol))
     (equalp (to-keyword sym1) (to-keyword sym2)))
+  ;; export:defrule calls (position '=> rule :test #'weak-symbol-equal-p))
+  ;; where rule is list of clauses supplied to defrule
+  ;; so '=> may be compared with either symbol or list
   (:method (sym1 sym2) nil))
 
 (defmacro mac-exp (&body body)
@@ -204,19 +207,22 @@
 
 (defgeneric exil-equal-p (obj1 obj2)
   (:documentation "ExiL default equality predicate")
-  (:method (obj1 obj2) nil)
-  (:method ((obj1 null) (obj2 null)) t))
+  (:method-combination and))
+;  (:method and (obj1 obj2) (equalp obj1 obj2)))
 
-(defmethod exil-equal-p ((obj1 string) (obj2 string))
+(defmethod exil-equal-p and ((obj1 string) (obj2 string))
   (string= obj1 obj2))
 
-(defmethod exil-equal-p ((obj1 symbol) (obj2 symbol))
+(defmethod exil-equal-p and ((obj1 symbol) (obj2 symbol))
   (equalp obj1 obj2))
 
-(defmethod exil-equal-p ((obj1 number) (obj2 number))
+(defmethod exil-equal-p and ((obj1 number) (obj2 number))
   (= obj1 obj2))
 
-(defmethod exil-equal-p ((obj1 cons) (obj2 cons))
+(defmethod exil-equal-p and ((obj1 null) (obj2 null))
+  t)
+
+(defmethod exil-equal-p and ((obj1 cons) (obj2 cons))
   (and (exil-equal-p (car obj1) (car obj2))
        (exil-equal-p (cdr obj1) (cdr obj2))))
 

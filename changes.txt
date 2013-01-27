@@ -41,6 +41,9 @@ redefine initialize-instance methods as after, if possible
 add documentation to classes, functions, methods, macros and slots
   (using :documentation in slot definition)
 
+== Text
+zaradit sekci o BDD/TDD, citovat napr. z The RSpec Book, zminit LIFT a XLUnit
+
 === CLIPS FEATURES NOT INTENDED TO SUPPORT:
 not all clips functions are supported on the RHS (e.g. printout)
 template slot types

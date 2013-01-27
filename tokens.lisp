@@ -21,7 +21,7 @@
 (defmethod includes-p ((fact fact) (token token))
   (loop for tkn = token then (parent tkn)
      unless tkn do (return nil)
-     when (fact-equal-p fact (wme tkn)) do
+     when (exil-equal-p fact (wme tkn)) do
        (return t)))
 
 (defgeneric token-equal-p (token1 token2)
@@ -29,7 +29,7 @@
   (:method (token1 token2) nil)
   (:method ((token1 empty-token) (token2 empty-token)) t)
   (:method ((token1 token) (token2 token))
-    (and (fact-equal-p (wme token1) (wme token2))
+    (and (exil-equal-p (wme token1) (wme token2))
 	 (token-equal-p (parent token1) (parent token2)))))
 
 (defmethod includes-p ((included-token token) (token token))

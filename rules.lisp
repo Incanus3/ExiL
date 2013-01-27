@@ -18,7 +18,7 @@
 		 (conds2 conditions)
 		 (acts2 activations)) rule2
       (and (equalp name1 name2)
-	   (every #'pattern-equal-p conds1 conds2)
+	   (every #'exil-equal-p conds1 conds2)
 	   (   )))))
 |#
 

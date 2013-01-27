@@ -10,9 +10,8 @@
                                       :initarg :match-var
                                       :accessor match-var)))
 
-; public, used by rules
-(defgeneric pattern-equal-p (pattern1 pattern2)
-  (:method ((pattern1 pattern) (pattern2 pattern)) nil))
+(defmethod exil-equal-p and ((pattern1 pattern) (pattern2 pattern))
+  (equalp (negated-p pattern1) (negated-p pattern2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -21,6 +20,8 @@
   ((specifier :initform (error "pattern slot must be specified")
               :initarg :pattern
               :reader pattern)))
+
+;; exil-equal-p inherited from pattern and simple-object
 
 (defun make-simple-pattern (pattern-spec &optional negated match-var)
   (make-instance 'simple-pattern
@@ -39,11 +40,6 @@
         (print-pattern)))
   pattern)
 
-; public, used by rules
-(defmethod pattern-equal-p ((pattern1 simple-pattern) (pattern2 simple-pattern))
-  (and (equalp (pattern pattern1) (pattern pattern2))
-       (equalp (negated-p pattern1) (negated-p pattern2))))
-
 ; OBSOLETE:
 ;; checks pattern constant equivalency, ignores variables
 ;(defmethod pattern-const-equal-p ((pattern1 simple-pattern)
@@ -58,18 +54,14 @@
 ; public
 (defclass template-pattern (pattern template-object) ())
 
+;; exil-equal-p inherited from pattern and template-object
+
 (defmethod slot-default ((type (eql 'pattern)))
   '?)
 
 ; private
 (defmethod tmpl-pattern-slot-value ((pattern template-pattern) slot-name)
   (tmpl-object-slot-value pattern slot-name))
-
-; public, used by rules
-(defmethod pattern-equal-p ((pattern1 template-pattern)
-                            (pattern2 template-pattern))
-  (and (equalp (negated-p pattern1) (negated-p pattern2))
-       (tmpl-object-equal-p pattern1 pattern2)))
 
 ; not in use
 ;(defgeneric pattern-slot (pattern slot-spec)

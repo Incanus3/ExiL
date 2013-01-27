@@ -5,6 +5,9 @@
 (defclass simple-object (base-object)
   ((specifier :reader specifier)))
 
+(defmethod exil-equal-p and ((object1 simple-object) (object2 simple-object))
+  (exil-equal-p (specifier object1) (specifier object2)))
+
 ; public, used by rete
 (defmethod find-atom ((object simple-object) atom)
   (find atom (specifier object)))
@@ -49,10 +52,8 @@
            object slot-name))
   (setf (assoc-value slot-name (slots object) :test #'weak-symbol-equal-p) val))
 
-; private
-(defmethod tmpl-object-equal-p ((object1 template-object)
-                                (object2 template-object))
-  "template-object equality predicate"
+(defmethod exil-equal-p and ((object1 template-object)
+                             (object2 template-object))
   (and (exil-weak-equal-p (tmpl-name object1) (tmpl-name object2))
        (exil-weak-equal-p (slots object1) (slots object2))))
 

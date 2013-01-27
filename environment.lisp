@@ -91,7 +91,7 @@
 
 ; public
 (defun add-fact (fact)
-  (when (nth-value 1 (pushnew-end fact (facts) :test #'fact-equal-p))
+  (when (nth-value 1 (pushnew-end fact (facts) :test #'exil-equal-p))
     (when (watched-p 'facts)
       (format t "==> ~A~%" fact))
     (add-wme fact)
@@ -100,7 +100,7 @@
 ; public
 (defun rem-fact (fact)
   (multiple-value-bind (new-list altered-p)
-      (ext-delete fact (facts) :test #'fact-equal-p)
+      (ext-delete fact (facts) :test #'exil-equal-p)
     (when altered-p
       (setf (facts) new-list)
       (when (watched-p 'facts)
@@ -109,7 +109,7 @@
       #+lispworks(exil-gui:update-lists))))
 
 (defun modify-fact (fact mod-list)
-  (assert (find fact (facts) :test #'fact-equal-p) ()
+  (assert (find fact (facts) :test #'exil-equal-p) ()
           "modify: fact ~A not found in (facts)" fact)
   (let ((new-fact (copy-fact fact)))
     (doplist (slot-name val mod-list)
@@ -169,7 +169,7 @@
 
 ; public
 (defun find-fact (fact)
-  (find-if (lambda (fct) (fact-equal-p fact fct)) (facts)))
+  (find fact (facts) :test #'exil-equal-p))
 
 ; public
 (defun find-rule (name)
