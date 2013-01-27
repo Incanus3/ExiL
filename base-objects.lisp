@@ -3,7 +3,8 @@
 (defclass base-object () ())
 
 (defclass simple-object (base-object)
-  ((specifier :reader specifier)))
+  ((specifier :reader specifier
+              :initarg :specifier)))
 
 (defmethod exil-equal-p and ((object1 simple-object) (object2 simple-object))
   (exil-equal-p (specifier object1) (specifier object2)))

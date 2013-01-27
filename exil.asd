@@ -20,6 +20,7 @@
    (:file "templates"         :depends-on ("utils"))     ; ^
    (:file "templates-tests"   :depends-on ("templates" "tests"))
    (:file "base-objects"      :depends-on ("templates"))
+   (:file "base-objects-tests" :depends-on ("base-objects" "tests"))
    (:file "facts"             :depends-on ("base-objects")) ; |
    (:file "facts-tests"       :depends-on ("facts" "tests"))
    (:file "patterns"          :depends-on ("facts"))     ; | core

@@ -6,23 +6,6 @@
 (defmethod set-up ((tests simple-fact-tests))
   (setf (fact tests) (make-simple-fact '(in box hall))))
 
-;; simple-fact tests
-(def-test-method test-exil-equal-p ((tests simple-fact-tests) :run nil)
-  (with-slots (fact) tests
-    (let ((fact2 (make-simple-fact '(in robot warehouse))))
-      (assert-true (exil-equal-p fact fact))
-      (assert-false (exil-equal-p fact fact2)))))
-
-(def-test-method test-find-atom ((tests simple-fact-tests) :run nil)
-  (with-slots (fact) tests
-    (assert-true (find-atom fact 'box))
-    (assert-false (find-atom fact 'not-present))))
-
-(def-test-method test-atom-position ((tests simple-fact-tests) :run nil)
-  (with-slots (fact) tests
-    (assert-equal (atom-position fact 'box) 1)
-    (assert-false (atom-position fact 'not-present))))
-
 (def-test-method test-fact-description ((tests simple-fact-tests) :run nil)
   (with-slots (fact) tests
     (assert-equal (fact-description fact) '(in box hall))))
