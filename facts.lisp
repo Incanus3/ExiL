@@ -5,8 +5,8 @@
 ; public, virtual
 (defclass fact () ())
 
-(defgeneric fact-description (fact))
-(defgeneric copy-fact (fact))
+;(defgeneric description (fact))
+;(defgeneric copy-fact (fact))
 
 ;; needed e.g. in tokens:includes-p which calls (exil-equal-p fact (wme token))
 ;; where for empty-token (wme token) is nil
@@ -29,12 +29,6 @@
 (defun make-simple-fact (fact-spec)
   (make-instance 'simple-fact :fact (copy-list fact-spec)))
 
-(defmethod fact-description ((fact simple-fact))
-  (fact fact))
-
-(defmethod copy-fact ((fact simple-fact))
-  (make-simple-fact (fact fact)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; slots (inherited from template-object) holds alist of slot names and values
 ; public
@@ -46,15 +40,3 @@
              () "fact can't include variables"))
 
 ;; find-atom and atom-position inherited from template-object
-
-; public
-(defmethod fact-description ((fact template-fact))
-  (cons (tmpl-name fact)
-        (loop for (slot . val) in (slots fact)
-           append (list (to-keyword slot) val))))
-
-; public, used by exil-env:modify-fact
-(defmethod copy-fact ((fact template-fact))
-  (make-instance 'template-fact
-                 :tmpl-name (tmpl-name fact)
-                 :slots (copy-alist (slots fact))))

@@ -35,15 +35,6 @@
   (intern key package))
 ;; (from-keyword :a) => a
 
-(defgeneric weak-symbol-equal-p (sym1 sym2)
-  (:documentation "test if the symbol name is equal, omits the package name")
-  (:method ((sym1 symbol) (sym2 symbol))
-    (equalp (to-keyword sym1) (to-keyword sym2)))
-  ;; export:defrule calls (position '=> rule :test #'weak-symbol-equal-p))
-  ;; where rule is list of clauses supplied to defrule
-  ;; so '=> may be compared with either symbol or list
-  (:method (sym1 sym2) nil))
-
 (defmacro mac-exp (&body body)
   "shortcut for calling macroexpand-1"
   `(pprint (macroexpand-1 ',@body)))
@@ -200,46 +191,16 @@
            ((not ,key) ,retval)
          ,@body))))
 
-(defmethod hash->list ((hash hash-table))
+(defun hash->list (hash)
   "returns list of all values in the hash"
   (loop for val being the hash-value of hash
      collect val))
 
-(defgeneric exil-equal-p (obj1 obj2)
-  (:documentation "ExiL default equality predicate")
-  (:method-combination and))
-;  (:method and (obj1 obj2) (equalp obj1 obj2)))
-
-(defmethod exil-equal-p and ((obj1 string) (obj2 string))
-  (string= obj1 obj2))
-
-(defmethod exil-equal-p and ((obj1 symbol) (obj2 symbol))
-  (equalp obj1 obj2))
-
-(defmethod exil-equal-p and ((obj1 number) (obj2 number))
-  (= obj1 obj2))
-
-(defmethod exil-equal-p and ((obj1 null) (obj2 null))
-  t)
-
-(defmethod exil-equal-p and ((obj1 cons) (obj2 cons))
-  (and (exil-equal-p (car obj1) (car obj2))
-       (exil-equal-p (cdr obj1) (cdr obj2))))
-
-(defgeneric exil-weak-equal-p (obj1 obj2)
+(defgeneric weak-equal-p (obj1 obj2)
   (:documentation "ExiL default weak equality predicate")
-  (:method (obj1 obj2) (exil-equal-p obj1 obj2)))
-
-(defmethod exil-weak-equal-p ((obj1 string) (obj2 string))
-  (string-equal obj1 obj2))
-
-(defmethod exil-weak-equal-p ((obj1 symbol) (obj2 symbol))
-  (weak-symbol-equal-p obj1 obj2))
-
-(defmethod exil-weak-equal-p ((obj1 cons) (obj2 cons))
-  (and (exil-weak-equal-p (car obj1) (car obj2))
-       (exil-weak-equal-p (cdr obj1) (cdr obj2))))
-
-(defun class-slot-value (class-name slot-name)
-  "get a class-slot value from class-name"
-  (slot-value (make-instance class-name) slot-name))
+  (:method (obj1 obj2) (equalp obj1 obj2))
+  (:method ((sym1 symbol) (sym2 symbol))
+    (equalp (to-keyword sym1) (to-keyword sym2)))
+  (:method ((cons1 cons) (cons2 cons))
+    (and (weak-equal-p (car cons1) (car cons2))
+         (weak-equal-p (cdr cons1) (cdr cons2)))))

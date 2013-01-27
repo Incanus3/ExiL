@@ -26,8 +26,8 @@
 (def-test-method test-from-keyword ((tests utils-tests) :run nil)
   (assert-equal (cl:intern "ABC") (from-keyword :abc)))
 
-(def-test-method test-weak-symbol-equal-p ((tests utils-tests) :run nil)
-  (assert-true (weak-symbol-equal-p 'exil-utils:intern 'cl:intern)))
+(def-test-method test-weak-equal-p ((tests utils-tests) :run nil)
+  (assert-true (weak-equal-p 'exil-utils:intern 'cl:intern)))
 
 (def-test-method test-subsets ((tests utils-tests) :run nil)
   (let ((subsets (subsets '(1 2))))
@@ -141,11 +141,6 @@
     (assert-true (member 2 list))
     (setf list (delete 1 (delete 2 list)))
     (assert-false list))) ; and nothing more
-
-(defclass blah () ((slot :allocation :class :initform 1)))
-
-(def-test-method test-class-slot-value ((tests utils-tests) :run nil)
-  (assert-equal (class-slot-value 'blah 'slot) 1))
 
 ;(textui-test-run (get-suite utils-tests))
 (add-test-suite 'utils-tests)

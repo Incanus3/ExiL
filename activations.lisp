@@ -8,7 +8,7 @@
 			 collect (cons atom (object-slot fact i))))
 	(match-var (match-var pattern)))
     (if match-var
-	(cons (cons match-var (fact-description fact)) var-bindings)
+	(cons (cons match-var (description fact)) var-bindings)
 	var-bindings)))
 
 ; private
@@ -18,7 +18,7 @@
 			 collect (cons slot-val (object-slot fact slot-name))))
 	(match-var (match-var pattern)))
     (if match-var
-	(cons (cons match-var (fact-description fact)) var-bindings)
+	(cons (cons match-var (description fact)) var-bindings)
 	var-bindings)))
 
 ;; if the variable bindings of particular patter-fact pairs aren't consistent

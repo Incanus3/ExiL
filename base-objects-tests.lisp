@@ -16,6 +16,12 @@
     (assert-true (exil-equal-p object object))
     (assert-false (exil-equal-p object object2))))
 
+(def-test-method test-copy-object ((tests simple-object-tests) :run nil)
+  (with-slots (object) tests
+    (let ((copy (copy-object object)))
+      (assert-true (exil-equal-p object copy))
+      (assert-not-eql object copy))))
+
 (def-test-method test-object-slot ((tests simple-object-tests) :run nil)
   (with-slots (object) tests
     (assert-equal (object-slot object 1) 'box)
@@ -32,6 +38,10 @@
     (assert-equal (atom-position object 'box) 1)
     (assert-false (atom-position object 'not-present))))
 
+(def-test-method test-description ((tests simple-object-tests) :run nil)
+  (with-slots (object) tests
+    (assert-equal (description object) '(in box hall))))
+
 (defclass template-object-tests (test-case)
   ((template :initform (make-template 'test-template '(a (b :default 5)))
              :reader template)
@@ -41,17 +51,6 @@
   (setf (object tests) (make-instance 'exil-core::template-object
                                       :tmpl-name 'test-template
                                       :slots (copy-alist '((a . 1) (b . 2))))))
-
-(def-test-method test-has-slot-p ((tests template-object-tests) :run nil)
-  (with-slots (object) tests
-    (assert-true (has-slot-p object 'a))
-    (assert-false (has-slot-p object 'no-slot))))
-
-(def-test-method test-object-slot ((tests template-object-tests) :run nil)
-  (with-slots (object) tests
-    (assert-equal (object-slot object 'a) 1)
-    (setf (object-slot object 'a) 5)
-    (assert-equal (object-slot object 'a) '5)))
 
 (def-test-method test-exil-equal-p ((tests template-object-tests) :run nil)
   (with-slots (object) tests
@@ -65,6 +64,23 @@
       (assert-false (exil-equal-p object object2))
       (assert-false (exil-equal-p object object3)))))
 
+(def-test-method test-copy-object ((tests template-object-tests) :run nil)
+  (with-slots (object) tests
+    (let ((copy (copy-object object)))
+      (assert-true (exil-equal-p object copy))
+      (assert-not-eql object copy))))
+
+(def-test-method test-has-slot-p ((tests template-object-tests) :run nil)
+  (with-slots (object) tests
+    (assert-true (has-slot-p object 'a))
+    (assert-false (has-slot-p object 'no-slot))))
+
+(def-test-method test-object-slot ((tests template-object-tests) :run nil)
+  (with-slots (object) tests
+    (assert-equal (object-slot object 'a) 1)
+    (setf (object-slot object 'a) 5)
+    (assert-equal (object-slot object 'a) '5)))
+
 (def-test-method test-find-atom ((tests template-object-tests) :run nil)
   (with-slots (object) tests
     (assert-true (find-atom object 1))
@@ -74,6 +90,10 @@
   (with-slots (object) tests
     (assert-equal (atom-position object 2) 'b)
     (assert-false (atom-position object 3))))
+
+(def-test-method test-description ((tests template-object-tests) :run nil)
+  (with-slots (object) tests
+    (assert-equal (description object) '(test-template :a 1 :b 2))))
 
 (add-test-suite 'simple-object-tests)
 (add-test-suite 'template-object-tests)

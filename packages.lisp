@@ -8,9 +8,9 @@
   (:export :intern :string-append :symbol-name :symbol-append :to-keyword
            :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
            :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
-           :ext-delete :diff-delete :push-update :class-slot-value :select
-           :weak-symbol-equal-p :every-couple :cpl-assoc-val :plistp :alistp
-           :doplist :exil-equal-p :exil-weak-equal-p :hash->list))
+           :ext-delete :diff-delete :push-update :select
+           :every-couple :cpl-assoc-val :plistp :alistp
+           :doplist :weak-equal-p :hash->list))
 
 (defpackage :tests-base
   (:use :common-lisp :xlunit :exil-utils)
@@ -30,18 +30,17 @@
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :variable-p :template :tmpl-name :slots :find-atom
            :has-slot-p :make-template :fact :simple-fact
-           :atom-position :template-fact
-           :slot-default :doslots :copy-fact :object-slot
+           :atom-position :template-fact :exil-equal-p
+           :slot-default :doslots :copy-object :object-slot
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern
            :negated-p :simple-pattern :var-or-equal-p
            :template-pattern :rule :rule-equal-p :make-rule
-           :name :conditions :activations :fact-description))
+           :name :conditions :activations :description))
 
 (defpackage :core-tests
   (:documentation "tests for the utils package")
   (:use :common-lisp :exil-core :xlunit)
-  (:import-from :exil-utils :exil-equal-p)
   (:import-from :tests-base :add-test-suite))
 
 (defpackage :exil-rete

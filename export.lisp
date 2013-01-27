@@ -16,7 +16,7 @@
 	   (keywordp (second slot-spec)))))
 
 (defun clips-slot-spec-p (slot-spec)
-  (and (weak-symbol-equal-p (first slot-spec) 'slot))
+  (and (weak-equal-p (first slot-spec) 'slot))
        (symbolp (second slot-spec))
        (listp (nthcdr 2 slot-spec)))
 
@@ -141,18 +141,18 @@
   (reset-environment))
 
 ; public
-(defmacro deffacts (name &body fact-descriptions)
+(defmacro deffacts (name &body descriptions)
   "Create group of facts to be asserted after (reset)"
-  (if (stringp (first fact-descriptions)) (pop fact-descriptions))
-  `(add-fact-group ',name ',fact-descriptions))
+  (if (stringp (first descriptions)) (pop descriptions))
+  `(add-fact-group ',name ',descriptions))
 
 ; public
 (defmacro undeffacts (name)
   "Delete fact group"
   `(rem-fact-group ',name))
 
-(defun assert-group% (fact-descriptions)
-  (dolist (desc fact-descriptions)
+(defun assert-group% (descriptions)
+  (dolist (desc descriptions)
     (assert% desc)))
 
 ; public
@@ -186,7 +186,7 @@
   "Define rule"
   (when (stringp (first rule))
     (pop rule)) ;; ignore the clips rule header
-  (let* ((=>-position (position '=> rule :test #'weak-symbol-equal-p))
+  (let* ((=>-position (position '=> rule :test #'weak-equal-p))
 	 (conditions (extract-conditions% (subseq rule 0 =>-position)))
 	 (activations (subseq rule (1+ =>-position)))
 	 (rule-symbol (gensym "rule")))
@@ -251,7 +251,7 @@
 ; public
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(progn (if (weak-symbol-equal-p ',watcher 'all)
+  `(progn (if (weak-equal-p ',watcher 'all)
 	      (watch-all)
 	      (set-watcher ',watcher))
 	  nil))
@@ -259,7 +259,7 @@
 ; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(progn (if (weak-symbol-equal-p ',watcher 'all)
+  `(progn (if (weak-equal-p ',watcher 'all)
 	      (unwatch-all)
 	      (unset-watcher ',watcher))
 	  nil))
