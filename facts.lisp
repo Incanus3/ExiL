@@ -5,11 +5,6 @@
 ; public, virtual
 (defclass fact () ())
 
-;; needed e.g. in tokens:includes-p which calls (exil-equal-p fact (wme token))
-;; where for empty-token (wme token) is nil
-(defmethod exil-equal-p and ((fact fact) (null null))
-  nil)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; public, used by rete

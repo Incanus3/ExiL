@@ -45,10 +45,16 @@
 
 (defpackage :exil-rete
   (:documentation "the rete algorithm for matching facts against rule conditions")
+  (:nicknames :erete)
   (:use :common-lisp :exil-utils :exil-core)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
            :token->list :token-equal-p))
+
+(defpackage :rete-tests
+  (:documentation "tests for the rete package")
+  (:use :common-lisp :exil-core :exil-rete :xlunit)
+  (:import-from :tests-base :add-test-suite))
 
 (defpackage :exil-env
   (:documentation "the exil environment, keeps track of the defined templates
