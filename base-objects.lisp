@@ -2,12 +2,25 @@
 
 (defclass base-object () ())
 
+; private, called by print-object
+(defgeneric format-object (object stream))
+
+(defmethod print-object ((object base-object) stream)
+  (if *print-escape*
+      (print-unreadable-object (object stream :type t :identity t)
+        (format-object object stream))
+      (format-object object stream))
+  object)
+
 (defclass simple-object (base-object)
   ((specifier :reader specifier
               :initarg :specifier)))
 
 (defmethod exil-equal-p and ((object1 simple-object) (object2 simple-object))
   (exil-equal-p (specifier object1) (specifier object2)))
+
+(defmethod format-object ((object simple-object) stream)
+  (format stream "~S" (specifier object)))
 
 (defmethod object-slot ((object simple-object) (slot-spec integer))
   (nth slot-spec (specifier object)))
@@ -52,14 +65,8 @@
   (and (exil-weak-equal-p (tmpl-name object1) (tmpl-name object2))
        (exil-weak-equal-p (slots object1) (slots object2))))
 
-; public
-(defmethod print-object ((object template-object) stream)
-  "template-object printing method"
-  (if *print-escape*
-      (print-unreadable-object (object stream :type t :identity t)
-        (format stream "~A" (cons (tmpl-name object) (slots object))))
-      (format stream "~A" (cons (tmpl-name object) (slots object))))
-  object)
+(defmethod format-object ((object template-object) stream)
+  (format stream "~A" (cons (tmpl-name object) (slots object))))
 
 (defmethod object-slot ((object template-object) (slot-spec symbol))
   (assoc-value slot-spec (slots object) :test #'weak-symbol-equal-p))

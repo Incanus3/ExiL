@@ -29,16 +29,6 @@
 (defun make-simple-fact (fact-spec)
   (make-instance 'simple-fact :fact (copy-list fact-spec)))
 
-;; prints facts
-; public
-(defmethod print-object ((fact simple-fact) stream)
-  (labels ((print-fact () (format stream "~S" (fact fact))))
-    (if *print-escape*
-        (print-unreadable-object (fact stream :type t :identity t)
-          (print-fact))
-        (print-fact)))
-  fact)
-
 (defmethod fact-description ((fact simple-fact))
   (fact fact))
 

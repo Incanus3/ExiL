@@ -29,16 +29,9 @@
                  :negated negated
                  :match-var match-var))
 
-; public
-(defmethod print-object ((pattern simple-pattern) stream)
-  (labels ((print-pattern ()
-             (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
-                     (negated-p pattern) (pattern pattern))))
-    (if *print-escape*
-        (print-unreadable-object (pattern stream :type t)
-          (print-pattern))
-        (print-pattern)))
-  pattern)
+(defmethod format-object ((pattern simple-pattern) stream)
+  (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
+                     (negated-p pattern) (pattern pattern)))
 
 ; OBSOLETE:
 ;; checks pattern constant equivalency, ignores variables
@@ -59,15 +52,9 @@
 (defmethod slot-default ((type (eql 'pattern)))
   '?)
 
-; public
-(defmethod print-object ((object template-pattern) stream)
-  (if *print-escape*
-      (print-unreadable-object (object stream :type t :identity t)
-        (format stream "~:[~;NOT ~]~A" (negated-p object)
+(defmethod format-object ((object template-pattern) stream)
+  (format stream "~:[~;NOT ~]~A" (negated-p object)
                 (cons (tmpl-name object) (slots object))))
-      (format stream "~:[~;NOT ~]~A" (negated-p object)
-              (cons (tmpl-name object) (slots object))))
-  object)
 
 ; public, used by rete
 (defgeneric atom-equal-p (object1 object2)
