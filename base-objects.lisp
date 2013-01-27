@@ -81,10 +81,6 @@
                  :tmpl-name (tmpl-name object)
                  :slots (copy-alist (slots object))))
 
-; public
-(defmethod has-slot-p ((object template-object) slot-name)
-  (find slot-name (slots object) :key #'car :test #'weak-equal-p))
-
 (defmethod object-slot ((object template-object) (slot-spec symbol))
   (assoc-value slot-spec (slots object) :test #'weak-equal-p))
 
@@ -109,6 +105,10 @@
   (cons (tmpl-name object)
         (loop for (slot . val) in (slots object)
            append (list (to-keyword slot) val))))
+
+; public
+(defmethod has-slot-p ((object template-object) slot-name)
+  (find slot-name (slots object) :key #'car :test #'weak-equal-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
