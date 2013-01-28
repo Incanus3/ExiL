@@ -1,0 +1,59 @@
+cl-xlunit (0.6.3-2) unstable; urgency=low
+
+  * Build with debhelper extension dh-lisp
+  * control: Add Vcs-Browser field. Fix Depends field.
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 03 Aug 2009 20:32:20 -0600
+
+cl-xlunit (0.6.3-1) unstable; urgency=low
+
+  * New upstream
+  * debian/watch: New file
+  * debian/control: Require debhelper 7. Change to new lisp section.
+  Add Vcs-Git and Homepage fields.
+  * debian/rules: Update for DH7, architecture-independent build
+  * debian/{prerm,postrm}: Remove path from binary function
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 01 Aug 2009 20:13:35 -0600
+
+cl-xlunit (0.6.2-2) unstable; urgency=low
+
+  * debian/control: Use build-depends, update standards-version
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 09 Sep 2007 19:39:08 -0600
+
+cl-xlunit (0.6.2-1) unstable; urgency=low
+
+  * Remove textui invocation on load of tests.lisp
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun,  7 Mar 2004 18:41:39 -0700
+
+cl-xlunit (0.6.1-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 14 Aug 2003 17:25:21 -0600
+
+cl-xlunit (0.6.0-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 10 Aug 2003 03:32:47 -0600
+
+cl-xlunit (0.5.0-1) unstable; urgency=low
+
+  * New usptream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon,  4 Aug 2003 13:39:48 -0600
+
+cl-xlunit (0.2.0-1) unstable; urgency=low
+
+  * New version
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon,  4 Aug 2003 05:35:35 -0600
+
+cl-xlunit (0.1.0-1) unstable; urgency=low
+
+  * Initial upload
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon,  4 Aug 2003 03:40:37 -0600

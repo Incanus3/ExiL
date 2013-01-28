@@ -40,8 +40,11 @@ wildcards
 redefine initialize-instance methods as after, if possible
 add documentation to classes, functions, methods, macros and slots
   (using :documentation in slot definition)
+polish the lispworks gui - dialogs shouldn't be modal, lists should display
+object in readable form (as opposed to the unreadable #<> one)
 
 == Text
+zminit v textu pomocne nastroje - asdf, quickload
 zaradit sekci o BDD/TDD, citovat napr. z The RSpec Book, zminit LIFT a XLUnit
 
 === CLIPS FEATURES NOT INTENDED TO SUPPORT:

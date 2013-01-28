@@ -1,0 +1,1 @@
+dists/quicklisp/software/xlunit-20101006-git/xlunit.asd

@@ -45,7 +45,6 @@
 ;; more convenient, when i supply this predicate as a test to delete
 (defmethod includes-p ((fact fact) (token token))
   (loop for tkn = token then (parent tkn)
-     ;; unless tkn do (return nil)
      when (empty-token-p tkn) do (return nil)
      when (exil-equal-p fact (wme tkn)) do
        (return t)))

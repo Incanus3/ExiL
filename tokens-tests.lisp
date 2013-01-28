@@ -27,4 +27,4 @@
     (assert-false (token-equal-p empty-token token1))))
 
 (add-test-suite 'token-tests)
-(textui-test-run (get-suite token-tests))
+;(textui-test-run (get-suite token-tests))

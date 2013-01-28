@@ -12,6 +12,7 @@
   :licence "BSD"
   :description "EXpert system In Lisp"
   :long-description ""
+  :depends-on (:xlunit)
   :components
   ((:file "packages")
    (:file "utils"              :depends-on ("packages"))             ; ^
@@ -39,10 +40,11 @@
    (:file "environment"        :depends-on ("strategies"))           ; |
    (:file "object-makers"      :depends-on ("environment"))          ; v
    (:file "export"             :depends-on ("object-makers"))        ; front-end
-;   (:file "gui"                :depends-on ("export"))
-;   (:file "test-package"       :depends-on ("export"))
-   #|     (:file "print-tree"        :depends-on ("environment"))
-     (:file "pokusy"            :depends-on ("export"))|#)
+   #+lispworks(:file "gui"     :depends-on ("export"))
+#|     (:file "print-tree"        :depends-on ("environment"))
+     (:file "pokusy"            :depends-on ("export"))
+|#
+   )
 ;  :properties ((:author-email . "jakubkalab@gmail.com")
 ;               (:date . "4.9.2010")
   )
