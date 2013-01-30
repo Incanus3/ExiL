@@ -1,5 +1,13 @@
 (in-package :exil-rete)
 
+;; token constitutes a hierarchy of facts that meet some rule's conditions,
+;; e.g. if token's wme is some fact that meets some rule's third condition
+;; (which is a pattern)
+;; then its parent's wme is a fact that meets the rule's second condition, etc.
+;; together with the rule the token forms a match (either partial or complete,
+;; if a set of facts is found, that meets all the rule's conditions)
+;; by pairing the token hierarchy wmes (facts) to the rule's conditions (patterns)
+;; we get the variable bindings, that are then used in the rule's activations
 (defclass token () ((parent :reader parent :initarg :parent
                             :initform (make-empty-token))
                     (wme :reader wme :initarg :wme
@@ -12,7 +20,7 @@
 (defun make-empty-token ()
   (make-instance 'empty-token))
 
-(defun empty-token-p (token)
+(defmethod empty-token-p ((token token))
   (typep token 'empty-token))
 
 (defun make-token (wme &optional (parent (make-empty-token)))
@@ -30,33 +38,33 @@
 (defmethod print-object ((token token) stream)
   (print-unreadable-object (token stream :type t)
     (format stream "~A"
-            (nreverse
-             (loop for tkn = token then (parent tkn)
-                until (empty-token-p tkn)
-                collect (wme tkn))))))
+            (iter (for tkn :first token :then (parent tkn))
+                  (until (empty-token-p tkn))
+                  (collect (wme tkn) at beginning)))))
 
+;; wme of the token n steps back in the hierarchy (or nil, if the parent-chain
+;; is not that long
 (defmethod previous-wme ((token token) &optional (n 1))
   "gives wme from token n wmes back"
   (dotimes (i n (wme token))
     (setf token (parent token))
     (unless token (return))))
 
-;; it would be more logical if the arguements were switched, but this is
-;; more convenient, when i supply this predicate as a test to delete
-(defmethod includes-p ((fact fact) (token token))
-  (loop for tkn = token then (parent tkn)
-     when (empty-token-p tkn) do (return nil)
-     when (exil-equal-p fact (wme tkn)) do
-       (return t)))
+;; is fact included in token's hierarchy wmes?
+(defmethod included-in-p ((fact fact) (token token))
+  (iter (for tkn :first token :then (parent tkn))
+        (until (empty-token-p tkn))
+        (when (exil-equal-p fact (wme tkn)) (return t))))
 
-(defmethod includes-p ((included-token token) (token token))
-  (loop for tkn = token then (parent tkn)
-     unless tkn do (return nil)
-     when (token-equal-p tkn included-token) do
-       (return t)))
+;; is included-token included in token's hierarchy?
+;; (e.g. is it token-equal to either token or some of its ancestors?)
+(defmethod included-in-p ((included-token token) (token token))
+  (iter (for tkn :first token :then (parent tkn))
+        (while tkn)
+        (when (token-equal-p tkn included-token) (return t))))
 
+;; extracts wmes from token, ordered from first ancestor -> token
 (defun token->list (token)
-  (loop with list = ()
-     for tkn = token then (parent tkn)
-     when (typep tkn 'empty-token) do (return list)
-     do (push (wme tkn) list)))
+  (iter (for tkn :first token :then (parent tkn))
+        (until (empty-token-p tkn))
+        (collect (wme tkn) :at :beginning)))

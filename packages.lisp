@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defpackage :exil-utils
   (:documentation "general purpose utilities used in the rest of the code")
-  (:use :common-lisp)
+  (:use :common-lisp :iterate)
   (:shadow :intern :symbol-name)
   (:export :intern :string-append :symbol-name :symbol-append :to-keyword
            :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
@@ -26,7 +26,7 @@
 (defpackage :exil-core
   (:documentation "core functionality of the expert system library - facts,
                    templates, patterns and rules")
-  (:use :common-lisp :exil-utils)
+  (:use :common-lisp :exil-utils :iterate)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :variable-p :template :tmpl-name :slots :find-atom
            :has-slot-p :make-template :fact :simple-fact
@@ -46,7 +46,7 @@
 (defpackage :exil-rete
   (:documentation "the rete algorithm for matching facts against rule conditions")
   (:nicknames :erete)
-  (:use :common-lisp :exil-utils :exil-core)
+  (:use :common-lisp :exil-utils :exil-core :iterate)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
            :token->list :token-equal-p))

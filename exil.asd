@@ -12,7 +12,7 @@
   :licence "BSD"
   :description "EXpert system In Lisp"
   :long-description ""
-  :depends-on (:xlunit)
+  :depends-on (:xlunit :iterate)
   :components
   ((:file "packages")
    (:file "utils"              :depends-on ("packages"))             ; ^

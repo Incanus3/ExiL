@@ -158,12 +158,12 @@
   "applies 2-parameter predicate to every couple of items in the list,
    returns true if all the return values are true"
   (when (evenp (length list))
-    (loop with lst-copy = (copy-list list)
-       while lst-copy
-       for first = (pop lst-copy) then (pop lst-copy)
-       for second = (pop lst-copy) then (pop lst-copy)
-       unless (funcall predicate first second) return nil
-       finally (return t))))
+    (iter (with lst-copy = (copy-list list))
+          (while lst-copy)
+          (for first = (pop lst-copy))
+          (for second = (pop lst-copy))
+          (unless (funcall predicate first second) (return nil))
+          (finally (return t)))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun plistp (list)
@@ -193,8 +193,8 @@
 
 (defun hash->list (hash)
   "returns list of all values in the hash"
-  (loop for val being the hash-value of hash
-     collect val))
+  (iter (for (key val) in-hashtable hash)
+        (collect val)))
 
 (defgeneric weak-equal-p (obj1 obj2)
   (:documentation "ExiL default weak equality predicate")

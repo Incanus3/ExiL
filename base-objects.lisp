@@ -103,8 +103,8 @@
 ; public
 (defmethod description ((object template-object))
   (cons (tmpl-name object)
-        (loop for (slot . val) in (slots object)
-           append (list (to-keyword slot) val))))
+        (iter (for (slot . val) in (slots object))
+              (appending (list (to-keyword slot) val)))))
 
 ; public
 (defmethod has-slot-p ((object template-object) slot-name)

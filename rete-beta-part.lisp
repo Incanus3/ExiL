@@ -36,14 +36,14 @@
 
 (defmethod inactivate :before ((node beta-memory-node) (fact fact))
   (multiple-value-bind (new-items deleted) 
-      (diff-delete fact (items node) :test #'includes-p)
+      (diff-delete fact (items node) :test #'included-in-p)
     (setf (items node) new-items)
     (dolist (item deleted)
       (broken-match node item))))
 
 (defmethod inactivate :before ((node beta-memory-node) (token token))
   (multiple-value-bind (new-list deleted)
-      (diff-delete token (items node) :test #'includes-p)
+      (diff-delete token (items node) :test #'included-in-p)
     (setf (items node) new-list)
     (dolist (item deleted)
       (broken-match node item))))
