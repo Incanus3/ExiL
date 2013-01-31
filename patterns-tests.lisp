@@ -29,6 +29,10 @@
     (assert-false (exil-equal-p tmpl-pattern1 tmpl-pattern3))
     (assert-false (exil-equal-p tmpl-pattern1 tmpl-pattern4))))
 
+(def-test-method test-variable-p ((tests pattern-tests) :run nil)
+  (assert-true (variable-p '?a))
+  (assert-false (variable-p 'a)))
+
 (def-test-method test-constant-test ((tests pattern-tests) :run nil)
   (assert-true (constant-test 'a 'a))
   (assert-true (constant-test '?a 'b))

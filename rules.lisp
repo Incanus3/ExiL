@@ -1,7 +1,17 @@
 (in-package :exil-core)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; rules
+;; These are the expert system's inference rules, they consist of a set of
+;; conditions (which are patterns) and a set of activations, which may be any
+;; lisp expressions and can contain variables, that appear in the conditions.
+;; These expressions are evaluated when all the rule's conditions are met
+;; (facts matching the patterns with compatible variable bindings are found)
+;; and the rule is selected from agenda (defined in environment) for activation
+;; - we say the rule is "fired". Rule's activations typically consist of calls
+;; to assert, retract or modify, thus modifying the system's knowledge base,
+;; but the user is not limited to these options, printing output is a typical
+;; example of other usage.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; public
 (defclass rule ()

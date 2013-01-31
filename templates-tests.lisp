@@ -4,10 +4,6 @@
   ((template :initform (make-template 'test-template '(a (b :default 5)))
              :reader template)))
 
-(def-test-method test-variable-p ((tests template-tests) :run nil)
-  (assert-true (variable-p '?a))
-  (assert-false (variable-p 'a)))
-
 (def-test-method test-doslots ((tests template-tests) :run nil)
   (let (slots)
     (doslots (name default (template tests))

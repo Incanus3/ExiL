@@ -3,12 +3,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general-purpose functions
 
-; public
-(defun variable-p (expr)
-  "is expr an exil variable?"
-  (and (symbolp expr)
-       (char-equal (char (symbol-name expr) 0) #\?)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template class
 

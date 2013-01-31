@@ -1,13 +1,20 @@
 (in-package :exil-rete)
 
-;; token constitutes a hierarchy of facts that meet some rule's conditions,
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Token constitutes a linked list of facts that meet some rule's conditions,
 ;; e.g. if token's wme is some fact that meets some rule's third condition
-;; (which is a pattern)
 ;; then its parent's wme is a fact that meets the rule's second condition, etc.
-;; together with the rule the token forms a match (either partial or complete,
-;; if a set of facts is found, that meets all the rule's conditions)
-;; by pairing the token hierarchy wmes (facts) to the rule's conditions (patterns)
-;; we get the variable bindings, that are then used in the rule's activations
+;; Together with the rule the token forms a match (either partial or complete,
+;; if a set of facts is found, that meets all the rule's conditions).
+;; By pairing the token's wmes (facts) to the rule's conditions (patterns)
+;; we get the variable bindings, that are then used in the rule's activations.
+;; WME stands for working memory element, which is RETE's terminology for facts
+;; that are matched against some rule's conditions. The RETE network keeps
+;; tokens (complete or partial matches) in each of its nodes, so many copies
+;; of the same WME may exist at the moment, whereas the environment stores only
+;; one instance of the fact.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defclass token () ((parent :reader parent :initarg :parent
                             :initform (make-empty-token))
                     (wme :reader wme :initarg :wme
@@ -51,6 +58,8 @@
     (unless token (return))))
 
 ;; is fact included in token's hierarchy wmes?
+;; parameter's are ordered this way so that it can be called like this:
+;; (delete fact (list of tokens) :test #'included-in-p)
 (defmethod included-in-p ((fact fact) (token token))
   (iter (for tkn :first token :then (parent tkn))
         (until (empty-token-p tkn))
