@@ -13,8 +13,8 @@
    (alpha-memory :accessor memory :initarg :memory
                  :initform nil)))
 
-(defmethod node-equal-p ((node1 alpha-test-node)
-                         (node2 alpha-test-node))
+(defmethod exil-equal-p and ((node1 alpha-test-node)
+                             (node2 alpha-test-node))
   (and (equalp (tested-field node1)
                (tested-field node2))
        (constant-test (value node1)

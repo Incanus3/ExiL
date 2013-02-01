@@ -11,8 +11,8 @@
 
 (push *path* asdf:*central-registry*)
 
-(ql:update-client)
-(ql:update-all-dists)
+;(ql:update-client)
+;(ql:update-all-dists)
 (ql:quickload :exil)
 
 (tests-base:run-suites)

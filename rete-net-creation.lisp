@@ -145,7 +145,7 @@
 				  :parent parent
 				  :tests tests
 				  :alpha-memory a-memory)))
-    (or (find-if (lambda (child) (node-equal-p child join-node)) (children parent))
+    (or (find-if (lambda (child) (exil-equal-p child join-node)) (children parent))
 	(progn (push join-node (children parent))
 	       (push join-node (children a-memory))
 	       join-node))))
@@ -157,7 +157,7 @@
 				 :parent parent
 				 :tests tests
 				 :alpha-memory a-memory)))
-    (or (find-if (lambda (child) (node-equal-p child neg-node)) (children parent))
+    (or (find-if (lambda (child) (exil-equal-p child neg-node)) (children parent))
 	(progn (push neg-node (children parent))
 	       (push neg-node (children a-memory))
 	       neg-node))))
