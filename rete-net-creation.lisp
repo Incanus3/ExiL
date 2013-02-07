@@ -41,8 +41,8 @@
 (defgeneric find/create-test-node (parent field value)
   (:method ((parent simple-fact-alpha-node) field value)
     (find/create-test-node% parent field value 'simple-fact-test-node))
-  (:method ((parent template-fact-alpha-node) field value)
-    (find/create-test-node% parent field value 'template-fact-test-node)))
+  (:method ((parent tmpl-fact-alpha-node) field value)
+    (find/create-test-node% parent field value 'tmpl-fact-test-node)))
 
 (defmethod create-alpha-net% ((pattern simple-pattern)
                               (root simple-fact-subtop-node))
@@ -66,7 +66,7 @@
                                         :description pattern))))))
 
 (defmethod create-alpha-net% ((pattern template-pattern)
-                              (root template-fact-subtop-node))
+                              (root tmpl-fact-subtop-node))
   (loop with slots = (slots pattern)
      with node = root
      for (slot-name . slot-value) in slots

@@ -2,9 +2,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RETE is the algorithm that matches the facts in the knowledge base of an
-;; expert system against conditions of its inferences rules. Without this
-;; algorithm, matching of each rule against each set of facts would have
-;; exponential computational complexity 
+;; expert system against conditions of its productions (inferences rules).
+;; Without this algorithm, matching of each rule against each set of facts
+;; would have unfeasible computational complexity even for medium-sized expert
+;; systems.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; terminology note:
