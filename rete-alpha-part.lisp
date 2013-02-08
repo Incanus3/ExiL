@@ -50,9 +50,7 @@
 (defmethod initialize-network ((node alpha-top-node)
                                &optional (tmpl-name (simple-fact-key node)))
   (setf (network node tmpl-name)
-        (make-instance (if (equalp tmpl-name (simple-fact-key node))
-                           'simple-fact-subtop-node
-                           'tmpl-fact-subtop-node))))
+        (make-instance 'alpha-subtop-node)))
 
 (defmethod ensure-network ((node alpha-top-node)
                            &optional (tmpl-name (simple-fact-key node)))
@@ -88,17 +86,6 @@
 
 (defmethod activate ((node alpha-subtop-node) (wme fact))
   (activate-children node wme))
-
-;; TODO: remove these classes, they're not needed any more, as
-;; simple-fact-test-node and tmpl-fact-test-node have been replaced by generic
-;; alpha-test-node
-(defclass simple-fact-alpha-node (alpha-node) ())
-
-(defclass tmpl-fact-alpha-node (alpha-node) ())
-
-(defclass simple-fact-subtop-node (alpha-subtop-node simple-fact-alpha-node) ())
-
-(defclass tmpl-fact-subtop-node (alpha-subtop-node tmpl-fact-alpha-node) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

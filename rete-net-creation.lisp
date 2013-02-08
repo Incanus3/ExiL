@@ -39,7 +39,7 @@
                                :value value) t))))
 
 (defmethod create-alpha-net% ((pattern simple-pattern)
-                              (root simple-fact-subtop-node))
+                              (root alpha-subtop-node))
   (loop with patt = (pattern pattern)
      with node = root
      for atom in patt
@@ -60,7 +60,7 @@
                                         :description pattern))))))
 
 (defmethod create-alpha-net% ((pattern template-pattern)
-                              (root tmpl-fact-subtop-node))
+                              (root alpha-subtop-node))
   (loop with slots = (slots pattern)
      with node = root
      for (slot-name . slot-value) in slots
