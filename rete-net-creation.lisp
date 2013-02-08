@@ -18,8 +18,7 @@
   (activate (alpha-top-node rete) wme))
 
 (defmethod rem-wme ((wme fact) &optional (rete (exil-env:rete)))
-  (inactivate (alpha-top-node rete) wme)
-  (inactivate (beta-top-node rete) wme))
+  (inactivate (alpha-top-node rete) wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; net creation
@@ -90,38 +89,36 @@
         (with used-vars)
         (for i :upfrom 0)
         (for (prev-cond . field) = (find-atom-in-cond-list% atom prev-conds))
-        (when (variable-p atom)
-          (unless (member atom used-vars)
-            (when prev-cond
-              (collect (make-test i prev-cond field))
-              (push atom used-vars))))))
+        (when (and (variable-p atom) prev-cond (not (member atom used-vars)))
+          (collect (make-test i prev-cond field))
+          (push atom used-vars))))
 
 (defmethod get-intercondition-tests% ((condition template-pattern)
                                       (prev-conds list))
   (iter (for (slot-name . slot-val) in (slots condition))
         (with used-vars)
         (for (prev-cond . field) = (find-atom-in-cond-list% slot-val prev-conds))
-        (when (variable-p slot-val)
-          (unless (member slot-val used-vars)
-            (when prev-cond
+        (when (and (variable-p slot-val)
+                   prev-cond
+                   (not (member slot-val used-vars)))
               (collect (make-test slot-name prev-cond field))
-              (push slot-val used-vars))))))
+              (push slot-val used-vars))))
 
 (defmethod get-intracondition-tests% ((condition simple-pattern))
   (iter (for subpattern on (pattern condition))
         (for i :upfrom 0)
-        (when (variable-p (first subpattern))
-          (when (position (first subpattern) (rest subpattern))
-            (collect (make-test 0 i (+ 1 i (position (first subpattern)
-                                                     (rest subpattern)))))))))
+        (when (and (variable-p (first subpattern))
+                   (position (first subpattern) (rest subpattern)))
+          (collect (make-test 0 i (+ 1 i (position (first subpattern)
+                                                   (rest subpattern))))))))
 
 (defmethod get-intracondition-tests% ((condition template-pattern))
   (iter (for subpattern on (slots condition))
         (for (slot-name . slot-val) = (first subpattern))
-        (when (variable-p slot-val)
-          (when (find slot-val (rest subpattern) :key #'cdr)
-            (collect (make-test 0 slot-name (car (find slot-val (rest subpattern)
-                                                       :key #'cdr))))))))
+        (when (and (variable-p slot-val)
+                   (find slot-val (rest subpattern) :key #'cdr))
+          (collect (make-test 0 slot-name (car (find slot-val (rest subpattern)
+                                                     :key #'cdr)))))))
 
 (defmethod get-join-tests-from-condition ((condition pattern)
                                           (prev-conds list))

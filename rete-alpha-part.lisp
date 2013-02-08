@@ -104,8 +104,7 @@
     (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
 
 (defgeneric test (node wme)
-  (:documentation "provides testing part of alpha-test-node activation")
-  (:method ((node alpha-test-node) (wme fact)) nil))
+  (:documentation "provides testing part of alpha-test-node activation"))
 
 ;; once the wme passes test of some of node's children, there's no need
 ;; to continue the search, because the children are created in a way
