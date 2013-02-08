@@ -50,6 +50,11 @@
 ;; for top node, called by add-wme, for others, called by their parents
 (defgeneric activate (node object)
   (:documentation "handles various node activations"))
+
+;; DEBUG:
+(defmethod activate :before (node object)
+  (format t "~%~a~%  activated by ~a" node object))
+
 (defgeneric activate-children (node object))
 ;; for top node, called by remove-wme
 (defgeneric inactivate (node object))

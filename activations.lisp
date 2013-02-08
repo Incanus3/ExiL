@@ -44,7 +44,7 @@
 	 (bindings (get-variable-bindings (remove-if #'negated-p (conditions rule))
 					  (token->list token)))
 	 (activations (substitute-variables (activations rule)
-					    bindings)))
+                                      bindings)))
     (format t "Firing ~A~%" activation)
     (dolist (activation activations)
       (eval activation))))

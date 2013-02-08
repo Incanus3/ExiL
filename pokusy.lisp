@@ -2,21 +2,18 @@
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
 ; TEMPLATE FACTS:
-(clear)
+;(clear)
+(exil-env::completely-reset-environment)
 
 (deftemplate goal action object from to)
 (deftemplate in object location)
 
+#|
 (deffacts world
   (in :object robot :location A)
   (in :object box :location B)
   (goal :action push :object box :from B :to A))
-
-(defrule stop
-  (goal :object ?x :to ?y)
-  (in :object ?x :location ?y)
-  =>
-  (halt))
+|#
 
 (defrule move
   (goal :object ?x :from ?y)
@@ -34,14 +31,28 @@
   (modify ?robot :location ?z)
   (modify ?object :location ?z))
 
+(defrule stop
+  (goal :object ?x :to ?y)
+  (in :object ?x :location ?y)
+  =>
+  (halt))
+
 (unwatch all)
-(watch facts)
+;(watch facts)
 ;(watch activations)
 
 (reset)
-;(step)
 
-(run)
+#|
+(assert (in :object robot :location A))
+(assert (in :object box :location B))
+(assert (goal :action push :object box :from B :to A))
+|#
+
+#|
+(step)
+;(run)
+|#
 
 #|
 ; SIMPLE FACTS:

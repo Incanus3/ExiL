@@ -231,6 +231,7 @@
 (defun step ()
   "Run inference engine for one turn"
   (when (agenda)
+    (format t "~%------------------------------------------------------~%")
     (activate-rule (select-activation))
     t))
 
