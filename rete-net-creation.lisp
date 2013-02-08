@@ -83,11 +83,11 @@
 
 (defmethod create-alpha-net ((pattern simple-pattern)
                              &optional (rete (exil-env:rete)))
-  (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete))))
+  (create-alpha-net% pattern (ensure-network (alpha-top-node rete))))
 
 (defmethod create-alpha-net ((pattern template-pattern)
                              &optional (rete (exil-env:rete)))
-  (create-alpha-net% pattern (get/initialize-network (alpha-top-node rete)
+  (create-alpha-net% pattern (ensure-network (alpha-top-node rete)
                                                      (tmpl-name pattern))))
 
 (defun find-atom-in-cond-list% (atom cond-list)

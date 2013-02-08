@@ -18,47 +18,60 @@
 (defclass alpha-top-node (alpha-node)
   ((dataflow-networks :accessor networks :initform (make-hash-table))
    (simple-fact-key :reader simple-fact-key
-                    :initform (gensym "simple-fact"))))
+                    :initform (gensym "simple-fact")))
+  (:documentation "Top node of the alpha-part of rete network, stores one
+                   dataflow network for each template and one for simple-facts"))
 
-;(defmethod initialize-instance :after ((node alpha-top-node) &key)
-;  (setf (gethash (simple-fact-key node)
-;		 (networks node))
-;	(make-instance 'simple-fact-subtop-node)))
+(defgeneric network (node &optional tmpl-name)
+  (:documentation "returns dataflow network for given template name
+                   or simple-fact network if template name omitted"))
+(defgeneric (setf network) (value node &optional tmpl-name)
+  (:documentation "sets dataflow network for given template name
+                   or simple-fact network by default"))
+(defgeneric initialize-network (node &optional tmpl-name)
+  (:documentation "creates new dataflow network for given template name
+                   or simple-fact network by default"))
+(defgeneric ensure-network (node &optional tmpl-name)
+  (:documentation "either returns dataflow network for given template name
+                   (or simple-fact network by default) if it exists or
+                   initializes a new one and returns it"))
+(defgeneric network-key (node wme)
+  (:documentation "returns dataflow-networks hash-key for given wme
+                   i.e. either its tmpl-name or simple-fact-key"))
 
-(defmethod get-network ((node alpha-top-node)
-                        &optional (template-name (simple-fact-key node)))
-  (gethash template-name (networks node)))
+(defmethod network ((node alpha-top-node)
+                    &optional (tmpl-name (simple-fact-key node)))
+  (gethash tmpl-name (networks node)))
 
-(defmethod (setf get-network)
-    (value (node alpha-top-node)
-     &optional (template-name (simple-fact-key node)))
-  (setf (gethash template-name (networks node)) value))
+(defmethod (setf network) (value (node alpha-top-node)
+                           &optional (tmpl-name (simple-fact-key node)))
+  (setf (gethash tmpl-name (networks node)) value))
 
-(defmethod initialize-network
-    ((node alpha-top-node) &optional (template-name (simple-fact-key node)))
-  (setf (get-network node template-name)
-        (make-instance (if (equalp template-name (simple-fact-key node))
+(defmethod initialize-network ((node alpha-top-node)
+                               &optional (tmpl-name (simple-fact-key node)))
+  (setf (network node tmpl-name)
+        (make-instance (if (equalp tmpl-name (simple-fact-key node))
                            'simple-fact-subtop-node
                            'tmpl-fact-subtop-node))))
 
-(defmethod get/initialize-network
-    ((node alpha-top-node) &optional (template-name (simple-fact-key node)))
-  (or (get-network node template-name)
-      (initialize-network node template-name)))
+(defmethod ensure-network ((node alpha-top-node)
+                           &optional (tmpl-name (simple-fact-key node)))
+  (or (network node tmpl-name)
+      (initialize-network node tmpl-name)))
 
 (defmethod initialize-instance :after ((node alpha-top-node) &key)
   (initialize-network node))
 
+(defmethod network-key ((node alpha-top-node) (wme fact))
+  (typecase wme
+    (simple-fact (simple-fact-key node))
+    (template-fact (tmpl-name wme))))
+
+;; TODO: check whether rete-network-creation (add-production) ensures creation
+;; of alpha-subtop-node for each template, if so, replace ensure-network call
+;; by network call
 (defmethod activate ((node alpha-top-node) (wme fact))
-  (let ((network (get/initialize-network
-                  node (typecase wme
-                         (simple-fact (simple-fact-key node))
-                         (template-fact (tmpl-name wme))))))
-    ;; (unless network
-    ;; (print "activate alpha-top-node: no network found~%\
-    ;; returning networks hash for debug")
-    ;; (inspect node))
-    (activate network wme)))
+  (activate (ensure-network node (network-key node wme)) wme))
 
 (defmethod inactivate ((node alpha-top-node) (wme fact))
   (loop for child being the hash-values in (networks node)
@@ -138,7 +151,7 @@
 (defclass simple-fact-test-node (alpha-test-node simple-fact-alpha-node) ())
 
 (defmethod test ((node simple-fact-test-node) (wme simple-fact))
-  (constant-test (value node) (nth (tested-field node) (fact wme))))
+  (constant-test (value node) (object-slot wme (tested-field node))))
 
 ;; tested-field holds field name
 (defclass tmpl-fact-test-node (alpha-test-node tmpl-fact-alpha-node) ())
@@ -157,4 +170,3 @@
 
 (defmethod inactivate ((node alpha-memory-node) (wme fact))
   (setf (items node) (delete wme (items node) :test #'exil-equal-p)))
-
