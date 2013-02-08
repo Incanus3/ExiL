@@ -72,8 +72,8 @@
   (activate (ensure-network node (network-key node wme)) wme))
 
 (defmethod inactivate ((node alpha-top-node) (wme fact))
-  (loop for child being the hash-values in (networks node)
-     do (inactivate child wme)))
+  (iter (for (tmpl-name subtop-node) in-hashtable (networks node))
+        (inactivate subtop-node wme)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
