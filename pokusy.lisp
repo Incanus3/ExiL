@@ -55,50 +55,6 @@
 (run)
 
 #|
-; SIMPLE FACTS:
-;(clear)
-
-(deffacts world
-  (in robot A)
-  (in box B)
-  (goal push box B A))
-
-(defrule stop
-  (goal ?action ?object ?from ?to)
-  (in ?object ?to)
-  =>
-  (halt))
-
-(defrule move
-  (goal ?action ?object ?from ?to)
-  (in ?object ?from)
-  (- in robot ?from)
-  (in robot ?z)
-  =>
-  (modify (in robot ?z)
-	  (in robot ?from)))
-
-(defrule push
-  (goal ?action ?object ?from ?to)
-  (in ?object ?from)
-  (in robot ?from)
-  =>
-  (modify (in robot ?from)
-	  (in robot ?to))
-  (modify (in ?object ?from)
-	  (in ?object ?to)))
-
-(unwatch all)
-(watch facts)
-;(watch activations)
-
-(reset)
-;(step)
-
-(run)
-|#
-
-#|
 (pprint (facts))
 
 (completely-reset-environment)

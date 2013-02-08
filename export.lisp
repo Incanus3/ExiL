@@ -114,26 +114,30 @@
     ((clips-mod-list-p mod-list) (clips->nonclips-mod-list mod-list))
     (t (error "~A not a valid modify specifier" mod-list))))
 
-(defmethod modify% ((fact-spec list) mod-list)
+;; mod-list is a mapping from slot-name to new value
+;; it can be either plist for non-clips syntax of alist for clips syntax
+(defmethod modify% ((fact-spec list) (mod-list list))
   (let ((mod-fact (make-fact fact-spec)))
     (unless (typep mod-fact 'template-fact)
-      (error "modify: ~A is not a template fact specification" fact-spec))
+      (error "modify: ~S is not a template fact specification" fact-spec))
     (modify-fact mod-fact (to-mod-spec-list mod-list))))
 
-(defmethod modify% ((fact-spec integer) mod-list)
-  (let ((mod-fact (nth (1- fact-spec) (facts))))
-    (unless (typep mod-fact 'template-fact)
-      (error "modify: ~A is not a template fact" mod-fact)) 
-    (modify-fact mod-fact mod-list)))
-
+;; used as follows:
+;; (defrule push
+;;   (goal :object ?x :from ?y :to ?z)
+;;   ?object <- (in :object ?x :location ?y)
+;;   ?robot <- (in :object robot :location ?y)
+;;   =>
+;;   (modify ?robot :location ?z)
+;;   (modify ?object :location ?z))
+;; modify works for template-facts ONLY!
+;; it doesn't make much sense to use it for simple facts as there are no
+;; slot names that could be used in the mod-list
+;; CLIPS doesn't support modify for simple-facts either
 ; public
 (defmacro modify (fact-spec &rest mod-list)
   "Replace old-fact by new-fact"
-  (typecase fact-spec
-    (list `(modify% ',fact-spec ',mod-list))
-    (integer `(modify% ,fact-spec ',mod-list))
-    (t (error "modify doesn't support fact specification of type ~A"
-	      (type-of fact-spec)))))
+  `(modify% ',fact-spec ',mod-list))
 
 ; public
 (defun clear ()

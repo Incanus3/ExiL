@@ -108,7 +108,9 @@
       (rem-wme fact)
       #+lispworks(exil-gui:update-lists))))
 
-(defun modify-fact (fact mod-list)
+;; modify-fact works for template-facts ONLY!
+;; mod-list is a plist mapping slot-name to new value
+(defmethod modify-fact ((fact fact) (mod-list list))
   (assert (find fact (facts) :test #'exil-equal-p) ()
           "modify: fact ~A not found in (facts)" fact)
   (let ((new-fact (copy-object fact)))
