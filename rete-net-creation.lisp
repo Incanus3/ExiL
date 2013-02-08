@@ -14,12 +14,12 @@
   (defun make-rete ()
     (make-instance 'rete)))
 
-(defmethod add-wme ((fact fact) &optional (rete (exil-env:rete)))
-  (activate (alpha-top-node rete) fact))
+(defmethod add-wme ((wme fact) &optional (rete (exil-env:rete)))
+  (activate (alpha-top-node rete) wme))
 
-(defmethod rem-wme ((fact fact) &optional (rete (exil-env:rete)))
-  (inactivate (alpha-top-node rete) fact)
-  (inactivate (beta-top-node rete) fact))
+(defmethod rem-wme ((wme fact) &optional (rete (exil-env:rete)))
+  (inactivate (alpha-top-node rete) wme)
+  (inactivate (beta-top-node rete) wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; net creation
@@ -81,17 +81,15 @@
 (defun find-atom-in-cond-list% (atom cond-list)
   (iter (for condition in (reverse cond-list))
         (for i :upfrom 1)
-        (until (find-atom condition atom))
-        (finally (let ((position (atom-position condition atom)))
-                   (when position (return (cons i position)))))))
+        (when (find-atom condition atom)
+          (return (cons i (atom-position condition atom))))))
 
 (defmethod get-intercondition-tests% ((condition simple-pattern)
                                       (prev-conds list))
   (iter (for atom in (pattern condition))
         (with used-vars)
         (for i :upfrom 0)
-        (for (prev-cond . field) :first (find-atom-in-cond-list% atom prev-conds)
-             :then (find-atom-in-cond-list% atom prev-conds))
+        (for (prev-cond . field) = (find-atom-in-cond-list% atom prev-conds))
         (when (variable-p atom)
           (unless (member atom used-vars)
             (when prev-cond
@@ -102,9 +100,7 @@
                                       (prev-conds list))
   (iter (for (slot-name . slot-val) in (slots condition))
         (with used-vars)
-        (for (prev-cond . field)
-             :first (find-atom-in-cond-list% slot-val prev-conds)
-             :then (find-atom-in-cond-list% slot-val prev-conds))
+        (for (prev-cond . field) = (find-atom-in-cond-list% slot-val prev-conds))
         (when (variable-p slot-val)
           (unless (member slot-val used-vars)
             (when prev-cond
@@ -121,8 +117,7 @@
 
 (defmethod get-intracondition-tests% ((condition template-pattern))
   (iter (for subpattern on (slots condition))
-        (for (slot-name . slot-val) :first (first subpattern)
-             :then (first subpattern))
+        (for (slot-name . slot-val) = (first subpattern))
         (when (variable-p slot-val)
           (when (find slot-val (rest subpattern) :key #'cdr)
             (collect (make-test 0 slot-name (car (find slot-val (rest subpattern)
@@ -165,25 +160,19 @@
 (defmethod new-production ((rule rule) &optional (rete (exil-env:rete)))
   (with-slots (conditions) rule
     (iter (for current-cond in conditions)
-          (for i :first 0 :then (1+ i))
+          (for i :upfrom 0)
           (for prev-conds :first () :then (subseq conditions 0 i))
-          (for alpha-memory :first (create-alpha-net current-cond rete)
-               :then (create-alpha-net current-cond rete))
+          (for alpha-memory = (create-alpha-net current-cond rete))
           (for tests :first ()
                :then (get-join-tests-from-condition current-cond prev-conds))
           (for current-mem-node :first (beta-top-node rete)
                :then (beta-memory current-join-node))
-          (for current-join-node
-               :first (if (negated-p current-cond)
-                          (find/create-neg-node current-mem-node tests
-                                                alpha-memory)
-                          (find/create-join-node current-mem-node tests
-                                                 alpha-memory))
-               :then (if (negated-p current-cond)
-                         (find/create-neg-node current-mem-node tests
-                                               alpha-memory)
-                         (find/create-join-node current-mem-node tests
-                                                alpha-memory)))
+          (for current-join-node = 
+               (if (negated-p current-cond)
+                   (find/create-neg-node current-mem-node tests
+                                         alpha-memory)
+                   (find/create-join-node current-mem-node tests
+                                          alpha-memory)))
           (finally (add-production (beta-memory current-join-node) rule)))))
 	 
 (defmethod remove-production ((rule rule) &optional (rete (exil-env:rete)))

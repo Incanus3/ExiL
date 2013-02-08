@@ -52,24 +52,19 @@
   (setf (network node tmpl-name)
         (make-instance 'alpha-subtop-node)))
 
+; called by rete-net-creation
 (defmethod ensure-network ((node alpha-top-node)
                            &optional (tmpl-name (simple-fact-key node)))
   (or (network node tmpl-name)
       (initialize-network node tmpl-name)))
-
-(defmethod initialize-instance :after ((node alpha-top-node) &key)
-  (initialize-network node))
 
 (defmethod network-key ((node alpha-top-node) (wme fact))
   (typecase wme
     (simple-fact (simple-fact-key node))
     (template-fact (tmpl-name wme))))
 
-;; TODO: check whether rete-network-creation (add-production) ensures creation
-;; of alpha-subtop-node for each template, if so, replace ensure-network call
-;; by network call
 (defmethod activate ((node alpha-top-node) (wme fact))
-  (activate (ensure-network node (network-key node wme)) wme))
+  (activate (network node (network-key node wme)) wme))
 
 (defmethod inactivate ((node alpha-top-node) (wme fact))
   (iter (for (tmpl-name subtop-node) in-hashtable (networks node))
@@ -143,6 +138,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; children are beta-join-nodes
+;; TODO: save the rule condition (pattern) for information purposes
 (defclass alpha-memory-node (alpha-node memory-node) ())
 
 (defmethod activate ((node alpha-memory-node) (wme fact))

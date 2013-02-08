@@ -41,7 +41,7 @@
   (modify ?object (location ?z)))
 
 (unwatch all)
-(watch facts)
+;(watch facts)
 ;(watch activations)
 
 (reset)
