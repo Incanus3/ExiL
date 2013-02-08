@@ -23,26 +23,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; net creation
-;; parent can be either alpha-test-node or simple/pattern-fact-subtop-node
+;; parent can be either alpha-test-node or alpha-subtop-node
 (defmethod find-test-node ((parent alpha-node) field value)
   (dolist (child (children parent) nil)
     (when (and (equalp (tested-field child) field)
                (var-or-equal-p (value child) value))
       (return child))))
 
-(defmethod find/create-test-node% (parent field value new-node-type)
+(defmethod find/create-test-node ((parent alpha-node) field value)
   (let ((node (find-test-node parent field value)))
     (if node
         (values node nil)
-        (values (make-instance new-node-type
+        (values (make-instance 'alpha-test-node
                                :tested-field field
                                :value value) t))))
-
-(defgeneric find/create-test-node (parent field value)
-  (:method ((parent simple-fact-alpha-node) field value)
-    (find/create-test-node% parent field value 'simple-fact-test-node))
-  (:method ((parent tmpl-fact-alpha-node) field value)
-    (find/create-test-node% parent field value 'tmpl-fact-test-node)))
 
 (defmethod create-alpha-net% ((pattern simple-pattern)
                               (root simple-fact-subtop-node))

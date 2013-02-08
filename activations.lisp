@@ -45,6 +45,6 @@
 					  (token->list token)))
 	 (activations (substitute-variables (activations rule)
                                       bindings)))
-    (format t "Firing ~A~%" activation)
+    (format t "~%Firing ~A" activation)
     (dolist (activation activations)
       (eval activation))))

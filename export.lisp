@@ -151,8 +151,9 @@
   "Delete fact group"
   `(rem-fact-group ',name))
 
-(defun assert-group% (descriptions)
-  (dolist (desc descriptions)
+(defun assert-group% (group)
+  (format t "~%Asserting fact group ~A" (car group))
+  (dolist (desc (cdr group))
     (assert% desc)))
 
 ; public
@@ -160,7 +161,7 @@
   "Clear all facts and add all fact groups"
   (clear)
   (dolist (group (fact-groups))
-    (assert-group% (cdr group))))
+    (assert-group% group)))
 
 (defun my-position (atom list)
   (position atom list))
@@ -231,7 +232,7 @@
 (defun step ()
   "Run inference engine for one turn"
   (when (agenda)
-    (format t "~%------------------------------------------------------~%")
+;    (format t "~%------------------------------------------------------")
     (activate-rule (select-activation))
     t))
 
@@ -240,7 +241,7 @@
 ; public
 (defun halt ()
   "Stop the inference engine"
-  (format t "Halting~%")
+  (format t "~%Halting")
   (setf *exil-running* nil))
 
 ; public

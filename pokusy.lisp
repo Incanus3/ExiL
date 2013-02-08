@@ -8,12 +8,10 @@
 (deftemplate goal action object from to)
 (deftemplate in object location)
 
-#|
 (deffacts world
   (in :object robot :location A)
   (in :object box :location B)
   (goal :action push :object box :from B :to A))
-|#
 
 (defrule move
   (goal :object ?x :from ?y)
@@ -44,6 +42,7 @@
 (reset)
 
 #|
+; when asserting fact individualy, comment out deffacts call above
 (assert (in :object robot :location A))
 (assert (in :object box :location B))
 (assert (goal :action push :object box :from B :to A))
@@ -51,8 +50,9 @@
 
 #|
 (step)
-;(run)
 |#
+
+(run)
 
 #|
 ; SIMPLE FACTS:

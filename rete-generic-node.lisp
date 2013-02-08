@@ -53,7 +53,8 @@
 
 ;; DEBUG:
 (defmethod activate :before (node object)
-  (format t "~%~a~%  activated by ~a" node object))
+;  (format t "~%~a~%  activated by ~a" node object)
+  )
 
 (defgeneric activate-children (node object))
 ;; for top node, called by remove-wme

@@ -27,5 +27,5 @@
                                   (token->list (match-token match)))))
       ;;      (format stream "Activation ~A:~%~A"
       ;;	      (name (match-rule match)) (token->list (match-token match)))
-      (format stream "Activation ~A:" (name (match-rule match))))
+      (format stream "Activation ~A" (name (match-rule match))))
   match)

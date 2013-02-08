@@ -89,6 +89,13 @@
 (defmethod activate ((node alpha-subtop-node) (wme fact))
   (activate-children node wme))
 
+;; TODO: remove these classes, they're not needed any more, as
+;; simple-fact-test-node and tmpl-fact-test-node have been replaced by generic
+;; alpha-test-node
+(defclass simple-fact-alpha-node (alpha-node) ())
+
+(defclass tmpl-fact-alpha-node (alpha-node) ())
+
 (defclass simple-fact-subtop-node (alpha-subtop-node simple-fact-alpha-node) ())
 
 (defclass tmpl-fact-subtop-node (alpha-subtop-node tmpl-fact-alpha-node) ())
@@ -143,20 +150,7 @@
   (when (memory node)
     (inactivate (memory node) wme)))
 
-(defclass simple-fact-alpha-node (alpha-node) ())
-
-(defclass tmpl-fact-alpha-node (alpha-node) ())
-
-;; tested-field holds field index
-(defclass simple-fact-test-node (alpha-test-node simple-fact-alpha-node) ())
-
-(defmethod test ((node simple-fact-test-node) (wme simple-fact))
-  (constant-test (value node) (object-slot wme (tested-field node))))
-
-;; tested-field holds field name
-(defclass tmpl-fact-test-node (alpha-test-node tmpl-fact-alpha-node) ())
-
-(defmethod test ((node tmpl-fact-test-node) (wme template-fact))
+(defmethod test ((node alpha-test-node) (wme fact))
   (constant-test (value node) (object-slot wme (tested-field node))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
