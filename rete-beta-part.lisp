@@ -1,16 +1,29 @@
 (in-package :exil-rete)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; beta memory classes
 
 (defclass beta-node (node) ((parent :accessor parent :initarg :parent
                                     :initform nil)))
+
+(defclass beta-top-node (beta-memory-node) 
+  ((items :initform (list (make-empty-token)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; children are beta-join-nodes
 (defclass beta-memory-node (beta-node memory-node)
   ((productions :accessor productions
                 ;; :initarg :productions
                 :initform ())))
+
+(defgeneric complete-match (node token))
+(defgeneric broken-match (node token))
+(defgeneric add-production (node production))
+(defgeneric delete-production (node production))
+
+(defmethod print-object ((node beta-memory-node) stream)
+  (print-unreadable-object (node stream :type t :identity t)
+    (format stream "productions: ~S" (productions node))))
 
 (defmethod complete-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
@@ -51,12 +64,7 @@
   (setf (productions node)
         (delete production (productions node) :test #'rule-equal-p)))
 
-(defmethod print-object ((node beta-memory-node) stream)
-  (print-unreadable-object (node stream :type t :identity t)
-    (format stream "productions: ~S" (productions node))))
-
-(defclass beta-top-node (beta-memory-node) 
-  ((items :initform (list (make-instance 'empty-token)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass test ()
   ((current-field-to-test
@@ -69,6 +77,9 @@
    (previous-field-to-test
     :reader previous-field :initarg :previous-field
     :initform (error "previous-field slot has to be specified"))))
+
+(defgeneric test-equal-p (test1 test2))
+(defgeneric tests-equal-p (test-list1 test-list2))
 
 (defun make-test (current-field previous-condition previous-field)
   (make-instance 'test
@@ -94,12 +105,18 @@
   (and (= (length test-list1) (length test-list2))
        (every #'test-equal-p test-list1 test-list2)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; children are beta-memory-nodes
 ;; there's always just one child
 (defclass beta-join-node (beta-node)
   ((alpha-memory :reader alpha-memory :initarg :alpha-memory
                  :initform (error "alpha-memory slot has to be specified"))
    (tests :accessor tests :initarg :tests :initform ())))
+
+(defgeneric beta-memory (node))
+(defgeneric perform-join-test (test token wme))
+(defgeneric perform-join-tests (test-list token wme))
 
 (defmethod initialize-instance :after ((node beta-join-node)
                                        &key (beta-memory
@@ -141,12 +158,16 @@
                              (node2 beta-join-node))
   (with-slots ((am1 alpha-memory) (tsts1 tests) (par1 parent)) node1
     (with-slots ((am2 alpha-memory) (tsts2 tests) (par2 parent)) node2
-      (and (equalp (type-of node1) (type-of node2))
+      (and ;(equalp (type-of node1) (type-of node2))
            (exil-equal-p am1 am2)
            (exil-equal-p par1 par2)
            (tests-equal-p tsts1 tsts2)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defclass beta-negative-node (beta-join-node memory-node) ())
+
+(defgeneric get-bad-wmes (node token))
 
 ;; returns list of wmes (from neg-node's alpha-memory), which are
 ;; with given token var-consistent

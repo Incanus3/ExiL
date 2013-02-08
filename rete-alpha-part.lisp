@@ -63,9 +63,11 @@
     (simple-fact (simple-fact-key node))
     (template-fact (tmpl-name wme))))
 
+;; called by add-wme
 (defmethod activate ((node alpha-top-node) (wme fact))
   (activate (network node (network-key node wme)) wme))
 
+;; called by remove-wme
 (defmethod inactivate ((node alpha-top-node) (wme fact))
   (iter (for (tmpl-name subtop-node) in-hashtable (networks node))
         (inactivate subtop-node wme)))
@@ -73,8 +75,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; after alpha-top-node selects the right dataflow network according to fact type
-;; and eventually template name, it activates the right subtop node
-;; the simple-fact subtop-node is created when during rete class initialization
+;; and (in case of template-fact) template name, it activates the appropriate
+;; subtop node
+;; the simple-fact subtop-node is created when during network creation
 ;; the template-fact subtop-nodes are created, when condition of that template
 ;; appears in some newly added rule
 (defclass alpha-subtop-node (alpha-node) ())
@@ -84,6 +87,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; performs constant test on the with which it's activated by comparing the
+;; tested-field to the desired-value, when the test is successful, activates
+;; its children and the alpha-memory, that's attached (if any)
+;; TODO: check if it makes sense to differentiate between memory and child
+;; activation, if not, memory could be just another child
 (defclass alpha-test-node (alpha-node)
   ((tested-field :reader tested-field :initarg :tested-field
                  :initform (error "tested-field slot has to be specified"))
@@ -91,6 +99,9 @@
                   :initform (error "desired-value slot has to be specified"))
    (alpha-memory :accessor memory :initarg :memory
                  :initform nil)))
+
+(defgeneric test (node wme)
+  (:documentation "provides testing part of alpha-test-node activation"))
 
 (defmethod exil-equal-p and ((node1 alpha-test-node)
                              (node2 alpha-test-node))
@@ -103,12 +114,13 @@
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
 
-(defgeneric test (node wme)
-  (:documentation "provides testing part of alpha-test-node activation"))
-
 ;; once the wme passes test of some of node's children, there's no need
 ;; to continue the search, because the children are created in a way
 ;; that no wme can pass 2 children's tests
+;; TODO: stop the loop in this case
+;; TODO: check if the net creation reuses parts of the alpha net, when
+;; similar conditions are used (that differ e.g. from the third slot on)
+;; if not, there's always only one child
 (defmethod activate-children ((node alpha-test-node) (wme fact))
   (dolist (child (children node))
     (activate child wme)))
