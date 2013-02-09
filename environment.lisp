@@ -93,7 +93,7 @@
 (defun add-fact (fact)
   (when (nth-value 1 (pushnew-end fact (facts) :test #'exil-equal-p))
     (when (watched-p 'facts)
-      (format t "==> ~A~%" fact))
+      (format t "~%==> ~A" fact))
     (add-wme fact)
     #+lispworks(exil-gui:update-lists)))
 
@@ -104,7 +104,7 @@
     (when altered-p
       (setf (facts) new-list)
       (when (watched-p 'facts)
-        (format t "<== ~A~%" fact))
+        (format t "~%<== ~A" fact))
       (rem-wme fact)
       #+lispworks(exil-gui:update-lists))))
 
@@ -183,7 +183,7 @@
     (when (and (nth-value 1 (ext-pushnew match (agenda)
                                          :test #'match-equal-p))
                (watched-p 'activations))
-      (format t "==> ~A~%" match)
+      (format t "~%==> ~A" match)
       #+lispworks(exil-gui:update-lists))))
 
 ; public, used by rete
@@ -194,7 +194,7 @@
       (when altered-p
         (setf (agenda) new-list)
         (when (watched-p 'activations)
-          (format t "<== ~A~%" match))
+          (format t "~%<== ~A" match))
         #+lispworks(exil-gui:update-lists)))))
 
 ; public

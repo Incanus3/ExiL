@@ -21,9 +21,6 @@
                 ;; :initarg :productions
                 :initform ())))
 
-;; (defgeneric complete-match (node token)
-;;   (:documentation "pairs token with each of node's productions and adds
-;;                    it as a new match to the environment"))
 (defgeneric broken-match (node token)
   (:documentation "pairs token with each of node's productions and removes
                    this match from the environment"))
@@ -35,11 +32,6 @@
 (defmethod print-object ((node beta-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "productions: ~S" (productions node))))
-
-;; used only once, call replaced by body, marked for deletion
-;; (defmethod complete-match ((node beta-memory-node) (token token))
-;;   (dolist (production (productions node))
-;;     (exil-env:add-match production token)))
 
 (defmethod activate ((node beta-memory-node) (token token))
   ;; when token wasn't already there

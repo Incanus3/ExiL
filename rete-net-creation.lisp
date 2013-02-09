@@ -15,9 +15,13 @@
     (make-instance 'rete)))
 
 (defmethod add-wme ((wme fact) &optional (rete (exil-env:rete)))
+  ;; DEBUG:
+  (format t "~%------------------------------------------------------")
   (activate (alpha-top-node rete) wme))
 
 (defmethod rem-wme ((wme fact) &optional (rete (exil-env:rete)))
+  ;; DEBUG:
+  (format t "~%------------------------------------------------------")
   (inactivate (alpha-top-node rete) wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -51,7 +55,7 @@
                              (memory node)
                              (setf (memory node)
                                    (make-instance 'alpha-memory-node
-                                                  :description pattern)))))))
+                                                  :pattern pattern)))))))
 
 (defmethod create-alpha-net% ((pattern template-pattern)
                               (root alpha-subtop-node))
@@ -66,7 +70,7 @@
                              (memory node)
                              (setf (memory node)
                                    (make-instance 'alpha-memory-node
-                                                  :description pattern)))))))
+                                                  :pattern pattern)))))))
 
 (defmethod create-alpha-net ((pattern simple-pattern)
                              &optional (rete (exil-env:rete)))

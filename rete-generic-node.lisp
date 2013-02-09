@@ -56,6 +56,10 @@
 ;  (format t "~%~a~%  activated by ~a" node object)
   )
 
+(defmethod inactivate :before (node object)
+;  (format t "~%~a~%  inactivated by ~a" node object)
+  )
+
 (defgeneric activate-children (node object))
 ;; for top node, called by remove-wme
 (defgeneric inactivate (node object))
@@ -73,12 +77,6 @@
 (defmethod add-child ((node node) (child node))
   (pushnew child (children node) :test #'exil-equal-p)
   node)
-
-;; probably redundant, there may be no need to add more then one child at a time
-;; as prophetized, not in use
-;; (defmethod add-children ((node node) (children list))
-;;   (dolist (child children node)
-;;     (add-child node child)))
 
 (defmethod activate-children ((node node) object)
   (dolist (child (children node))

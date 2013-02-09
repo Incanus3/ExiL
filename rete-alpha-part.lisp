@@ -50,7 +50,7 @@
 (defmethod initialize-network ((node alpha-top-node)
                                &optional (tmpl-name (simple-fact-key node)))
   (setf (network node tmpl-name)
-        (make-instance 'alpha-subtop-node)))
+        (make-instance 'alpha-subtop-node :tmpl-name tmpl-name)))
 
 ; called by rete-net-creation
 (defmethod ensure-network ((node alpha-top-node)
@@ -64,13 +64,17 @@
     (template-fact (tmpl-name wme))))
 
 ;; called by add-wme
+;; activates appropriate subtop node
 (defmethod activate ((node alpha-top-node) (wme fact))
   (activate (network node (network-key node wme)) wme))
 
 ;; called by remove-wme
+;; inactivates appropriate subtop node
 (defmethod inactivate ((node alpha-top-node) (wme fact))
-  (iter (for (tmpl-name subtop-node) in-hashtable (networks node))
-        (inactivate subtop-node wme)))
+;; inactivating the appropriate network is sufficient
+;  (iter (for (tmpl-name subtop-node) in-hashtable (networks node))
+;        (inactivate subtop-node wme)))
+  (inactivate (network node (network-key node wme)) wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -80,7 +84,13 @@
 ;; the simple-fact subtop-node is created when during network creation
 ;; the template-fact subtop-nodes are created, when condition of that template
 ;; appears in some newly added rule
-(defclass alpha-subtop-node (alpha-node) ())
+(defclass alpha-subtop-node (alpha-node)
+  ;; stored for debug purposes
+  ((tmpl-name :reader tmpl-name :initarg :tmpl-name)))
+
+(defmethod print-object ((node alpha-subtop-node) stream)
+  (print-unreadable-object (node stream :type t :identity t)
+    (format stream "| tmpl-name: ~A" (tmpl-name node))))
 
 (defmethod activate ((node alpha-subtop-node) (wme fact))
   (activate-children node wme))
@@ -114,21 +124,18 @@
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
 
-;; once the wme passes test of some of node's children, there's no need
-;; to continue the search, because the children are created in a way
-;; that no wme can pass 2 children's tests
-;; TODO: stop the loop in this case
-;; TODO: check if the net creation reuses parts of the alpha net, when
-;; similar conditions are used (that differ e.g. from the third slot on)
-;; if not, there's always only one child
-(defmethod activate-children ((node alpha-test-node) (wme fact))
-  (dolist (child (children node))
-    (activate child wme)))
-
 (defmethod activate-memory ((node alpha-test-node) (wme fact))
   (with-slots ((mem alpha-memory)) node
     (when mem
       (activate mem wme))))
+
+;; once the wme passes test of some of node's children, there's no need
+;; to continue the search, because the children are created in a way
+;; that no wme can pass 2 children's tests
+;; TODO: stop the loop in this case - redefine activate-children
+;; TODO: check if the net creation reuses parts of the alpha net, when
+;; similar conditions are used (that differ e.g. from the third slot on)
+;; if not, there's always only one child
 
 ;; returns test return value, thanks to this it is possible for
 ;; activate-children to break after first successful test
@@ -139,6 +146,7 @@
       (activate-memory node wme))
     test))
 
+;; inactivate standard method inactivates children
 (defmethod inactivate :after ((node alpha-test-node) (wme fact))
   (when (memory node)
     (inactivate (memory node) wme)))
@@ -150,7 +158,13 @@
 
 ;; children are beta-join-nodes
 ;; TODO: save the rule condition (pattern) for information purposes
-(defclass alpha-memory-node (alpha-node memory-node) ())
+(defclass alpha-memory-node (alpha-node memory-node)
+  ;; stored for debug purposes
+  ((pattern :reader pattern :initarg :pattern)))
+
+(defmethod print-object ((node alpha-memory-node) stream)
+  (print-unreadable-object (node stream :type t :identity t)
+    (format stream "| pattern: ~A" (pattern node))))
 
 (defmethod activate ((node alpha-memory-node) (wme fact))
   (add-item node wme)
