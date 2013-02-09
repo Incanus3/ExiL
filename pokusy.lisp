@@ -8,12 +8,12 @@
 (deftemplate goal action object from to)
 (deftemplate in object location)
 
-#|
+;#|
 (deffacts world
   (in :object robot :location A)
   (in :object box :location B)
   (goal :action push :object box :from B :to A))
-|#
+;|#
 
 (defrule move
   (goal :object ?x :from ?y)
@@ -54,7 +54,9 @@
 (step)
 |#
 
+;#|
 (run)
+;|#
 
 #|
 (pprint (facts))

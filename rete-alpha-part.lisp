@@ -71,9 +71,6 @@
 ;; called by remove-wme
 ;; inactivates appropriate subtop node
 (defmethod inactivate ((node alpha-top-node) (wme fact))
-;; inactivating the appropriate network is sufficient
-;  (iter (for (tmpl-name subtop-node) in-hashtable (networks node))
-;        (inactivate subtop-node wme)))
   (inactivate (network node (network-key node wme)) wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,9 +78,8 @@
 ;; after alpha-top-node selects the right dataflow network according to fact type
 ;; and (in case of template-fact) template name, it activates the appropriate
 ;; subtop node
-;; the simple-fact subtop-node is created when during network creation
-;; the template-fact subtop-nodes are created, when condition of that template
-;; appears in some newly added rule
+;; the subtop-nodes are created, when condition of that template (or simple)
+;; appears for the first time in some newly added rule
 (defclass alpha-subtop-node (alpha-node)
   ;; stored for debug purposes
   ((tmpl-name :reader tmpl-name :initarg :tmpl-name)))
@@ -157,7 +153,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; children are beta-join-nodes
-;; TODO: save the rule condition (pattern) for information purposes
+;; stores wmes that passed the constant tests for one condition of some rule
 (defclass alpha-memory-node (alpha-node memory-node)
   ;; stored for debug purposes
   ((pattern :reader pattern :initarg :pattern)))
@@ -171,4 +167,5 @@
   (activate-children node wme))
 
 (defmethod inactivate ((node alpha-memory-node) (wme fact))
-  (delete-item node wme))
+  (delete-item node wme)
+  (inactivate-children node wme))

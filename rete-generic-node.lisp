@@ -23,28 +23,15 @@
 ;;      - e.g. (on red-box ?some-other-box) ; simple-pattern
 ;;      - or (car :color ?some-color)       ; template-pattern
 
-;; serves for debugging purposes, so I can attach a description to various
-;; nodes of the network and then see them in the printed tree
-
-(defclass described-object () ((description :initarg :description
-                                            :initform ""
-                                            :accessor description)))
-
-(defmethod print-object :after ((object described-object) stream)
-  (unless (equal (description object) "")
-    (format stream "  ~A" (description object))))
-
 ;; this is needed in order to compare lists of exil objects
 ;; all these lists should be sets according to exil-equal-p, as they're all
 ;; updated using pusnew :test #'exil-equal-p, or similar
-
 (defmethod exil-equal-p and ((list1 list) (list2 list))
   (every (lambda (object) (member object list2 :test #'exil-equal-p)) list1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; TODO: remove the described-object superclass after proper debug
-(defclass node (described-object) ((children :accessor children :initform ())))
+(defclass node () ((children :accessor children :initform ())))
 
 (defgeneric add-child (node child))
 ;; for top node, called by add-wme, for others, called by their parents
