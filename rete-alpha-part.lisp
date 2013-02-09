@@ -153,8 +153,8 @@
 (defclass alpha-memory-node (alpha-node memory-node) ())
 
 (defmethod activate ((node alpha-memory-node) (wme fact))
-  (pushnew wme (items node) :test #'exil-equal-p)
+  (add-item node wme)
   (activate-children node wme))
 
 (defmethod inactivate ((node alpha-memory-node) (wme fact))
-  (setf (items node) (delete wme (items node) :test #'exil-equal-p)))
+  (delete-item node wme))

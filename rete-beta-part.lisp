@@ -5,37 +5,48 @@
 (defclass beta-node (node) ((parent :accessor parent :initarg :parent
                                     :initform nil)))
 
-(defclass beta-top-node (beta-memory-node) 
+(defclass beta-top-node (beta-memory-node)
   ((items :initform (list (make-empty-token)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; children are beta-join-nodes
+;; children are beta-join-nodes, items are tokens
+;; botom memory nodes of beta rete network store productions (rules) that
+;; are satisfied when the node is activated (i.e. the network path leading
+;; to this node represents testing of all the production's conditions)
+;; when these nodes are (in)activated, they signal add-match (remove-match)
+;; to the environment
 (defclass beta-memory-node (beta-node memory-node)
   ((productions :accessor productions
                 ;; :initarg :productions
                 :initform ())))
 
-(defgeneric complete-match (node token))
-(defgeneric broken-match (node token))
-(defgeneric add-production (node production))
-(defgeneric delete-production (node production))
+;; (defgeneric complete-match (node token)
+;;   (:documentation "pairs token with each of node's productions and adds
+;;                    it as a new match to the environment"))
+(defgeneric broken-match (node token)
+  (:documentation "pairs token with each of node's productions and removes
+                   this match from the environment"))
+(defgeneric add-production (node production)
+  (:documentation "adds production that is satisfied when node is activated"))
+(defgeneric delete-production (node production)
+  (:documentation "deletes production from productions list"))
 
 (defmethod print-object ((node beta-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "productions: ~S" (productions node))))
 
-(defmethod complete-match ((node beta-memory-node) (token token))
-  (dolist (production (productions node))
-    (exil-env:add-match production token)))
+;; used only once, call replaced by body, marked for deletion
+;; (defmethod complete-match ((node beta-memory-node) (token token))
+;;   (dolist (production (productions node))
+;;     (exil-env:add-match production token)))
 
 (defmethod activate ((node beta-memory-node) (token token))
-  ;;  (format t "BETA-MEM-NODE ACTIVATED~%productions: ~A~%items before: ~A~%"
-  ;;	  (productions node) (items node))
-  (when (nth-value 1 (add-item node token #'token-equal-p))
-    (complete-match node token))
-  ;;  (format t "items after: ~A~%" (items node))
-  (activate-children node token))
+  ;; when token wasn't already there
+  (when (nth-value 1 (ext-add-item node token #'token-equal-p))
+    (dolist (production (productions node))
+      (exil-env:add-match production token))
+    (activate-children node token))) ;CHANGED: moved into when clause
 
 (defmethod broken-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
@@ -43,22 +54,23 @@
 
 (defmethod inactivate :before ((node beta-memory-node) (fact fact))
   (multiple-value-bind (new-items deleted) 
-      (diff-delete fact (items node) :test #'included-in-p)
+      (diff-remove fact (items node) :test #'included-in-p)
     (setf (items node) new-items)
     (dolist (item deleted)
       (broken-match node item))))
 
 (defmethod inactivate :before ((node beta-memory-node) (token token))
   (multiple-value-bind (new-list deleted)
-      (diff-delete token (items node) :test #'included-in-p)
+      (diff-remove token (items node) :test #'included-in-p)
     (setf (items node) new-list)
     (dolist (item deleted)
       (broken-match node item))))
 
 (defmethod add-production ((node beta-memory-node) (production rule))
   (push-update production (productions node) :test #'rule-equal-p)
-  (dolist (item (items node))
-    (complete-match node item)))
+  (dolist (token (items node))
+    (exil-env:add-match production token)))
+;    (complete-match node item)))
 
 (defmethod delete-production ((node beta-memory-node) (production rule))
   (setf (productions node)
@@ -140,14 +152,14 @@
   (dolist (test tests t)
     (unless (perform-join-test test token wme) (return nil))))
     
-;; left activation
+;; left activation - by parent beta-memory-node
 (defmethod activate ((node beta-join-node) (token token))
   (dolist (wme (items (alpha-memory node)))
     (if (perform-join-tests (tests node) token wme)
         (activate-children
          node (make-instance 'token :parent token :wme wme)))))
 
-;; right activation
+;; right activation - by alpha-memory-node which feeds into it
 (defmethod activate ((node beta-join-node) (wme fact))
   (dolist (token (items (parent node)))
     (if (perform-join-tests (tests node) token wme)

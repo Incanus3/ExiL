@@ -8,7 +8,7 @@
   (:export :intern :string-append :symbol-name :symbol-append :to-keyword
            :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
            :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
-           :ext-delete :diff-delete :push-update :select
+           :ext-delete :diff-remove :push-update :select
            :every-couple :cpl-assoc-val :plistp :alistp
            :doplist :weak-equal-p :hash->list))
 

@@ -95,11 +95,11 @@
     (assert-equal (multiple-value-list (ext-delete 2 list))
                   (list (list 1) nil))))
 
-(def-test-method test-diff-delete ((tests utils-tests) :run nil)
+(def-test-method test-diff-remove ((tests utils-tests) :run nil)
   (let ((list (list 1 2)))
-    (assert-equal (multiple-value-list (diff-delete 2 list))
+    (assert-equal (multiple-value-list (diff-remove 2 list))
                   (list (list 1) (list 2)))
-    (assert-equal (multiple-value-list (diff-delete 2 list))
+    (assert-equal (multiple-value-list (diff-remove 2 list))
                   (list (list 1) ()))))
 
 (def-test-method test-push-update ((tests utils-tests) :run nil)

@@ -94,5 +94,19 @@
 ;; every node that stores some info is subclass (usualy indirect) of memory-node
 (defclass memory-node (node) ((items :accessor items :initform ())))
 
+(defgeneric add-item (memory-node item &optional test)
+  (:documentation "adds new item to node's memory"))
+(defgeneric ext-add-item (memory-node item &optional test)
+  (:documentation "adds new item to node's memory, as a second value returns
+                   true if the item wasn't there yet"))
+(defgeneric delete-item (memory-node item &optional test)
+  (:documentation "removes item from node's memory"))
+
 (defmethod add-item ((node memory-node) item &optional (test #'exil-equal-p))
+  (pushnew item (items node) :test test))
+
+(defmethod ext-add-item ((node memory-node) item &optional (test #'exil-equal-p))
   (ext-pushnew item (items node) :test test))
+
+(defmethod delete-item ((node memory-node) item &optional (test #'exil-equal-p))
+  (setf (items node) (delete item (items node) :test test)))

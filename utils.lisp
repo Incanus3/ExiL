@@ -128,7 +128,7 @@
            (,new-list (delete ,item ,place :test ,test :key ,key)))
        (values ,new-list (not (= (length ,new-list) ,length))))))
 
-(defmacro diff-delete (item sequence &key (test '#'equalp) (key '#'identity))
+(defmacro diff-remove (item sequence &key (test '#'equalp) (key '#'identity))
   "like delete, but as a second value returns list of deleted items"
   (let ((new-list (gensym "new-list"))
         (deleted (gensym "deleted"))
