@@ -6,13 +6,15 @@
                                     :initform nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; children are beta-join-nodes, items are tokens
-;; botom memory nodes of beta rete network store productions (rules) that
+;; beta-memory-node store (complete or partial) matches (sequences of wmes
+;; that match some consecutive rule conditions)
+;; botom beta-memory-nodes store productions (rules) that
 ;; are satisfied when the node is activated (i.e. the network path leading
 ;; to this node represents testing of all the production's conditions)
 ;; when these nodes are (in)activated, they signal add-match (remove-match)
 ;; to the environment
+;; children are beta-join-nodes, items are tokens
+
 (defclass beta-memory-node (beta-node memory-node)
   ((productions :accessor productions
                 ;; :initarg :productions
@@ -88,6 +90,7 @@
 ;; tests holds info about one variable-binding consistency test
 ;; current- and previous-field-to-test are object-slot descriptors -
 ;; integer positions for simple-facts, slot names for template facts
+
 (defclass test ()
   ((current-field-to-test
     :reader current-field :initarg :current-field
@@ -135,9 +138,16 @@
        (every #'test-equal-p test-list1 test-list2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; beta-join-node provides testing of variable binding consistency between
+;; current rule condition (matching wmes stored in alpha memory feeding into
+;; this node) and previous conditions (matchin tokens stored in beta memory
+;; feeding into this node)
+;; it can be activated either by the alpha memory when newly added wme matches
+;; the current condition, or by the beta memory when newly added wme matches
+;; some of the previous conditions, in both cases the other memory is searched
+;; for items with consistent variable bindings
+;; children are beta-memory-nodes, there's always just one child
 
-;; children are beta-memory-nodes
-;; there's always just one child
 (defclass beta-join-node (beta-node)
   ((alpha-memory :reader alpha-memory :initarg :alpha-memory
                  :initform (error "alpha-memory slot has to be specified"))
@@ -159,6 +169,8 @@
   (first (children node)))
 
 ;; PERFORM JOIN TEST NEPODPORUJE INTRACONDITION TESTY - DODELAT
+;; token doesn't include the wme, that's why there's 1- in the call
+;; to previous-wme
 (defmethod perform-join-test ((test test) (token token) (wme fact))
   (let ((previous-wme (previous-wme token (1- (previous-condition test)))))
     (when previous-wme
@@ -173,15 +185,13 @@
 (defmethod activate ((node beta-join-node) (token token))
   (dolist (wme (items (alpha-memory node)))
     (if (perform-join-tests (tests node) token wme)
-        (activate-children
-         node (make-instance 'token :parent token :wme wme)))))
+        (activate-children node (make-token wme token)))))
 
 ;; right activation - by alpha-memory-node which feeds into it
 (defmethod activate ((node beta-join-node) (wme fact))
   (dolist (token (items (parent node)))
     (if (perform-join-tests (tests node) token wme)
-        (activate-children
-         node (make-instance 'token :parent token :wme wme)))))
+        (activate-children node (make-token wme token)))))
 
 (defmethod exil-equal-p and ((node1 beta-join-node)
                              (node2 beta-join-node))
@@ -193,35 +203,53 @@
            (tests-equal-p tsts1 tsts2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; beta-negative-node handles join tests (variable binding consistency tests
+;; between rule's conditions) for negated conditions
+;; these conditions are satisfied if there's no fact in the working memory
+;; congruent with the pattern (with consistent variable bindings)
 
 (defclass beta-negative-node (beta-join-node memory-node) ())
 
 (defgeneric get-bad-wmes (node token))
 
-;; returns list of wmes (from neg-node's alpha-memory), which are
-;; with given token var-consistent
-(defmethod get-bad-wmes ((node beta-negative-node) (token token))
-  (let (bad-wmes)
-    (dolist (wme (items (alpha-memory node)) bad-wmes)
-      (when (perform-join-tests (tests node) token wme)
-        (push wme bad-wmes)))))
+;; returns list of wmes (from neg-node's alpha-memory), which have consistent
+;; variable bindings with token, i.e. which pass the consistency tests
+(defmethod get-consistent-wmes ((node beta-negative-node) (token token))
+  (remove-if-not (lambda (wme) (perform-join-tests (tests node) token wme))
+                 (items (alpha-memory node))))
     
 ;; left activation
+;; when activated by token (previous conditions satisfied), ensure there are
+;; no wmes consistent with the token, if not, activate children
+;; store the consistent wmes (which are blocking the negated condition from
+;; being satisfied) in the token for future use
 (defmethod activate ((node beta-negative-node) (token token))
-  (let ((bad-wmes (get-bad-wmes node token)))
+  (let ((bad-wmes (get-consistent-wmes node token)))
     (unless bad-wmes (activate-children node token))
     (setf (negative-wmes token) bad-wmes)
-    (add-item node token #'token-equal-p))
-  nil)
+    (add-item node token #'token-equal-p)))
 
+;; right activation
+;; when activated by wme (from alpha memory) we need to check, whether this
+;; breaks any negative condition match (if we find a token consistent with
+;; this wme, where no consistent wmes were previously blocking
+;; ((negative-wmes token) was empty), we need to signal this broken match
+;; to children
 (defmethod activate ((node beta-negative-node) (wme fact))
   (dolist (token (items node))
     (when (perform-join-tests (tests node) token wme)
       (unless (negative-wmes token)
         (inactivate-children node token))
-      (pushnew wme (negative-wmes token) :test #'exil-equal-p)))
-  nil)
+      (pushnew wme (negative-wmes token) :test #'exil-equal-p))))
 
+;; left inactivation only propagates to children
+
+;; right inactivation
+;; when inactivated by wme (from alpha memory) we need to check, wheter
+;; there's some token previously blocked by this wme (i.e. this is the last
+;; wme congruent with the negative condition, with bindings consistent with
+;; the rest of token) and in that case signal newly satisfied negative
+;; condition to children
 (defmethod inactivate ((node beta-negative-node) (wme fact))
   (inactivate-children node wme)
   (dolist (token (items node))
@@ -230,5 +258,4 @@
       (setf (negative-wmes token)
             (delete wme (negative-wmes token) :test #'exil-equal-p))
       (unless (negative-wmes token)
-        (activate-children node token))))
-  nil)
+        (activate-children node token)))))

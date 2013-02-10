@@ -51,7 +51,7 @@
 
 ;; wme of the token n steps back in the hierarchy (or nil, if the parent-chain
 ;; is not that long
-(defmethod previous-wme ((token token) &optional (n 1))
+(defmethod previous-wme ((token token) n)
   "gives wme from token n wmes back"
   (dotimes (i n (wme token))
     (setf token (parent token))

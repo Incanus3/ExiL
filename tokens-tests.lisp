@@ -31,7 +31,6 @@
 (def-test-method test-previous-wme ((tests token-tests) :run nil)
   (with-slots (token1 wme1 wme2) tests
     (assert-equal (erete::previous-wme token1 0) wme1)
-    (assert-equal (erete::previous-wme token1) wme2) ; default n = 1
     (assert-equal (erete::previous-wme token1 1) wme2)
     (assert-false (erete::previous-wme token1 2))))
 
