@@ -176,10 +176,10 @@
                                           alpha-memory)))
           (finally (add-production (beta-memory current-join-node) rule)))))
 	 
-(defmethod remove-production ((rule rule) &optional (rete (exil-env:rete)))
+(defmethod remove-production ((production rule) &optional (rete (exil-env:rete)))
   (labels ((walk-through (node)
              (when (typep node 'beta-memory-node)
-               (delete-production node rule))
+               (delete-production node production))
              (dolist (child (children node))
                (walk-through child))))
     (walk-through (beta-top-node rete))))

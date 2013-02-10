@@ -23,10 +23,9 @@
               :reader fact)))
 
 ; private
-;; TODO: move this test to make-fact
-;; (defmethod initialize-instance :after ((simple-fact simple-fact) &key)
-;;   (cl:assert (notany #'variable-p (fact simple-fact))
-;;              () "fact can't include variables"))
+(defmethod initialize-instance :after ((simple-fact simple-fact) &key)
+  (cl:assert (notany #'variable-p (fact simple-fact))
+             () "fact may not include variables"))
 
 (defun make-simple-fact (fact-spec)
   (make-instance 'simple-fact :fact (copy-list fact-spec)))
@@ -41,10 +40,9 @@
 (defclass template-fact (fact template-object) ())
 
 ; private
-;; TODO: move this test to make-fact
-;; (defmethod initialize-instance :after ((fact template-fact) &key)
-;;   (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
-;;              () "fact can't include variables"))
+(defmethod initialize-instance :after ((fact template-fact) &key)
+  (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
+             () "fact may not include variables"))
 
 ;;;; inherited from template-object:
 ;; exil-equal-p, format-object, print-object, copy-object, object-slot,

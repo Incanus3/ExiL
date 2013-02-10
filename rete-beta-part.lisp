@@ -5,9 +5,6 @@
 (defclass beta-node (node) ((parent :accessor parent :initarg :parent
                                     :initform nil)))
 
-(defclass beta-top-node (beta-memory-node)
-  ((items :initform (list (make-empty-token)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; children are beta-join-nodes, items are tokens
@@ -31,26 +28,35 @@
 
 (defmethod print-object ((node beta-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
-    (format stream "productions: ~S" (productions node))))
+    (format stream "| productions: ~S" (productions node))))
 
+;; when this is a new token, signal newly matched productions and activate
+;; children
 (defmethod activate ((node beta-memory-node) (token token))
-  ;; when token wasn't already there
   (when (nth-value 1 (ext-add-item node token #'token-equal-p))
     (dolist (production (productions node))
       (exil-env:add-match production token))
-    (activate-children node token))) ;CHANGED: moved into when clause
+    (activate-children node token)))
 
+;; signal to environment that token (combined with any production)
+;; is not a valid match any more
 (defmethod broken-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
     (exil-env:remove-match production token)))
 
-(defmethod inactivate :before ((node beta-memory-node) (fact fact))
+;; left inactivation - the wme has been removed from working memory
+;; remove tokens including it and signal broken matches
+(defmethod inactivate :before ((node beta-memory-node) (wme fact))
   (multiple-value-bind (new-items deleted) 
-      (diff-remove fact (items node) :test #'included-in-p)
+      (diff-remove wme (items node) :test #'included-in-p)
     (setf (items node) new-items)
-    (dolist (item deleted)
-      (broken-match node item))))
+    (dolist (token deleted)
+      (broken-match node token))))
 
+;; right inactivation - some other wme, that matched some of the rule's
+;; previous conditions, have been removed from working memory, so tokens
+;; that include token are not valid matches any more
+;; remove tokens including it and signal broken matches
 (defmethod inactivate :before ((node beta-memory-node) (token token))
   (multiple-value-bind (new-list deleted)
       (diff-remove token (items node) :test #'included-in-p)
@@ -58,18 +64,30 @@
     (dolist (item deleted)
       (broken-match node item))))
 
+;; add production to productions and signal complete match for already
+;; matched tokens
 (defmethod add-production ((node beta-memory-node) (production rule))
   (push-update production (productions node) :test #'rule-equal-p)
   (dolist (token (items node))
     (exil-env:add-match production token)))
-;    (complete-match node item)))
 
+;; remove production from productions
+;; exil-env:rem-rule, that calls this (indirectly), also removes matches from
+;; agenda, so there's no need to signal broken matches
 (defmethod delete-production ((node beta-memory-node) (production rule))
   (setf (productions node)
         (delete production (productions node) :test #'rule-equal-p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; dummy top-node
+(defclass beta-top-node (beta-memory-node)
+  ((items :initform (list (make-empty-token)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tests holds info about one variable-binding consistency test
+;; current- and previous-field-to-test are object-slot descriptors -
+;; integer positions for simple-facts, slot names for template facts
 (defclass test ()
   ((current-field-to-test
     :reader current-field :initarg :current-field
@@ -92,11 +110,18 @@
                  :previous-field previous-field))
 
 (defmethod print-object ((test test) stream)
-  (print-unreadable-object (test stream :type t :identity t)
-    (with-slots (current-field-to-test previous-condition-number
-                                       previous-field-to-test) test
-      (format stream "~A" (list current-field-to-test previous-condition-number
-                                previous-field-to-test)))))
+  (with-slots (current-field-to-test previous-condition-number
+                                     previous-field-to-test) test
+    (if *print-escape*
+        (print-unreadable-object (test stream :type t :identity nil)
+          (format stream
+                  "current-field: ~A, ~A conditions back, previous-field: ~A"
+                  current-field-to-test previous-condition-number
+                  previous-field-to-test))
+        (format stream
+                "(curr-field: ~A, ~A conds back, prev-field: ~A)"
+                current-field-to-test previous-condition-number
+                previous-field-to-test))))
 
 (defmethod test-equal-p ((test1 test) (test2 test))
   (with-accessors ((cf1 current-field) (pc1 previous-condition)
@@ -118,17 +143,17 @@
                  :initform (error "alpha-memory slot has to be specified"))
    (tests :accessor tests :initarg :tests :initform ())))
 
-(defgeneric beta-memory (node))
+(defgeneric beta-memory (node)
+  (:documentation "the beta memory node this node feeds into"))
 (defgeneric perform-join-test (test token wme))
 (defgeneric perform-join-tests (test-list token wme))
 
-(defmethod initialize-instance :after ((node beta-join-node)
-                                       &key (beta-memory
-                                             (make-instance 'beta-memory-node
-                                                            :parent node)))
-  (when (equalp beta-memory 'production)
-    (setf beta-memory (make-instance 'production-node :parent node)))
-  (add-child node beta-memory))
+(defmethod initialize-instance :after ((node beta-join-node) &key)
+  (add-child node (make-instance 'beta-memory-node :parent node)))
+
+(defmethod print-object ((node beta-join-node) stream)
+  (print-unreadable-object (node stream :type t :identity t)
+    (format stream "| tests: ~A" (tests node))))
 
 (defmethod beta-memory ((node beta-join-node))
   (first (children node)))

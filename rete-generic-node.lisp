@@ -37,6 +37,10 @@
 ;; for top node, called by add-wme, for others, called by their parents
 (defgeneric activate (node object)
   (:documentation "handles various node activations"))
+(defgeneric activate-children (node object))
+;; for top node, called by remove-wme for others by their parents
+(defgeneric inactivate (node object))
+(defgeneric inactivate-children (node object))
 
 ;; DEBUG:
 (defmethod activate :before (node object)
@@ -46,11 +50,6 @@
 (defmethod inactivate :before (node object)
 ;  (format t "~%~a~%  inactivated by ~a" node object)
   )
-
-(defgeneric activate-children (node object))
-;; for top node, called by remove-wme
-(defgeneric inactivate (node object))
-(defgeneric inactivate-children (node object))
 
 ;; TODO: check if the graph defined by rete nodes and their children is a tree
 ;; if it is, than the commented variant is probably just too memory-expansive

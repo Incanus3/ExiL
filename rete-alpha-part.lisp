@@ -142,7 +142,6 @@
       (activate-memory node wme))
     test))
 
-;; inactivate standard method inactivates children
 (defmethod inactivate :after ((node alpha-test-node) (wme fact))
   (when (memory node)
     (inactivate (memory node) wme)))
@@ -166,6 +165,5 @@
   (add-item node wme)
   (activate-children node wme))
 
-(defmethod inactivate ((node alpha-memory-node) (wme fact))
-  (delete-item node wme)
-  (inactivate-children node wme))
+(defmethod inactivate :before ((node alpha-memory-node) (wme fact))
+  (delete-item node wme))

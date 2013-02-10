@@ -17,7 +17,7 @@
 
 (defmethod print-object ((object base-object) stream)
 ;  (if *print-escape*
-      (print-unreadable-object (object stream :type t :identity t)
+      (print-unreadable-object (object stream :type t :identity nil)
         (format-object object stream))
 ;      (format-object object stream))
   object)

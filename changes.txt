@@ -37,7 +37,6 @@ matches (rule) - shows partial matches of rule conditions against working memory
 list-deffacts, ppdeffacts
 deffact should check, that all variables appearing in RHS are bound in LHS
 wildcards
-redefine initialize-instance methods as after, if possible
 add documentation to classes, functions, methods, macros and slots
   (using :documentation in slot definition)
 polish the lispworks gui - dialogs shouldn't be modal, lists should display
