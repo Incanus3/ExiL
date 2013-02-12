@@ -14,36 +14,48 @@
   :long-description ""
   :depends-on (:xlunit :iterate)
   :components
-  ((:file "packages")
-   (:file "utils"              :depends-on ("packages"))             ; ^
-   (:file "tests"              :depends-on ("utils"))                ; | utils
-   (:file "utils-tests"        :depends-on ("utils" "tests"))        ; v
-   (:file "templates"          :depends-on ("utils"))                ; ^
-   (:file "templates-tests"    :depends-on ("templates" "tests"))    ; |
-   (:file "base-objects"       :depends-on ("templates"))            ; |
-   (:file "base-objects-tests" :depends-on ("base-objects" "tests")) ; |
-   (:file "facts"              :depends-on ("base-objects"))         ; |
-   (:file "facts-tests"        :depends-on ("facts" "tests"))        ; | core
-   (:file "patterns"           :depends-on ("facts"))                ; |
-   (:file "patterns-tests"     :depends-on ("patterns" "tests"))     ; |
-   (:file "rules"              :depends-on ("patterns"))             ; |
-   (:file "rules-tests"        :depends-on ("rules" "tests"))        ; v
-   (:file "tokens"             :depends-on ("rules"))                ; ^
-   (:file "tokens-tests"       :depends-on ("tokens" "tests"))       ; |
-   (:file "rete-generic-node"  :depends-on ("tokens"))               ; |
-   (:file "rete-alpha-part"    :depends-on ("rete-generic-node"))    ; | rete
-   (:file "rete-beta-part"     :depends-on ("rete-alpha-part"))      ; |
-   (:file "rete-net-creation"  :depends-on ("rete-beta-part"))       ; v
-   (:file "matches"            :depends-on ("rete-net-creation"))    ; ^
-   (:file "activations"        :depends-on ("matches"))              ; |
-   (:file "strategies"         :depends-on ("activations"))          ; | environment
-   (:file "environment"        :depends-on ("strategies"))           ; |
-   (:file "object-makers"      :depends-on ("environment"))          ; v
-   (:file "export"             :depends-on ("object-makers"))        ; front-end
+  ((:module :base
+            :components
+            ((:file "packages")
+             (:file "utils"              :depends-on ("packages"))
+             (:file "tests"              :depends-on ("utils"))
+             (:file "utils-tests"        :depends-on ("utils" "tests"))))
+   (:module :core
+            :depends-on (:base)
+            :components
+            ((:file "templates")
+             (:file "templates-tests"    :depends-on ("templates"))
+             (:file "base-objects"       :depends-on ("templates"))
+             (:file "base-objects-tests" :depends-on ("base-objects"))
+             (:file "facts"              :depends-on ("base-objects"))
+             (:file "facts-tests"        :depends-on ("facts"))
+             (:file "patterns"           :depends-on ("facts"))
+             (:file "patterns-tests"     :depends-on ("patterns"))
+             (:file "rules"              :depends-on ("patterns"))
+             (:file "rules-tests"        :depends-on ("rules"))))
+   (:module :rete
+            :depends-on (:core)
+            :components
+            ((:file "tokens")
+             (:file "tokens-tests"       :depends-on ("tokens"))
+             (:file "rete-generic-node"  :depends-on ("tokens"))
+             (:file "rete-alpha-part"    :depends-on ("rete-generic-node"))
+             (:file "rete-beta-part"     :depends-on ("rete-alpha-part"))
+             (:file "rete-net-creation"  :depends-on ("rete-beta-part"))))
+   (:module :environment
+            :depends-on (:rete)
+            :components
+            ((:file "matches")
+             (:file "activations"        :depends-on ("matches"))
+             (:file "strategies"         :depends-on ("activations"))
+             (:file "environment"        :depends-on ("strategies"))
+             (:file "object-makers"      :depends-on ("environment"))))
+   (:file "export"             :depends-on (:environment))
    #+lispworks(:file "gui"     :depends-on ("export"))
-#|     (:file "print-tree"        :depends-on ("environment"))
-     (:file "pokusy"            :depends-on ("export"))
-|#
+   #|
+   (:file "print-tree"        :depends-on ("export"))
+   (:file "pokusy"            :depends-on ("export"))
+   |#
    )
 ;  :properties ((:author-email . "jakubkalab@gmail.com")
 ;               (:date . "4.9.2010")

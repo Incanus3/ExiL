@@ -1,6 +1,8 @@
 (in-package :exil-user)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
+(setf erete::*debug-rete* nil)
+
 ; TEMPLATE FACTS:
 ;(clear)
 (exil-env::completely-reset-environment)

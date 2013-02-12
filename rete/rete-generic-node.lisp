@@ -42,14 +42,16 @@
 (defgeneric inactivate (node object))
 (defgeneric inactivate-children (node object))
 
+(defvar *debug-rete* nil)
+
 ;; DEBUG:
 (defmethod activate :before (node object)
-;  (format t "~%~a~%  activated by ~a" node object)
-  )
+  (when *debug-rete*
+    (format t "~%~a~%  activated by ~a" node object)))
 
 (defmethod inactivate :before (node object)
-;  (format t "~%~a~%  inactivated by ~a" node object)
-  )
+  (when *debug-rete*
+    (format t "~%~a~%  inactivated by ~a" node object)))
 
 ;; TODO: check if the graph defined by rete nodes and their children is a tree
 ;; if it is, than the commented variant is probably just too memory-expansive

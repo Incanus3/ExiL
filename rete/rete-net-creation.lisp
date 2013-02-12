@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; compound rete class and methods for export
 
-;(defgeneric rete ())
+(defvar *debug-rete* nil)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defclass rete () ((alpha-top-node :reader alpha-top-node
@@ -15,13 +15,13 @@
     (make-instance 'rete)))
 
 (defmethod add-wme ((wme fact) &optional (rete (exil-env:rete)))
-  ;; DEBUG:
-  (format t "~%------------------------------------------------------")
+  (when *debug-rete*
+    (format t "~%------------------------------------------------------"))
   (activate (alpha-top-node rete) wme))
 
 (defmethod rem-wme ((wme fact) &optional (rete (exil-env:rete)))
-  ;; DEBUG:
-  (format t "~%------------------------------------------------------")
+  (when *debug-rete*
+    (format t "~%------------------------------------------------------"))
   (inactivate (alpha-top-node rete) wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
