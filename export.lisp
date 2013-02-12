@@ -1,11 +1,35 @@
 (in-package :exil)
 
-; private
-(defparameter *clips-mode* nil)
+#|
+  ;; not in use
+(defvar *environments*
+  (let ((table (make-hash-table :test #'equalp)))
+    (setf (gethash "default" table)
+          (make-instance 'environment))
+    table))
 
-; public
-(defun set-clips-mode (val)
-  (setf *clips-mode* val))
+  ;; not in use
+(defmacro defenv (name &key (redefine nil))
+  (let ((sym-name (gensym "sym-name")))
+    `(let ((,sym-name (symbol-name ,name)))
+       (when (or (not (gethash ,name *environments*))
+                 ,redefine)
+         (setf (gethash ,name *environments*)
+               (make-instance 'environment))))))
+
+  ;; not in use
+(defmacro setenv (name)
+  (let ((env (gensym "env")))
+    `(let ((,env (gethash (symbol-name ,name) *environments*)))
+       (when ,env (setf *current-environment* ,env)))))
+
+  ;; public
+(defvar *current-environment*
+  (gethash "default" *environments*))
+|#
+
+(defvar *current-environment*
+  (make-instance 'environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application macros
@@ -56,17 +80,18 @@
     `(let ((,template
 	    (make-template ',name
 			   ',(slots->slot-designators% slots))))
-       (add-template ,template))))
+       (add-template *current-environment* ,template))))
 
 ; public
-(defun facts (&optional (start-index 1) (end-index (length (exil-env:facts)))
-			(at-most end-index))
-  (let ((facts (exil-env:facts)))
+(defun facts (&optional (start-index 1)
+                (end-index (length (exil-env:facts *current-environment*)))
+                (at-most end-index))
+  (let ((facts (exil-env:facts *current-environment*)))
     (loop for i from (1- start-index) to (min (1- end-index) (+ start-index at-most -1))
        collect (nth i facts))))
 
 (defun assert% (fact-spec)
-  (add-fact (make-fact fact-spec)))
+  (add-fact *current-environment* (make-fact *current-environment* fact-spec)))
 
 ; public
 (defmacro assert (&rest fact-specs)
@@ -79,11 +104,11 @@
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
       (typecase fact-spec
-	(list (pushnew (make-fact fact-spec) facts-to-remove))
+	(list (pushnew (make-fact *current-environment* fact-spec) facts-to-remove))
 	(integer (pushnew (nth (1- fact-spec) (facts)) facts-to-remove))
 	(t (error "Type ~A not supported by retract" (type-of fact-spec)))))
     (dolist (fact facts-to-remove)
-      (rem-fact fact))))
+      (rem-fact *current-environment* fact))))
 
 ; retract supports either full fact specification e.g. (retract (is-animal duck))
 ; or number indices (starting with 1) for clips compatitibity.
@@ -96,7 +121,7 @@
 
 ; public
 (defun retract-all ()
-  (reset-facts))
+  (reset-facts *current-environment*))
 
 (defun nonclips-mod-list-p (mod-list)
   (plistp mod-list))
@@ -117,10 +142,10 @@
 ;; mod-list is a mapping from slot-name to new value
 ;; it can be either plist for non-clips syntax of alist for clips syntax
 (defmethod modify% ((fact-spec list) (mod-list list))
-  (let ((mod-fact (make-fact fact-spec)))
+  (let ((mod-fact (make-fact *current-environment* fact-spec)))
     (unless (typep mod-fact 'template-fact)
       (error "modify: ~S is not a template fact specification" fact-spec))
-    (modify-fact mod-fact (to-mod-spec-list mod-list))))
+    (modify-fact *current-environment* mod-fact (to-mod-spec-list mod-list))))
 
 ;; used as follows:
 ;; (defrule push
@@ -142,13 +167,17 @@
 ; public
 (defun clear ()
   "Delete all facts"
-  (reset-environment))
+  (reset-environment *current-environment*))
+
+;; DEBUG:
+(defun complete-reset ()
+  (exil-env::completely-reset-environment *current-environment*))
 
 ; public
 (defmacro deffacts (name &body descriptions)
   "Create group of facts to be asserted after (reset)"
   (if (stringp (first descriptions)) (pop descriptions))
-  `(add-fact-group ',name ',descriptions))
+  `(add-fact-group *current-environment* ',name ',descriptions))
 
 ; public
 (defmacro undeffacts (name)
@@ -164,7 +193,7 @@
 (defun reset ()
   "Clear all facts and add all fact groups"
   (clear)
-  (dolist (group (fact-groups))
+  (dolist (group (fact-groups *current-environment*))
     (assert-group% group)))
 
 (defun my-position (atom list)
@@ -200,13 +229,14 @@
     `(let ((,rule-symbol
 	    (make-rule ',name
 		       (mapcar (lambda (condition)
-				 (make-pattern (car condition) :match-var (cdr condition)))
+				 (make-pattern *current-environment* (car condition)
+                       :match-var (cdr condition)))
 			       ',conditions)
 		       ',activations)))
-       (add-rule ,rule-symbol))))
+       (add-rule *current-environment* ,rule-symbol))))
 
 (defun ppdefrule% (name)
-  (let ((rule (find-rule name)))
+  (let ((rule (find-rule *current-environment* name)))
     (format t "(defrule ~A~{~%  ~A~}~%  =>~{~%  ~S~})"
 	    name (conditions rule) (activations rule))))
 
@@ -235,9 +265,9 @@
 ; public
 (defun step ()
   "Run inference engine for one turn"
-  (when (agenda)
+  (when (agenda *current-environment*)
 ;    (format t "~%------------------------------------------------------")
-    (activate-rule (select-activation))
+    (activate-rule (select-activation *current-environment*))
     t))
 
 (defvar *exil-running* nil)
@@ -259,14 +289,14 @@
   "Watch selected item (facts, rules, activations)"
   `(progn (if (weak-equal-p ',watcher 'all)
 	      (watch-all)
-	      (set-watcher ',watcher))
+	      (set-watcher *current-environment* ',watcher))
 	  nil))
 
 ; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
   `(progn (if (weak-equal-p ',watcher 'all)
-	      (unwatch-all)
-	      (unset-watcher ',watcher))
+	      (unwatch-all *current-environment*)
+	      (unset-watcher *current-environment* ',watcher))
 	  nil))
 

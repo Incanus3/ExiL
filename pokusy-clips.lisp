@@ -1,7 +1,8 @@
 (in-package :exil-user)
 
 ; TEMPLATE FACTS:
-(clear)
+;(clear)
+(complete-reset)
 
 (deftemplate goal
   (slot action)

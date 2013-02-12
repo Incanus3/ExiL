@@ -12,14 +12,19 @@
 ;; are satisfied when the node is activated (i.e. the network path leading
 ;; to this node represents testing of all the production's conditions)
 ;; when these nodes are (in)activated, they signal add-match (remove-match)
-;; to the environment
+;; to the environment, that's also why it stores reference to rete
+;; (which stores reference to the environment)
 ;; children are beta-join-nodes, items are tokens
 
 (defclass beta-memory-node (beta-node memory-node)
   ((productions :accessor productions
                 ;; :initarg :productions
-                :initform ())))
+                :initform ())
+   (rete :reader rete :initarg :rete
+         :initform (error "rete has to be specified"))))
 
+(defgeneric environment (node)
+  (:documentation "environment in which this rete network is defined"))
 (defgeneric broken-match (node token)
   (:documentation "pairs token with each of node's productions and removes
                    this match from the environment"))
@@ -32,19 +37,22 @@
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| productions: ~S" (productions node))))
 
+(defmethod environment ((node beta-memory-node))
+  (environment (rete node)))
+
 ;; when this is a new token, signal newly matched productions and activate
 ;; children
 (defmethod activate ((node beta-memory-node) (token token))
   (when (nth-value 1 (ext-add-item node token #'token-equal-p))
     (dolist (production (productions node))
-      (exil-env:add-match production token))
+      (exil-env:add-match (environment node) production token))
     (activate-children node token)))
 
 ;; signal to environment that token (combined with any production)
 ;; is not a valid match any more
 (defmethod broken-match ((node beta-memory-node) (token token))
   (dolist (production (productions node))
-    (exil-env:remove-match production token)))
+    (exil-env:remove-match (environment node) production token)))
 
 ;; left inactivation - the wme has been removed from working memory
 ;; remove tokens including it and signal broken matches
@@ -84,7 +92,8 @@
 
 ;; dummy top-node
 (defclass beta-top-node (beta-memory-node)
-  ((items :initform (list (make-empty-token)))))
+  ((items :initform (list (make-empty-token)))
+   (rete :initform nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tests holds info about one variable-binding consistency test
@@ -158,8 +167,8 @@
 (defgeneric perform-join-test (test token wme))
 (defgeneric perform-join-tests (test-list token wme))
 
-(defmethod initialize-instance :after ((node beta-join-node) &key)
-  (add-child node (make-instance 'beta-memory-node :parent node)))
+(defmethod initialize-instance :after ((node beta-join-node) &key rete)
+  (add-child node (make-instance 'beta-memory-node :parent node :rete rete)))
 
 (defmethod print-object ((node beta-join-node) stream)
   (print-unreadable-object (node stream :type t :identity t)

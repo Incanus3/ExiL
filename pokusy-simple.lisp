@@ -3,7 +3,7 @@
 
 ; SIMPLE FACTS:
 ;(clear)
-(exil-env::completely-reset-environment)
+(complete-reset)
 
 (deffacts world
   (in robot A)

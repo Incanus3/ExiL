@@ -5,21 +5,24 @@
 
 (defvar *debug-rete* nil)
 
+;; rete stores reference to environment, to be able to call its add-match and
+;; remove-match callbacks
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defclass rete () ((alpha-top-node :reader alpha-top-node
                                      :initform (make-instance 'alpha-top-node))
                      (beta-top-node  :accessor beta-top-node
-                                     :initform (make-instance 'beta-top-node))))
+                                     :initform (make-instance 'beta-top-node))
+                     (environment :reader environment :initarg :environment)))
 
-  (defun make-rete ()
-    (make-instance 'rete)))
+  (defun make-rete (environment)
+    (make-instance 'rete :environment environment)))
 
-(defmethod add-wme ((wme fact) &optional (rete (exil-env:rete)))
+(defmethod add-wme ((rete rete) (wme fact))
   (when *debug-rete*
     (format t "~%------------------------------------------------------"))
   (activate (alpha-top-node rete) wme))
 
-(defmethod rem-wme ((wme fact) &optional (rete (exil-env:rete)))
+(defmethod rem-wme ((rete rete) (wme fact))
   (when *debug-rete*
     (format t "~%------------------------------------------------------"))
   (inactivate (alpha-top-node rete) wme))
@@ -72,12 +75,10 @@
                                    (make-instance 'alpha-memory-node
                                                   :pattern pattern)))))))
 
-(defmethod create-alpha-net ((pattern simple-pattern)
-                             &optional (rete (exil-env:rete)))
+(defmethod create-alpha-net ((rete rete) (pattern simple-pattern))
   (create-alpha-net% pattern (ensure-network (alpha-top-node rete))))
 
-(defmethod create-alpha-net ((pattern template-pattern)
-                             &optional (rete (exil-env:rete)))
+(defmethod create-alpha-net ((rete rete) (pattern template-pattern))
   (create-alpha-net% pattern (ensure-network (alpha-top-node rete)
                                              (tmpl-name pattern))))
 
@@ -105,8 +106,8 @@
         (when (and (variable-p slot-val)
                    prev-cond
                    (not (member slot-val used-vars)))
-              (collect (make-test slot-name prev-cond field))
-              (push slot-val used-vars))))
+          (collect (make-test slot-name prev-cond field))
+          (push slot-val used-vars))))
 
 (defmethod get-intracondition-tests% ((condition simple-pattern))
   (iter (for subpattern on (pattern condition))
@@ -131,13 +132,15 @@
           ;; get internal condition tests (same variable twice in condition)
           (get-intracondition-tests% condition)))
 
-(defmethod find/create-join-node ((parent beta-memory-node)
+(defmethod find/create-join-node ((rete rete)
+                                  (parent beta-memory-node)
                                   (tests list)
                                   (a-memory alpha-memory-node))
   (let ((join-node (make-instance 'beta-join-node
                                   :parent parent
                                   :tests tests
-                                  :alpha-memory a-memory)))
+                                  :alpha-memory a-memory
+                                  :rete rete)))
     (or (find-if (lambda (child) (exil-equal-p child join-node))
                  (children parent))
         (progn (push join-node (children parent))
@@ -158,12 +161,12 @@
                neg-node))))
 
 ;; DODELAT NEGATIVE NODY
-(defmethod new-production ((rule rule) &optional (rete (exil-env:rete)))
+(defmethod new-production ((rete rete) (rule rule))
   (with-slots (conditions) rule
     (iter (for current-cond in conditions)
           (for i :upfrom 0)
           (for prev-conds :first () :then (subseq conditions 0 i))
-          (for alpha-memory = (create-alpha-net current-cond rete))
+          (for alpha-memory = (create-alpha-net rete current-cond))
           (for tests :first ()
                :then (get-join-tests-from-condition current-cond prev-conds))
           (for current-mem-node :first (beta-top-node rete)
@@ -172,11 +175,11 @@
                (if (negated-p current-cond)
                    (find/create-neg-node current-mem-node tests
                                          alpha-memory)
-                   (find/create-join-node current-mem-node tests
+                   (find/create-join-node rete current-mem-node tests
                                           alpha-memory)))
           (finally (add-production (beta-memory current-join-node) rule)))))
 	 
-(defmethod remove-production ((production rule) &optional (rete (exil-env:rete)))
+(defmethod remove-production ((rete rete) (production rule))
   (labels ((walk-through (node)
              (when (typep node 'beta-memory-node)
                (delete-production node production))

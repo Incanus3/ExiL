@@ -24,10 +24,10 @@
       (tmpl-slots-spec-p-clips slots-spec)))
 
 ; private, used by make-object
-(defun tmpl-object-spec-p (specification)
+(defmethod tmpl-object-spec-p ((env environment) specification)
   "is this a template-object specification?"
   (and (listp specification)
-       (find-template (first specification))
+       (find-template env (first specification))
        (tmpl-slots-spec-p (rest specification))))
 
 ; private, used by make-object
@@ -65,8 +65,8 @@
 
 ;; creates template object from generic template object specification
 ; private, used by make-object
-(defun make-tmpl-object (object-type object-spec)
-  (let ((template (find-template (first object-spec)))
+(defmethod make-tmpl-object ((env environment) object-type object-spec)
+  (let ((template (find-template env (first object-spec)))
         (slots-spec (rest object-spec))
         slots)
     (cl:assert template () "can't find template ~A" (first object-spec))
@@ -82,23 +82,23 @@
 ;; creates object from generic object specification - doesn't support
 ;; pattern negation and match-var, implemented in make-pattern
 ; private, used by make-fact, make-pattern
-(defun make-object (object-type object-spec)
-  (if (tmpl-object-spec-p object-spec)
-      (make-tmpl-object object-type object-spec)
+(defmethod make-object ((env environment) object-type object-spec)
+  (if (tmpl-object-spec-p env object-spec)
+      (make-tmpl-object env object-type object-spec)
       (make-simple-object object-type object-spec)))
 
 ; public, used by export:assert%, retract% and modify%
-(defun make-fact (fact-spec)
-  (make-object 'fact fact-spec))
+(defmethod make-fact ((env environment) fact-spec)
+  (make-object env 'fact fact-spec))
 
 ; TODO:
 ; make-pattern should support the ?fact <- <pattern> notation
 ; it should also support the ~, | and & notations in variable matching
 ; public, used by export:defrule
-(defun make-pattern (pattern-spec &key (match-var nil))
+(defmethod make-pattern ((env environment) pattern-spec &key (match-var nil))
   (let* ((negated (equalp (first pattern-spec) '-))
          (spec (if negated (rest pattern-spec) pattern-spec))
-         (pattern (make-object 'pattern spec)))
+         (pattern (make-object env 'pattern spec)))
     (setf (negated-p pattern) negated)
     (setf (match-var pattern) match-var)
     pattern))

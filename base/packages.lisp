@@ -65,7 +65,7 @@
            :add-fact-group :rem-fact-group :add-rule :rem-rule :find-rule
            :add-strategy :set-strategy :select-activation :find-fact :modify-fact
            :set-watcher :unset-watcher :watched-p :watch-all :unwatch-all
-           :activate-rule :make-fact :make-pattern
+           :activate-rule :make-fact :make-pattern :environment
            :facts :rules :templates :agenda :fact-groups :find-template :rete
            :add-match :remove-match))
 
@@ -75,7 +75,8 @@
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
            :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
-           :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule)
+           :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule
+           :complete-reset) ;; DEBUG
   (:shadow :assert :step :facts))
 
 #+lispworks (defpackage :exil-gui

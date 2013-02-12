@@ -5,7 +5,7 @@
 
 ; TEMPLATE FACTS:
 ;(clear)
-(exil-env::completely-reset-environment)
+(complete-reset)
 
 (deftemplate goal action object from to)
 (deftemplate in object location)
