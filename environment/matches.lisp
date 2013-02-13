@@ -12,6 +12,8 @@
 (defun make-match (rule token &optional (timestamp (get-internal-real-time)))
   (make-instance 'match :rule rule :token token :timestamp timestamp))
 
+(defgeneric match-equal-p (match1 match2))
+
 ; public
 (defmethod match-equal-p ((match1 match) (match2 match))
   (and (rule-equal-p (match-rule match1)

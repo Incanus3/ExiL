@@ -3,6 +3,14 @@
 ;; template- and generic fact and pattern makers - front-end template-object
 ;; specification parsing
 
+;; functions that (potentially) create template objects are defined as methods
+;; of environment, as they need access to environment's template list
+(defgeneric tmpl-object-spec-p (env specification))
+(defgeneric make-tmpl-object (env object-type object-spec))
+(defgeneric make-object (env object-type object-spec))
+(defgeneric make-fact (env fact-spec))
+(defgeneric make-pattern (env pattern-spec &key match-var))
+
 ; private, used by tmpl-slots-spec-p, get-slot-val
 (defun tmpl-slots-spec-p-nonclips (slots-spec)
   (every-couple (lambda (slot-name slot-val)

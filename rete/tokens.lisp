@@ -27,6 +27,10 @@
 (defun make-empty-token ()
   (make-instance 'empty-token))
 
+(defgeneric empty-token-p (token))
+(defgeneric previous-wme (token n))
+(defgeneric included-in-p (object token))
+
 (defmethod empty-token-p ((token token))
   (typep token 'empty-token))
 

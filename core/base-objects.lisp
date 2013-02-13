@@ -7,7 +7,6 @@
   (:documentation "ExiL default equality predicate")
   (:method-combination and))
 (defgeneric format-object (object stream))
-(defgeneric print-object (object stream))
 (defgeneric copy-object (object))
 (defgeneric object-slot (object slot-spec))
 (defgeneric (setf object-slot) (val object slot-spec))

@@ -36,6 +36,39 @@
 (defmethod initialize-instance :after ((env environment) &key)
   (setf (rete env) (make-rete env)))
 
+;; public methods
+(defgeneric add-fact (env fact))
+(defgeneric rem-fact (env fact))
+(defgeneric modify-fact (env fact mod-list))
+(defgeneric add-fact-group (env group-name descriptions))
+(defgeneric rem-fact-group (env group-name))
+(defgeneric add-template (env template))
+(defgeneric find-template (env name))
+(defgeneric add-rule (env rule))
+(defgeneric rem-rule (env rule))
+(defgeneric find-fact (env fact))
+(defgeneric find-rule (env rule-name))
+;; forward-declared in rete
+;(defgeneric add-match (env production token))
+;(defgeneric remove-match (env production token))
+(defgeneric add-strategy (env strat-name function))
+(defgeneric set-strategy (env &optional strat-name))
+(defgeneric select-activation (env))
+(defgeneric set-watcher (env watcher))
+(defgeneric unset-watcher (env watcher))
+(defgeneric watch-all (env))
+(defgeneric unwatch-all (env))
+(defgeneric reset-environment (env))
+(defgeneric reset-facts (env))
+;; DEBUG
+(defgeneric completely-reset-environment (env))
+
+;; private methods
+(defgeneric watched-p (env watcher))
+(defgeneric remove-matches (env rule))
+(defgeneric current-strategy (env))
+(defgeneric is-watcher (env watcher))
+
 ;; private
 (defmethod watched-p ((env environment) watcher)
   (assoc-value (to-keyword watcher) (watchers env)))

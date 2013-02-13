@@ -1,5 +1,10 @@
 (in-package :exil-env)
 
+(defgeneric variable-bindings (pattern fact))
+;(defmethod get-variable-bindings (pattern-list fact-list))
+;(defmethod substitute-variables (activations bindings))
+(defgeneric activate-rule (activation))
+
 ; private
 (defmethod variable-bindings ((pattern simple-pattern) (fact simple-fact))
   (let ((var-bindings (loop for atom in (pattern pattern)

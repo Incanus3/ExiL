@@ -106,6 +106,7 @@
    (alpha-memory :accessor memory :initarg :memory
                  :initform nil)))
 
+(defgeneric activate-memory (node wme))
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation"))
 

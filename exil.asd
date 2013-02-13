@@ -27,10 +27,10 @@
              (:file "templates-tests"    :depends-on ("templates"))
              (:file "base-objects"       :depends-on ("templates"))
              (:file "base-objects-tests" :depends-on ("base-objects"))
-             (:file "facts"              :depends-on ("base-objects"))
-             (:file "facts-tests"        :depends-on ("facts"))
              (:file "patterns"           :depends-on ("facts"))
              (:file "patterns-tests"     :depends-on ("patterns"))
+             (:file "facts"              :depends-on ("base-objects"))
+             (:file "facts-tests"        :depends-on ("facts"))
              (:file "rules"              :depends-on ("patterns"))
              (:file "rules-tests"        :depends-on ("rules"))))
    (:module :rete

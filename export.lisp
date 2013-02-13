@@ -141,7 +141,7 @@
 
 ;; mod-list is a mapping from slot-name to new value
 ;; it can be either plist for non-clips syntax of alist for clips syntax
-(defmethod modify% ((fact-spec list) (mod-list list))
+(defun modify% (fact-spec mod-list)
   (let ((mod-fact (make-fact *current-environment* fact-spec)))
     (unless (typep mod-fact 'template-fact)
       (error "modify: ~S is not a template fact specification" fact-spec))

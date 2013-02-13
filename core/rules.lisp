@@ -19,6 +19,8 @@
    (conditions :initarg :conditions :reader conditions)
    (activations :initarg :activations :reader activations)))
 
+(defgeneric rule-equal-p (rule1 rule2))
+
 #|
 (defmethod rule-equal-p ((rule1 rule) (rule2 rule))
   (with-slots ((name1 name)
@@ -46,5 +48,5 @@
   rule)
 
 ;public
-(defmethod make-rule (name conditions activations)
+(defun make-rule (name conditions activations)
   (make-instance 'rule :name name :conditions conditions :activations activations))

@@ -16,9 +16,12 @@
 ;; (which stores reference to the environment)
 ;; children are beta-join-nodes, items are tokens
 
+;; forward declarations
+(defgeneric exil-env:add-match (env production token))
+(defgeneric exil-env:remove-match (env production token))
+
 (defclass beta-memory-node (beta-node memory-node)
   ((productions :accessor productions
-                ;; :initarg :productions
                 :initform ())
    (rete :reader rete :initarg :rete
          :initform (error "rete has to be specified"))))
@@ -219,7 +222,7 @@
 
 (defclass beta-negative-node (beta-join-node memory-node) ())
 
-(defgeneric get-bad-wmes (node token))
+(defgeneric get-consistent-wmes (node token))
 
 ;; returns list of wmes (from neg-node's alpha-memory), which have consistent
 ;; variable bindings with token, i.e. which pass the consistency tests
