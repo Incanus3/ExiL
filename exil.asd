@@ -38,10 +38,12 @@
             :components
             ((:file "tokens")
              (:file "tokens-tests"       :depends-on ("tokens"))
-             (:file "rete-generic-node"  :depends-on ("tokens"))
-             (:file "rete-alpha-part"    :depends-on ("rete-generic-node"))
-             (:file "rete-beta-part"     :depends-on ("rete-alpha-part"))
-             (:file "rete-net-creation"  :depends-on ("rete-beta-part"))))
+             (:file "generic-node"       :depends-on ("tokens"))
+             (:file "alpha-part"         :depends-on ("generic-node"))
+             (:file "beta-memories"      :depends-on ("alpha-part"))
+             (:file "beta-joins"         :depends-on ("beta-memories"))
+             (:file "create-alpha-net"   :depends-on ("beta-joins"))
+             (:file "create-beta-net"    :depends-on ("create-alpha-net"))))
    (:module :environment
             :depends-on (:rete)
             :components
