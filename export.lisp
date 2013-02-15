@@ -37,12 +37,12 @@
 (defun nonclips-slot-spec-p (slot-spec)
   (and (symbolp (first slot-spec))
        (or (null (rest slot-spec))
-	   (keywordp (second slot-spec)))))
+           (keywordp (second slot-spec)))))
 
 (defun clips-slot-spec-p (slot-spec)
   (and (weak-equal-p (first slot-spec) 'slot))
-       (symbolp (second slot-spec))
-       (listp (nthcdr 2 slot-spec)))
+  (symbolp (second slot-spec))
+  (listp (nthcdr 2 slot-spec)))
 
 (defun slot-spec-p (slot-spec)
   (or (nonclips-slot-spec-p slot-spec)
@@ -78,8 +78,8 @@
   "define a fact template"
   (let ((template (gensym "template")))
     `(let ((,template
-	    (make-template ',name
-			   ',(slots->slot-designators% slots))))
+            (make-template ',name
+                           ',(slots->slot-designators% slots))))
        (add-template *current-environment* ,template))))
 
 ; public
@@ -87,7 +87,8 @@
                 (end-index (length (exil-env:facts *current-environment*)))
                 (at-most end-index))
   (let ((facts (exil-env:facts *current-environment*)))
-    (loop for i from (1- start-index) to (min (1- end-index) (+ start-index at-most -1))
+    (loop for i from (1- start-index) to (min (1- end-index)
+                                              (+ start-index at-most -1))
        collect (nth i facts))))
 
 (defun assert% (fact-spec)
@@ -104,9 +105,10 @@
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
       (typecase fact-spec
-	(list (pushnew (make-fact *current-environment* fact-spec) facts-to-remove))
-	(integer (pushnew (nth (1- fact-spec) (facts)) facts-to-remove))
-	(t (error "Type ~A not supported by retract" (type-of fact-spec)))))
+        (list (pushnew (make-fact *current-environment* fact-spec)
+                       facts-to-remove))
+        (integer (pushnew (nth (1- fact-spec) (facts)) facts-to-remove))
+        (t (error "Type ~A not supported by retract" (type-of fact-spec)))))
     (dolist (fact facts-to-remove)
       (rem-fact *current-environment* fact))))
 
@@ -209,10 +211,10 @@
      for cond = (first cond-list) then (nth i cond-list)
      while (< i (length cond-list))
      if (listp cond)
-       collect (cons cond nil)
+     collect (cons cond nil)
      else
-       collect (cons (nth (+ i 2) cond-list) cond) and
-       do (incf i 2)))
+     collect (cons (nth (+ i 2) cond-list) cond) and
+     do (incf i 2)))
 
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 ; public
@@ -221,24 +223,25 @@
   (when (stringp (first rule))
     (pop rule)) ;; ignore the clips rule header
   (let* ((=>-position (position '=> rule :test #'weak-equal-p))
-	 (conditions (extract-conditions% (subseq rule 0 =>-position)))
-	 (activations (subseq rule (1+ =>-position)))
-	 (rule-symbol (gensym "rule")))
+         (conditions (extract-conditions% (subseq rule 0 =>-position)))
+         (activations (subseq rule (1+ =>-position)))
+         (rule-symbol (gensym "rule")))
     (cl:assert =>-position ()
-	    "rule definition must include =>")
+               "rule definition must include =>")
     `(let ((,rule-symbol
-	    (make-rule ',name
-		       (mapcar (lambda (condition)
-				 (make-pattern *current-environment* (car condition)
-                       :match-var (cdr condition)))
-			       ',conditions)
-		       ',activations)))
+            (make-rule
+             ',name
+             (mapcar (lambda (condition)
+                       (make-pattern *current-environment* (car condition)
+                                     :match-var (cdr condition)))
+                     ',conditions)
+             ',activations)))
        (add-rule *current-environment* ,rule-symbol))))
 
 (defun ppdefrule% (name)
   (let ((rule (find-rule *current-environment* name)))
     (format t "(defrule ~A~{~%  ~A~}~%  =>~{~%  ~S~})"
-	    name (conditions rule) (activations rule))))
+            name (conditions rule) (activations rule))))
 
 ; public
 (defmacro ppdefrule (name)
@@ -266,7 +269,7 @@
 (defun step ()
   "Run inference engine for one turn"
   (when (agenda *current-environment*)
-;    (format t "~%------------------------------------------------------")
+    ;; (format t "~%------------------------------------------------------")
     (activate-rule (select-activation *current-environment*))
     t))
 
@@ -288,15 +291,14 @@
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
   `(progn (if (weak-equal-p ',watcher 'all)
-	      (watch-all)
-	      (set-watcher *current-environment* ',watcher))
-	  nil))
+              (watch-all)
+              (set-watcher *current-environment* ',watcher))
+          nil))
 
 ; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
   `(progn (if (weak-equal-p ',watcher 'all)
-	      (unwatch-all *current-environment*)
-	      (unset-watcher *current-environment* ',watcher))
-	  nil))
-
+              (unwatch-all *current-environment*)
+              (unset-watcher *current-environment* ',watcher))
+          nil))
