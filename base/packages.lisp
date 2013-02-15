@@ -8,8 +8,8 @@
   (:export :intern :string-append :symbol-name :symbol-append :to-keyword
            :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
            :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
-           :ext-delete :diff-remove :push-update :select
-           :every-couple :cpl-assoc-val :plistp :alistp
+           :ext-delete :diff-remove :push-update :select :every-couple
+           :cpl-assoc-val :plistp :alistp :plist-every :plist-equal-p :rgetf
            :doplist :weak-equal-p :hash->list))
 
 (defpackage :tests-base
@@ -28,12 +28,13 @@
                    templates, patterns and rules")
   (:use :common-lisp :exil-utils :iterate)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
-  (:export :variable-p :template :tmpl-name :slots :find-atom
+  (:export :variable-p :template :slots :find-atom
            :has-slot-p :make-template :fact :simple-fact
            :atom-position :template-fact :exil-equal-p
            :slot-default :doslots :copy-object :object-slot
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern
+           :make-template-fact :make-template-pattern
            :negated-p :simple-pattern :var-or-equal-p
            :template-pattern :rule :rule-equal-p :make-rule
            :name :conditions :activations :description))
@@ -59,7 +60,7 @@
 (defpackage :exil-env
   (:documentation "the exil environment, keeps track of the defined templates
                    and rules and stores the asserted facts")
-  (:use :common-lisp :exil-utils :exil-core :exil-rete)
+  (:use :common-lisp :exil-utils :exil-core :exil-rete :iterate)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
            :add-fact-group :rem-fact-group :add-rule :rem-rule :find-rule

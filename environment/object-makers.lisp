@@ -38,66 +38,27 @@
        (find-template env (first specification))
        (tmpl-slots-spec-p (rest specification))))
 
-; private, used by make-object
-(defun make-simple-object (object-type object-spec)
-  (ecase object-type
-    (fact (make-simple-fact object-spec))
-    (pattern (make-simple-pattern object-spec))))
+(defun extract-tmpl-name (specification)
+  (first specification))
 
-;; extracts slot value from lispy slots specification
-;; e.g. (:object box :location hall)
-; private, used by get-slot-val
-(defun get-slot-val-nonclips (slot-name slots-spec)
-  (getf slots-spec (to-keyword slot-name)))
+(defun clips->nonclips-spec (slot-spec)
+  (let (nonclips-slot-spec)
+    (iter (for (slot-name slot-val) in slot-spec)
+          (setf (getf nonclips-slot-spec (to-keyword slot-name))
+                slot-val))
+    nonclips-slot-spec))
 
-;; extracts slot value from clips-like slots specification
-;; e.g. ((object box) (location hall))
-; private, used by get-slot-val
-(defun get-slot-val-clips (slot-name slots-spec)
-  (cpl-assoc-val slot-name slots-spec))
+(defun extract-slot-spec (fact-spec)
+  (let ((slot-spec (rest fact-spec)))
+    (if (tmpl-slots-spec-p-clips slot-spec)
+        (clips->nonclips-spec slot-spec)
+        slot-spec)))
 
-;; extracts slot value from slots specification (used in assert)
-; private, used by make-tmpl-object
-(defun get-slot-val (slot-name slots-spec)
-  (cond ((tmpl-slots-spec-p-nonclips slots-spec)
-         (get-slot-val-nonclips slot-name slots-spec))
-        ((tmpl-slots-spec-p-clips slots-spec)
-         (get-slot-val-clips slot-name slots-spec))
-        (t (error "~S is not a valid slots specification" slots-spec))))
-
-; private, used by make-tmpl-object
-(defun tmpl-object-class (object-type)
-  (ecase object-type
-    (fact 'template-fact)
-    (pattern 'template-pattern)))
-
-;; creates template object from generic template object specification
-; private, used by make-object
-(defmethod make-tmpl-object ((env environment) object-type object-spec)
-  (let ((template (find-template env (first object-spec)))
-        (slots-spec (rest object-spec))
-        slots)
-    (cl:assert template () "can't find template ~A" (first object-spec))
-    (doslots (slot-name default template)
-      (push (cons slot-name (or (get-slot-val slot-name slots-spec)
-                                default
-                                (slot-default object-type)))
-            slots))
-    (make-instance (tmpl-object-class object-type)
-                   :tmpl-name (name template)
-                   :slots (nreverse slots))))
-
-;; creates object from generic object specification - doesn't support
-;; pattern negation and match-var, implemented in make-pattern
-; private, used by make-fact, make-pattern
-(defmethod make-object ((env environment) object-type object-spec)
-  (if (tmpl-object-spec-p env object-spec)
-      (make-tmpl-object env object-type object-spec)
-      (make-simple-object object-type object-spec)))
-
-; public, used by export:assert%, retract% and modify%
 (defmethod make-fact ((env environment) fact-spec)
-  (make-object env 'fact fact-spec))
+  (if (tmpl-object-spec-p env fact-spec)
+      (make-template-fact (find-template env (extract-tmpl-name fact-spec))
+                          (extract-slot-spec fact-spec))
+      (make-simple-fact fact-spec)))
 
 ; TODO:
 ; make-pattern should support the ?fact <- <pattern> notation
@@ -105,8 +66,11 @@
 ; public, used by export:defrule
 (defmethod make-pattern ((env environment) pattern-spec &key (match-var nil))
   (let* ((negated (equalp (first pattern-spec) '-))
-         (spec (if negated (rest pattern-spec) pattern-spec))
-         (pattern (make-object env 'pattern spec)))
-    (setf (negated-p pattern) negated)
-    (setf (match-var pattern) match-var)
-    pattern))
+         (spec (if negated (rest pattern-spec) pattern-spec)))
+    (if (tmpl-object-spec-p env spec)
+        (make-template-pattern
+         (find-template env (extract-tmpl-name spec))
+         (extract-slot-spec spec)
+         :match-var match-var :negated negated)
+        (make-simple-pattern
+         spec :match-var match-var :negated negated))))

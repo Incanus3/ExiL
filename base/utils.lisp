@@ -154,6 +154,7 @@
             (nth i list))
           indices))
 
+;; TODO: check if this is used
 (defun every-couple (predicate list)
   "applies 2-parameter predicate to every couple of items in the list,
    returns true if all the return values are true"
@@ -165,6 +166,7 @@
           (unless (funcall predicate first second) (return nil))
           (finally (return t)))))
 
+;; TODO: check if this needs to be in eval-when
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun plistp (list)
     "is the list a property list?"
@@ -190,6 +192,22 @@
             (,val (pop ,sym-plist) (pop ,sym-plist)))
            ((not ,key) ,retval)
          ,@body))))
+
+(defun plist-every (pred plist)
+  (doplist (key val plist t)
+    (unless (funcall pred key val) (return nil))))
+
+(defun plist-equal-p (plist1 plist2)
+  (and (= (length plist1) (length plist2))
+       (plist-every (lambda (key val)
+                      (equalp val (getf plist2 key)))
+                    plist1)))
+
+;; returns plist key for given value
+(defun rgetf (plist value)
+  (doplist (key val plist)
+    (when (equalp val value)
+      (return key))))
 
 (defun hash->list (hash)
   "returns list of all values in the hash"

@@ -111,4 +111,4 @@
 ;; create alpha network in rete for given template-pattern
 (defmethod create-alpha-net ((rete rete) (pattern template-pattern))
   (create-alpha-net% pattern (ensure-network (alpha-top-node rete)
-                                             (tmpl-name pattern))))
+                                             (name (template pattern)))))

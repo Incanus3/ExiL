@@ -41,8 +41,12 @@
 
 ; private
 (defmethod initialize-instance :after ((fact template-fact) &key)
-  (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
-             () "fact must not include variables"))
+;  (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))
+;             () "fact must not include variables")
+  )
+
+(defmethod make-template-fact ((tmpl template) (slot-spec list))
+  (make-tmpl-object tmpl slot-spec 'template-fact))
 
 ;;;; inherited from template-object:
 ;; exil-equal-p, format-object, print-object, copy-object, object-slot,

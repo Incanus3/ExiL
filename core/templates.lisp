@@ -19,10 +19,6 @@
           :initform (error "slots have to be specified"))))
 
 ; not in use
-;(defmethod tmpl-slot-spec ((template template) slot-name)
-;  (assoc-value slot-name (slots template)))
-
-; not in use
 ;(defmethod tmpl-equal-p ((tmpl1 template) (tmpl2 template))
 ;  (and (equalp (name tmpl1) (name tmpl2))
 ;       (equalp (slots tmpl1) (slots tmpl2))))
@@ -35,7 +31,11 @@
 
 ; public
 (defun make-template (name slots)
-  (make-instance 'template :name name :slots (to-list-of-lists slots)))
+  (make-instance 'template :name name
+                 :slots (mapcar (lambda (slot-spec)
+                                  (cons (to-keyword (car slot-spec))
+                                        (cdr slot-spec)))
+                                (to-list-of-lists slots))))
 
 ; iterates over template's slots, introducing variables (whose names are
 ; given by name and default) in the body

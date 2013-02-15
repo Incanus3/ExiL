@@ -34,12 +34,13 @@
               :initarg :pattern
               :reader pattern)))
 
-(defun make-simple-pattern (pattern-spec &optional negated match-var)
+(defun make-simple-pattern (pattern-spec &key negated match-var)
   (make-instance 'simple-pattern
                  :pattern (copy-list pattern-spec)
                  :negated negated
                  :match-var match-var))
 
+;; TODO: change this to correspond to assert format
 (defmethod format-object ((pattern simple-pattern) stream)
   (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
                      (negated-p pattern) (pattern pattern)))
@@ -53,8 +54,15 @@
 (defclass template-pattern (pattern template-object) ())
 
 (defmethod format-object ((object template-pattern) stream)
-  (format stream "~:[~;NOT ~]~A" (negated-p object)
-                (cons (tmpl-name object) (slots object))))
+  (format stream "~:[~;NOT ~]~S" (negated-p object)
+                (cons (name (template object)) (slots object))))
+
+(defmethod make-template-pattern ((tmpl template) (slot-spec list)
+                                  &key negated match-var)
+  (let ((pattern (make-tmpl-object tmpl slot-spec 'template-pattern)))
+    (setf (negated-p pattern) negated)
+    (setf (match-var pattern) match-var)
+    pattern))
 
 ;;;; inherited from template-object:
 ;; print-object, copy-object, object-slot, find-atom, atom-position,
@@ -65,7 +73,7 @@
 ;; pattern's slot, for which user supplies no value and it's default value isn't
 ;; specified in the template definition, defaults to the anonymous variable '?
 ; public, used by object-makers (environment)
-(defmethod slot-default ((type (eql 'pattern)))
+(defmethod slot-default ((type (eql 'template-pattern)))
   '?)
 
 ; public

@@ -30,10 +30,8 @@
              (:file "patterns"           :depends-on ("facts"))
              (:file "patterns-tests"     :depends-on ("patterns"))
              (:file "facts"              :depends-on ("base-objects"))
-             (:file "facts-tests"        :depends-on ("facts"))
-             (:file "rules"              :depends-on ("patterns"))
-             (:file "rules-tests"        :depends-on ("rules"))))
-   (:module :rete
+             (:file "rules"              :depends-on ("patterns"))))
+   (:Module :rete
             :depends-on (:core)
             :components
             ((:file "tokens")

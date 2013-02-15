@@ -27,7 +27,7 @@
 (defmethod find-atom-in-cond-list (atom cond-list)
   (iter (for condition in (reverse cond-list))
         (for i :upfrom 1)
-        (when (find-atom condition atom)
+        (when (atom-position condition atom)
           (return (cons i (atom-position condition atom))))))
 
 ;; get list of tests ensuring consistent variable bindings between

@@ -6,19 +6,19 @@
   (let* ((specifier '(on ?a ?b))
          (simple-pattern1 (make-simple-pattern specifier))
          (simple-pattern2 (make-simple-pattern '(on ?a ?c)))
-         (simple-pattern3 (make-simple-pattern specifier t)) ; negated
-         (slots '((a . 1) (b . 2)))
+         (simple-pattern3 (make-simple-pattern specifier :negated t))
+         (slots '(:a 1 :b 2))
          (tmpl-pattern1 (make-instance 'template-pattern
-                                       :tmpl-name 'template
+                                       :template 'template
                                        :slots slots))
          (tmpl-pattern2 (make-instance 'template-pattern
-                                       :tmpl-name 'template
+                                       :template 'template
                                        :slots ()))
          (tmpl-pattern3 (make-instance 'template-pattern
-                                       :tmpl-name 'other-template
+                                       :template 'other-template
                                        :slots slots))
          (tmpl-pattern4 (make-instance 'template-pattern
-                                       :tmpl-name 'template
+                                       :template 'template
                                        :slots slots
                                        :negated t)))
     (assert-true (exil-equal-p simple-pattern1 simple-pattern1))

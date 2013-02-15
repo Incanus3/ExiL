@@ -61,7 +61,7 @@
 (defmethod network-key ((node alpha-top-node) (wme fact))
   (typecase wme
     (simple-fact (simple-fact-key node))
-    (template-fact (tmpl-name wme))))
+    (template-fact (name (template wme)))))
 
 ;; called by add-wme
 ;; activates appropriate subtop node
