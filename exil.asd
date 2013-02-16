@@ -31,7 +31,7 @@
              (:file "patterns-tests"     :depends-on ("patterns"))
              (:file "facts"              :depends-on ("base-objects"))
              (:file "rules"              :depends-on ("patterns"))))
-   (:Module :rete
+   (:module :rete
             :depends-on (:core)
             :components
             ((:file "tokens")
@@ -41,7 +41,8 @@
              (:file "beta-memories"      :depends-on ("alpha-part"))
              (:file "beta-joins"         :depends-on ("beta-memories"))
              (:file "create-alpha-net"   :depends-on ("beta-joins"))
-             (:file "create-beta-net"    :depends-on ("create-alpha-net"))))
+             (:file "create-beta-net"    :depends-on ("create-alpha-net"))
+             (:file "rete-tests"         :depends-on ("create-beta-net"))))
    (:module :environment
             :depends-on (:rete)
             :components

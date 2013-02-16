@@ -42,7 +42,7 @@
 ;; rete has four entry-points:
 ;; add-wme, rem-wme, add-production, remove-production
 
-(def-test-method test-rete ((tests rete-simple-tests))
+(def-test-method test-rete ((tests rete-simple-tests) :run nil)
   (with-slots (env rete rule wme1 wme2 wme3 wme4) tests
     (let* ((token1 (erete::make-token wme3))
            (token2 (erete::make-token wme2 token1)))
@@ -97,7 +97,7 @@
 ;; rete has four entry-points:
 ;; add-wme, rem-wme, add-production, remove-production
 
-(def-test-method test-rete ((tests rete-template-tests))
+(def-test-method test-rete ((tests rete-template-tests) :run nil)
   (with-slots (env rete rule wme1 wme2 wme3 wme4) tests
     (let* ((token1 (erete::make-token wme3))
            (token2 (erete::make-token wme2 token1)))
@@ -121,5 +121,5 @@
 
 (add-test-suite 'rete-simple-tests)
 (add-test-suite 'rete-template-tests)
-(textui-test-run (get-suite rete-simple-tests))
-(textui-test-run (get-suite rete-template-tests))
+;(textui-test-run (get-suite rete-simple-tests))
+;(textui-test-run (get-suite rete-template-tests))
