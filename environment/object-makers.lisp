@@ -13,10 +13,7 @@
 
 ; private, used by tmpl-slots-spec-p, get-slot-val
 (defun tmpl-slots-spec-p-nonclips (slots-spec)
-  (every-couple (lambda (slot-name slot-val)
-                  (declare (ignore slot-val))
-                  (keywordp slot-name))
-                slots-spec))
+  (plistp slots-spec))
 
 ; private, used by tmpl-slots-spec-p, get-slot-val
 (defun tmpl-slots-spec-p-clips (slots-spec)

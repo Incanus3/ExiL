@@ -49,6 +49,7 @@
     (assert-equal 'a (assoc-key 1 alist))
     (assert-equal nil (assoc-key 2 alist))))
 
+#|
 (def-test-method test-cpl-assoc-val ((tests utils-tests) :run nil)
   (let ((cpl-list (list (list 'a 1))))
     (assert-equal 1 (cpl-assoc-val 'a cpl-list))
@@ -56,6 +57,7 @@
     (setf (cpl-assoc-val 'a cpl-list) 2)
     (assert-equal 2 (cpl-assoc-val 'a cpl-list))
     (assert-condition 'simple-error (setf (cpl-assoc-val 'b cpl-list) 2))))
+|#
 
 (def-test-method test-to-list ((tests utils-tests) :run nil)
   (assert-equal '(a) (to-list 'a))
@@ -109,10 +111,12 @@
 (def-test-method test-select ((tests utils-tests) :run nil)
   (assert-equal (select '(a b c d) '(1 3)) '(b d)))
 
+#|
 (def-test-method test-every-couple ((tests utils-tests) :run nil)
   (flet ((even-sum (a b) (evenp (+ a b))))
     (assert-true (every-couple #'even-sum '(1 1 2 2)))
     (assert-false (every-couple #'even-sum '(1 1 2 3)))))
+|#
 
 (def-test-method test-plistp ((tests utils-tests) :run nil)
   (assert-true (plistp '(:a 1 :b 2)))

@@ -10,7 +10,7 @@
 (defgeneric copy-object (object))
 (defgeneric object-slot (object slot-spec))
 (defgeneric (setf object-slot) (val object slot-spec))
-(defgeneric find-atom (object atom))
+;(defgeneric find-atom (object atom))
 (defgeneric atom-position (object atom))
 (defgeneric description (object))
 
@@ -43,8 +43,8 @@
   (setf (nth slot-spec (specifier object)) val))
 
 ; public, used by rete
-(defmethod find-atom ((object simple-object) atom)
-  (find atom (specifier object)))
+;(defmethod find-atom ((object simple-object) atom)
+;  (find atom (specifier object)))
 
 ; public, used by rete
 (defmethod atom-position ((object simple-object) atom)
@@ -58,6 +58,7 @@
 ;; virtual, template-fact and template-pattern will inherit from this one
 ;; template-name is a keyword
 ;; slots holds alist of slot names and values
+;; slot names are keyword symbols
 ; private for package
 (defclass template-object (base-object)
   ((template :reader template
@@ -65,14 +66,12 @@
              :initform (error "template has to be specified"))
    (slots :accessor slots :initarg :slots :initform ())))
 
-;(defgeneric has-slot-p (tmpl-object slot-name))
-
 ;; TODO: add equality predicate for templates and use it here
 ;; TODO: add alist equality predicate and use it here
 (defmethod exil-equal-p and ((object1 template-object)
                              (object2 template-object))
-  (and (equalp (template object1) (template object2))
-       (weak-equal-p (slots object1) (slots object2))))
+  (and (exil-equal-p (template object1) (template object2))
+       (alist-equal-p (slots object1) (slots object2))))
 
 ;; TODO: change this so it corresponds to assert format
 (defmethod format-object ((object template-object) stream)
@@ -85,10 +84,6 @@
 
 (defmethod object-slot ((object template-object) (slot-name symbol))
   (assoc-value slot-name (slots object)))
-
-;; not used
-;(defmethod has-slot-p ((object template-object) slot-name)
-;  (find slot-name (slots object) :key #'car :test #'weak-equal-p))
 
 (defmethod (setf object-slot) (val (object template-object) (slot-name symbol))
     (setf (assoc-value slot-name (slots object)) val))

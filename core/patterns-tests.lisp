@@ -7,20 +7,13 @@
          (simple-pattern1 (make-simple-pattern specifier))
          (simple-pattern2 (make-simple-pattern '(on ?a ?c)))
          (simple-pattern3 (make-simple-pattern specifier :negated t))
+         (tmpl1 (make-template :tmpl '(:a :b)))
+         (tmpl2 (make-template :tmpl2 '(:a (:b :default 5))))
          (slots '(:a 1 :b 2))
-         (tmpl-pattern1 (make-instance 'template-pattern
-                                       :template 'template
-                                       :slots slots))
-         (tmpl-pattern2 (make-instance 'template-pattern
-                                       :template 'template
-                                       :slots ()))
-         (tmpl-pattern3 (make-instance 'template-pattern
-                                       :template 'other-template
-                                       :slots slots))
-         (tmpl-pattern4 (make-instance 'template-pattern
-                                       :template 'template
-                                       :slots slots
-                                       :negated t)))
+         (tmpl-pattern1 (make-template-pattern tmpl1 slots))
+         (tmpl-pattern2 (make-template-pattern tmpl1 ()))
+         (tmpl-pattern3 (make-template-pattern tmpl2 slots))
+         (tmpl-pattern4 (make-template-pattern tmpl1 slots :negated t)))
     (assert-true (exil-equal-p simple-pattern1 simple-pattern1))
     (assert-false (exil-equal-p simple-pattern1 simple-pattern2))
     (assert-false (exil-equal-p simple-pattern1 simple-pattern3))

@@ -1,9 +1,9 @@
 (in-package :exil-utils)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; various general purpose utilities
+;; SYMBOLS:
 
-;; insures that (intern "abc") equals (intern "ABC")
+;; ensures that (intern "abc") equals (intern "ABC")
 (defun intern (string &optional (package *package*))
   "create symbol from string"
   (cl:intern (string-upcase string) package))
@@ -35,25 +35,8 @@
   (intern key package))
 ;; (from-keyword :a) => a
 
-(defmacro mac-exp (&body body)
-  "shortcut for calling macroexpand-1"
-  `(pprint (macroexpand-1 ',@body)))
-
-;; more like sublists - doesn't care about duplicities in the input list
-;; i just don't like the name sublists, that's why
-(defun subsets (list)
-  "get a list of all subsets of given list"
-  (cl:assert (<= (length list) 20)
-             ()
-             (string-append "subsets: Can't generate subsets of list longer"
-                            "then 20, not enough memory!"))
-  (case (length list)
-    (0 ())
-    (1 (list () list))
-    (otherwise (let ((subsets (subsets (rest list))))
-                 (append subsets (mapcar (lambda (x) (cons (first list) x))
-                                         subsets))))))
-;; (subsets '(1 2)) = ((1 2) (1) (2) ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ALISTS:
 
 (defun assoc-value (the-key alist &key (key #'identity) (test #'equalp))
   "get value from assoc-list according to the key"
@@ -73,16 +56,86 @@
   (car (rassoc value alist)))
 ;; (assoc-key 2 '((a . 1) (b . 2))) => b
 
-(defun cpl-assoc-val (key cpl-list)
-  "get value from couple list according to the key"
-  (second (assoc key cpl-list)))
-;; (cpl-assoc-val 'b '((a 1) (b 2))) => 2
+(defun alistp (list)
+  "is the list an assoc-list?"
+  (every (lambda (elem)
+           (and (listp elem) (= (length elem) 2)))
+         list))
 
-(defun (setf cpl-assoc-val) (new-val key cpl-list)
-  (let ((couple (assoc key cpl-list)))
-    (if couple
-        (setf (second couple) new-val)
-        (error "Key ~s not present in ~s" key cpl-list))))
+(defun alist-equal-p (alist1 alist2)
+  (and (= (length alist1) (length alist2))
+       (every (lambda (x)
+                (equalp (assoc (car x) alist2) x))
+              alist1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; PLISTS:
+
+(defun every-couple% (predicate list)
+  "applies 2-parameter predicate to every couple of items in the list,
+   returns true if all the return values are true"
+  (when (evenp (length list))
+    (iter (with lst-copy = (copy-list list))
+          (while lst-copy)
+          (for first = (pop lst-copy))
+          (for second = (pop lst-copy))
+          (unless (funcall predicate first second) (return nil))
+          (finally (return t)))))
+
+;; TODO: check if this needs to be in eval-when
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun plistp (list)
+    "is the list a property list?"
+    (every-couple% (lambda (key val)
+                    (declare (ignore val))
+                    (keywordp key))
+                  list)))
+
+(defmacro doplist ((key val plist &optional (retval nil)) &body body)
+  "iterates over plist setting key and val variables for each iteration"
+  (let ((sym-plist (gensym "plist")))
+    `(let ((,sym-plist (copy-list ,plist)))
+       (cl:assert (plistp ,plist) ()
+                  "doplist: ~A not a plist" ,plist)
+       (do ((,key (pop ,sym-plist) (pop ,sym-plist))
+            (,val (pop ,sym-plist) (pop ,sym-plist)))
+           ((not ,key) ,retval)
+         ,@body))))
+
+(defun plist-every (pred plist)
+  (doplist (key val plist t)
+    (unless (funcall pred key val) (return nil))))
+
+(defun plist-equal-p (plist1 plist2)
+  (and (= (length plist1) (length plist2))
+       (plist-every (lambda (key val)
+                      (equalp val (getf plist2 key)))
+                    plist1)))
+
+;; returns plist key for given value
+(defun rgetf (plist value)
+  (doplist (key val plist)
+    (when (equalp val value)
+      (return key))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LISTS:
+
+;; more like sublists - doesn't care about duplicities in the input list
+;; i just don't like the name sublists, that's why
+(defun subsets (list)
+  "get a list of all subsets of given list"
+  (cl:assert (<= (length list) 20)
+             ()
+             (string-append "subsets: Can't generate subsets of list longer"
+                            "then 20, not enough memory!"))
+  (case (length list)
+    (0 ())
+    (1 (list () list))
+    (otherwise (let ((subsets (subsets (rest list))))
+                 (append subsets (mapcar (lambda (x) (cons (first list) x))
+                                         subsets))))))
+;; (subsets '(1 2)) = ((1 2) (1) (2) ())
 
 (defun to-list (x)
   "when given an atom, returns list containing it,
@@ -154,60 +207,11 @@
             (nth i list))
           indices))
 
-;; TODO: check if this is used
-(defun every-couple (predicate list)
-  "applies 2-parameter predicate to every couple of items in the list,
-   returns true if all the return values are true"
-  (when (evenp (length list))
-    (iter (with lst-copy = (copy-list list))
-          (while lst-copy)
-          (for first = (pop lst-copy))
-          (for second = (pop lst-copy))
-          (unless (funcall predicate first second) (return nil))
-          (finally (return t)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; TODO: check if this needs to be in eval-when
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun plistp (list)
-    "is the list a property list?"
-    (and (evenp (length list))
-         (every-couple (lambda (key val)
-                         (declare (ignore val))
-                         (keywordp key))
-                       list))))
-
-(defun alistp (list)
-  "is the list an assoc-list?"
-  (every (lambda (elem)
-           (and (listp elem) (= (length elem) 2)))
-         list))
-
-(defmacro doplist ((key val plist &optional (retval nil)) &body body)
-  "iterates over plist setting key and val variables for each iteration"
-  (let ((sym-plist (gensym "plist")))
-    `(let ((,sym-plist (copy-list ,plist)))
-       (cl:assert (plistp ,plist) ()
-                  "doplist: ~A not a plist" ,plist)
-       (do ((,key (pop ,sym-plist) (pop ,sym-plist))
-            (,val (pop ,sym-plist) (pop ,sym-plist)))
-           ((not ,key) ,retval)
-         ,@body))))
-
-(defun plist-every (pred plist)
-  (doplist (key val plist t)
-    (unless (funcall pred key val) (return nil))))
-
-(defun plist-equal-p (plist1 plist2)
-  (and (= (length plist1) (length plist2))
-       (plist-every (lambda (key val)
-                      (equalp val (getf plist2 key)))
-                    plist1)))
-
-;; returns plist key for given value
-(defun rgetf (plist value)
-  (doplist (key val plist)
-    (when (equalp val value)
-      (return key))))
+(defmacro mac-exp (&body body)
+  "shortcut for calling macroexpand-1"
+  `(pprint (macroexpand-1 ',@body)))
 
 (defun hash->list (hash)
   "returns list of all values in the hash"

@@ -18,20 +18,20 @@
    (slots :reader slots :initarg :slots
           :initform (error "slots have to be specified"))))
 
-; not in use
-;(defmethod tmpl-equal-p ((tmpl1 template) (tmpl2 template))
+(defmethod exil-equal-p and ((tmpl1 template) (tmpl2 template))
 ;  (and (equalp (name tmpl1) (name tmpl2))
 ;       (equalp (slots tmpl1) (slots tmpl2))))
+  (equalp (name tmpl1) (name tmpl2)))
 
 ; public
 (defmethod print-object ((tmpl template) stream)
   (print-unreadable-object (tmpl stream :type t)
-    (format stream "~A ~S" (name tmpl) (slots tmpl)))
+    (format stream "~A ~A" (name tmpl) (slots tmpl)))
   tmpl)
 
 ; public
 (defun make-template (name slots)
-  (make-instance 'template :name name
+  (make-instance 'template :name (to-keyword name)
                  :slots (mapcar (lambda (slot-spec)
                                   (cons (to-keyword (car slot-spec))
                                         (cdr slot-spec)))

@@ -28,10 +28,12 @@
     (setf (object-slot object 1) 'blue-box)
     (assert-equal (object-slot object 1) 'blue-box)))
 
+#|
 (def-test-method test-find-atom ((tests simple-object-tests) :run nil)
   (with-slots (object) tests
     (assert-true (find-atom object 'box))
     (assert-false (find-atom object 'not-present))))
+|#
 
 (def-test-method test-atom-position ((tests simple-object-tests) :run nil)
   (with-slots (object) tests
@@ -100,7 +102,7 @@
 
 (def-test-method test-description ((tests template-object-tests) :run nil)
   (with-slots (object) tests
-    (assert-equal (description object) '(test-template :a 1 :b 2))))
+    (assert-equal (description object) '(:test-template :a 1 :b 2))))
 
 (add-test-suite 'simple-object-tests)
 (add-test-suite 'template-object-tests)

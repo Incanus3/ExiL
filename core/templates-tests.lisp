@@ -8,7 +8,7 @@
   (let (slots)
     (doslots (name default (template tests))
       (push (cons name default) slots))
-    (assert-equal (nreverse slots) '((a . nil) (b . 5)))))
+    (assert-equal (nreverse slots) '((:a . nil) (:b . 5)))))
 
 (add-test-suite 'template-tests)
 ;(textui-test-run (get-suite template-tests))
