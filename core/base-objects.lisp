@@ -118,7 +118,7 @@
 (defmethod make-tmpl-object ((tmpl template) (slot-spec list) (obj-type symbol))
   (let (slots)
     (doslots (slot-name default tmpl)
-      (push (cons slot-name
+      (push-end (cons slot-name
                   (or (getf slot-spec slot-name)
                       default
                       (slot-default obj-type)))

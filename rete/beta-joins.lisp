@@ -82,7 +82,6 @@
 (defmethod beta-memory ((node beta-join-node))
   (first (children node)))
 
-;; PERFORM JOIN TEST NEPODPORUJE INTRACONDITION TESTY - DODELAT
 ;; token doesn't include the wme, that's why there's 1- in the call
 ;; to previous-wme
 (defmethod perform-join-test ((test test) (token token) (wme fact))

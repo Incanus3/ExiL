@@ -45,29 +45,33 @@
     (assert-equal (description object) '(in box hall))))
 
 (defclass template-object-tests (test-case)
-  ((template :initform (make-template 'test-template '(a (b :default 5)))
+  ((template :initform (make-template :test-template '(a (b :default 5)))
              :reader template)
-   (template2 :initform (make-template 'test-template2 '(a (b :default 10)))
+   (template2 :initform (make-template :test-template2 '(a (b :default 10)))
              :reader template2)
-   (object :accessor object)))
+   (object :accessor object)
+   (object2 :accessor object2)
+   (object3 :accessor object3)))
 
 (defmethod set-up ((tests template-object-tests))
-  (with-slots (template object) tests
-    (setf (object tests) (make-instance 'exil-core::template-object
-                                        :template template
-                                        :slots (copy-alist '((:a . 1) (:b . 2)))))))
+  (with-slots (template template2 object object2 object3) tests
+    (setf object
+          (exil-core::make-tmpl-object template '(:a 1 :b 2)
+                                       'exil-core::template-object)
+          object2
+          ;; different slots
+          (exil-core::make-tmpl-object template '(:a 2 :b 3)
+                                       'exil-core::template-object)
+          object3
+          ;; same slots, different template
+          (exil-core::make-tmpl-object template2 '(:a 1 :b 2)
+                                       'exil-core::template-object))))
 
 (def-test-method test-exil-equal-p ((tests template-object-tests) :run nil)
-  (with-slots (object template template2) tests
+  (with-slots (object object2 object3) tests
     (assert-true (exil-equal-p object object))
-    (let ((object2 (make-instance 'exil-core::template-object
-                                  :template template2
-                                  :slots (slots object)))
-          (object3 (make-instance 'exil-core::template-object
-                                  :template template
-                                  :slots '((:a . 1) (:b . 3)))))
-      (assert-false (exil-equal-p object object2))
-      (assert-false (exil-equal-p object object3)))))
+    (assert-false (exil-equal-p object object2))
+    (assert-false (exil-equal-p object object3))))
 
 (def-test-method test-copy-object ((tests template-object-tests) :run nil)
   (with-slots (object) tests
