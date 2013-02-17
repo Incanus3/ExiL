@@ -30,10 +30,6 @@
 (defgeneric unset-watcher (env watcher))
 (defgeneric watch-all (env))
 (defgeneric unwatch-all (env))
-;; environment clean-up:
-(defgeneric reset-environment (env))
-(defgeneric reset-facts (env))
-(defgeneric completely-reset-environment (env)) ; DEBUG
 ;; templates:
 (defgeneric add-template (env template))
 (defgeneric find-template (env name))
@@ -41,7 +37,6 @@
 (defgeneric add-fact (env fact))
 (defgeneric rem-fact (env fact))
 (defgeneric modify-fact (env fact mod-list))
-(defgeneric find-fact (env fact))
 ;; fact groups:
 (defgeneric add-fact-group (env group-name descriptions))
 (defgeneric rem-fact-group (env group-name))
@@ -56,6 +51,10 @@
 ;(defgeneric add-match (env production token)) ; forward-declared in rete
 ;(defgeneric remove-match (env production token)) ; forward-declared in rete
 (defgeneric select-activation (env))
+;; environment clean-up:
+(defgeneric reset-environment (env))
+(defgeneric reset-facts (env))
+(defgeneric completely-reset-environment (env)) ; DEBUG
 
 (defmethod initialize-instance :after ((env environment) &key)
   (with-slots (watchers strategies rete) env
@@ -103,32 +102,3 @@
 (defmethod unwatch-all ((env environment))
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) nil))
                                (watchers env))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ENVIRONMENT CLEANUP
-
-;; public
-(defmethod reset-environment ((env environment))
-  (setf (facts env) ()
-        (agenda env) ()
-        (rete env) (make-rete env))
-  (loop for rule being the hash-values in (rules env)
-     do (add-rule env rule))
-  #+lispworks(exil-gui:update-lists)
-  nil)
-
-;; public
-(defmethod reset-facts ((env environment))
-  (dolist (fact (facts env))
-    (rem-fact env fact)))
-
-;; public, not in use
-(defmethod completely-reset-environment ((env environment))
-  (setf (facts env) ()
-        (agenda env) ()
-        (fact-groups env) ()
-        (templates env) (make-hash-table :test 'equalp)
-        (rules env) (make-hash-table :test 'equalp)
-        (rete env) (make-rete env))
-  #+lispworks(exil-gui:update-lists)
-  nil)

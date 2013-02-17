@@ -5,25 +5,28 @@
 
 ;; public
 (defmethod add-template ((env environment) template)
-  (setf (gethash (symbol-name (name template)) (templates env)) template)
+  (setf (gethash (name template) (templates env)) template)
   #+lispworks(exil-gui:update-lists)
   template)
 
 ;; public
 (defmethod find-template ((env environment) name)
-  (gethash (symbol-name name) (templates env)))
+  (gethash (to-keyword name) (templates env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACTS
 
+;; add fact to facts, print watcher output, notify rete
 ;; public
 (defmethod add-fact ((env environment) fact)
+  ;; when the fact wasn't already there
   (when (nth-value 1 (pushnew-end fact (facts env) :test #'exil-equal-p))
     (when (watched-p env :facts)
       (format t "~%==> ~A" fact))
     (add-wme (rete env) fact)
     #+lispworks(exil-gui:update-lists)))
 
+;; remove fact from facts, print watcher output, notify rete
 ;; public
 (defmethod rem-fact ((env environment) fact)
   (multiple-value-bind (new-list altered-p)
@@ -35,6 +38,7 @@
       (rem-wme (rete env) fact)
       #+lispworks(exil-gui:update-lists))))
 
+;; find fact, perform modifications, notify rete
 ;; modify-fact works for template-facts ONLY!
 ;; mod-list is a plist mapping slot-name to new value
 (defmethod modify-fact ((env environment) (fact fact) (mod-list list))
@@ -45,11 +49,6 @@
       (setf (object-slot new-fact slot-name) val))
     (rem-fact env fact)
     (add-fact env new-fact)))
-
-;; public
-
-(defmethod find-fact ((env environment) fact)
-  (find fact (facts env) :test #'exil-equal-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS
