@@ -201,7 +201,7 @@
 (defmethod select-activation ((env environment))
   (let ((activation (funcall (current-strategy env) (agenda env))))
     (setf (agenda env) (delete activation (agenda env)
-                           :test #'match-equal-p))
+                               :test #'match-equal-p))
     activation))
 
 (defmethod is-watcher ((env environment) (watcher symbol))

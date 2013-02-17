@@ -1,5 +1,10 @@
 (in-package :exil-env)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; strategies are functions, that implement selecting the activation to be
+;; fired from environment's agenda
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defgeneric newer-than-p (match1 match2))
 (defgeneric simpler-than-p (obj1 obj2))
 

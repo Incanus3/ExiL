@@ -1,17 +1,17 @@
 (in-package :exil-gui)
 
 (define-interface facts-gui () ()
-  (:panes
-   (fact-list list-panel
-              :items (facts)
-              :reader fact-list)
-   (retract-button push-button
-                   :text "Retract fact"
-                   :callback 'retract-fact
-                   :callback-type :interface))
-  (:default-initargs :title "ExiL Facts"
-   :visible-min-height 100
-   :visible-min-width 300))
+                  (:panes
+                   (fact-list list-panel
+                              :items (facts)
+                              :reader fact-list)
+                   (retract-button push-button
+                                   :text "Retract fact"
+                                   :callback 'retract-fact
+                                   :callback-type :interface))
+                  (:default-initargs :title "ExiL Facts"
+                    :visible-min-height 100
+                    :visible-min-width 300))
 
 (defmethod selected-fact ((interface facts-gui))
   (choice-selected-item (fact-list interface)))
@@ -21,26 +21,26 @@
   (update-lists))
 
 (define-interface templates-gui () ()
-  (:panes
-   (template-list list-panel
-              :items (hash->list (templates))
-              :reader template-list))
-  (:default-initargs :title "ExiL Templates"
-   :visible-min-height 100
-   :visible-min-width 300))
+                  (:panes
+                   (template-list list-panel
+                                  :items (hash->list (templates))
+                                  :reader template-list))
+                  (:default-initargs :title "ExiL Templates"
+                    :visible-min-height 100
+                    :visible-min-width 300))
 
 (define-interface rules-gui () ()
-  (:panes
-   (rule-list list-panel
-              :items (hash->list (rules))
-              :reader rule-list)
-   (undefrule-button push-button
-                     :text "Undefine rule"
-                     :callback 'undef-rule
-                     :callback-type :interface))
-  (:default-initargs :title "ExiL Rules"
-   :visible-min-height 100
-   :visible-min-width 300))
+                  (:panes
+                   (rule-list list-panel
+                              :items (hash->list (rules))
+                              :reader rule-list)
+                   (undefrule-button push-button
+                                     :text "Undefine rule"
+                                     :callback 'undef-rule
+                                     :callback-type :interface))
+                  (:default-initargs :title "ExiL Rules"
+                    :visible-min-height 100
+                    :visible-min-width 300))
 
 (defmethod selected-rule ((interface rules-gui))
   (choice-selected-item (rule-list interface)))
@@ -56,14 +56,14 @@
     (subseq s 1 (length s))))
 
 (define-interface agenda-gui () ()
-  (:panes
-   (agenda-list list-panel
-              :items (agenda)
-              :reader agenda-list
-              :print-function #'pprint->string))
-  (:default-initargs :title "ExiL Agenda"
-   :visible-min-height 100
-   :visible-min-width 300))
+                  (:panes
+                   (agenda-list list-panel
+                                :items (agenda)
+                                :reader agenda-list
+                                :print-function #'pprint->string))
+                  (:default-initargs :title "ExiL Agenda"
+                    :visible-min-height 100
+                    :visible-min-width 300))
 
 (define-interface exil-gui ()
   ()
