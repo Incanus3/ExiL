@@ -1,40 +1,28 @@
 (in-package :exil-env)
-(declaim (optimize (speed 1) (debug 3) (safety 3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; public
+
 (defclass environment ()
-  ((facts :initform () :accessor facts
+  ((watchers :accessor watchers
+             :documentation "alist, (:facts, :rules, :activations) -> t/nil")
+   (templates :initform (make-hash-table :test #'equalp) :accessor templates
+              :documentation "hash table, assigns template instance to name")
+   (facts :initform () :accessor facts
           :documentation "list of fact instances")
    (fact-groups :initform () :accessor fact-groups
                 :documentation "((group-name description*)*)")
-   (templates :initform (make-hash-table :test 'equalp) :accessor templates
-              :documentation "hash table, assigns template instance to name")
-   (rules :initform (make-hash-table :test 'equalp) :accessor rules
+   (strategies :accessor strategies
+               :documentation "alist, assigns strategy function to name symbol")
+   (current-strategy-name :initform :default :accessor current-strategy-name
+                          :documentation "symbol")
+   (rules :initform (make-hash-table :test #'equalp) :accessor rules
           :documentation "hash table, assigns rule instance to name")
    (rete :accessor rete :documentation "the rete singleton instance")
    (agenda :initform () :accessor agenda
-           :documentation "list of matches")
-   (strategies :initform `((default . ,#'depth-strategy)
-                           (depth-strategy . ,#'depth-strategy)
-                           (breadth-strategy . ,#'breadth-strategy)
-                           (simplicity-strategy . ,#'simplicity-strategy)
-                           (complexity-strategy . ,#'complexity-strategy))
-               :accessor strategies
-               :documentation "alist, assigns strategy function to name symbol")
-   (current-strategy-name :initform 'default :accessor current-strategy-name
-                          :documentation "symbol")
-   (watchers :initform '((:facts . nil)
-                         (:rules . nil)
-                         (:activations . nil))
-             :accessor watchers
-             :documentation "alist, (:facts, :rules, :activations) -> t/nil"))
+           :documentation "list of matches"))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                      strategies and watchers and stores the asserted facts
                      and the agenda"))
-
-(defmethod initialize-instance :after ((env environment) &key)
-  (setf (rete env) (make-rete env)))
 
 ;; PUBLIC METHODS
 ;; watchers:
@@ -69,6 +57,18 @@
 ;(defgeneric remove-match (env production token)) ; forward-declared in rete
 (defgeneric select-activation (env))
 
+(defmethod initialize-instance :after ((env environment) &key)
+  (with-slots (watchers strategies rete) env
+    (setf watchers (copy-alist '((:facts . ()) (:rules . ())
+                                 (:activations . ())))
+          strategies
+          (copy-alist `((:default . ,#'depth-strategy)
+                        (:depth-strategy . ,#'depth-strategy)
+                        (:breadth-strategy . ,#'breadth-strategy)
+                        (:simplicity-strategy . ,#'simplicity-strategy)
+                        (:complexity-strategy . ,#'complexity-strategy)))
+          rete (make-rete env))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
 
@@ -76,25 +76,25 @@
 (defgeneric watched-p (env watcher))
 
 (defmethod watched-p ((env environment) watcher)
-  (assoc-value (to-keyword watcher) (watchers env)))
+  (assoc-value watcher (watchers env)))
 
 ;; private
 (defgeneric is-watcher (env watcher))
 
 (defmethod is-watcher ((env environment) (watcher symbol))
-  (find (to-keyword watcher) (watchers env) :key #'car))
+  (assoc watcher (watchers env)))
 
 ;; public
 (defmethod set-watcher ((env environment) watcher)
   (cl:assert (is-watcher env watcher)
              () "I don't know how to watch ~A" watcher)
-  (setf (assoc-value (to-keyword watcher) (watchers env)) t))
+  (setf (assoc-value watcher (watchers env)) t))
 
 ;; public
 (defmethod unset-watcher ((env environment) watcher)
   (cl:assert (is-watcher env watcher)
              () "I don't know how to watch ~A" watcher)
-  (setf (assoc-value (to-keyword watcher) (watchers env)) nil))
+  (setf (assoc-value watcher (watchers env)) nil))
 
 (defmethod watch-all ((env environment))
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) t))

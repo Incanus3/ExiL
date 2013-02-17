@@ -19,7 +19,7 @@
 ;; public
 (defmethod add-fact ((env environment) fact)
   (when (nth-value 1 (pushnew-end fact (facts env) :test #'exil-equal-p))
-    (when (watched-p env 'facts)
+    (when (watched-p env :facts)
       (format t "~%==> ~A" fact))
     (add-wme (rete env) fact)
     #+lispworks(exil-gui:update-lists)))
@@ -30,7 +30,7 @@
       (ext-delete fact (facts env) :test #'exil-equal-p)
     (when altered-p
       (setf (facts env) new-list)
-      (when (watched-p env 'facts)
+      (when (watched-p env :facts)
         (format t "~%<== ~A" fact))
       (rem-wme (rete env) fact)
       #+lispworks(exil-gui:update-lists))))

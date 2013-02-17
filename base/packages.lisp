@@ -65,7 +65,7 @@
   (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
            :add-fact-group :rem-fact-group :add-rule :rem-rule :find-rule
            :add-strategy :set-strategy :select-activation :find-fact :modify-fact
-           :set-watcher :unset-watcher :watched-p :watch-all :unwatch-all
+           :set-watcher :unset-watcher :watch-all :unwatch-all
            :activate-rule :make-fact :make-pattern :environment
            :facts :rules :templates :agenda :fact-groups :find-template :rete
            :add-match :remove-match))

@@ -1,5 +1,7 @@
 (in-package :core-tests)
 
+(declaim (optimize (debug 3) (compilation-speed 0) (space 0) (speed 0)))
+
 (defclass pattern-tests (test-case) ())
 
 (def-test-method test-exil-equal-p ((tests pattern-tests) :run nil)

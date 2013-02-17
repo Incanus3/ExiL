@@ -1,4 +1,7 @@
 (in-package :utils-tests)
+
+(declaim (optimize (debug 3) (compilation-speed 0) (space 0) (speed 0)))
+
 ;; some macro tests result in code so trivial, that sbcl actually
 ;; decides to optimize it so that it removes part of the code
 ;; as unreachable, don't wonna see these warnings

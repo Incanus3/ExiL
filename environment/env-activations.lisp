@@ -2,6 +2,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; STRATEGIES
+;; strategy names are keyword symbols
 
 ;; public
 (defmethod add-strategy ((env environment) name function)
@@ -10,7 +11,7 @@
       (warn "~A is not a function" function)))
 
 ;; public
-(defmethod set-strategy ((env environment) &optional (name 'default))
+(defmethod set-strategy ((env environment) &optional (name :default))
   (if (find name (strategies env) :key #'car)
       (setf (current-strategy-name env) name)
       (warn "unknown strategy ~A" name)))
@@ -29,7 +30,7 @@
   (let ((match (make-match production token)))
     (when (and (nth-value 1 (ext-pushnew match (agenda env)
                                          :test #'match-equal-p))
-               (watched-p env 'activations))
+               (watched-p env :activations))
       (format t "~%==> ~A" match)
       #+lispworks(exil-gui:update-lists))))
 
@@ -40,7 +41,7 @@
         (ext-delete match (agenda env) :test #'match-equal-p)
       (when altered-p
         (setf (agenda env) new-list)
-        (when (watched-p env 'activations)
+        (when (watched-p env :activations)
           (format t "~%<== ~A" match))
         #+lispworks(exil-gui:update-lists)))))
 
@@ -67,7 +68,7 @@
 (defmethod add-rule ((env environment) rule)
   (setf (gethash (symbol-name (name rule)) (rules env)) rule)
   (new-production (rete env) rule)
-  (when (watched-p env 'rules)
+  (when (watched-p env :rules)
     (format t "==> ~A" rule))
   (dolist (fact (facts env))
     (add-wme (rete env) fact))
@@ -79,7 +80,7 @@
   (let* ((name (symbol-name (name rule)))
          (old-rule (gethash name (rules env))))
     (remhash (symbol-name (name rule)) (rules env))
-    (when (and old-rule (watched-p env 'rules))
+    (when (and old-rule (watched-p env :rules))
       (format t "<== ~A" old-rule))
     (remove-production rule (rete env))
     (remove-matches env rule)))

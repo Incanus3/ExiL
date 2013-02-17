@@ -1,5 +1,7 @@
 (in-package :core-tests)
 
+(declaim (optimize (debug 3) (compilation-speed 0) (space 0) (speed 0)))
+
 (defclass simple-object-tests (test-case)
   ((object :accessor object)
    (object2 :reader object2

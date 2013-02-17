@@ -292,7 +292,7 @@
   "Watch selected item (facts, rules, activations)"
   `(progn (if (weak-equal-p ',watcher 'all)
               (watch-all)
-              (set-watcher *current-environment* ',watcher))
+              (set-watcher *current-environment* (to-keyword ',watcher)))
           nil))
 
 ; public
@@ -300,5 +300,5 @@
   "Unwatch selected item"
   `(progn (if (weak-equal-p ',watcher 'all)
               (unwatch-all *current-environment*)
-              (unset-watcher *current-environment* ',watcher))
+              (unset-watcher *current-environment* (to-keyword ',watcher)))
           nil))

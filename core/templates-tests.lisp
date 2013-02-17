@@ -1,5 +1,7 @@
 (in-package :core-tests)
 
+(declaim (optimize (debug 3) (compilation-speed 0) (space 0) (speed 0)))
+
 (defclass template-tests (test-case)
   ((template :initform (make-template 'test-template '(a (b :default 5)))
              :reader template)))

@@ -1,5 +1,7 @@
 (in-package :rete-tests)
 
+(declaim (optimize (debug 3) (compilation-speed 0) (space 0) (speed 0)))
+
 ;; environment mock - will receive add- and remove-match from rete
 
 (defclass env-mock ()
