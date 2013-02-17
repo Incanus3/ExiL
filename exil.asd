@@ -49,8 +49,10 @@
             ((:file "matches")
              (:file "activations"        :depends-on ("matches"))
              (:file "strategies"         :depends-on ("activations"))
-             (:file "environment"        :depends-on ("strategies"))
-             (:file "object-makers"      :depends-on ("environment"))))
+             (:file "env-base"           :depends-on ("strategies"))
+             (:file "env-facts"          :depends-on ("env-base"))
+             (:file "env-activations"    :depends-on ("env-facts"))
+             (:file "object-makers"      :depends-on ("env-activations"))))
    (:file "export"             :depends-on (:environment))
    #+lispworks(:file "gui"     :depends-on ("export"))
    #|
