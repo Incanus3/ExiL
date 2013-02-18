@@ -53,8 +53,14 @@
              (:file "env-facts"          :depends-on ("env-base"))
              (:file "env-activations"    :depends-on ("env-facts"))
              (:file "object-makers"      :depends-on ("env-activations"))))
-   (:file "export"             :depends-on (:environment))
-   #+lispworks(:file "gui"     :depends-on ("export"))
+   (:module :export
+            :depends-on (:environment)
+            :components
+            ((:file "export-base")
+             (:file "export-facts" :depends-on ("export-base"))
+             (:file "export-rules" :depends-on ("export-facts"))
+             (:file "export-execution" :depends-on ("export-rules"))))
+   #+lispworks(:file "gui"     :depends-on (:export))
    #|
    (:file "print-tree"        :depends-on ("export"))
    (:file "pokusy"            :depends-on ("export"))

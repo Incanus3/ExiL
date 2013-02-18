@@ -192,7 +192,7 @@
 		 (walk-through child))))
       (walk-through node)
       (nreverse memories))))
-	  
+
 (defmethod print-memory ((memory memory-node))
   (format t "~A:~%  ~A~%~%" memory (items memory)))
 
