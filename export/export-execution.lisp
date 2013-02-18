@@ -30,7 +30,7 @@
 (defun run ()
   "Run the infenece engine"
   (setf *exil-running* t)
-  (loop while (and *exil-running* (step))))
+  (iter (while (and *exil-running* (step)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; environment cleanup

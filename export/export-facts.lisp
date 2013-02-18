@@ -8,9 +8,9 @@
                 (end-index (length (exil-env:facts *current-environment*)))
                 (at-most end-index))
   (let ((facts (exil-env:facts *current-environment*)))
-    (loop for i from (1- start-index) to (min (1- end-index)
-                                              (+ start-index at-most -1))
-       collect (nth i facts))))
+    (iter (for i :from (1- start-index) :to (min (1- end-index)
+                                                 (+ start-index at-most -1)))
+          (collect (nth i facts)))))
 
 (defun assert% (fact-spec)
   (add-fact *current-environment* (make-fact *current-environment* fact-spec)))
@@ -53,8 +53,8 @@
   (alistp mod-list))
 
 (defun clips->nonclips-mod-list (mod-list)
-  (loop for (slot-name new-val) in mod-list
-     append (list (to-keyword slot-name) new-val)))
+  (iter (for (slot-name new-val) in mod-list)
+        (appending (list (to-keyword slot-name) new-val))))
 
 (defun to-mod-spec-list (mod-list)
   (cond

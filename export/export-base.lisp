@@ -68,15 +68,15 @@
 ; public
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(progn (if (weak-equal-p ',watcher 'all)
-              (watch-all)
+  `(progn (if (equalp (to-keyword ',watcher) :all)
+              (watch-all *current-environment*)
               (set-watcher *current-environment* (to-keyword ',watcher)))
           nil))
 
 ; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(progn (if (weak-equal-p ',watcher 'all)
+  `(progn (if (equalp (to-keyword ',watcher) :all)
               (unwatch-all *current-environment*)
               (unset-watcher *current-environment* (to-keyword ',watcher)))
           nil))
@@ -84,38 +84,40 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates
 
+;; TODO: use defaults in examples to test this
+
+;; is this a valid exil slot specifier?
+; private
 (defun nonclips-slot-spec-p (slot-spec)
   (and (symbolp (first slot-spec))
-       (or (null (rest slot-spec))
-           (keywordp (second slot-spec)))))
+       (plistp (rest slot-spec))))
 
+;; is this a clips deftemplate syntax slot specifier?
+; private
 (defun clips-slot-spec-p (slot-spec)
-  (and (weak-equal-p (first slot-spec) 'slot))
+  (and (equalp (to-keyword (first slot-spec)) :slot))
   (symbolp (second slot-spec))
   (listp (nthcdr 2 slot-spec)))
 
-(defun slot-spec-p (slot-spec)
-  (or (nonclips-slot-spec-p slot-spec)
-      (clips-slot-spec-p slot-spec)))
-
-(defun clips-slot->slot-des% (slot-spec)
-  (destructuring-bind (slot slot-name &optional (modifiers nil)) slot-spec
+;; convert clips deftemplate syntax slot specifier to exil syntax
+; private
+(defun clips-slot->slot-spec (slot-spec)
+  (destructuring-bind (slot slot-name &optional modifiers) slot-spec
     (declare (ignore slot))
     `(,slot-name . (:default ,(second modifiers)))))
 
-(defun nonclips-slot->slot-des% (slot-spec)
-  (destructuring-bind (slot-name &key (default nil)) slot-spec
-    `(,slot-name . (:default ,default))))
-
-(defun slot->slot-designator% (slot-spec)
+;; ensure slot-spec is a valid exil slot-specifier
+; private
+(defun slot->slot-specifier (slot-spec)
   (cond
-    ((nonclips-slot-spec-p slot-spec) (nonclips-slot->slot-des% slot-spec))
-    ((clips-slot-spec-p slot-spec) (clips-slot->slot-des% slot-spec))
+    ((nonclips-slot-spec-p slot-spec) slot-spec)
+    ((clips-slot-spec-p slot-spec) (clips-slot->slot-spec slot-spec))
     (t (error "~A not a valid template slot specifier~%" slot-spec))))
 
-(defun slots->slot-designators% (slots)
-  (loop for slot in (to-list-of-lists slots)
-     collect (slot->slot-designator% slot)))
+;; ensure deftemplate slot specifiers are valid exil specifiers
+; private
+(defun slots->slot-specifiers (slots)
+  (mapcar #'slot->slot-specifier (to-list-of-lists slots)))
 
 ;; creates instance of template class with given name and slot specification
 ;; and pushes it into *templates*.
@@ -129,5 +131,5 @@
   (let ((template (gensym "template")))
     `(let ((,template
             (make-template ',name
-                           ',(slots->slot-designators% slots))))
+                           ',(slots->slot-specifiers slots))))
        (add-template *current-environment* ,template))))

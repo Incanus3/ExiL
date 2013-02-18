@@ -20,16 +20,15 @@
 ; include ?fact <- <condition> statements
 ; returns list of pairs (<condition> , <match-variable>)
 ; TODO: add some tests - when ?fact <- not followed by condition definition
-; this will just piss itself
+; this will crash in most unpredictable ways
 (defun extract-conditions% (cond-list)
-  (loop for i = 0 then (1+ i)
-     for cond = (first cond-list) then (nth i cond-list)
-     while (< i (length cond-list))
-     if (listp cond)
-     collect (cons cond nil)
-     else
-     collect (cons (nth (+ i 2) cond-list) cond) and
-     do (incf i 2)))
+  (iter (for i :upfrom 0)
+        (for cond :first (first cond-list) :then (nth i cond-list))
+        (while (< i (length cond-list)))
+        (if (listp cond)
+            (collect (cons cond nil))
+            (progn (collect (cons (nth (+ i 2) cond-list) cond))
+                   (incf i 2)))))
 
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 ; public

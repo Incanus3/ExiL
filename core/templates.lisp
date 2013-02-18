@@ -8,7 +8,7 @@
 
 ;; stores template for template facts and patterns
 ;; slot "slots" holds alist of slot specifiers (plists):
-;; (<name> (:default <default> [:type <type> \ planned \]))
+;; (<name> . (:default <default> [:type <type> \ planned \]))
 ;; it is a bit redundant, since there's only one supported option
 ;; so far, but it's easily extensible
 ; public
@@ -29,6 +29,7 @@
     (format stream "~A ~A" (name tmpl) (slots tmpl)))
   tmpl)
 
+;; make-template ensures that slot-names are keywords
 ; public
 (defun make-template (name slots)
   (make-instance 'template :name (to-keyword name)

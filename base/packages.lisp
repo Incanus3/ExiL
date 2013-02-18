@@ -72,7 +72,7 @@
 
 (defpackage :exil
   (:documentation "the main package, used by exil-user")
-  (:use :common-lisp :exil-utils :exil-core :exil-env)
+  (:use :common-lisp :exil-utils :exil-core :exil-env :iterate)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
            :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
