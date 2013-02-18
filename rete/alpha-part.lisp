@@ -66,12 +66,12 @@
 ;; called by add-wme
 ;; activates appropriate subtop node
 (defmethod activate ((node alpha-top-node) (wme fact))
-  (activate (network node (network-key node wme)) wme))
+  (activate (ensure-network node (network-key node wme)) wme))
 
 ;; called by remove-wme
 ;; inactivates appropriate subtop node
 (defmethod inactivate ((node alpha-top-node) (wme fact))
-  (inactivate (network node (network-key node wme)) wme))
+  (inactivate (ensure-network node (network-key node wme)) wme))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

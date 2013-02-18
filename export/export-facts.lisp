@@ -7,29 +7,33 @@
 (defun facts (&optional (start-index 1)
                 (end-index (length (exil-env:facts *current-environment*)))
                 (at-most end-index))
-  (let ((facts (exil-env:facts *current-environment*)))
-    (iter (for i :from (1- start-index) :to (min (1- end-index)
-                                                 (+ start-index at-most -1)))
-          (collect (nth i facts)))))
+  "return at most at-most facts from start-index to end-index"
+  (subseq (exil-env:facts *current-environment*)
+          (1- start-index)
+          (min end-index (+ start-index at-most -1))))
 
+; private
 (defun assert% (fact-spec)
   (add-fact *current-environment* (make-fact *current-environment* fact-spec)))
 
 ; public
 (defmacro assert (&rest fact-specs)
-  "Add fact into working memory"
-  (let ((fact-spec (gensym "fact-spec")))
-    `(dolist (,fact-spec ',fact-specs)
-       (assert% ,fact-spec))))
+  "add facts to working memory"
+  `(mapc #'assert% ',fact-specs))
 
+;; retract needs to compute the facts to remove first, for when facts are
+;; specified by indices and one is removed, the other indices shift
+; private
 (defun retract% (fact-specs)
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
       (typecase fact-spec
         (list (pushnew (make-fact *current-environment* fact-spec)
                        facts-to-remove))
-        (integer (pushnew (nth (1- fact-spec) (facts)) facts-to-remove))
-        (t (error "Type ~A not supported by retract" (type-of fact-spec)))))
+        (integer (pushnew (nth (1- fact-spec)
+                               (exil-env:facts *current-environment*))
+                          facts-to-remove))
+        (t (error "~%Don't know how to retract ~A." fact-spec))))
     (dolist (fact facts-to-remove)
       (rem-fact *current-environment* fact))))
 
@@ -39,23 +43,28 @@
 ; a special meaning in lisp. retract-all does this instead.
 ; public
 (defmacro retract (&rest fact-specs)
-  "Remove fact from working memory"
+  "remove facts from working memory"
   `(retract% ',fact-specs))
 
 ; public
 (defun retract-all ()
+  "remove all facts from working memory"
   (reset-facts *current-environment*))
 
+; private
 (defun nonclips-mod-list-p (mod-list)
   (plistp mod-list))
 
+; private
 (defun clips-mod-list-p (mod-list)
   (alistp mod-list))
 
+; private
 (defun clips->nonclips-mod-list (mod-list)
   (iter (for (slot-name new-val) in mod-list)
         (appending (list (to-keyword slot-name) new-val))))
 
+; private
 (defun to-mod-spec-list (mod-list)
   (cond
     ((nonclips-mod-list-p mod-list) mod-list)
@@ -64,6 +73,7 @@
 
 ;; mod-list is a mapping from slot-name to new value
 ;; it can be either plist for non-clips syntax of alist for clips syntax
+; private
 (defun modify% (fact-spec mod-list)
   (let ((mod-fact (make-fact *current-environment* fact-spec)))
     (unless (typep mod-fact 'template-fact)
@@ -84,7 +94,7 @@
 ;; CLIPS doesn't support modify for simple-facts either
 ; public
 (defmacro modify (fact-spec &rest mod-list)
-  "Replace old-fact by new-fact"
+  "modify fact-spec by mod-list"
   `(modify% ',fact-spec ',mod-list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -92,15 +102,16 @@
 
 ; public
 (defmacro deffacts (name &body descriptions)
-  "Create group of facts to be asserted after (reset)"
+  "create group of facts to be asserted after (reset)"
   (if (stringp (first descriptions)) (pop descriptions))
   `(add-fact-group *current-environment* ',name ',descriptions))
 
 ; public
 (defmacro undeffacts (name)
-  "Delete fact group"
+  "delete fact group"
   `(rem-fact-group ',name))
 
+; private
 (defun assert-group% (group)
   (format t "~%Asserting fact group ~A" (car group))
   (dolist (desc (cdr group))
