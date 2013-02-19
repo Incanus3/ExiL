@@ -30,6 +30,9 @@
         (when (atom-position condition atom)
           (return (cons i (atom-position condition atom))))))
 
+;; TODO: get-intercondition-tests and get-intracondition-tests shouldn't
+;; make tests for the singleton variable '?
+
 ;; get list of tests ensuring consistent variable bindings between
 ;; simple-pattern condition and prev-conds
 (defmethod get-intercondition-tests ((condition simple-pattern)

@@ -5,12 +5,12 @@
 
 ; public
 (defmacro defstrategy (name function)
-  "Define strategy"
+  "define new strategy"
   `(add-strategy ',name ,function))
 
 ; public
 (defmacro setstrategy (name)
-  "Set strategy to use"
+  "set strategy to use"
   `(set-strategy ',name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,9 +33,9 @@
 ;; DODELAT KONTROLU, ZDA SE VSECHNY PROMENNE V RHS VYSKYTUJI V LHS
 ; public
 (defmacro defrule (name &body rule)
-  "Define rule"
+  "define rule"
   (when (stringp (first rule))
-    (pop rule)) ;; ignore the clips rule header
+    (pop rule)) ;; ignore clips rule header
   (let* ((=>-position (position '=> rule :test #'weak-equal-p))
          (conditions (extract-conditions% (subseq rule 0 =>-position)))
          (activations (subseq rule (1+ =>-position)))
@@ -43,14 +43,21 @@
     (cl:assert =>-position ()
                "rule definition must include =>")
     `(let ((,rule-symbol
-            (make-rule
-             ',name
-             (mapcar (lambda (condition)
-                       (make-pattern *current-environment* (car condition)
-                                     :match-var (cdr condition)))
-                     ',conditions)
+            (make-rule ',name
+                       (mapcar (lambda (condition)
+                                 (make-pattern *current-environment*
+                                               (car condition)
+                                               :match-var (cdr condition)))
+                               ',conditions)
              ',activations)))
        (add-rule *current-environment* ,rule-symbol))))
+
+; public
+(defmacro undefrule (name)
+  "undefine rule"
+  (let ((rule (gensym "rule")))
+    `(let ((,rule (find-rule ',name)))
+       (when ,rule (rem-rule ,rule)))))
 
 (defun ppdefrule% (name)
   (let ((rule (find-rule *current-environment* name)))
@@ -58,13 +65,6 @@
             name (conditions rule) (activations rule))))
 
 ; public
-(defmacro undefrule (name)
-  "Undefine rule"
-  (let ((rule (gensym "rule")))
-    `(let ((,rule (find-rule ',name)))
-       (when ,rule (rem-rule ,rule)))))
-
-; public
 (defmacro ppdefrule (name)
-  "pretty prints rule definition"
+  "pretty-print rule definition"
   `(ppdefrule% ',name))

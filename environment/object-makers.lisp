@@ -70,7 +70,7 @@
                           (extract-slot-spec fact-spec))
       (make-simple-fact fact-spec)))
 
-; TODO:
+; TODO: this is actually task for rete
 ; make-pattern should support the ?fact <- <pattern> notation
 ; it should also support the ~, | and & notations in variable matching
 ; public, used by export:defrule

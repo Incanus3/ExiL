@@ -112,7 +112,7 @@
   `(rem-fact-group ',name))
 
 ; private
-(defun assert-group% (group)
+(defun assert-group (group)
   (format t "~%Asserting fact group ~A" (car group))
   (dolist (desc (cdr group))
     (assert% desc)))

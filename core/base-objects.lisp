@@ -66,8 +66,6 @@
              :initform (error "template has to be specified"))
    (slots :accessor slots :initarg :slots :initform ())))
 
-;; TODO: add equality predicate for templates and use it here
-;; TODO: add alist equality predicate and use it here
 (defmethod exil-equal-p and ((object1 template-object)
                              (object2 template-object))
   (and (exil-equal-p (template object1) (template object2))
