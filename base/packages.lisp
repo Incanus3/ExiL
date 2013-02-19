@@ -60,6 +60,7 @@
 (defpackage :exil-env
   (:documentation "the exil environment, keeps track of the defined templates
                    and rules and stores the asserted facts")
+  (:nicknames :eenv)
   (:use :common-lisp :exil-utils :exil-core :exil-rete :iterate)
   (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-template :add-fact :rem-fact :reset-environment :reset-facts
@@ -69,6 +70,11 @@
            :activate-rule :make-fact :make-pattern :environment
            :facts :rules :templates :agenda :fact-groups :find-template :rete
            :add-match :remove-match))
+
+(defpackage :env-tests
+  (:documentation "tests for the environment package")
+  (:use :common-lisp :exil-core :exil-env :xlunit)
+  (:import-from :tests-base :add-test-suite))
 
 (defpackage :exil
   (:documentation "the main package, used by exil-user")

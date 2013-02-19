@@ -52,6 +52,7 @@
              (:file "env-base"           :depends-on ("strategies"))
              (:file "env-facts"          :depends-on ("env-base"))
              (:file "env-activations"    :depends-on ("env-facts"))
+             (:file "env-tests"          :depends-on ("env-activations"))
              (:file "object-makers"      :depends-on ("env-activations"))))
    (:module :export
             :depends-on (:environment)

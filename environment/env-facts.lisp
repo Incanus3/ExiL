@@ -16,6 +16,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACTS
 
+; public
+(defmethod find-fact ((env environment) fact)
+  (find fact (facts env) :test #'exil-equal-p))
+
 ;; add fact to facts, print watcher output, notify rete
 ;; public
 (defmethod add-fact ((env environment) fact)
@@ -41,9 +45,8 @@
 ;; find fact, perform modifications, notify rete
 ;; modify-fact works for template-facts ONLY!
 ;; mod-list is a plist mapping slot-name to new value
-(defmethod modify-fact ((env environment) (fact fact) (mod-list list))
-  (assert (find fact (facts env) :test #'exil-equal-p) ()
-          "modify: fact ~A not found in (facts)" fact)
+(defmethod modify-fact ((env environment) (fact template-fact) (mod-list list))
+  (assert (find-fact env fact) () "modify: fact ~A not found in (facts)" fact)
   (let ((new-fact (copy-object fact)))
     (doplist (slot-name val mod-list)
       (setf (object-slot new-fact slot-name) val))
@@ -54,13 +57,19 @@
 ;; FACT GROUPS
 
 ;; public
-(defmethod add-fact-group ((env environment) group-name descriptions)
-  (if (assoc group-name (fact-groups env))
-      (setf (assoc-value group-name (fact-groups env))
+(defmethod find-fact-group ((env environment) (group-name symbol))
+  (assoc-value (to-keyword group-name) (fact-groups env)))
+
+;; public
+(defmethod add-fact-group ((env environment) (group-name symbol)
+                           (descriptions list))
+  (if (find-fact-group env group-name)
+      (setf (assoc-value (to-keyword group-name) (fact-groups env))
             descriptions)
-      (push (cons group-name descriptions)
+      (push (cons (to-keyword group-name) descriptions)
             (fact-groups env)))
   nil)
 
-(defmethod rem-fact-group ((env environment) name)
-  (setf (fact-groups env) (delete name (fact-groups env) :key #'car)))
+(defmethod rem-fact-group ((env environment) (group-name symbol))
+  (setf (fact-groups env) (delete (to-keyword group-name)
+                                  (fact-groups env) :key #'car)))

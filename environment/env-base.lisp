@@ -34,6 +34,7 @@
 (defgeneric add-template (env template))
 (defgeneric find-template (env name))
 ;; facts:
+(defgeneric find-fact (env fact))
 (defgeneric add-fact (env fact))
 (defgeneric rem-fact (env fact))
 (defgeneric modify-fact (env fact mod-list))
