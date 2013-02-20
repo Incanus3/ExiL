@@ -16,7 +16,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass token () ((parent :reader parent :initarg :parent
-                            :initform (make-empty-token))
+;                            :initform (make-empty-token)
+                            )
                     (wme :reader wme :initarg :wme
                          :initform (error "wme slot has to be specified"))
                     (negative-wmes :initform nil :accessor negative-wmes)))

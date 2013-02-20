@@ -89,8 +89,10 @@
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")
               (:use :common-lisp :capi)
-              (:import-from :exil-env :facts :templates :rules :agenda :rem-fact :rem-rule)
+              (:import-from :exil-env :facts :templates :rules :agenda
+               :rem-fact :rem-rule)
               (:import-from :exil-utils :hash->list)
+              (:import-from :exil :*current-environment*)
               (:export :show-gui :update-lists))
 
 (defpackage :exil-user

@@ -45,6 +45,9 @@
 ;             () "fact must not include variables")
   )
 
+(defgeneric make-template-fact (template slot-spec)
+  (:documentation "finds values for fact's slots, create new template-fact"))
+
 (defmethod make-template-fact ((tmpl template) (slot-spec list))
   (make-tmpl-object tmpl slot-spec 'template-fact))
 

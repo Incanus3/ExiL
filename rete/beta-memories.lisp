@@ -80,7 +80,7 @@
 (defmethod add-production ((node beta-memory-node) (production rule))
   (push-update production (productions node) :test #'rule-equal-p)
   (dolist (token (items node))
-    (exil-env:add-match production token)))
+    (exil-env:add-match (rete node) production token)))
 
 ;; remove production from productions
 ;; exil-env:rem-rule, that calls this (indirectly), also removes matches from

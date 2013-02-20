@@ -1,7 +1,8 @@
 (in-package :exil-core)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; general-purpose functions
+(defgeneric exil-equal-p (obj1 obj2)
+  (:documentation "ExiL default equality predicate")
+  (:method-combination and))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template class

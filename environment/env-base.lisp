@@ -39,6 +39,7 @@
 (defgeneric rem-fact (env fact))
 (defgeneric modify-fact (env fact mod-list))
 ;; fact groups:
+(defgeneric find-fact-group (env group-name))
 (defgeneric add-fact-group (env group-name descriptions))
 (defgeneric rem-fact-group (env group-name))
 ;; strategies:

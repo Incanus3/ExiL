@@ -1,6 +1,18 @@
 (in-package :exil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; environment cleanup
+
+; public
+(defun clear ()
+  "delete all facts"
+  (reset-environment *current-environment*))
+
+;; DEBUG:
+(defun complete-reset ()
+  (exil-env::completely-reset-environment *current-environment*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; starting execution
 
 ;; TODO: move this behavior to environment
@@ -32,15 +44,3 @@
   "run the infenece engine"
   (setf *exil-running* t)
   (iter (while (and *exil-running* (step)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; environment cleanup
-
-; public
-(defun clear ()
-  "delete all facts"
-  (reset-environment *current-environment*))
-
-;; DEBUG:
-(defun complete-reset ()
-  (exil-env::completely-reset-environment *current-environment*))

@@ -57,6 +57,9 @@
   (format stream "~:[~;NOT ~]~S" (negated-p object)
                 (cons (name (template object)) (slots object))))
 
+(defgeneric make-template-pattern (template slot-spec &key negated match-var)
+  (:documentation "finds values for pattern's slots, creates new tmpl-patter"))
+
 (defmethod make-template-pattern ((tmpl template) (slot-spec list)
                                   &key negated match-var)
   (let ((pattern (make-tmpl-object tmpl slot-spec 'template-pattern)))

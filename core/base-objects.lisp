@@ -2,10 +2,6 @@
 
 (defclass base-object () ())
 
-; private, called by print-object
-(defgeneric exil-equal-p (obj1 obj2)
-  (:documentation "ExiL default equality predicate")
-  (:method-combination and))
 (defgeneric format-object (object stream))
 (defgeneric copy-object (object))
 (defgeneric object-slot (object slot-spec))
@@ -105,11 +101,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; public, used in exil-env:make-tmpl-object to determine value for a slot
-; whose value haven't been defined neither in the slots description, nor
-; as a template default; patterns make use of this by specifying '? as default
+;; used determine value for a slot value haven't been defined neither in the
+;; slots description, nor as a template default; patterns make use of this by
+;; specifying '? as default
+; private
 (defgeneric slot-default (object-type)
   (:method ((type symbol)) nil))
+
+(defgeneric make-tmpl-object (template slot-spec obj-type)
+  (:documentation "finds values for slots in slot-spec, template defaults or
+                   global slot-default, creates new object with those slots"))
 
 ;; slot-spec is a plist mapping slot-names to values
 ;; obj-type is either template-fact or template-pattern
