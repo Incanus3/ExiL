@@ -1,6 +1,8 @@
 (in-package :exil-user)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
+(format t "~%~%Running examples with simple facts:~%")
+
 ; SIMPLE FACTS:
 ;(clear)
 (complete-reset)

@@ -84,12 +84,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates
 
-;; creates instance of template class with given name and slot specification
-;; and pushes it into *templates*.
-;; it is to consider whether lambda list (name slots)
-;; or (name &body slots) is better
-;; for the former possibility, the call is more similar to defclass
-;; for the latter, the call is more like defstruct call
 ; public
 (defmacro deftemplate (name &body slots)
   "define new template"

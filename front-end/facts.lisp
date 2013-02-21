@@ -23,6 +23,8 @@
 
 ;; retract needs to compute the facts to remove first, for when facts are
 ;; specified by indices and one is removed, the other indices shift
+;; TODO: domluvit s dostalem, jestli je podpora specifikace faktu cislem
+;; zadouci, pripadne odstranit podporu pro integerovy fact-spec
 ; private
 (defun retract% (fact-specs)
   (let (facts-to-remove)

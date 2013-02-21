@@ -5,7 +5,7 @@
   (push-end suite-name *test-suites*))
 (defun run-suites ()
   (dolist (suite *test-suites*)
-    (format t "Running test suite ~a " suite)
+    (format t "~%Running test suite ~a " suite)
     (textui-test-run (suite (make-instance suite)))))
 
 #|

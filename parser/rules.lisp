@@ -16,7 +16,9 @@
             (progn (collect (cons (nth (+ i 2) cond-list) cond))
                    (incf i 2)))))
 
-(defun parse-rule (env name body)
+;; TODO: dodelat kontrolu, zda se vsechny promenne v RHS vyskytuji v LHS
+; public
+(defmethod parse-rule ((env environment) (name symbol) (body list))
   (when (stringp (first body))
     (pop body)) ;; ignore clips rule header
   (let* ((=>-position (position '=> body :test #'weak-equal-p))

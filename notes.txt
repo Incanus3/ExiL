@@ -1,3 +1,8 @@
 retract% will have to take the whole list. if it doesn't and retract is called with
 list of numbers, it can act very strangely, because after each retraction, the list
 is reindexed.
+
+domluvit s dostalem, jestli je treba zachovavat kompatibilitu s clipsem co do
+indexovani faktu cisly (front-end:facts, retract), co do filtrovani faktu
+ve znalostni bazi by bylo lepsi napr. filtrovani faktu podle templatu,
+prip. napr. vypsat fakta konsistentni s patternem

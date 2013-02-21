@@ -1,5 +1,7 @@
 (in-package :exil-user)
 
+(format t "~%~%Running examples with clips-compatible syntax:~%")
+
 ; TEMPLATE FACTS:
 ;(clear)
 (complete-reset)

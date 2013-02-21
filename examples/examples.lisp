@@ -3,6 +3,8 @@
 
 (setf erete::*debug-rete* nil)
 
+(format t "~%~%Running examples with template facts:~%")
+
 ; TEMPLATE FACTS:
 ;(clear)
 (complete-reset)

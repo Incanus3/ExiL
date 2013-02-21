@@ -14,61 +14,73 @@
   :long-description ""
   :depends-on (:xlunit :iterate)
   :components
-  ((:module :base
+  ((:file "packages")
+   (:module :utils
+            :depends-on ("packages")
             :components
-            ((:file "packages")
-             (:file "utils"              :depends-on ("packages"))
-             (:file "tests"              :depends-on ("utils"))
-             (:file "utils-tests"        :depends-on ("utils" "tests"))))
+            ((:file "utils")))
    (:module :core
-            :depends-on (:base)
+            :depends-on ("packages" :utils)
             :components
             ((:file "templates")
-             (:file "templates-tests"    :depends-on ("templates"))
              (:file "base-objects"       :depends-on ("templates"))
-             (:file "base-objects-tests" :depends-on ("base-objects"))
              (:file "patterns"           :depends-on ("facts"))
-             (:file "patterns-tests"     :depends-on ("patterns"))
              (:file "facts"              :depends-on ("base-objects"))
              (:file "rules"              :depends-on ("patterns"))))
    (:module :rete
-            :depends-on (:core)
+            :depends-on ("packages" :utils :core)
             :components
             ((:file "tokens")
-             (:file "tokens-tests"       :depends-on ("tokens"))
              (:file "generic-node"       :depends-on ("tokens"))
              (:file "alpha-part"         :depends-on ("generic-node"))
              (:file "beta-memories"      :depends-on ("alpha-part"))
              (:file "beta-joins"         :depends-on ("beta-memories"))
              (:file "create-alpha-net"   :depends-on ("beta-joins"))
-             (:file "create-beta-net"    :depends-on ("create-alpha-net"))
-             (:file "rete-tests"         :depends-on ("create-beta-net"))))
+             (:file "create-beta-net"    :depends-on ("create-alpha-net"))))
    (:module :environment
-            :depends-on (:core :rete)
+            :depends-on ("packages" :utils :core :rete)
             :components
             ((:file "matches")
              (:file "activations"        :depends-on ("matches"))
              (:file "strategies"         :depends-on ("activations"))
              (:file "env-base"           :depends-on ("strategies"))
              (:file "env-facts"          :depends-on ("env-base"))
-             (:file "env-activations"    :depends-on ("env-facts"))
-             (:file "env-tests"          :depends-on ("env-activations"))
-;             (:file "object-makers"      :depends-on ("env-activations"))
-             ))
+             (:file "env-activations"    :depends-on ("env-facts"))))
    (:module :parser
-            :depends-on (:core :environment)
+            :depends-on ("packages" :utils :core :environment)
             :components
             ((:file "base")
              (:file "templates" :depends-on ("base"))
              (:file "facts" :depends-on ("templates"))
              (:file "rules" :depends-on ("facts"))))
    (:module :front-end
-            :depends-on (:environment :parser)
+            :depends-on ("packages" :utils :environment :parser)
             :components
             ((:file "base")
              (:file "facts" :depends-on ("base"))
              (:file "rules" :depends-on ("facts"))
              (:file "execution" :depends-on ("rules"))))
+   (:module :tests
+            :depends-on ("packages" :utils :core :rete :environment
+                                    :parser :front-end)
+            :components
+            ((:file "base")
+             (:file "utils"        :depends-on ("base"))
+             (:file "templates"    :depends-on ("base"))
+             (:file "base-objects" :depends-on ("base"))
+             (:file "patterns"     :depends-on ("base"))
+             (:file "tokens"       :depends-on ("base"))
+             (:file "rete"         :depends-on ("base"))
+             (:file "environment"  :depends-on ("base"))
+             (:file "run-tests"
+                    :depends-on ("base" "utils" "templates" "base-objects" "rete"
+                                        "patterns" "tokens" "environment"))))
+   (:module :examples
+            :depends-on ("packages" :front-end)
+            :components
+            ((:file "examples")
+             (:file "examples-simple")
+             (:file "examples-clips")))
    #+lispworks(:file "gui"     :depends-on (:front-end))
    #|
    (:file "print-tree"        :depends-on ("export"))
