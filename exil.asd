@@ -44,7 +44,7 @@
              (:file "create-beta-net"    :depends-on ("create-alpha-net"))
              (:file "rete-tests"         :depends-on ("create-beta-net"))))
    (:module :environment
-            :depends-on (:rete)
+            :depends-on (:core :rete)
             :components
             ((:file "matches")
              (:file "activations"        :depends-on ("matches"))
@@ -53,9 +53,17 @@
              (:file "env-facts"          :depends-on ("env-base"))
              (:file "env-activations"    :depends-on ("env-facts"))
              (:file "env-tests"          :depends-on ("env-activations"))
-             (:file "object-makers"      :depends-on ("env-activations"))))
+;             (:file "object-makers"      :depends-on ("env-activations"))
+             ))
+   (:module :parser
+            :depends-on (:core :environment)
+            :components
+            ((:file "base")
+             (:file "templates" :depends-on ("base"))
+             (:file "facts" :depends-on ("templates"))
+             (:file "rules" :depends-on ("facts"))))
    (:module :front-end
-            :depends-on (:environment)
+            :depends-on (:environment :parser)
             :components
             ((:file "base")
              (:file "facts" :depends-on ("base"))

@@ -218,11 +218,15 @@
   (iter (for (key val) in-hashtable hash)
         (collect val)))
 
+(defun symbol-name-equal-p (sym1 sym2)
+  "returns true if symbol-names are string-equal"
+  (string-equal (symbol-name sym1) (symbol-name sym2)))
+
 (defgeneric weak-equal-p (obj1 obj2)
   (:documentation "ExiL default weak equality predicate")
   (:method (obj1 obj2) (equalp obj1 obj2))
   (:method ((sym1 symbol) (sym2 symbol))
-    (equalp (to-keyword sym1) (to-keyword sym2)))
+    (symbol-name-equal-p sym1 sym2))
   (:method ((cons1 cons) (cons2 cons))
     (and (weak-equal-p (car cons1) (car cons2))
          (weak-equal-p (cdr cons1) (cdr cons2)))))

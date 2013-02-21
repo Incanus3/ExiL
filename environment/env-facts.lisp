@@ -42,17 +42,6 @@
       (rem-wme (rete env) fact)
       #+lispworks(exil-gui:update-lists))))
 
-;; find fact, perform modifications, notify rete
-;; modify-fact works for template-facts ONLY!
-;; mod-list is a plist mapping slot-name to new value
-(defmethod modify-fact ((env environment) (fact template-fact) (mod-list list))
-  (assert (find-fact env fact) () "modify: fact ~A not found in (facts)" fact)
-  (let ((new-fact (copy-object fact)))
-    (doplist (slot-name val mod-list)
-      (setf (object-slot new-fact slot-name) val))
-    (rem-fact env fact)
-    (add-fact env new-fact)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS
 

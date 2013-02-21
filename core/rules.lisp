@@ -51,5 +51,5 @@
 ;; conditions - list of patterns
 ;; activations - list of s-expressions, that are evaluated when the rule is fired
 (defun make-rule (name conditions activations)
-  (make-instance 'rule :name (to-keyword name)
-                 :conditions conditions :activations activations))
+  (make-instance 'rule :name name :conditions conditions
+                 :activations activations))

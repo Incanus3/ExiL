@@ -14,7 +14,7 @@
 
 ; private
 (defun assert% (fact-spec)
-  (add-fact *current-environment* (make-fact *current-environment* fact-spec)))
+  (add-fact *current-environment* (parse-fact *current-environment* fact-spec)))
 
 ; public
 (defmacro assert (&rest fact-specs)
@@ -28,7 +28,7 @@
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
       (typecase fact-spec
-        (list (pushnew (make-fact *current-environment* fact-spec)
+        (list (pushnew (parse-fact *current-environment* fact-spec)
                        facts-to-remove))
         (integer (pushnew (nth (1- fact-spec)
                                (exil-env:facts *current-environment*))
@@ -51,26 +51,6 @@
   "remove all facts from working memory"
   (reset-facts *current-environment*))
 
-; private
-(defun nonclips-mod-list-p (mod-list)
-  (plistp mod-list))
-
-; private
-(defun clips-mod-list-p (mod-list)
-  (alistp mod-list))
-
-; private
-(defun clips->nonclips-mod-list (mod-list)
-  (iter (for (slot-name new-val) in mod-list)
-        (appending (list (to-keyword slot-name) new-val))))
-
-; private
-(defun to-mod-spec-list (mod-list)
-  (cond
-    ((nonclips-mod-list-p mod-list) mod-list)
-    ((clips-mod-list-p mod-list) (clips->nonclips-mod-list mod-list))
-    (t (error "~A not a valid modify specifier" mod-list))))
-
 ;; mod-list is a mapping from slot-name to new value
 ;; it can be either plist for non-clips syntax of alist for clips syntax
 ;; TODO: modify-fact should be responsibility of parser, as it works with
@@ -79,10 +59,10 @@
 ;; than remove the old fact from environment and add the modified one
 ; private
 (defun modify% (fact-spec mod-list)
-  (let ((mod-fact (make-fact *current-environment* fact-spec)))
-    (unless (typep mod-fact 'template-fact)
-      (error "modify: ~S is not a template fact specification" fact-spec))
-    (modify-fact *current-environment* mod-fact (to-mod-spec-list mod-list))))
+  (let* ((old-fact (parse-fact *current-environment* fact-spec))
+         (new-fact (modify-fact old-fact mod-list)))
+    (rem-fact *current-environment* old-fact)
+    (add-fact *current-environment* new-fact)))
 
 ;; used as follows:
 ;; (defrule push

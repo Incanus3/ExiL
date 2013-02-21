@@ -1,17 +1,4 @@
-(in-package :exil-env)
-
-;; template- and generic fact and pattern makers - front-end template-object
-;; specification parsing
-
-;; functions that (potentially) create template objects are defined as methods
-;; of environment, as they need access to environment's template list
-
-;; used by assert
-(defgeneric make-fact (env fact-spec)
-  (:documentation "make fact from assert-syntax specification"))
-;; used for creating patterns from rule's conditions
-(defgeneric make-pattern (env pattern-spec &key match-var)
-  (:documentation "make pattern from assert-syntax speicification"))
+(in-package :exil-parser)
 
 ; private
 (defun tmpl-slots-spec-p-nonclips (slots-spec)
@@ -64,7 +51,7 @@
         (clips->nonclips-spec slot-spec)
         slot-spec)))
 
-(defmethod make-fact ((env environment) fact-spec)
+(defmethod parse-fact ((env environment) fact-spec)
   (if (tmpl-object-spec-p env fact-spec)
       (make-template-fact (find-template env (extract-tmpl-name fact-spec))
                           (extract-slot-spec fact-spec))
@@ -74,7 +61,7 @@
 ; make-pattern should support the ?fact <- <pattern> notation
 ; it should also support the ~, | and & notations in variable matching
 ; public, used by export:defrule
-(defmethod make-pattern ((env environment) pattern-spec &key (match-var nil))
+(defmethod parse-pattern ((env environment) pattern-spec &key (match-var nil))
   (let* ((negated (equalp (first pattern-spec) '-))
          (spec (if negated (rest pattern-spec) pattern-spec)))
     (if (tmpl-object-spec-p env spec)
@@ -84,3 +71,39 @@
          :match-var match-var :negated negated)
         (make-simple-pattern
          spec :match-var match-var :negated negated))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; private
+(defun nonclips-mod-list-p (mod-list)
+  (plistp mod-list))
+
+; private
+(defun clips-mod-list-p (mod-list)
+  (alistp mod-list))
+
+; private
+(defun clips->nonclips-mod-list (mod-list)
+  (iter (for (slot-name new-val) in mod-list)
+        (appending (list (to-keyword slot-name) new-val))))
+
+; private
+(defun to-mod-spec-list (mod-list)
+  (cond
+    ((nonclips-mod-list-p mod-list) mod-list)
+    ((clips-mod-list-p mod-list) (clips->nonclips-mod-list mod-list))
+    (t (error "~A not a valid modify specifier" mod-list))))
+
+;; find fact, perform modifications, notify rete
+;; modify-fact works for template-facts ONLY!
+;; mod-list is a plist mapping slot-name to new value
+(defmethod modify-fact ((fact template-fact) (mod-list list))
+;  (assert (find-fact env fact) () "modify: fact ~A not found in (facts)" fact)
+  (assert (typep fact 'template-fact) ()
+          "modify-fact: simple facts can't be modified")
+  (let ((new-fact (copy-object fact)))
+    (doplist (slot-name val (to-mod-spec-list mod-list))
+      (setf (object-slot new-fact slot-name) val))
+;    (rem-fact env fact)
+;    (add-fact env new-fact)
+    new-fact))

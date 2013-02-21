@@ -25,6 +25,8 @@
                      and the agenda"))
 
 ;; PUBLIC METHODS
+;; constructor:
+;(defun make-environment ())
 ;; watchers:
 (defgeneric set-watcher (env watcher))
 (defgeneric unset-watcher (env watcher))
@@ -37,7 +39,6 @@
 (defgeneric find-fact (env fact))
 (defgeneric add-fact (env fact))
 (defgeneric rem-fact (env fact))
-(defgeneric modify-fact (env fact mod-list))
 ;; fact groups:
 (defgeneric find-fact-group (env group-name))
 (defgeneric add-fact-group (env group-name descriptions))
@@ -69,6 +70,9 @@
                         (:simplicity-strategy . ,#'simplicity-strategy)
                         (:complexity-strategy . ,#'complexity-strategy)))
           rete (make-rete env))))
+
+(defun make-environment ()
+  (make-instance 'environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
