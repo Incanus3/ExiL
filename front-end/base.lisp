@@ -28,7 +28,7 @@
 ;; execution:
 ; (defun reset ())
 ; (defun step ())
-; (defun hatl ())
+; (defun halt ())
 ; (defun run ())
 ;; environment cleanup:
 ; (defun clear ())
@@ -84,6 +84,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates
 
+;; TODO: parsing of the template is a responsibility of parser, deftemplate
+;;   should just pass the name and slots to parser and add the result to env
 ;; TODO: use defaults in examples to test this
 
 ;; is this a valid exil slot specifier?

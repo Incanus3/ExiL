@@ -3,6 +3,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; strategies
 
+;; TODO: this shouldn't take function, instead it should seem more like
+;; a function definition - it should take name and body, pass the body to parser
+;; to create the strategy (which will probably still be just a function)
+;; and then store the strategy in the environment under given name
 ; public
 (defmacro defstrategy (name function)
   "define new strategy"
@@ -16,6 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rules
 
+;; TODO: parsing the rule is the responsibility of parser
 ; extracts actual conditions from rule conditions list, which can also
 ; include ?fact <- <condition> statements
 ; returns list of pairs (<condition> , <match-variable>)
