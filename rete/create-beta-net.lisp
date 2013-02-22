@@ -85,7 +85,7 @@
 (defmethod find/add-test-node ((test-node beta-join-node)
                                (parent beta-memory-node)
                                (alpha-mem alpha-memory-node))
-  (or (find-if (lambda (child) (exil-equal-p child test-node))
+  (or (find-if (lambda (child) (node-equal-p child test-node))
                (children parent))
       (progn (add-child parent test-node)
              (add-child alpha-mem test-node)

@@ -110,8 +110,8 @@
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation"))
 
-(defmethod exil-equal-p and ((node1 alpha-test-node)
-                             (node2 alpha-test-node))
+(defmethod node-equal-p ((node1 alpha-test-node)
+                         (node2 alpha-test-node))
   (and (equalp (tested-field node1)
                (tested-field node2))
        (constant-test (value node1)

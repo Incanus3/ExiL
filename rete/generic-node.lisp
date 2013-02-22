@@ -57,13 +57,11 @@
 ;; if it is, than the commented variant is probably just too memory-expansive
 ;; if it has cycles, than come up with some other good method to compare
 ;; the nodes according to the children
-(defmethod exil-equal-p and ((node1 node) (node2 node))
-  (equalp node1 node2)
-;  (exil-equal-p (children node1) (children node2))
-  )
+(defgeneric node-equal-p (node1 node2)
+  (:method (node1 node2) nil))
 
 (defmethod add-child ((node node) (child node))
-  (pushnew child (children node) :test #'exil-equal-p)
+  (pushnew child (children node) :test #'node-equal-p)
   node)
 
 (defmethod activate-children ((node node) object)

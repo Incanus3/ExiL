@@ -106,13 +106,13 @@
     (if (perform-join-tests (tests node) token wme)
         (activate-children node (make-token wme token)))))
 
-(defmethod exil-equal-p and ((node1 beta-join-node)
-                             (node2 beta-join-node))
+(defmethod node-equal-p ((node1 beta-join-node)
+                         (node2 beta-join-node))
   (with-slots ((am1 alpha-memory) (tsts1 tests) (par1 parent)) node1
     (with-slots ((am2 alpha-memory) (tsts2 tests) (par2 parent)) node2
       (and ;(equalp (type-of node1) (type-of node2))
-           (exil-equal-p am1 am2)
-           (exil-equal-p par1 par2)
+           (node-equal-p am1 am2)
+           (node-equal-p par1 par2)
            (tests-equal-p tsts1 tsts2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
