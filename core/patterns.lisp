@@ -42,7 +42,7 @@
 
 ;; TODO: change this to correspond to assert format
 (defmethod format-object ((pattern simple-pattern) stream)
-  (format stream "~@[~A <- ~]~:[~;NOT ~]~S" (match-var pattern)
+  (format stream "~@[~A <- ~]~:[~;NOT ~]~A" (match-var pattern)
                      (negated-p pattern) (pattern pattern)))
 
 ;;;; inherited from simple-object:
@@ -54,7 +54,7 @@
 (defclass template-pattern (pattern template-object) ())
 
 (defmethod format-object ((object template-pattern) stream)
-  (format stream "~:[~;NOT ~]~S" (negated-p object)
+  (format stream "~:[~;NOT ~]~A" (negated-p object)
                 (cons (name (template object)) (slots object))))
 
 (defgeneric make-template-pattern (template slot-spec &key negated match-var)

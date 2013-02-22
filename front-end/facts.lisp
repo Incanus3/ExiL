@@ -11,9 +11,11 @@
                 (end-index (length (exil-env:facts *current-environment*)))
                 (at-most end-index))
   "return at most at-most facts from start-index to end-index"
-  (subseq (exil-env:facts *current-environment*)
-          (1- start-index)
-          (min end-index (+ start-index at-most -1))))
+  (progn
+    (princ (subseq (exil-env:facts *current-environment*)
+                   (1- start-index)
+                   (min end-index (+ start-index at-most -1))))
+    nil))
 
 (defun assert% (fact-spec)
   (add-fact *current-environment* (parse-fact *current-environment* fact-spec)))

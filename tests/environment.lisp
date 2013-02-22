@@ -35,12 +35,12 @@
 (def-test-method test-simple-facts ((tests env-tests) :run nil)
   (with-slots (env) tests
     (let ((fact (make-simple-fact '(in box hall))))
-      (assert-false (find-fact env fact))
+      (assert-false (exil-env::find-fact env fact))
       (add-fact env fact)
-      (assert-true (find-fact env fact))
+      (assert-true (exil-env::find-fact env fact))
       ;; fact equality is tested based on contents, so this should work:
       (rem-fact env (make-simple-fact '(in box hall)))
-      (assert-false (find-fact env fact))
+      (assert-false (exil-env::find-fact env fact))
 ;      ;; fact is not there
 ;      (assert-condition 'simple-error (modify-fact env fact ()))
 ;      (add-fact env fact)
@@ -51,18 +51,19 @@
 (def-test-method test-tmpl-facts ((tests env-tests) :run nil)
   (with-slots (env tmpl) tests
     (let ((fact (make-template-fact tmpl '(:a 3))))
-      (assert-false (find-fact env fact))
+      (assert-false (exil-env::find-fact env fact))
       (add-fact env fact)
-      (assert-true (find-fact env fact))
+      (assert-true (exil-env::find-fact env fact))
       ;; fact equality is tested based on contents, so this should work:
       (rem-fact env (make-template-fact tmpl '(:a 3)))
-      (assert-false (find-fact env fact))
+      (assert-false (exil-env::find-fact env fact))
 ;      ;; fact is not there
 ;      (assert-condition 'simple-error (modify-fact env fact ()))
 ;      (add-fact env fact)
 ;      (modify-fact env fact '(:a 5 :b 10))
-;      (assert-false (find-fact env fact))
-;      (assert-true (find-fact env (make-template-fact tmpl '(:a 5 :b 10))))
+;      (assert-false (exil-env::find-fact env fact))
+;      (assert-true (exil-env::find-fact env
+;        (make-template-fact tmpl '(:a 5 :b 10))))
       )))
 
 

@@ -84,7 +84,7 @@
 
 ;; remove production from productions
 ;; exil-env:rem-rule, that calls this (indirectly), also removes matches from
-;; agenda, so there's no need to signal broken matches
+;; activations, so there's no need to signal broken matches
 (defmethod delete-production ((node beta-memory-node) (production rule))
   (setf (productions node)
         (delete production (productions node) :test #'rule-equal-p)))

@@ -31,13 +31,17 @@
   "undefine rule"
   `(rem-rule *current-environment* ',name))
 
-;; TODO: printing functionality should be moved to core
 (defun ppdefrule% (name)
-  (let ((rule (find-rule *current-environment* name)))
-    (format t "(defrule ~A~{~%  ~A~}~%  =>~{~%  ~S~})"
-            name (conditions rule) (activations rule))))
+  (princ (find-rule *current-environment* name)))
 
 ; public
 (defmacro ppdefrule (name)
   "pretty-print rule definition"
   `(ppdefrule% ',name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; agenda
+
+(defun agenda ()
+  (princ (activations *current-environment*))
+  nil)

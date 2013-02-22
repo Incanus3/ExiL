@@ -24,7 +24,7 @@
 (defmethod add-match ((env environment) production token)
   (let ((match (make-match production token)))
     ;; when it wasn't already there
-    (when (and (nth-value 1 (ext-pushnew match (agenda env)
+    (when (and (nth-value 1 (ext-pushnew match (activations env)
                                          :test #'match-equal-p))
                (watched-p env :activations))
       (format t "~%==> ~A" match)
@@ -34,23 +34,23 @@
 (defmethod remove-match ((env environment) production token)
   (let ((match (make-match production token)))
     (multiple-value-bind (new-list altered-p)
-        (ext-delete match (agenda env) :test #'match-equal-p)
+        (ext-delete match (activations env) :test #'match-equal-p)
       (when altered-p
-        (setf (agenda env) new-list)
+        (setf (activations env) new-list)
         (when (watched-p env :activations)
           (format t "~%<== ~A" match))
         #+lispworks(exil-gui:update-lists)))))
 
 (defun remove-matches (env rule)
-  (setf (agenda env)
-        (delete rule (agenda env)
+  (setf (activations env)
+        (delete rule (activations env)
                 :test #'rule-equal-p :key #'match-rule))
   #+lispworks(exil-gui:update-lists))
 
 ; public
 (defmethod select-activation ((env environment))
-  (let ((activation (funcall (current-strategy env) (agenda env))))
-    (setf (agenda env) (delete activation (agenda env)
+  (let ((activation (funcall (current-strategy env) (activations env))))
+    (setf (activations env) (delete activation (activations env)
                                :test #'match-equal-p))
     activation))
 
@@ -100,13 +100,13 @@
 ;;   (dolist (fact (facts env))
 ;;     (rem-fact env fact)))
 
-;; clears facts, agenda and rete, keeps templates, fact groups and rules
+;; clears facts, activations and rete, keeps templates, fact groups and rules
 ;; if there're are some rules, whose conditions are met by empty set of facts
-;; these will appear in the agenda thereafter
+;; these will appear in the activations thereafter
 ; public
 (defmethod clear-env ((env environment))
   (setf (facts env) ()
-        (agenda env) ()
+        (activations env) ()
         (rete env) (make-rete env))
   (iter (for (name rule) in-hashtable (rules env))
         (new-production (rete env) rule)))
@@ -122,7 +122,7 @@
 ; public, not in use
 (defmethod completely-reset-env ((env environment))
   (setf (facts env) ()
-        (agenda env) ()
+        (activations env) ()
         (fact-groups env) ()
         (templates env) (make-hash-table :test 'equalp)
         (rules env) (make-hash-table :test 'equalp)

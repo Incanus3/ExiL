@@ -18,11 +18,11 @@
    (rules :initform (make-hash-table :test #'equalp) :accessor rules
           :documentation "hash table, assigns rule instance to name")
    (rete :accessor rete :documentation "the rete singleton instance")
-   (agenda :initform () :accessor agenda
+   (activations :initform () :accessor activations
            :documentation "list of matches"))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                      strategies and watchers and stores the asserted facts
-                     and the agenda"))
+                     and the activations"))
 
 ;; PUBLIC METHODS
 ;; constructor:
@@ -56,7 +56,7 @@
 (defgeneric select-activation (env))
 ;; environment clean-up:
 (defgeneric reset-environment (env))
-(defgeneric reset-facts (env))
+;(defgeneric reset-facts (env))
 (defgeneric completely-reset-environment (env)) ; DEBUG
 
 (defmethod initialize-instance :after ((env environment) &key)

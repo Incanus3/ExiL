@@ -45,17 +45,14 @@
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all
            :add-template :find-template
-           :facts :add-fact :rem-fact :find-fact ;<- remove this
-           :reset-facts ;<- use reset-env
-;           :modify-fact ;<- move this to parser
-           :add-fact-group :rem-fact-group ;:fact-groups
+           :facts :add-fact :rem-fact
+           :add-fact-group :rem-fact-group
            :add-strategy :set-strategy
            :add-rule :rem-rule :find-rule
-           :agenda
+           :activations
            :clear-env :reset-env :completely-reset-env
            ;; consider if this is supposed to be environment's responsibility
            :select-activation :activate-rule
-           :make-fact :make-pattern ; move this to parser
            ;; called by rete
            :add-match :remove-match))
 
@@ -67,15 +64,13 @@
   (:import-from :exil-utils :to-keyword :to-list-of-lists :weak-equal-p :plistp
                 :alistp :doplist)
   (:import-from :exil-env :environment :find-template)
-  (:export :parse-template :parse-fact :modify-fact
+  (:export :parse-template :parse-fact :modify-fact :parse-pattern
            :parse-fact-group :parse-rule))
 
 (defpackage :exil
   (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-parser :exil-env :iterate)
   (:import-from :exil-utils :to-keyword)
-;; should be removed when rule printing moved to core
-  (:import-from :exil-core :conditions :activations)
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
            :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
            :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule
@@ -85,7 +80,7 @@
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")
               (:use :common-lisp :capi)
-              (:import-from :exil-env :facts :templates :rules :agenda
+              (:import-from :exil-env :facts :templates :rules :activations
                :rem-fact :rem-rule)
               (:import-from :exil-utils :hash->list)
               (:import-from :exil :*current-environment*)
@@ -106,21 +101,17 @@
 
 (defpackage :utils-tests
   (:documentation "tests for the utils package")
-  (:use :common-lisp :exil-utils :xlunit)
-  (:import-from :tests-base :add-test-suite)
+  (:use :common-lisp :exil-utils :xlunit :tests-base)
   (:shadowing-import-from :exil-utils :intern :symbol-name))
 
 (defpackage :core-tests
   (:documentation "tests for the utils package")
-  (:use :common-lisp :exil-core :xlunit)
-  (:import-from :tests-base :add-test-suite))
+  (:use :common-lisp :exil-core :xlunit :tests-base))
 
 (defpackage :rete-tests
   (:documentation "tests for the rete package")
-  (:use :common-lisp :exil-core :exil-rete :xlunit)
-  (:import-from :tests-base :add-test-suite))
+  (:use :common-lisp :exil-core :exil-rete :xlunit :tests-base))
 
 (defpackage :env-tests
   (:documentation "tests for the environment package")
-  (:use :common-lisp :exil-core :exil-env :xlunit)
-  (:import-from :tests-base :add-test-suite))
+  (:use :common-lisp :exil-core :exil-env :xlunit :tests-base))

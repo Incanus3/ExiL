@@ -1,7 +1,7 @@
 (in-package :exil-env)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; environment's agenda consists of activations, which are themselves matches
+;; environment's activations are themselves matches
 ;; folowing code implements:
 ;; 1) variable bindings resolution between rule's conditions (patterns) and the
 ;;    facts that satisfy them
@@ -76,6 +76,6 @@
                     (token->list token)))
          (activations (substitute-variables (activations rule)
                                             bindings)))
-    (format t "~%Firing ~A" activation)
+    (format t "~%Firing ~A" (rule-name activation))
     (dolist (activation activations)
       (eval activation))))

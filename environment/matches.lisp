@@ -29,11 +29,16 @@
        (token-equal-p (match-token match1)
                       (match-token match2))))
 
+(defmethod rule-name ((match match))
+  (name (match-rule match)))
+
 ; public
 (defmethod print-object ((match match) stream)
   (if *print-escape*
       (print-unreadable-object (match stream :type t :identity t)
         (format stream "~S" (list (match-rule match)
                                   (token->list (match-token match)))))
-      (format stream "Activation ~A" (name (match-rule match))))
-  match)
+;      (format stream "Activation ~A" (name (match-rule match))))
+      (format stream "(ACTIVATION ~A ~A)"
+              (rule-name match)
+              (token->list (match-token match)))))

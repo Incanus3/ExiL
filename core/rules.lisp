@@ -40,11 +40,12 @@
 
 ; public
 (defmethod print-object ((rule rule) stream)
-  (if *print-escape*
-      (print-unreadable-object (rule stream :type t)
-        (format stream "~A" (name rule)))
-      (format stream "Rule ~A:~%~{~A~%~}=>~%~{~A~}" (name rule) (conditions rule)
-              (activations rule)))
+  (with-slots (name conditions activations) rule
+    (if *print-escape*
+        (print-unreadable-object (rule stream :type t)
+          (format stream "~A" (name rule)))
+        (format t "(RULE ~A~{~%  ~A~}~%  =>~{~%  ~A~})"
+                name (conditions rule) (activations rule))))
   rule)
 
 ;public

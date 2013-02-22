@@ -2,7 +2,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; strategies are functions, that implement selecting the activation to be
-;; fired from environment's agenda
+;; fired from environment's activations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgeneric newer-than-p (match1 match2))
@@ -12,11 +12,11 @@
   (> (timestamp match1)
      (timestamp match2)))
 
-(defun depth-strategy (agenda)
-  (first (sort agenda #'newer-than-p)))
+(defun depth-strategy (activations)
+  (first (sort activations #'newer-than-p)))
 
-(defun breadth-strategy (agenda)
-  (first (sort agenda (complement #'newer-than-p))))
+(defun breadth-strategy (activations)
+  (first (sort activations (complement #'newer-than-p))))
 
 (defmethod simpler-than-p ((rule1 rule) (rule2 rule))
   (< (length (conditions rule1))
@@ -25,8 +25,8 @@
 (defmethod simpler-than-p ((match1 match) (match2 match))
   (simpler-than-p (match-rule match1) (match-rule match2)))
 
-(defun simplicity-strategy (agenda)
-  (first (sort agenda #'simpler-than-p)))
+(defun simplicity-strategy (activations)
+  (first (sort activations #'simpler-than-p)))
 
-(defun complexity-strategy (agenda)
-  (first (sort agenda (complement #'simpler-than-p))))
+(defun complexity-strategy (activations)
+  (first (sort activations (complement #'simpler-than-p))))

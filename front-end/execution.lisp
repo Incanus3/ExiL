@@ -24,7 +24,7 @@
 ; public
 (defun step ()
   "run inference engine for one turn"
-  (when (agenda *current-environment*)
+  (when (activations *current-environment*)
     ;; (format t "~%------------------------------------------------------")
     (activate-rule (select-activation *current-environment*))
     t))

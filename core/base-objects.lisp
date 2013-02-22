@@ -11,10 +11,10 @@
 (defgeneric description (object))
 
 (defmethod print-object ((object base-object) stream)
-;  (if *print-escape*
+  (if *print-escape*
       (print-unreadable-object (object stream :type t :identity nil)
         (format-object object stream))
-;      (format-object object stream))
+      (format-object object stream))
   object)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -27,7 +27,7 @@
   (weak-equal-p (specifier object1) (specifier object2)))
 
 (defmethod format-object ((object simple-object) stream)
-  (format stream "~S" (specifier object)))
+  (format stream "~A" (specifier object)))
 
 (defmethod copy-object ((object simple-object))
   (make-instance (class-of object) :specifier (copy-list (specifier object))))
@@ -69,7 +69,7 @@
 
 ;; TODO: change this so it corresponds to assert format
 (defmethod format-object ((object template-object) stream)
-  (format stream "~S" (cons (name (template object)) (slots object))))
+  (format stream "~A" (cons (name (template object)) (slots object))))
 
 (defmethod copy-object ((object template-object))
   (make-instance (class-of object)
