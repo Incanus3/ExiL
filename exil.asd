@@ -7,11 +7,11 @@
 (defsystem exil
   :name "EXpert system In Lisp"
   :author "Jakub Kalab <jakubkalab@gmail.com>"
-  :version "0.1"
+;  :version "0.1"
   :maintainer "Jakub Kalab <jakubkalab@gmail.com>"
-  :licence "BSD"
+;  :licence "BSD"
   :description "EXpert system In Lisp"
-  :long-description ""
+;  :long-description ""
   :depends-on (:xlunit :iterate)
   :components
   ((:file "packages")

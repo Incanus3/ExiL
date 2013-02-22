@@ -91,3 +91,11 @@
     (doplist (slot-name val (to-mod-spec-list mod-list))
       (setf (object-slot new-fact slot-name) val))
     new-fact))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod parse-fact-group ((env environment) (fact-specs list))
+  (when (stringp (first fact-specs)) (pop fact-specs))
+  (mapcar (lambda (fact-desc)
+            (parse-fact env fact-desc))
+          fact-specs))

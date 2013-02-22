@@ -3,6 +3,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; facts
 
+;; TODO: domluvit s dostalem, jestli je podpora specifikace faktu cislem
+;; zadouci, pripadne pridat jinou moznost filtrovani faktu, napr. podle
+;; templatu, nebo patternu
 ; public
 (defun facts (&optional (start-index 1)
                 (end-index (length (exil-env:facts *current-environment*)))
@@ -12,7 +15,6 @@
           (1- start-index)
           (min end-index (+ start-index at-most -1))))
 
-; private
 (defun assert% (fact-spec)
   (add-fact *current-environment* (parse-fact *current-environment* fact-spec)))
 
@@ -25,7 +27,6 @@
 ;; specified by indices and one is removed, the other indices shift
 ;; TODO: domluvit s dostalem, jestli je podpora specifikace faktu cislem
 ;; zadouci, pripadne odstranit podporu pro integerovy fact-spec
-; private
 (defun retract% (fact-specs)
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
@@ -51,7 +52,7 @@
 ; public
 (defun retract-all ()
   "remove all facts from working memory"
-  (reset-facts *current-environment*))
+  (clear-env *current-environment*))
 
 ;; mod-list is a mapping from slot-name to new value
 ;; it can be either plist for non-clips syntax of alist for clips syntax
@@ -59,7 +60,6 @@
 ;; external representation of mod-list
 ;; this should ask parser to parse fact-spec, then to modify the fact
 ;; than remove the old fact from environment and add the modified one
-; private
 (defun modify% (fact-spec mod-list)
   (let* ((old-fact (parse-fact *current-environment* fact-spec))
          (new-fact (modify-fact old-fact mod-list)))
@@ -87,18 +87,12 @@
 ;; fact groups
 
 ; public
-(defmacro deffacts (name &body descriptions)
+(defmacro deffacts (name &body fact-specs)
   "create group of facts to be asserted after (reset)"
-  (if (stringp (first descriptions)) (pop descriptions))
-  `(add-fact-group *current-environment* ',name ',descriptions))
+  `(add-fact-group *current-environment* ',name
+                   (parse-fact-group *current-environment* ',fact-specs)))
 
 ; public
 (defmacro undeffacts (name)
   "delete fact group"
-  `(rem-fact-group ',name))
-
-; private
-(defun assert-group (group)
-  (format t "~%Asserting fact group ~A" (car group))
-  (dolist (desc (cdr group))
-    (assert% desc)))
+  `(rem-fact-group *current-environment* ',name))

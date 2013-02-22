@@ -29,11 +29,9 @@
 ; public
 (defmacro undefrule (name)
   "undefine rule"
-  (let ((rule (gensym "rule")))
-    `(let ((,rule (find-rule ',name)))
-       (when ,rule (rem-rule ,rule)))))
+  `(rem-rule *current-environment* ',name))
 
-;; printing functionality should be moved to core
+;; TODO: printing functionality should be moved to core
 (defun ppdefrule% (name)
   (let ((rule (find-rule *current-environment* name)))
     (format t "(defrule ~A~{~%  ~A~}~%  =>~{~%  ~S~})"

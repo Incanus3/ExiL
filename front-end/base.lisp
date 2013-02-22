@@ -37,7 +37,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; support for multiple environments
 
-;; private
 (defvar *environments* (make-hash-table))
 (defvar *current-environment*)
 
@@ -46,8 +45,8 @@
   "define new environment with given name, if redefine is true, will redefine
    existing environment with that name, if one exists"
   (let ((env-name (gensym "env-name")))
-    `(let ((,env-name (to-keyword ,name)))
-       (when (or (not (gethash ,name *environments*))
+    `(let ((,env-name (to-keyword ',name)))
+       (when (or (not (gethash ,env-name *environments*))
                  ,redefine)
          (setf (gethash ,env-name *environments*)
                (make-environment))))))
@@ -56,7 +55,7 @@
 (defmacro setenv (name)
   "set current environment to one previously defined with name"
   (let ((env (gensym "env")))
-    `(let ((,env (gethash (to-keyword ,name) *environments*)))
+    `(let ((,env (gethash (to-keyword ',name) *environments*)))
        (when ,env (setf *current-environment* ,env)))))
 
 (defenv :default)
@@ -68,18 +67,12 @@
 ; public
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(progn (if (equalp (to-keyword ',watcher) :all)
-              (watch-all *current-environment*)
-              (set-watcher *current-environment* (to-keyword ',watcher)))
-          nil))
+  `(set-watcher *current-environment* ',watcher))
 
 ; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(progn (if (equalp (to-keyword ',watcher) :all)
-              (unwatch-all *current-environment*)
-              (unset-watcher *current-environment* (to-keyword ',watcher)))
-          nil))
+  `(unset-watcher *current-environment* ',watcher))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates

@@ -48,11 +48,11 @@
            :facts :add-fact :rem-fact :find-fact ;<- remove this
            :reset-facts ;<- use reset-env
 ;           :modify-fact ;<- move this to parser
-           :add-fact-group :rem-fact-group :fact-groups
+           :add-fact-group :rem-fact-group ;:fact-groups
            :add-strategy :set-strategy
            :add-rule :rem-rule :find-rule
            :agenda
-           :reset-environment :completely-reset-environment
+           :clear-env :reset-env :completely-reset-env
            ;; consider if this is supposed to be environment's responsibility
            :select-activation :activate-rule
            :make-fact :make-pattern ; move this to parser
@@ -73,8 +73,7 @@
 (defpackage :exil
   (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-parser :exil-env :iterate)
-;; should be removed when parsing functionality completely moved to parser
-  (:import-from :exil-utils :to-keyword :weak-equal-p)
+  (:import-from :exil-utils :to-keyword)
 ;; should be removed when rule printing moved to core
   (:import-from :exil-core :conditions :activations)
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda

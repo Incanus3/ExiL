@@ -4,26 +4,23 @@
 ;; STRATEGIES
 ;; strategy names are keyword symbols
 
-;; public
+; public
 (defmethod add-strategy ((env environment) (name symbol) (function function))
   (push-update (cons (to-keyword name) function) (strategies env)))
 
-;; public
+; public
 (defmethod set-strategy ((env environment) &optional (name :default))
   (if (assoc (to-keyword name) (strategies env))
       (setf (current-strategy-name env) name)
       (error "unknown strategy ~A" name)))
 
-;; private
-(defgeneric current-strategy (env))
-
-(defmethod current-strategy ((env environment))
+(defun current-strategy (env)
   (assoc-value (current-strategy-name env) (strategies env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ACTIVATIONS
 
-;; public, used by rete
+; public, used by rete
 (defmethod add-match ((env environment) production token)
   (let ((match (make-match production token)))
     ;; when it wasn't already there
@@ -33,7 +30,7 @@
       (format t "~%==> ~A" match)
       #+lispworks(exil-gui:update-lists))))
 
-;; public, used by rete
+; public, used by rete
 (defmethod remove-match ((env environment) production token)
   (let ((match (make-match production token)))
     (multiple-value-bind (new-list altered-p)
@@ -44,17 +41,13 @@
           (format t "~%<== ~A" match))
         #+lispworks(exil-gui:update-lists)))))
 
-;; private
-(defgeneric remove-matches (env rule)
-  (:documentation "remove all matches including given rule"))
-
-(defmethod remove-matches ((env environment) rule)
+(defun remove-matches (env rule)
   (setf (agenda env)
         (delete rule (agenda env)
                 :test #'rule-equal-p :key #'match-rule))
   #+lispworks(exil-gui:update-lists))
 
-;; public
+; public
 (defmethod select-activation ((env environment))
   (let ((activation (funcall (current-strategy env) (agenda env))))
     (setf (agenda env) (delete activation (agenda env)
@@ -64,7 +57,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES
 
-;; public
+; public
 (defmethod add-rule ((env environment) (rule rule))
   (setf (gethash (name rule) (rules env)) rule)
   (new-production (rete env) rule)
@@ -75,10 +68,13 @@
   #+lispworks(exil-gui:update-lists)
   rule)
 
-;; public
-(defmethod rem-rule ((env environment) (rule rule))
-  (let* ((name (name rule))
-         (old-rule (gethash name (rules env))))
+; public
+(defmethod find-rule ((env environment) (name symbol))
+  (gethash (to-keyword name) (rules env)))
+
+; public
+(defmethod rem-rule ((env environment) (name symbol))
+  (let ((old-rule (find-rule env name)))
     (when old-rule
       (when (watched-p env :rules)
         (format t "<== ~A" old-rule))
@@ -86,36 +82,45 @@
       (remove-production (rete env) rule)
       (remove-matches env rule))))
 
-;; public
-(defmethod find-rule ((env environment) (name symbol))
-  (gethash (to-keyword name) (rules env)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
-;; clears facts one by one
-;; should be dropped in favor of reset-environment
-;; public
-(defmethod reset-facts ((env environment))
-  (dolist (fact (facts env))
-    (rem-fact env fact)))
+;;; result of calling reset-facts or clear-env is practically same, but
+;;; reset-facts is faster when there are many rules (as clear-env recreates the
+;;; rete network), whereas clear-env is faster when there are many facts
+;;; in the working memory (as retracting facts one by one involves many
+;;; rete-node inactivations)
+;;; usually there's much more facts than rules, front-end:retract-all thus
+;;; uses clear-env
 
-;; clears facts, agenda and rete, keeps templates and rules
+;; clears facts one by one
+;; should be dropped in favor of clear-env
+; public
+;; (defmethod reset-facts ((env environment))
+;;   (dolist (fact (facts env))
+;;     (rem-fact env fact)))
+
+;; clears facts, agenda and rete, keeps templates, fact groups and rules
 ;; if there're are some rules, whose conditions are met by empty set of facts
 ;; these will appear in the agenda thereafter
-;; public
-(defmethod reset-environment ((env environment))
+; public
+(defmethod clear-env ((env environment))
   (setf (facts env) ()
         (agenda env) ()
         (rete env) (make-rete env))
   (iter (for (name rule) in-hashtable (rules env))
-        (add-rule env rule))
+        (new-production (rete env) rule)))
+
+; public
+(defmethod reset-env ((env environment))
+  (clear-env env)
+  (activate-fact-groups env)
   #+lispworks(exil-gui:update-lists)
   nil)
 
 ;; clears everything
-;; public, not in use
-(defmethod completely-reset-environment ((env environment))
+; public, not in use
+(defmethod completely-reset-env ((env environment))
   (setf (facts env) ()
         (agenda env) ()
         (fact-groups env) ()

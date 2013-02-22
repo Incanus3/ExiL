@@ -6,11 +6,11 @@
 ; public
 (defun clear ()
   "delete all facts"
-  (reset-environment *current-environment*))
+  (clear-env *current-environment*))
 
 ;; DEBUG:
 (defun complete-reset ()
-  (exil-env::completely-reset-environment *current-environment*))
+  (completely-reset-env *current-environment*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; starting execution
@@ -19,9 +19,7 @@
 ; public
 (defun reset ()
   "clear all facts and add all fact groups"
-  (clear)
-  (dolist (group (fact-groups *current-environment*))
-    (assert-group group)))
+  (reset-env *current-environment*))
 
 ; public
 (defun step ()

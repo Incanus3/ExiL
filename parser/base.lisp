@@ -19,7 +19,7 @@
 (defgeneric parse-pattern (env pattern-spec &key match-var)
   (:documentation "create pattern from external representation"))
 
-(defgeneric parse-fact-group (env name fact-specs)
+(defgeneric parse-fact-group (env fact-specs)
   (:documentation "create fact group from external representation"))
 ;; used by front-end:defrule
 (defgeneric parse-rule (env name body)

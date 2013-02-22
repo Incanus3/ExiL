@@ -48,7 +48,7 @@
 (defgeneric set-strategy (env &optional strat-name))
 ;; rules:
 (defgeneric add-rule (env rule))
-(defgeneric rem-rule (env rule))
+(defgeneric rem-rule (env rule-name))
 (defgeneric find-rule (env rule-name))
 ;; activations:
 ;(defgeneric add-match (env production token)) ; forward-declared in rete
@@ -71,40 +71,44 @@
                         (:complexity-strategy . ,#'complexity-strategy)))
           rete (make-rete env))))
 
+; public
 (defun make-environment ()
   (make-instance 'environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
 
-;; private
-(defgeneric watched-p (env watcher))
-
-(defmethod watched-p ((env environment) watcher)
+(defun watched-p (env watcher)
   (assoc-value watcher (watchers env)))
 
-;; private
-(defgeneric is-watcher (env watcher))
-
-(defmethod is-watcher ((env environment) (watcher symbol))
+(defun is-watcher (env watcher)
   (assoc watcher (watchers env)))
 
-;; public
-(defmethod set-watcher ((env environment) watcher)
-  (cl:assert (is-watcher env watcher)
-             () "I don't know how to watch ~A" watcher)
-  (setf (assoc-value watcher (watchers env)) t))
-
-;; public
-(defmethod unset-watcher ((env environment) watcher)
-  (cl:assert (is-watcher env watcher)
-             () "I don't know how to watch ~A" watcher)
-  (setf (assoc-value watcher (watchers env)) nil))
-
-(defmethod watch-all ((env environment))
+(defun watch-all (env)
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) t))
                                (watchers env))))
 
-(defmethod unwatch-all ((env environment))
+(defun unwatch-all (env)
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) nil))
                                (watchers env))))
+
+(defun assert-watcher (env watcher)
+  (cl:assert (or (equalp watcher :all)
+                 (is-watcher env watcher))
+             () "I don't know how to watch ~A" watcher))
+
+; public
+(defmethod set-watcher ((env environment) (watcher symbol))
+  (let ((name (to-keyword watcher)))
+    (assert-watcher env name)
+    (if (equalp name :all)
+        (watch-all env)
+        (setf (assoc-value name (watchers env)) t))))
+
+; public
+(defmethod unset-watcher ((env environment) (watcher symbol))
+  (let ((name (to-keyword watcher)))
+    (assert-watcher env name)
+    (if (equalp name :all)
+        (unwatch-all env)
+        (setf (assoc-value name (watchers env)) nil))))
