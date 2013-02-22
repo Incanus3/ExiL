@@ -23,7 +23,7 @@
   ((specifier :reader specifier
               :initarg :specifier)))
 
-(defmethod exil-equal-p and ((object1 simple-object) (object2 simple-object))
+(defmethod exil-equal-p ((object1 simple-object) (object2 simple-object))
   (weak-equal-p (specifier object1) (specifier object2)))
 
 (defmethod format-object ((object simple-object) stream)
@@ -62,8 +62,8 @@
              :initform (error "template has to be specified"))
    (slots :accessor slots :initarg :slots :initform ())))
 
-(defmethod exil-equal-p and ((object1 template-object)
-                             (object2 template-object))
+(defmethod exil-equal-p ((object1 template-object)
+                         (object2 template-object))
   (and (exil-equal-p (template object1) (template object2))
        (alist-equal-p (slots object1) (slots object2))))
 

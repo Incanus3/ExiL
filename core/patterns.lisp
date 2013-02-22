@@ -23,8 +23,9 @@
                                       :initarg :match-var
                                       :accessor match-var)))
 
-(defmethod exil-equal-p and ((pattern1 pattern) (pattern2 pattern))
-  (equalp (negated-p pattern1) (negated-p pattern2)))
+(defmethod exil-equal-p ((pattern1 pattern) (pattern2 pattern))
+  (and (call-next-method)
+       (equalp (negated-p pattern1) (negated-p pattern2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

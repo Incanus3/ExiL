@@ -26,7 +26,7 @@
 ;; this is needed in order to compare lists of exil objects
 ;; all these lists should be sets according to exil-equal-p, as they're all
 ;; updated using pusnew :test #'exil-equal-p, or similar
-(defmethod exil-equal-p and ((list1 list) (list2 list))
+(defmethod exil-equal-p ((list1 list) (list2 list))
   (every (lambda (object) (member object list2 :test #'exil-equal-p)) list1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

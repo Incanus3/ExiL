@@ -2,7 +2,7 @@
 
 (defgeneric exil-equal-p (obj1 obj2)
   (:documentation "ExiL default equality predicate")
-  (:method-combination and))
+  (:method (obj1 obj2) nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template class
@@ -19,9 +19,7 @@
    (slots :reader slots :initarg :slots
           :initform (error "slots have to be specified"))))
 
-(defmethod exil-equal-p and ((tmpl1 template) (tmpl2 template))
-;  (and (equalp (name tmpl1) (name tmpl2))
-;       (equalp (slots tmpl1) (slots tmpl2))))
+(defmethod exil-equal-p ((tmpl1 template) (tmpl2 template))
   (equalp (name tmpl1) (name tmpl2)))
 
 ; public
