@@ -85,6 +85,8 @@
 
 ;; modify-fact works for template-facts ONLY!
 ;; mod-list is a plist mapping slot-name to new value
+;; modify-fact is in parser because it needs to support both variants of
+;; front-end syntax
 ; public
 (defmethod modify-fact ((fact template-fact) (mod-list list))
   (let ((new-fact (copy-object fact)))

@@ -58,7 +58,7 @@
 ;; if it has cycles, than come up with some other good method to compare
 ;; the nodes according to the children
 (defgeneric node-equal-p (node1 node2)
-  (:method (node1 node2) nil))
+  (:method ((node1 node) (node2 node)) nil))
 
 (defmethod add-child ((node node) (child node))
   (pushnew child (children node) :test #'node-equal-p)

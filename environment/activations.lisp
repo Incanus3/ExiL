@@ -12,9 +12,6 @@
 ;; 3) evaluation of selected activation's rule's RHS (i.e. its activations :D)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defgeneric variable-bindings (pattern fact))
-;(defgeneric get-variable-bindings (pattern-list fact-list))
-;(defgeneric substitute-variables (activations bindings))
 (defgeneric activate-rule (activation))
 
 ;; get variable bindings for single pattern-fact pair
@@ -23,7 +20,8 @@
 ;; encapsulation-friendly, make iterator macros for simple- and template-
 ;; objects and use them here. if they're made consistently, the need for
 ;; saparate variable-bindings methods should also cease
-; private
+(defgeneric variable-bindings (pattern fact))
+
 (defmethod variable-bindings ((pattern simple-pattern) (fact simple-fact))
   (let ((var-bindings (iter (for atom in (pattern pattern))
                             (for i :first 0 :then (1+ i))
@@ -34,7 +32,6 @@
         (cons (cons match-var (description fact)) var-bindings)
         var-bindings)))
 
-; private
 (defmethod variable-bindings ((pattern template-pattern) (fact template-fact))
   (let ((var-bindings (iter (for (slot-name . slot-val) in (slots pattern))
                             (when (variable-p slot-val)
@@ -51,15 +48,10 @@
 ;; this shouldn't happen if rete functions properly
 ; private
 (defun get-variable-bindings (pattern-list fact-list)
-;;  (cl:assert (= (length pattern-list)
-;;                (length fact-list)) ()
-;;                (string-append "get-variable-bindings: fact-list and patter-list"
-;;                               "has to be of the same length"))
   (remove-duplicates (mapcan #'variable-bindings pattern-list fact-list)
                      :test #'equalp))
 
 ;; substitute variables in rule's RHS by their bindings
-; private
 (defun substitute-variables (activations-with-vars var-bind-list)
   (let ((activations (copy-tree activations-with-vars)))
     (dolist (binding var-bind-list activations)

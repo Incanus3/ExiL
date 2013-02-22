@@ -4,19 +4,15 @@
 (defpackage :exil-utils
   (:documentation "general purpose utilities used in the rest of the code")
   (:use :common-lisp :iterate)
-  (:shadow :intern :symbol-name)
-  (:export :intern :string-append :symbol-name :symbol-append :to-keyword
-           :from-keyword :mac-exp :subsets :assoc-value :assoc-key :to-list
-           :to-list-of-lists :my-pushnew :ext-pushnew :push-end :pushnew-end
-           :ext-delete :diff-remove :push-update :select :alist-equal-p
-           :cpl-assoc-val :plistp :alistp :plist-every :plist-equal-p :rgetf
-           :doplist :weak-equal-p :hash->list :symbol-name-equal-p))
+  (:export :to-keyword :assoc-value :assoc-key :to-list :to-list-of-lists
+           :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
+           :push-update :alist-equal-p :plistp :alistp
+           :doplist :weak-equal-p :hash->list))
 
 (defpackage :exil-core
   (:documentation "core functionality of the expert system library - facts,
                    templates, patterns and rules")
   (:use :common-lisp :exil-utils :iterate)
-  (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :variable-p :template :slots :find-atom
            :has-slot-p :make-template :fact :simple-fact
            :atom-position :template-fact :exil-equal-p
@@ -31,8 +27,8 @@
 (defpackage :exil-rete
   (:documentation "the rete algorithm for matching facts against rule conditions")
   (:nicknames :erete)
-  (:use :common-lisp :exil-utils :exil-core :iterate)
-  (:shadowing-import-from :exil-utils :intern :symbol-name)
+  (:use :common-lisp :exil-core :iterate)
+  (:import-from :exil-utils :push-update :ext-pushnew :diff-remove)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
            :token->list :token-equal-p))
 
@@ -40,8 +36,9 @@
   (:documentation "the exil environment, keeps track of the defined templates
                    and rules and stores the asserted facts")
   (:nicknames :eenv)
-  (:use :common-lisp :exil-utils :exil-core :exil-rete :iterate)
-  (:shadowing-import-from :exil-utils :intern :symbol-name)
+  (:use :common-lisp :exil-core :exil-rete :iterate)
+  (:import-from :exil-utils :to-keyword :assoc-value
+                :ext-delete :ext-pushnew :pushnew-end)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all
            :add-template :find-template
@@ -96,13 +93,11 @@
 
 (defpackage :tests-base
   (:use :common-lisp :xlunit :exil-utils)
-  (:shadowing-import-from :exil-utils :intern :symbol-name)
   (:export :add-test-suite :run-suites))
 
 (defpackage :utils-tests
   (:documentation "tests for the utils package")
-  (:use :common-lisp :exil-utils :xlunit :tests-base)
-  (:shadowing-import-from :exil-utils :intern :symbol-name))
+  (:use :common-lisp :exil-utils :xlunit :tests-base))
 
 (defpackage :core-tests
   (:documentation "tests for the utils package")

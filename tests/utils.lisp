@@ -9,35 +9,11 @@
 
 (defclass utils-tests (test-case) ())
 
-(def-test-method test-intern ((tests utils-tests) :run nil)
-  (assert-equal (cl:intern "ABC") (intern "abc")))
-
-(def-test-method test-string-append ((tests utils-tests) :run nil)
-  (assert-equal "abcdef" (string-append "abc" "def")))
-
-(def-test-method test-symbol-name ((tests utils-tests) :run nil)
-  (assert-equal "ABC" (symbol-name 'abc))
-  (assert-equal "abc" (symbol-name "abc")))
-
-(def-test-method test-symbol-append ((tests utils-tests) :run nil)
-  (assert-equal (cl:intern "ABCDEF") (symbol-append "ABC" 'def)))
-
 (def-test-method test-to-keyword ((tests utils-tests) :run nil)
-  (assert-equal :abc (to-keyword 'abc))
-  (assert-equal :abc (to-keyword "abc")))
-
-(def-test-method test-from-keyword ((tests utils-tests) :run nil)
-  (assert-equal (cl:intern "ABC") (from-keyword :abc)))
+  (assert-equal :abc (to-keyword 'abc)))
 
 (def-test-method test-weak-equal-p ((tests utils-tests) :run nil)
-  (assert-true (weak-equal-p 'exil-utils:intern 'cl:intern)))
-
-(def-test-method test-subsets ((tests utils-tests) :run nil)
-  (let ((subsets (subsets '(1 2))))
-    (dolist (i '(nil (1) (2) (1 2)))
-      (assert-true (member i subsets :test #'equalp))
-      (setf subsets (delete i subsets :test #'equalp)))
-    (assert-false subsets)))
+  (assert-true (weak-equal-p 'exil-env:facts 'exil:facts)))
 
 (def-test-method test-assoc-value ((tests utils-tests) :run nil)
   (let ((alist (list (cons 'a 1))))
@@ -51,16 +27,6 @@
   (let ((alist (list (cons 'a 1))))
     (assert-equal 'a (assoc-key 1 alist))
     (assert-equal nil (assoc-key 2 alist))))
-
-#|
-(def-test-method test-cpl-assoc-val ((tests utils-tests) :run nil)
-  (let ((cpl-list (list (list 'a 1))))
-    (assert-equal 1 (cpl-assoc-val 'a cpl-list))
-    (assert-equal nil (cpl-assoc-val 'b cpl-list))
-    (setf (cpl-assoc-val 'a cpl-list) 2)
-    (assert-equal 2 (cpl-assoc-val 'a cpl-list))
-    (assert-condition 'simple-error (setf (cpl-assoc-val 'b cpl-list) 2))))
-|#
 
 (def-test-method test-to-list ((tests utils-tests) :run nil)
   (assert-equal '(a) (to-list 'a))
@@ -111,9 +77,6 @@
   (let ((list (list "BLAH" "FOO")))
     (assert-equal (push-update "blah" list) (list "blah" "FOO"))))
 
-(def-test-method test-select ((tests utils-tests) :run nil)
-  (assert-equal (select '(a b c d) '(1 3)) '(b d)))
-
 #|
 (def-test-method test-every-couple ((tests utils-tests) :run nil)
   (flet ((even-sum (a b) (evenp (+ a b))))
@@ -136,8 +99,7 @@
     (doplist (key val plist)
       (push-end key list)
       (push-end val list))
-    (assert-equal list '(:a 1 :b 2)))
-  (assert-condition 'simple-error (doplist (key val '(1 2 3))))) ; not a plist
+    (assert-equal list '(:a 1 :b 2))))
 
 (def-test-method test-hash->list ((tests utils-tests) :run nil)
   (let ((hash (make-hash-table)) list)

@@ -6,7 +6,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgeneric newer-than-p (match1 match2))
-(defgeneric simpler-than-p (obj1 obj2))
 
 (defmethod newer-than-p ((match1 match) (match2 match))
   (> (timestamp match1)
@@ -17,6 +16,8 @@
 
 (defun breadth-strategy (activations)
   (first (sort activations (complement #'newer-than-p))))
+
+(defgeneric simpler-than-p (obj1 obj2))
 
 (defmethod simpler-than-p ((rule1 rule) (rule2 rule))
   (< (length (conditions rule1))

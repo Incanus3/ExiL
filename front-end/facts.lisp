@@ -29,15 +29,16 @@
 ;; specified by indices and one is removed, the other indices shift
 ;; TODO: domluvit s dostalem, jestli je podpora specifikace faktu cislem
 ;; zadouci, pripadne odstranit podporu pro integerovy fact-spec
+;; TODO: check for fact index out of range
 (defun retract% (fact-specs)
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
       (typecase fact-spec
-        (list (pushnew (parse-fact *current-environment* fact-spec)
+        (list (push (parse-fact *current-environment* fact-spec)
+                    facts-to-remove))
+        (integer (push (nth (1- fact-spec)
+                            (exil-env:facts *current-environment*))
                        facts-to-remove))
-        (integer (pushnew (nth (1- fact-spec)
-                               (exil-env:facts *current-environment*))
-                          facts-to-remove))
         (t (error "~%Don't know how to retract ~A." fact-spec))))
     (dolist (fact facts-to-remove)
       (rem-fact *current-environment* fact))))

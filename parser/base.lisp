@@ -1,6 +1,6 @@
 (in-package :exil-parser)
 
-;; template- and generic fact and pattern makers - front-end template-object
+;; template- and generic fact and pattern parsers - front-end template-object
 ;; specification parsing
 
 ;; functions that (potentially) create template objects are defined as methods
@@ -18,7 +18,7 @@
 ;; used by parse-rule for creating patterns from rule's conditions
 (defgeneric parse-pattern (env pattern-spec &key match-var)
   (:documentation "create pattern from external representation"))
-
+;; used by front-end:deffacts
 (defgeneric parse-fact-group (env fact-specs)
   (:documentation "create fact group from external representation"))
 ;; used by front-end:defrule

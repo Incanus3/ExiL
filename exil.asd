@@ -59,7 +59,7 @@
             ((:file "base")
              (:file "facts" :depends-on ("base"))
              (:file "rules" :depends-on ("facts"))
-             (:File "execution" :depends-on ("rules"))))
+             (:file "execution" :depends-on ("rules"))))
    (:module :tests
             :depends-on ("packages" :utils :core :rete :environment
                                     :parser :front-end)
