@@ -4,7 +4,8 @@
 (defpackage :exil-utils
   (:documentation "general purpose utilities used in the rest of the code")
   (:use :common-lisp :iterate)
-  (:export :to-keyword :assoc-value :assoc-key :to-list :to-list-of-lists
+  (:export :to-keyword :assoc-value :add-assoc-value :assoc-key
+           :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
            :push-update :alist-equal-p :plistp :alistp
            :doplist :weak-equal-p :hash->list))
@@ -37,13 +38,13 @@
                    and rules and stores the asserted facts")
   (:nicknames :eenv)
   (:use :common-lisp :exil-core :exil-rete :iterate)
-  (:import-from :exil-utils :to-keyword :assoc-value
+  (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all
            :add-template :find-template
-           :facts :add-fact :rem-fact
-           :add-fact-group :rem-fact-group
+           :facts :add-fact :rem-fact :find-fact
+           :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy
            :add-rule :rem-rule :find-rule
            :activations

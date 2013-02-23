@@ -66,15 +66,13 @@
             :components
             ((:file "base")
              (:file "utils"        :depends-on ("base"))
-             (:file "templates"    :depends-on ("base"))
-             (:file "base-objects" :depends-on ("base"))
-             (:file "patterns"     :depends-on ("base"))
-             (:file "tokens"       :depends-on ("base"))
-             (:file "rete"         :depends-on ("base"))
-             (:file "environment"  :depends-on ("base"))
-             (:file "run-tests"
-                    :depends-on ("base" "utils" "templates" "base-objects" "rete"
-                                        "patterns" "tokens" "environment"))))
+             (:file "templates"    :depends-on ("utils"))
+             (:file "base-objects" :depends-on ("templates"))
+             (:file "patterns"     :depends-on ("base-objects"))
+             (:file "tokens"       :depends-on ("patterns"))
+             (:file "rete"         :depends-on ("tokens"))
+             (:file "environment"  :depends-on ("rete"))
+             (:file "run-tests"    :depends-on ("environment"))))
    (:module :examples
             :depends-on ("packages" :front-end)
             :components

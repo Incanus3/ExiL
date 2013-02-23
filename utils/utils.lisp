@@ -38,6 +38,17 @@
         (setf (cdr pair) value)
         (error "Key ~s not present in ~s" the-key alist))))
 
+;; this probably could be done better with defsetf/define-setf-expander
+;; sets value if key present, otherwise adds the cons
+(defmacro add-assoc-value (the-key alist value)
+  (let ((key-sym (gensym "key"))
+        (value-sym (gensym "value")))
+    `(let ((,key-sym ,the-key)
+           (,value-sym ,value))
+       (if (assoc-value ,key-sym ,alist)
+           (setf (assoc-value ,key-sym ,alist) ,value-sym)
+           (push (cons ,key-sym ,value-sym) ,alist)))))
+
 (defun assoc-key (value alist)
   "get key from assoc-list according to the value"
   (car (rassoc value alist)))

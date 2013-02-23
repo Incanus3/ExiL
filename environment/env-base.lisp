@@ -13,7 +13,8 @@
                 :documentation "((group-name description*)*)")
    (strategies :accessor strategies
                :documentation "alist, assigns strategy function to name symbol")
-   (current-strategy-name :initform :default :accessor current-strategy-name
+   (current-strategy-name :initform :depth-strategy
+                          :accessor current-strategy-name
                           :documentation "symbol")
    (rules :initform (make-hash-table :test #'equalp) :accessor rules
           :documentation "hash table, assigns rule instance to name")
@@ -30,8 +31,6 @@
 ;; watchers:
 (defgeneric set-watcher (env watcher))
 (defgeneric unset-watcher (env watcher))
-(defgeneric watch-all (env))
-(defgeneric unwatch-all (env))
 ;; templates:
 (defgeneric add-template (env template))
 (defgeneric find-template (env name))
@@ -41,7 +40,7 @@
 (defgeneric rem-fact (env fact))
 ;; fact groups:
 (defgeneric find-fact-group (env group-name))
-(defgeneric add-fact-group (env group-name descriptions))
+(defgeneric add-fact-group (env group-name facts))
 (defgeneric rem-fact-group (env group-name))
 ;; strategies:
 (defgeneric add-strategy (env strat-name function))
@@ -64,11 +63,10 @@
     (setf watchers (copy-alist '((:facts . ()) (:rules . ())
                                  (:activations . ())))
           strategies
-          (copy-alist `((:default . ,#'depth-strategy)
-                        (:depth-strategy . ,#'depth-strategy)
-                        (:breadth-strategy . ,#'breadth-strategy)
-                        (:simplicity-strategy . ,#'simplicity-strategy)
-                        (:complexity-strategy . ,#'complexity-strategy)))
+          (copy-alist `((:depth-strategy . ,#'newer-than-p)
+                        (:breadth-strategy . ,#'older-than-p)
+                        (:simplicity-strategy . ,#'simpler-than-p)
+                        (:complexity-strategy . ,#'more-complex-than-p)))
           rete (make-rete env))))
 
 ; public

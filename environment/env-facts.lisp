@@ -51,15 +51,10 @@
 (defmethod find-fact-group ((env environment) (group-name symbol))
   (assoc-value (to-keyword group-name) (fact-groups env)))
 
-;; TODO: add setting new value for assoc-list to utils, use it here
 ; public
 (defmethod add-fact-group ((env environment) (group-name symbol)
                            (facts list))
-  (if (find-fact-group env group-name)
-      (setf (assoc-value (to-keyword group-name) (fact-groups env))
-            facts)
-      (push (cons (to-keyword group-name) facts)
-            (fact-groups env)))
+  (add-assoc-value (to-keyword group-name) (fact-groups env) facts)
   nil)
 
 ; public

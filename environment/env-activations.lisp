@@ -6,13 +6,14 @@
 
 ; public
 (defmethod add-strategy ((env environment) (name symbol) (function function))
-  (push-update (cons (to-keyword name) function) (strategies env)))
+  (add-assoc-value (to-keyword name) (strategies env) function))
 
 ; public
 (defmethod set-strategy ((env environment) &optional (name :default))
-  (if (assoc (to-keyword name) (strategies env))
-      (setf (current-strategy-name env) name)
-      (error "unknown strategy ~A" name)))
+  (let ((key (to-keyword name)))
+    (if (assoc key (strategies env))
+        (setf (current-strategy-name env) key)
+        (error "unknown strategy ~A" name))))
 
 (defun current-strategy (env)
   (assoc-value (current-strategy-name env) (strategies env)))
@@ -49,9 +50,9 @@
 
 ; public
 (defmethod select-activation ((env environment))
-  (let ((activation (funcall (current-strategy env) (activations env))))
+  (let ((activation (first (sort (activations env) (current-strategy env)))))
     (setf (activations env) (delete activation (activations env)
-                               :test #'match-equal-p))
+                                    :test #'match-equal-p))
     activation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -74,10 +75,10 @@
 
 ; public
 (defmethod rem-rule ((env environment) (name symbol))
-  (let ((old-rule (find-rule env name)))
-    (when old-rule
+  (let ((rule (find-rule env name)))
+    (when rule
       (when (watched-p env :rules)
-        (format t "<== ~A" old-rule))
+        (format t "<== ~A" rule))
       (remhash name (rules env))
       (remove-production (rete env) rule)
       (remove-matches env rule))))

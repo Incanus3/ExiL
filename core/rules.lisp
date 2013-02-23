@@ -52,5 +52,7 @@
 ;; conditions - list of patterns
 ;; activations - list of s-expressions, that are evaluated when the rule is fired
 (defun make-rule (name conditions activations)
+  (assert (plusp (length conditions)) ()
+          "Rule must have at least one condition")
   (make-instance 'rule :name name :conditions conditions
                  :activations activations))
