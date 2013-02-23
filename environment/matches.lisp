@@ -29,7 +29,7 @@
        (token-equal-p (match-token match1)
                       (match-token match2))))
 
-(defmethod rule-name ((match match))
+(defun rule-name (match)
   (name (match-rule match)))
 
 ; public

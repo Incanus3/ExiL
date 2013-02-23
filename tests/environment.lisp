@@ -57,6 +57,7 @@
           (fact2 (make-simple-fact '(in robot warehouse))))
       (add-fact-group env :facts (list fact1 fact2))
       (assert-true (find-fact-group env :facts))
+      ;; should add facts from the group
       (reset-env env)
       (assert-true (find-fact env fact1))
       (rem-fact-group env :facts)
@@ -80,10 +81,13 @@
       (add-rule env rule)
       (assert-true (find-rule env :rule))
       (add-match env rule (erete::make-empty-token))
-      ;; should remove matches including rule
+      ;; should remove matches with rule
       (rem-rule env :rule)
       (assert-false (find-rule env :rule))
       (assert-false (find match (activations env))))))
+
+;; environment cleanup functions are really simple, so they shouldn't need to be
+;; tested
 
 (add-test-suite 'env-tests)
 ;(textui-test-run (get-suite env-tests))

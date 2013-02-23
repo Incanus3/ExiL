@@ -86,21 +86,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
-;;; result of calling reset-facts or clear-env is practically same, but
-;;; reset-facts is faster when there are many rules (as clear-env recreates the
-;;; rete network), whereas clear-env is faster when there are many facts
-;;; in the working memory (as retracting facts one by one involves many
-;;; rete-node inactivations)
-;;; usually there's much more facts than rules, front-end:retract-all thus
-;;; uses clear-env
-
-;; clears facts one by one
-;; should be dropped in favor of clear-env
-; public
-;; (defmethod reset-facts ((env environment))
-;;   (dolist (fact (facts env))
-;;     (rem-fact env fact)))
-
 ;; clears facts, activations and rete, keeps templates, fact groups and rules
 ;; if there're are some rules, whose conditions are met by empty set of facts
 ;; these will appear in the activations thereafter

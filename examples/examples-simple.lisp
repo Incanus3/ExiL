@@ -3,8 +3,6 @@
 
 (format t "~%~%Running examples with simple facts:~%")
 
-; SIMPLE FACTS:
-;(clear)
 (complete-reset)
 
 (deffacts world
@@ -43,5 +41,4 @@
 
 (reset)
 
-;(step)
 (run)

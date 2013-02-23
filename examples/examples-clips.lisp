@@ -2,8 +2,6 @@
 
 (format t "~%~%Running examples with clips-compatible syntax:~%")
 
-; TEMPLATE FACTS:
-;(clear)
 (complete-reset)
 
 (deftemplate goal
@@ -48,6 +46,5 @@
 ;(watch activations)
 
 (reset)
-;(step)
 
 (run)

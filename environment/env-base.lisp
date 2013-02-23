@@ -54,9 +54,9 @@
 ;(defgeneric remove-match (env production token)) ; forward-declared in rete
 (defgeneric select-activation (env))
 ;; environment clean-up:
-(defgeneric reset-environment (env))
-;(defgeneric reset-facts (env))
-(defgeneric completely-reset-environment (env)) ; DEBUG
+(defgeneric clear-env (env))
+(defgeneric reset-env (env))
+(defgeneric completely-reset-env (env)) ; DEBUG
 
 (defmethod initialize-instance :after ((env environment) &key)
   (with-slots (watchers strategies rete) env
