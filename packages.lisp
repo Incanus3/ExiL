@@ -41,7 +41,7 @@
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end)
   (:export :environment :make-environment
-           :set-watcher :unset-watcher :watch-all :unwatch-all
+           :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :find-template
            :facts :add-fact :rem-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group
@@ -49,6 +49,7 @@
            :add-rule :rem-rule :find-rule
            :activations
            :clear-env :reset-env :completely-reset-env
+	   :undo
            ;; consider if this is supposed to be environment's responsibility
            :select-activation :activate-rule
            ;; called by rete
@@ -72,8 +73,9 @@
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
            :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
            :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule
+	   :undo
            :complete-reset) ;; DEBUG
-  (:shadow :assert :step :facts))
+  (:shadow :assert :step :facts :undo))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")
@@ -111,3 +113,10 @@
 (defpackage :env-tests
   (:documentation "tests for the environment package")
   (:use :common-lisp :exil-core :exil-env :xlunit :tests-base))
+
+ (defpackage :undo-tests
+   (:documentation "tests for undo/redo functionality")
+   (:use :common-lisp :exil-core :exil-env :xlunit :tests-base)
+;   (:shadowing-import-from :exil :assert :step)
+;   (:shadowing-import-from :xlunit :run)
+   )

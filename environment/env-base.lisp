@@ -20,7 +20,9 @@
           :documentation "hash table, assigns rule instance to name")
    (rete :accessor rete :documentation "the rete singleton instance")
    (activations :initform () :accessor activations
-           :documentation "list of matches"))
+           :documentation "list of matches")
+   (undo-stack :initform () :accessor undo-stack
+	       :documentation "stores of closures, that restore previous state"))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                      strategies and watchers and stores the asserted facts
                      and the activations"))
@@ -83,8 +85,11 @@
   (assoc watcher (watchers env)))
 
 (defun watch-all (env)
-  (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) t))
-                               (watchers env))))
+  (with-undo env
+      (let ((original-watchers (watchers env)))
+	(lambda () (setf (watchers env) original-watchers)))
+    (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) t))
+				 (watchers env)))))
 
 (defun unwatch-all (env)
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) nil))
@@ -95,13 +100,20 @@
                  (is-watcher env watcher))
              () "I don't know how to watch ~A" watcher))
 
+(defun set-watcher% (env watcher val)
+  (setf (assoc-value watcher (watchers env)) val))
+
 ; public
 (defmethod set-watcher ((env environment) (watcher symbol))
   (let ((name (to-keyword watcher)))
     (assert-watcher env name)
     (if (equalp name :all)
         (watch-all env)
-        (setf (assoc-value name (watchers env)) t))))
+	(with-undo env
+	    (let ((original-value (watched-p env name)))
+	      (lambda ()
+		(set-watcher% env name original-value)))
+	  (set-watcher% env name t)))))
 
 ; public
 (defmethod unset-watcher ((env environment) (watcher symbol))

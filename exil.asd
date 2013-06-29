@@ -45,7 +45,8 @@
              (:file "strategies"         :depends-on ("activations"))
              (:file "env-base"           :depends-on ("strategies"))
              (:file "env-facts"          :depends-on ("env-base"))
-             (:file "env-activations"    :depends-on ("env-facts"))))
+             (:file "env-activations"    :depends-on ("env-facts"))
+	     (:file "env-undo"           :depends-on ("env-activations"))))
    (:module :parser
             :depends-on ("packages" :utils :core :environment)
             :components

@@ -42,3 +42,8 @@
   "run the infenece engine"
   (setf *exil-running* t)
   (iter (while (and *exil-running* (step)))))
+
+; public
+(defun undo ()
+  "undo the last action"
+  nil)
