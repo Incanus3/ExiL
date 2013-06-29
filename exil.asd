@@ -49,34 +49,34 @@
    (:module :parser
             :depends-on ("packages" :utils :core :environment)
             :components
-            ((:file "base")
-             (:file "templates" :depends-on ("base"))
-             (:file "facts" :depends-on ("templates"))
-             (:file "rules" :depends-on ("facts"))))
+            ((:file "prs-base")
+             (:file "prs-templates" :depends-on ("prs-base"))
+             (:file "prs-facts" :depends-on ("prs-templates"))
+             (:file "prs-rules" :depends-on ("prs-facts"))))
    (:module :front-end
             :depends-on ("packages" :utils :environment :parser)
             :components
-            ((:file "base")
-             (:file "facts" :depends-on ("base"))
-             (:file "rules" :depends-on ("facts"))
-             (:file "execution" :depends-on ("rules"))))
+            ((:file "fe-base")
+             (:file "fe-facts" :depends-on ("fe-base"))
+             (:file "fe-rules" :depends-on ("fe-facts"))
+             (:file "fe-execution" :depends-on ("fe-rules"))))
    (:module :tests
             :depends-on ("packages" :utils :core :rete :environment
                                     :parser :front-end)
             :components
-            ((:file "base")
-             (:file "utils"        :depends-on ("base"))
-             (:file "templates"    :depends-on ("utils"))
-             (:file "base-objects" :depends-on ("templates"))
-             (:file "patterns"     :depends-on ("base-objects"))
-             (:file "tokens"       :depends-on ("patterns"))
-             (:file "rete"         :depends-on ("tokens"))
-             (:file "environment"  :depends-on ("rete"))
-             (:file "run-tests"    :depends-on ("environment"))))
+            ((:file "tst-base")
+             (:file "tst-utils"        :depends-on ("tst-base"))
+             (:file "tst-templates"    :depends-on ("tst-utils"))
+             (:file "tst-base-objects" :depends-on ("tst-templates"))
+             (:file "tst-patterns"     :depends-on ("tst-base-objects"))
+             (:file "tst-tokens"       :depends-on ("tst-patterns"))
+             (:file "tst-rete"         :depends-on ("tst-tokens"))
+             (:file "tst-environment"  :depends-on ("tst-rete"))
+             (:file "run-tests"    :depends-on ("tst-environment"))))
    (:module :examples
             :depends-on ("packages" :front-end)
             :components
-            ((:file "examples")
+            ((:file "examples-template")
              (:file "examples-simple")
              (:file "examples-clips")))
    #+lispworks(:file "gui"     :depends-on (:front-end))
