@@ -15,6 +15,17 @@
 ;; not appear in the rule's activations (see rules).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;(defclass pattern () (negated match-variable))
+;(defclass simple-pattern (pattern simple-object) (specifier))
+;(defun make-simple-pattern (pattern-spec &key negated match-var))
+;(defclass template-pattern (pattern template-object) ())
+;(defgeneric make-template-pattern (template slot-spec &key negated match-var))
+;(defun variable-p (expr))
+;(defun constant-test (desired-value real-value))
+;(defun var-or-equal-p (atom1 atom2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; public, virtual
 (defclass pattern () ((negated :initform nil
                                :initarg :negated
@@ -35,6 +46,7 @@
               :initarg :pattern
               :reader pattern)))
 
+; public
 (defun make-simple-pattern (pattern-spec &key negated match-var)
   (make-instance 'simple-pattern
                  :pattern (copy-list pattern-spec)
@@ -58,6 +70,7 @@
   (format stream "~:[~;NOT ~]~A" (negated-p object)
                 (cons (name (template object)) (slots object))))
 
+; public
 (defgeneric make-template-pattern (template slot-spec &key negated match-var)
   (:documentation "finds values for pattern's slots, creates new tmpl-patter"))
 
@@ -76,7 +89,7 @@
 
 ;; pattern's slot, for which user supplies no value and it's default value isn't
 ;; specified in the template definition, defaults to the anonymous variable '?
-; public, used by object-makers (environment)
+; private
 (defmethod slot-default ((type (eql 'template-pattern)))
   '?)
 

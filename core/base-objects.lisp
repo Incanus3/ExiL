@@ -1,13 +1,18 @@
 (in-package :exil-core)
 
+; private
 (defclass base-object () ())
 
+; private
 (defgeneric format-object (object stream))
+; public
 (defgeneric copy-object (object))
+; public
 (defgeneric object-slot (object slot-spec))
 (defgeneric (setf object-slot) (val object slot-spec))
-;(defgeneric find-atom (object atom))
+; public
 (defgeneric atom-position (object atom))
+; public
 (defgeneric description (object))
 
 (defmethod print-object ((object base-object) stream)
@@ -19,6 +24,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; private
 (defclass simple-object (base-object)
   ((specifier :reader specifier
               :initarg :specifier)))
@@ -37,10 +43,6 @@
 
 (defmethod (setf object-slot) (val (object simple-object) (slot-spec integer))
   (setf (nth slot-spec (specifier object)) val))
-
-; public, used by rete
-;(defmethod find-atom ((object simple-object) atom)
-;  (find atom (specifier object)))
 
 ; public, used by rete
 (defmethod atom-position ((object simple-object) atom)
@@ -82,12 +84,6 @@
 (defmethod (setf object-slot) (val (object template-object) (slot-name symbol))
     (setf (assoc-value slot-name (slots object)) val))
 
-;; not used
-; public, used by rete
-;(defmethod find-atom ((object template-object) atom)
-;  "find the given atom in template-object slots"
-;  (find atom (mapcar #'cdr (slots object))))
-
 ; public, used by rete
 (defmethod atom-position ((object template-object) atom)
   "get the atom position in template-object slots"
@@ -96,18 +92,19 @@
 ; public
 (defmethod description ((object template-object))
   (cons (name (template object))
-        (iter (for (slot . val) in (slots object))
+        (iter (for (slot . val) :in (slots object))
               (appending (list (to-keyword slot) val)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; used determine value for a slot value haven't been defined neither in the
-;; slots description, nor as a template default; patterns make use of this by
-;; specifying '? as default
+;; used to determine value for a slot whose value haven't been defined neither
+;; in the slots description, nor as a template default
+;; patterns make use of this by specifying '? as default
 ; private
 (defgeneric slot-default (object-type)
   (:method ((type symbol)) nil))
 
+; private
 (defgeneric make-tmpl-object (template slot-spec obj-type)
   (:documentation "finds values for slots in slot-spec, template defaults or
                    global slot-default, creates new object with those slots"))

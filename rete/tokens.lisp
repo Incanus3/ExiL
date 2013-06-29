@@ -38,6 +38,7 @@
 (defun make-token (wme &optional (parent (make-empty-token)))
   (make-instance 'token :wme wme :parent parent))
 
+; public
 (defgeneric token-equal-p (token1 token2)
   (:documentation "token equality predicate")
   (:method ((token1 empty-token) (token2 empty-token)) t)
@@ -77,6 +78,7 @@
         (while tkn)
         (when (token-equal-p tkn included-token) (return t))))
 
+; public
 ;; extracts wmes from token, ordered from first ancestor -> token
 (defun token->list (token)
   (iter (for tkn :first token :then (parent tkn))

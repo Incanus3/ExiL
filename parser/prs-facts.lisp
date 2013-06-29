@@ -30,7 +30,7 @@
 (defun clips->nonclips-spec (slot-spec)
   "convert clips-syntax slots specification to lispy-syntax"
   (let (nonclips-slot-spec)
-    (iter (for (slot-name slot-val) in slot-spec)
+    (iter (for (slot-name slot-val) :in slot-spec)
           (setf (getf nonclips-slot-spec (to-keyword slot-name))
                 slot-val))
     nonclips-slot-spec))
@@ -74,7 +74,7 @@
   (alistp mod-list))
 
 (defun clips->nonclips-mod-list (mod-list)
-  (iter (for (slot-name new-val) in mod-list)
+  (iter (for (slot-name new-val) :in mod-list)
         (appending (list (to-keyword slot-name) new-val))))
 
 (defun to-mod-spec-list (mod-list)

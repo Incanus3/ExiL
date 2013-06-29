@@ -14,7 +14,7 @@
   (:documentation "core functionality of the expert system library - facts,
                    templates, patterns and rules")
   (:use :common-lisp :exil-utils :iterate)
-  (:export :variable-p :template :slots :find-atom
+  (:export :variable-p :template :slots
            :has-slot-p :make-template :fact :simple-fact
            :atom-position :template-fact :exil-equal-p
            :slot-default :doslots :copy-object :object-slot

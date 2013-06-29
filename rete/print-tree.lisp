@@ -12,7 +12,7 @@
   (children node))
 
 (defun hash-values (hash-table)
-  (iter (for (key val) in-hashtable hash-table)
+  (iter (for (key val) :in-hashtable hash-table)
         (collect val)))
 
 (defmethod node-children ((node alpha-top-node))

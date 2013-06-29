@@ -23,7 +23,7 @@
 (defgeneric variable-bindings (pattern fact))
 
 (defmethod variable-bindings ((pattern simple-pattern) (fact simple-fact))
-  (let ((var-bindings (iter (for atom in (pattern pattern))
+  (let ((var-bindings (iter (for atom :in (pattern pattern))
                             (for i :first 0 :then (1+ i))
                             (when (variable-p atom)
                               (collect (cons atom (object-slot fact i))))))
@@ -33,7 +33,7 @@
         var-bindings)))
 
 (defmethod variable-bindings ((pattern template-pattern) (fact template-fact))
-  (let ((var-bindings (iter (for (slot-name . slot-val) in (slots pattern))
+  (let ((var-bindings (iter (for (slot-name . slot-val) :in (slots pattern))
                             (when (variable-p slot-val)
                               (collect (cons slot-val
                                              (object-slot fact slot-name))))))

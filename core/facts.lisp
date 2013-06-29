@@ -11,6 +11,14 @@
 ;; in the environment.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;(defclass fact () ())
+;(defclass simple-fact (fact simple-object) (specifier))
+;(defun make-simple-fact (fact-spec))
+;(defclass template-fact (fact template-object) ())
+;(defgeneric make-template-fact (template slot-spec))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; public, virtual
 (defclass fact () ())
 
@@ -27,6 +35,7 @@
   (cl:assert (notany #'variable-p (fact simple-fact))
              () "fact must not include variables"))
 
+; public
 (defun make-simple-fact (fact-spec)
   (make-instance 'simple-fact :fact (copy-list fact-spec)))
 
@@ -45,6 +54,7 @@
 ;             () "fact must not include variables")
   )
 
+; public
 (defgeneric make-template-fact (template slot-spec)
   (:documentation "finds values for fact's slots, create new template-fact"))
 

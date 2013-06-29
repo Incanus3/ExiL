@@ -1,8 +1,11 @@
 (in-package :exil-core)
 
+;(defclass template () (name slots))
 (defgeneric exil-equal-p (obj1 obj2)
   (:documentation "ExiL default equality predicate")
   (:method (obj1 obj2) nil))
+;(defun make-template (name slots))
+;(defmacro doslots ((name default template &optional retval) &body body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; template class
@@ -19,6 +22,7 @@
    (slots :reader slots :initarg :slots
           :initform (error "slots have to be specified"))))
 
+; public
 (defmethod exil-equal-p ((tmpl1 template) (tmpl2 template))
   (equalp (name tmpl1) (name tmpl2)))
 

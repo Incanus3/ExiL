@@ -13,6 +13,10 @@
 ;; example of other usage.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;(defclass rule () (name conditions activations))
+;(defgeneric rule-equal-p (rule1 rule2))
+;(defun make-rule (name conditions activations)
+
 ; public
 (defclass rule ()
   ((name :initarg :name :reader name)

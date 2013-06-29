@@ -94,7 +94,7 @@
   (setf (facts env) ()
         (activations env) ()
         (rete env) (make-rete env))
-  (iter (for (name rule) in-hashtable (rules env))
+  (iter (for (name rule) :in-hashtable (rules env))
         (new-production (rete env) rule)))
 
 ; public

@@ -168,5 +168,5 @@
 
 (defun hash->list (hash)
   "returns list of all values in the hash"
-  (iter (for (key val) in-hashtable hash)
+  (iter (for (key val) :in-hashtable hash)
         (collect val)))

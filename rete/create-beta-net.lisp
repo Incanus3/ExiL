@@ -25,7 +25,7 @@
 
 ;; returns (cons <condition index from end> <atom-position in condition>)
 (defmethod find-atom-in-cond-list (atom cond-list)
-  (iter (for condition in (reverse cond-list))
+  (iter (for condition :in (reverse cond-list))
         (for i :upfrom 1)
         (when (atom-position condition atom)
           (return (cons i (atom-position condition atom))))))
@@ -37,7 +37,7 @@
 ;; simple-pattern condition and prev-conds
 (defmethod get-intercondition-tests ((condition simple-pattern)
                                      (prev-conds list))
-  (iter (for atom in (pattern condition))
+  (iter (for atom :in (pattern condition))
         (with used-vars)
         (for i :upfrom 0)
         (for (prev-cond . field) = (find-atom-in-cond-list atom prev-conds))
@@ -49,7 +49,7 @@
 ;; template-pattern condition and prev-conds
 (defmethod get-intercondition-tests ((condition template-pattern)
                                      (prev-conds list))
-  (iter (for (slot-name . slot-val) in (slots condition))
+  (iter (for (slot-name . slot-val) :in (slots condition))
         (with used-vars)
         (for (prev-cond . field) = (find-atom-in-cond-list slot-val prev-conds))
         (when (and (variable-p slot-val)
@@ -62,7 +62,7 @@
 ;; simple-pattern condition (important when the same variable appears in the
 ;; condition more than once)
 (defmethod get-intracondition-tests ((condition simple-pattern))
-  (iter (for subpattern on (pattern condition))
+  (iter (for subpattern :on (pattern condition))
         (for i :upfrom 0)
         (for other-occurrence = (position (first subpattern) (rest subpattern)))
         (when (and (variable-p (first subpattern)) other-occurrence)
@@ -71,7 +71,7 @@
 ;; get list of tests ensuring consistent variable bindings within
 ;; template-pattern condition
 (defmethod get-intracondition-tests ((condition template-pattern))
-  (iter (for subpattern on (slots condition))
+  (iter (for subpattern :on (slots condition))
         (for (slot-name . slot-val) = (first subpattern))
         (for other-occurrence = (rassoc slot-val (rest subpattern)))
         (when (and (variable-p slot-val) other-occurrence)
@@ -112,7 +112,7 @@
 ;; finally add the production to bottom beta-memory-node's productions
 (defmethod new-production ((rete rete) (production rule))
   (with-slots (conditions) production
-    (iter (for current-cond in conditions)
+    (iter (for current-cond :in conditions)
           (for i :upfrom 0)
           (for prev-conds :first () :then (subseq conditions 0 i))
           (for alpha-memory = (create-alpha-net rete current-cond))
