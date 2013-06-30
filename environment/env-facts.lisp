@@ -5,10 +5,15 @@
 
 ; public
 (defmethod find-template ((env environment) (name symbol))
+  "finds template in env with given name"
   (gethash (to-keyword name) (templates env)))
 
 (defmethod find-template ((env environment) (template template))
+  "finds template in env with same name as template"
   (find-template env (name template)))
+
+(defun set-template (env name template)
+  (setf (gethash name (templates env)) template))
 
 (defun all-facts (env)
   "returns all facts in facts and fact-groups of env"
@@ -19,13 +24,20 @@
   (find-if (lambda (fact) (equalp (name template) (template-name fact)))
 	   (all-facts env)))
 
+(defun add-template% (env template)
+  (with-undo env
+      (let ((original-template (find-template env template)))
+	(lambda () (set-template env (name template) original-template)))
+      (lambda () (set-template env (name template) template))
+    (set-template env (name template) template)))
+
 ; public
-(defmethod add-template ((env environment) template)
+(defmethod add-template ((env environment) (template template))
   (when (and (find-template env template)
 	     (find-fact-with-template env template))
     (error "can't redefine template ~A, because there are existing facts using it"
 	   (name template)))
-  (setf (gethash (name template) (templates env)) template)
+  (add-template% env template)
   #+lispworks(exil-gui:update-lists)
   template)
 
@@ -33,12 +45,12 @@
 ;; FACTS
 
 ; public
-(defmethod find-fact ((env environment) fact)
+(defmethod find-fact ((env environment) (fact fact))
   (find fact (facts env) :test #'exil-equal-p))
 
 ;; add fact to facts, print watcher output, notify rete
 ; public
-(defmethod add-fact ((env environment) fact)
+(defmethod add-fact ((env environment) (fact fact))
   ;; when the fact wasn't already there
   (when (nth-value 1 (pushnew-end fact (facts env) :test #'exil-equal-p))
     (when (watched-p env :facts)
@@ -48,7 +60,7 @@
 
 ;; remove fact from facts, print watcher output, notify rete
 ; public
-(defmethod rem-fact ((env environment) fact)
+(defmethod rem-fact ((env environment) (fact fact))
   (multiple-value-bind (new-list altered-p)
       (ext-delete fact (facts env) :test #'exil-equal-p)
     (when altered-p

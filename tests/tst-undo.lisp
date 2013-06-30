@@ -85,8 +85,19 @@
 
 (def-test-method undo-add-template ((tests undo-tests) :run nil)
   (with-slots (env) tests
-    
-    ))
+    (let ((tmpl1 (make-template :test '(a (b :default 5))))
+	  (tmpl2 (make-template :test '())))
+      (add-template env tmpl1)		; template defined to tmpl1
+      (add-template env tmpl2)          ; template redefined to tmpl2
+      (assert-eql (find-template env :test) tmpl2)
+      (undo env)                        ; template should be tmpl1 again
+      (assert-eql (find-template env :test) tmpl1)
+      (undo env)			; template should be undefined
+      (assert-false (find-template env :test))
+      (redo env)		        ; template should be tmpl1 again
+      (assert-eql (find-template env :test) tmpl1)
+      (redo env)                        ; template should be tmpl2 again
+      (assert-eql (find-template env :test) tmpl2))))
 
 (add-test-suite 'undo-tests)
 ;(textui-test-run (get-suite undo-tests))
