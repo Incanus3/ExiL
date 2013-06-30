@@ -22,14 +22,19 @@
       (let ((original-value (watched-p env watcher)))
 	(lambda ()
 	  (set-one-watcher% env watcher original-value)))
+      (lambda () (set-one-watcher% env watcher val))
     (set-one-watcher% env watcher val)))
+
+(defun set-all-watchers% (env val)
+  (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) val))
+			       (watchers env))))
 
 (defun set-all-watchers (env val)
   (with-undo env
       (let ((original-watchers (watchers env)))
 	(lambda () (setf (watchers env) original-watchers)))
-    (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) val))
-				 (watchers env)))))
+      (lambda () (set-all-watchers% env val))
+    (set-all-watchers% env val)))
 
 ; public
 (defmethod set-watcher ((env environment) (watcher symbol))

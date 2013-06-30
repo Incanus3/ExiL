@@ -32,6 +32,9 @@
 ;; PUBLIC METHODS
 ;; constructor:
 ;(defun make-environment ())
+;; undo/redo:
+(defgeneric undo (env))
+(defgeneric redo (env))
 ;; watchers:
 (defgeneric set-watcher (env watcher))
 (defgeneric unset-watcher (env watcher))
@@ -80,19 +83,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; UNDO/REDO
 
-(defgeneric undo (env))
+(defun stack-for-undo (env undo-fun redo-fun)
+  (push (cons undo-fun redo-fun) (undo-stack env)))
 
-(defmethod undo ((env environment))
-  (when (undo-stack env)
-    (funcall (pop (undo-stack env)))))
+(defun stack-for-redo (env redo-fun undo-fun)
+  (push (cons redo-fun undo-fun) (redo-stack env)))
 
-(defun stack-for-undo (env fun)
-  (push fun (undo-stack env)))
-
-(defmacro with-undo (env undo-fun &body body)
-  `(progn (stack-for-undo ,env ,undo-fun)
+(defmacro with-undo (env undo-fun redo-fun &body body)
+  `(progn (stack-for-undo ,env ,undo-fun ,redo-fun)
 	  ,@body))
 
+; public
+(defmethod undo ((env environment))
+  (when (undo-stack env)
+    (destructuring-bind (undo-fun . redo-fun) (pop (undo-stack env))
+      (funcall undo-fun)
+      (stack-for-redo env redo-fun undo-fun))))
+
+; public
 (defmethod redo ((env environment))
   (when (redo-stack env)
-    (funcall (pop (redo-stack env)))))
+    (destructuring-bind (redo-fun . undo-fun) (pop (redo-stack env))
+      (funcall redo-fun)
+      (stack-for-undo env undo-fun redo-fun))))
