@@ -45,7 +45,7 @@
            :add-template :find-template
            :facts :add-fact :rem-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group
-           :add-strategy :set-strategy
+           :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
            :activations
            :clear-env :reset-env :completely-reset-env

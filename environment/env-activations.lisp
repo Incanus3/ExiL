@@ -4,19 +4,40 @@
 ;; STRATEGIES
 ;; strategy names are keyword symbols
 
+(defun find-strategy (env name)
+  (assoc-value name (strategies env)))
+
+(defun add-strategy% (env name function)
+  (add-assoc-value name (strategies env) function))
+
 ; public
 (defmethod add-strategy ((env environment) (name symbol) (function function))
-  (add-assoc-value (to-keyword name) (strategies env) function))
+  (let ((key (to-keyword name)))
+    (with-undo env
+	(let ((original-function (find-strategy env key)))
+	  (lambda () (add-strategy% env key original-function)))
+	(lambda () (add-strategy% env key function))
+      (add-strategy% env key function))))
+
+(defun set-strategy-name% (env name)
+  (setf (current-strategy-name env) name))
+
+(defun set-strategy-name (env name)
+  (with-undo env
+      (let ((original-strategy (current-strategy-name env)))
+	(lambda () (set-strategy-name% env original-strategy)))
+      (lambda () (set-strategy-name% env name))
+    (set-strategy-name% env name)))
 
 ; public
 (defmethod set-strategy ((env environment) &optional (name :default))
   (let ((key (to-keyword name)))
     (if (assoc key (strategies env))
-        (setf (current-strategy-name env) key)
+        (set-strategy-name env key)
         (error "unknown strategy ~A" name))))
 
 (defun current-strategy (env)
-  (assoc-value (current-strategy-name env) (strategies env)))
+  (find-strategy env (current-strategy-name env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ACTIVATIONS

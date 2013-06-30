@@ -70,7 +70,8 @@
     (setf watchers (copy-alist '((:facts . ()) (:rules . ())
                                  (:activations . ())))
           strategies
-          (copy-alist `((:depth-strategy . ,#'newer-than-p)
+          (copy-alist `((:default . ,#'newer-than-p)
+			(:depth-strategy . ,#'newer-than-p)
                         (:breadth-strategy . ,#'older-than-p)
                         (:simplicity-strategy . ,#'simpler-than-p)
                         (:complexity-strategy . ,#'more-complex-than-p)))

@@ -99,5 +99,32 @@
       (redo env)                        ; template should be tmpl2 again
       (assert-eql (find-template env :test) tmpl2))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; STRATEGIES
+
+(def-test-method undo-set-strategy ((tests undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-strategy env :depth-strategy)
+    (set-strategy env :breadth-strategy)
+    (undo env)
+    (assert-equal (current-strategy-name env) :depth-strategy)
+    (redo env)
+    (assert-equal (current-strategy-name env) :breadth-strategy)))
+
+(def-test-method undo-add-strategy ((tests undo-tests) :run t)
+  (with-slots (env) tests
+    (let ((str1 #'+) (str2 #'-))
+      (add-strategy env :my-strategy str1)
+      (add-strategy env :my-strategy str2)
+      (assert-equal (eenv::find-strategy env :my-strategy) str2)
+      (undo env)
+      (assert-equal (eenv::find-strategy env :my-strategy) str1)
+      (undo env)
+      (assert-false (eenv::find-strategy env :my-strategy))
+      (redo env)
+      (assert-equal (eenv::find-strategy env :my-strategy) str1)
+      (redo env)
+      (assert-equal (eenv::find-strategy env :my-strategy) str2))))
+
 (add-test-suite 'undo-tests)
 ;(textui-test-run (get-suite undo-tests))
