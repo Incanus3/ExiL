@@ -49,7 +49,7 @@
            :add-rule :rem-rule :find-rule
            :activations
            :clear-env :reset-env :completely-reset-env
-	   :undo
+	   :undo :redo
            ;; consider if this is supposed to be environment's responsibility
            :select-activation :activate-rule
            ;; called by rete

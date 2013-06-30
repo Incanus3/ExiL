@@ -12,18 +12,18 @@
 
 (def-test-method test-watchers ((tests env-tests) :run nil)
   (with-slots (env) tests
-    (unwatch-all env)
+    (unset-watcher env :all)
     (assert-false (eenv::watched-p env :facts))
     (set-watcher env :facts)
     (assert-true (eenv::watched-p env :facts))
     (unset-watcher env :facts)
     (assert-false (eenv::watched-p env :facts))
-    (watch-all env)
+    (set-watcher env :all)
     (assert-true (and (eenv::watched-p env :facts)
                       (eenv::watched-p env :activations)))
-    (unwatch-all env)
+    (unset-watcher env :all)
     (assert-false (and (eenv::watched-p env :facts)
-                      (eenv::watched-p env :activations)))))
+		       (eenv::watched-p env :activations)))))
 
 (def-test-method test-templates ((tests env-tests) :run nil)
   (with-slots (env tmpl) tests

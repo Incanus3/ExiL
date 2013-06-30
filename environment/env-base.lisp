@@ -22,7 +22,9 @@
    (activations :initform () :accessor activations
            :documentation "list of matches")
    (undo-stack :initform () :accessor undo-stack
-	       :documentation "stores of closures, that restore previous state"))
+	       :documentation "stacks closures, that restore previous state")
+   (redo-stack :initform () :accessor redo-stack
+	       :documentation "stacks closures, that restore state before undo"))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                      strategies and watchers and stores the asserted facts
                      and the activations"))
@@ -76,49 +78,21 @@
   (make-instance 'environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; WATCHERS
+;; UNDO/REDO
 
-(defun watched-p (env watcher)
-  (assoc-value watcher (watchers env)))
+(defgeneric undo (env))
 
-(defun is-watcher (env watcher)
-  (assoc watcher (watchers env)))
+(defmethod undo ((env environment))
+  (when (undo-stack env)
+    (funcall (pop (undo-stack env)))))
 
-(defun watch-all (env)
-  (with-undo env
-      (let ((original-watchers (watchers env)))
-	(lambda () (setf (watchers env) original-watchers)))
-    (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) t))
-				 (watchers env)))))
+(defun stack-for-undo (env fun)
+  (push fun (undo-stack env)))
 
-(defun unwatch-all (env)
-  (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) nil))
-                               (watchers env))))
+(defmacro with-undo (env undo-fun &body body)
+  `(progn (stack-for-undo ,env ,undo-fun)
+	  ,@body))
 
-(defun assert-watcher (env watcher)
-  (cl:assert (or (equalp watcher :all)
-                 (is-watcher env watcher))
-             () "I don't know how to watch ~A" watcher))
-
-(defun set-watcher% (env watcher val)
-  (setf (assoc-value watcher (watchers env)) val))
-
-; public
-(defmethod set-watcher ((env environment) (watcher symbol))
-  (let ((name (to-keyword watcher)))
-    (assert-watcher env name)
-    (if (equalp name :all)
-        (watch-all env)
-	(with-undo env
-	    (let ((original-value (watched-p env name)))
-	      (lambda ()
-		(set-watcher% env name original-value)))
-	  (set-watcher% env name t)))))
-
-; public
-(defmethod unset-watcher ((env environment) (watcher symbol))
-  (let ((name (to-keyword watcher)))
-    (assert-watcher env name)
-    (if (equalp name :all)
-        (unwatch-all env)
-        (setf (assoc-value name (watchers env)) nil))))
+(defmethod redo ((env environment))
+  (when (redo-stack env)
+    (funcall (pop (redo-stack env)))))

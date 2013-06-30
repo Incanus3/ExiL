@@ -44,9 +44,9 @@
              (:file "activations"        :depends-on ("matches"))
              (:file "strategies"         :depends-on ("activations"))
              (:file "env-base"           :depends-on ("strategies"))
-             (:file "env-facts"          :depends-on ("env-base"))
-             (:file "env-activations"    :depends-on ("env-facts"))
-	     (:file "env-undo"           :depends-on ("env-activations"))))
+	     (:file "env-watchers"       :depends-on ("env-base"))
+             (:file "env-facts"          :depends-on ("env-watchers"))
+             (:file "env-activations"    :depends-on ("env-facts"))))
    (:module :parser
             :depends-on ("packages" :utils :core :environment)
             :components
@@ -73,7 +73,8 @@
              (:file "tst-tokens"       :depends-on ("tst-patterns"))
              (:file "tst-rete"         :depends-on ("tst-tokens"))
              (:file "tst-environment"  :depends-on ("tst-rete"))
-             (:file "run-tests"    :depends-on ("tst-environment"))))
+	     (:file "tst-undo"         :depends-on ("tst-environment"))
+             (:file "run-tests"    :depends-on ("tst-undo"))))
    (:module :examples
             :depends-on ("packages" :front-end)
             :components
