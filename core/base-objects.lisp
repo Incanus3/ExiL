@@ -64,6 +64,11 @@
              :initform (error "template has to be specified"))
    (slots :accessor slots :initarg :slots :initform ())))
 
+(defgeneric template-name (object))
+; public
+(defmethod template-name ((object template-object))
+  (name (template object)))
+
 (defmethod exil-equal-p ((object1 template-object)
                          (object2 template-object))
   (and (exil-equal-p (template object1) (template object2))

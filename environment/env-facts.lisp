@@ -3,17 +3,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TEMPLATES
 
-;; TODO: when redefining template add-template should check that there aren't
-;; any facts (in facts or fact-groups) using it
+; public
+(defmethod find-template ((env environment) (name symbol))
+  (gethash (to-keyword name) (templates env)))
+
+(defmethod find-template ((env environment) (template template))
+  (find-template env (name template)))
+
+(defun all-facts (env)
+  "returns all facts in facts and fact-groups of env"
+  (apply #'append (facts env) (mapcar #'rest (fact-groups env))))
+
+(defun find-fact-with-template (env template)
+  "finds first fact in all-facts, that is based on template"
+  (find-if (lambda (fact) (equalp (name template) (template-name fact)))
+	   (all-facts env)))
+
 ; public
 (defmethod add-template ((env environment) template)
+  (when (and (find-template env template)
+	     (find-fact-with-template env template))
+    (error "can't redefine template ~A, because there are existing facts using it"
+	   (name template)))
   (setf (gethash (name template) (templates env)) template)
   #+lispworks(exil-gui:update-lists)
   template)
-
-; public
-(defmethod find-template ((env environment) name)
-  (gethash (to-keyword name) (templates env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACTS
