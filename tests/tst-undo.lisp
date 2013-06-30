@@ -111,7 +111,7 @@
     (redo env)
     (assert-equal (current-strategy-name env) :breadth-strategy)))
 
-(def-test-method undo-add-strategy ((tests undo-tests) :run t)
+(def-test-method undo-add-strategy ((tests undo-tests) :run nil)
   (with-slots (env) tests
     (let ((str1 #'+) (str2 #'-))
       (add-strategy env :my-strategy str1)
@@ -125,6 +125,35 @@
       (assert-equal (eenv::find-strategy env :my-strategy) str1)
       (redo env)
       (assert-equal (eenv::find-strategy env :my-strategy) str2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; FACT GROUPS
+
+(def-test-method undo-add-fact-group ((tests undo-tests) :run nil)
+  (with-slots (env) tests
+    (let ((fg1 (list :a)) (fg2 (list :b)))
+      (add-fact-group env :my-fg fg1)
+      (add-fact-group env :my-fg fg2)
+      (assert-equal (find-fact-group env :my-fg) fg2)
+      (undo env)
+      (assert-equal (find-fact-group env :my-fg) fg1)
+      (undo env)
+      (assert-false (find-fact-group env :my-fg))
+      (redo env)
+      (assert-equal (find-fact-group env :my-fg) fg1)
+      (redo env)
+      (assert-equal (find-fact-group env :my-fg) fg2))))
+
+(def-test-method undo-rem-fact-group ((tests undo-tests) :run nil)
+  (with-slots (env) tests
+    (let ((fg (list :a)))
+      (add-fact-group env :my-fg fg)
+      (rem-fact-group env :my-fg)
+      (assert-false (find-fact-group env :my-fg))
+      (undo env)
+      (assert-equal (find-fact-group env :my-fg) fg)
+      (redo env)
+      (assert-false (find-fact-group env :my-fg)))))
 
 (add-test-suite 'undo-tests)
 ;(textui-test-run (get-suite undo-tests))

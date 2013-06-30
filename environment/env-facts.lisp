@@ -77,16 +77,32 @@
 (defmethod find-fact-group ((env environment) (group-name symbol))
   (assoc-value (to-keyword group-name) (fact-groups env)))
 
-; public
-(defmethod add-fact-group ((env environment) (group-name symbol)
-                           (facts list))
-  (add-assoc-value (to-keyword group-name) (fact-groups env) facts)
+(defun add-fact-group% (env name facts)
+  (add-assoc-value name (fact-groups env) facts)
   nil)
 
 ; public
-(defmethod rem-fact-group ((env environment) (group-name symbol))
-  (setf (fact-groups env) (delete (to-keyword group-name)
+(defmethod add-fact-group ((env environment) (group-name symbol)
+                           (facts list))
+  (let ((key (to-keyword group-name)))
+    (with-undo env
+	(let ((original-fg (find-fact-group env key)))
+	  (lambda () (add-fact-group% env key original-fg)))
+	(lambda () (add-fact-group% env key facts))
+      (add-fact-group% env key facts))))
+
+(defun rem-fact-group% (env name)
+  (setf (fact-groups env) (delete name
                                   (fact-groups env) :key #'car)))
+
+; public
+(defmethod rem-fact-group ((env environment) (group-name symbol))
+  (let ((key (to-keyword group-name)))
+    (with-undo env
+	(let ((original-fg (find-fact-group env key)))
+	  (lambda () (add-fact-group% env key original-fg)))
+	(lambda () (rem-fact-group% env key))
+    (rem-fact-group% env key))))
 
 (defun activate-fact-group (env fact-group)
   (mapc (lambda (fact) (add-fact env fact))
