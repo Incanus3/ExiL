@@ -36,10 +36,10 @@
 (defgeneric undo (env))
 (defgeneric redo (env))
 ;; watchers:
-(defgeneric set-watcher (env watcher))
-(defgeneric unset-watcher (env watcher))
+(defgeneric set-watcher (env watcher &optional undo-label))
+(defgeneric unset-watcher (env watcher &optional undo-label))
 ;; templates:
-(defgeneric add-template (env template))
+(defgeneric add-template (env template &optional undo-label))
 (defgeneric find-template (env name))
 ;; facts:
 (defgeneric find-fact (env fact))
@@ -47,11 +47,11 @@
 (defgeneric rem-fact (env fact))
 ;; fact groups:
 (defgeneric find-fact-group (env group-name))
-(defgeneric add-fact-group (env group-name facts))
-(defgeneric rem-fact-group (env group-name))
+(defgeneric add-fact-group (env group-name facts &optional undo-label))
+(defgeneric rem-fact-group (env group-name &optional undo-label))
 ;; strategies:
-(defgeneric add-strategy (env strat-name function))
-(defgeneric set-strategy (env &optional strat-name))
+(defgeneric add-strategy (env strat-name function &optional undo-label))
+(defgeneric set-strategy (env &optional strat-name undo-label))
 ;; rules:
 (defgeneric add-rule (env rule))
 (defgeneric rem-rule (env rule-name))
@@ -84,27 +84,46 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; UNDO/REDO
 
-(defun stack-for-undo (env undo-fun redo-fun)
-  (push (cons undo-fun redo-fun) (undo-stack env)))
+(defun stack-for-undo (env undo-fun redo-fun label)
+  (push (list undo-fun redo-fun label) (undo-stack env)))
 
-(defun stack-for-redo (env redo-fun undo-fun)
-  (push (cons redo-fun undo-fun) (redo-stack env)))
+(defun stack-for-redo (env redo-fun undo-fun label)
+  (push (list redo-fun undo-fun label) (redo-stack env)))
 
-(defmacro with-undo (env undo-fun &body body)
+(defmacro with-undo (env label undo-fun &body body)
   ; redo function has the same body as the original action
-  `(progn (stack-for-undo ,env ,undo-fun (lambda () ,@body))
+  `(progn (stack-for-undo ,env ,undo-fun (lambda () ,@body) ,label)
 	  ,@body))
 
 ; public
 (defmethod undo ((env environment))
   (when (undo-stack env)
-    (destructuring-bind (undo-fun . redo-fun) (pop (undo-stack env))
+    (destructuring-bind (undo-fun redo-fun label) (pop (undo-stack env))
       (funcall undo-fun)
-      (stack-for-redo env redo-fun undo-fun))))
+      (stack-for-redo env redo-fun undo-fun label)))
+  nil)
 
 ; public
 (defmethod redo ((env environment))
   (when (redo-stack env)
-    (destructuring-bind (redo-fun . undo-fun) (pop (redo-stack env))
+    (destructuring-bind (redo-fun undo-fun label) (pop (redo-stack env))
       (funcall redo-fun)
-      (stack-for-undo env undo-fun redo-fun))))
+      (stack-for-undo env undo-fun redo-fun label)))
+  nil)
+
+(defun stack-item-label (item)
+  (third item))
+
+(defun numbered-stack (stack)
+  (numbered-map #'stack-item-label stack))
+
+(defun print-stack (stack)
+  (format t "~:{~5<~a: ~>~a~%~}" (numbered-stack stack)))
+
+; public
+(defmethod print-undo-stack ((env environment))
+  (print-stack (undo-stack env)))
+
+; public
+(defmethod print-redo-stack ((env environment))
+  (print-stack (redo-stack env)))

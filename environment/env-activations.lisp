@@ -11,9 +11,10 @@
   (add-assoc-value name (strategies env) function))
 
 ; public
-(defmethod add-strategy ((env environment) (name symbol) (function function))
+(defmethod add-strategy ((env environment) (name symbol) (function function)
+			 &optional (undo-label "(defstrategy)"))
   (let ((key (to-keyword name)))
-    (with-undo env
+    (with-undo env undo-label
 	(let ((original-function (find-strategy env key)))
 	  (lambda () (add-strategy% env key original-function)))
       (add-strategy% env key function))))
@@ -21,17 +22,18 @@
 (defun set-strategy-name% (env name)
   (setf (current-strategy-name env) name))
 
-(defun set-strategy-name (env name)
-  (with-undo env
+(defun set-strategy-name (env name undo-label)
+  (with-undo env undo-label
       (let ((original-strategy (current-strategy-name env)))
 	(lambda () (set-strategy-name% env original-strategy)))
     (set-strategy-name% env name)))
 
 ; public
-(defmethod set-strategy ((env environment) &optional (name :default))
+(defmethod set-strategy ((env environment) &optional (name :default)
+					     (undo-label "(setstrategy)"))
   (let ((key (to-keyword name)))
     (if (assoc key (strategies env))
-        (set-strategy-name env key)
+        (set-strategy-name env key undo-label)
         (error "unknown strategy ~A" name))))
 
 (defun current-strategy (env)

@@ -24,19 +24,20 @@
   (find-if (lambda (fact) (equalp (name template) (template-name fact)))
 	   (all-facts env)))
 
-(defun add-template% (env template)
-  (with-undo env
+(defun add-template% (env template undo-label)
+  (with-undo env undo-label
       (let ((original-template (find-template env template)))
 	(lambda () (set-template env (name template) original-template)))
     (set-template env (name template) template)))
 
 ; public
-(defmethod add-template ((env environment) (template template))
+(defmethod add-template ((env environment) (template template)
+			 &optional (undo-label "(deftemplate)"))
   (when (and (find-template env template)
 	     (find-fact-with-template env template))
     (error "can't redefine template ~A, because there are existing facts using it"
 	   (name template)))
-  (add-template% env template)
+  (add-template% env template undo-label)
   #+lispworks(exil-gui:update-lists)
   template)
 
@@ -82,9 +83,9 @@
 
 ; public
 (defmethod add-fact-group ((env environment) (group-name symbol)
-                           (facts list))
+                           (facts list) &optional (undo-label "(deffacts)"))
   (let ((key (to-keyword group-name)))
-    (with-undo env
+    (with-undo env undo-label
 	(let ((original-fg (find-fact-group env key)))
 	  (lambda () (add-fact-group% env key original-fg)))
       (add-fact-group% env key facts))))
@@ -94,9 +95,10 @@
                                   (fact-groups env) :key #'car)))
 
 ; public
-(defmethod rem-fact-group ((env environment) (group-name symbol))
+(defmethod rem-fact-group ((env environment) (group-name symbol)
+			   &optional (undo-label "(remfacts)"))
   (let ((key (to-keyword group-name)))
-    (with-undo env
+    (with-undo env undo-label
 	(let ((original-fg (find-fact-group env key)))
 	  (lambda () (add-fact-group% env key original-fg)))
     (rem-fact-group% env key))))

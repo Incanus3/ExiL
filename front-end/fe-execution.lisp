@@ -46,4 +46,16 @@
 ; public
 (defun undo ()
   "undo the last action"
-  nil)
+  (eenv:undo *current-environment*))
+
+(defun redo ()
+  "redo the last undone action"
+  (eenv:redo *current-environment*))
+
+; public
+(defun undo-stack ()
+  (print-undo-stack *current-environment*))
+
+; public
+(defun redo-stack ()
+  (print-redo-stack *current-environment*))

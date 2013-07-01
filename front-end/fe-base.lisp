@@ -64,20 +64,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; watchers
 
+(defun watch% (watcher)
+  (set-watcher *current-environment* watcher
+	       (format nil "(watch ~A)" watcher)))
+
 ; public
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(set-watcher *current-environment* ',watcher))
+  `(watch% ',watcher))
+
+(defun unwatch% (watcher)
+  (unset-watcher *current-environment* watcher
+		 (format nil "(unwatch ~A)" watcher)))
 
 ; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(unset-watcher *current-environment* ',watcher))
+  `(unwatch% ',watcher))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates
 
+(defun deftemplate% (name slots)
+  (add-template *current-environment* (parse-template name slots)
+		(format nil "(deftemplate ~A ~A)" name slots)))
+
 ; public
 (defmacro deftemplate (name &body slots)
   "define new template"
-  `(add-template *current-environment* (parse-template ',name ',slots)))
+  `(deftemplate% ',name ',slots))

@@ -17,8 +17,8 @@
 (defun set-one-watcher% (env watcher val)
   (setf (assoc-value watcher (watchers env)) val))
 
-(defun set-one-watcher (env watcher val)
-  (with-undo env
+(defun set-one-watcher (env watcher val undo-label)
+  (with-undo env undo-label
       (let ((original-value (watched-p env watcher)))
 	(lambda ()
 	  (set-one-watcher% env watcher original-value)))
@@ -28,24 +28,26 @@
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) val))
 			       (watchers env))))
 
-(defun set-all-watchers (env val)
-  (with-undo env
+(defun set-all-watchers (env val undo-label)
+  (with-undo env undo-label
       (let ((original-watchers (watchers env)))
 	(lambda () (setf (watchers env) original-watchers)))
     (set-all-watchers% env val)))
 
 ; public
-(defmethod set-watcher ((env environment) (watcher symbol))
+(defmethod set-watcher ((env environment) (watcher symbol)
+			&optional (undo-label "(watch)"))
   (let ((name (to-keyword watcher)))
     (assert-watcher env name)
     (if (equalp name :all)
-        (set-all-watchers env t)
-	(set-one-watcher env name t))))
+        (set-all-watchers env t undo-label)
+	(set-one-watcher env name t undo-label))))
 
 ; public
-(defmethod unset-watcher ((env environment) (watcher symbol))
+(defmethod unset-watcher ((env environment) (watcher symbol)
+			  &optional (undo-label "(unwatch)"))
   (let ((name (to-keyword watcher)))
     (assert-watcher env name)
     (if (equalp name :all)
-        (set-all-watchers env nil)
-	(set-one-watcher env name nil))))
+        (set-all-watchers env nil undo-label)
+	(set-one-watcher env name nil undo-label))))

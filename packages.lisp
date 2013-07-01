@@ -7,7 +7,7 @@
   (:export :to-keyword :assoc-value :add-assoc-value :assoc-key
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
-           :push-update :alist-equal-p :plistp :alistp
+           :push-update :numbered-map :alist-equal-p :plistp :alistp
            :doplist :weak-equal-p :hash->list))
 
 (defpackage :exil-core
@@ -39,7 +39,7 @@
   (:nicknames :eenv)
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
-                :ext-delete :ext-pushnew :pushnew-end)
+                :ext-delete :ext-pushnew :pushnew-end :numbered-map)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :find-template
@@ -49,7 +49,7 @@
            :add-rule :rem-rule :find-rule
            :activations
            :clear-env :reset-env :completely-reset-env
-	   :undo :redo
+	   :undo :redo :print-undo-stack :print-redo-stack
            ;; consider if this is supposed to be environment's responsibility
            :select-activation :activate-rule
            ;; called by rete
@@ -73,9 +73,9 @@
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
            :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
            :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule
-	   :undo
+	   :undo :redo :undo-stack :redo-stack
            :complete-reset) ;; DEBUG
-  (:shadow :assert :step :facts :undo))
+  (:shadow :assert :step :facts :undo :redo))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")

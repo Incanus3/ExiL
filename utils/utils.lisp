@@ -164,6 +164,11 @@
      (setf ,place (delete ,item ,place :test ,test :key ,key))
      (push ,item ,place)))
 
+(defun numbered-map (fun list &optional (start 1))
+  (iter (for i :upfrom start)
+	(for item in list)
+	(collect (list i (funcall fun item)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun hash->list (hash)

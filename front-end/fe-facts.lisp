@@ -89,13 +89,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fact groups
 
+(defun deffacts% (name fact-specs)
+  (add-fact-group *current-environment* name
+		  (parse-fact-group *current-environment* fact-specs)
+		  (format nil "(deffacts ~A ~A)" name fact-specs)))
+
 ; public
 (defmacro deffacts (name &body fact-specs)
   "create group of facts to be asserted after (reset)"
-  `(add-fact-group *current-environment* ',name
-                   (parse-fact-group *current-environment* ',fact-specs)))
+  `(deffacts% ',name ',fact-specs))
+
+(defun undeffacts% (name)
+  (rem-fact-group *current-environment* name
+		  (format nil "(undeffacts ~A)" name)))
 
 ; public
 (defmacro undeffacts (name)
   "delete fact group"
-  `(rem-fact-group *current-environment* ',name))
+  `(undeffacts% ',name))
