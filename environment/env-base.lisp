@@ -90,8 +90,9 @@
 (defun stack-for-redo (env redo-fun undo-fun)
   (push (cons redo-fun undo-fun) (redo-stack env)))
 
-(defmacro with-undo (env undo-fun redo-fun &body body)
-  `(progn (stack-for-undo ,env ,undo-fun ,redo-fun)
+(defmacro with-undo (env undo-fun &body body)
+  ; redo function has the same body as the original action
+  `(progn (stack-for-undo ,env ,undo-fun (lambda () ,@body))
 	  ,@body))
 
 ; public

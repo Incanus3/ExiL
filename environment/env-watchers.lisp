@@ -22,7 +22,6 @@
       (let ((original-value (watched-p env watcher)))
 	(lambda ()
 	  (set-one-watcher% env watcher original-value)))
-      (lambda () (set-one-watcher% env watcher val))
     (set-one-watcher% env watcher val)))
 
 (defun set-all-watchers% (env val)
@@ -33,7 +32,6 @@
   (with-undo env
       (let ((original-watchers (watchers env)))
 	(lambda () (setf (watchers env) original-watchers)))
-      (lambda () (set-all-watchers% env val))
     (set-all-watchers% env val)))
 
 ; public

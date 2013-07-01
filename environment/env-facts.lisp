@@ -28,7 +28,6 @@
   (with-undo env
       (let ((original-template (find-template env template)))
 	(lambda () (set-template env (name template) original-template)))
-      (lambda () (set-template env (name template) template))
     (set-template env (name template) template)))
 
 ; public
@@ -88,7 +87,6 @@
     (with-undo env
 	(let ((original-fg (find-fact-group env key)))
 	  (lambda () (add-fact-group% env key original-fg)))
-	(lambda () (add-fact-group% env key facts))
       (add-fact-group% env key facts))))
 
 (defun rem-fact-group% (env name)
@@ -101,7 +99,6 @@
     (with-undo env
 	(let ((original-fg (find-fact-group env key)))
 	  (lambda () (add-fact-group% env key original-fg)))
-	(lambda () (rem-fact-group% env key))
     (rem-fact-group% env key))))
 
 (defun activate-fact-group (env fact-group)

@@ -16,7 +16,6 @@
     (with-undo env
 	(let ((original-function (find-strategy env key)))
 	  (lambda () (add-strategy% env key original-function)))
-	(lambda () (add-strategy% env key function))
       (add-strategy% env key function))))
 
 (defun set-strategy-name% (env name)
@@ -26,7 +25,6 @@
   (with-undo env
       (let ((original-strategy (current-strategy-name env)))
 	(lambda () (set-strategy-name% env original-strategy)))
-      (lambda () (set-strategy-name% env name))
     (set-strategy-name% env name)))
 
 ; public
