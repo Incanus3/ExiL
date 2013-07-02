@@ -155,5 +155,31 @@
       (redo env)
       (assert-false (find-fact-group env :my-fg)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ENVIRONMENT CLEANUP
+
+(def-test-method undo-clear-env ((tests undo-tests) :run nil)
+  (with-slots (env) tests
+    (add-fact env (make-simple-fact '(:fact)))
+    (add-fact env (make-simple-fact '(:fact2)))
+    (let ((facts (copy-list (facts env))))
+      (clear-env env)
+      (assert-false (facts env))
+      (undo env)
+      (assert-equal (facts env) facts)
+      (redo env)
+      (assert-false (facts env)))))
+
+(def-test-method undo-reset-env ((tests undo-tests) :run nil)
+  (with-slots (env) tests
+    (let ((fact (make-simple-fact '(:fact))))
+    (add-fact-group env :facts (list fact))
+    (reset-env env)
+    (assert-true (find-fact env fact))
+    (undo env)
+    (assert-false (find-fact env fact))
+    (redo env)
+    (assert-true (find-fact env fact)))))
+
 (add-test-suite 'undo-tests)
 ;(textui-test-run (get-suite undo-tests))

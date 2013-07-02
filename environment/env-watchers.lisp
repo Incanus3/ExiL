@@ -28,6 +28,9 @@
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) val))
 			       (watchers env))))
 
+;; it would seem that original-watchers should store a copy of the watchers
+;; alist, but this is not necessary, as set-all-watchers% creates new alist
+;; from scratch, so the conses are not reused
 (defun set-all-watchers (env val undo-label)
   (with-undo env undo-label
       (let ((original-watchers (watchers env)))

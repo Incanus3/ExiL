@@ -61,8 +61,8 @@
 ;(defgeneric remove-match (env production token)) ; forward-declared in rete
 (defgeneric select-activation (env))
 ;; environment clean-up:
-(defgeneric clear-env (env))
-(defgeneric reset-env (env))
+(defgeneric clear-env (env &optional undo-label))
+(defgeneric reset-env (env &optional undo-label))
 (defgeneric completely-reset-env (env)) ; DEBUG
 
 (defmethod initialize-instance :after ((env environment) &key)
@@ -85,15 +85,19 @@
 ;; UNDO/REDO
 
 (defun stack-for-undo (env undo-fun redo-fun label)
-  (push (list undo-fun redo-fun label) (undo-stack env)))
+  (push (list undo-fun redo-fun label) (undo-stack env))
+  nil)
 
 (defun stack-for-redo (env redo-fun undo-fun label)
-  (push (list redo-fun undo-fun label) (redo-stack env)))
+  (push (list redo-fun undo-fun label) (redo-stack env))
+  nil)
 
 (defmacro with-undo (env label undo-fun &body body)
-  ; redo function has the same body as the original action
-  `(progn (stack-for-undo ,env ,undo-fun (lambda () ,@body) ,label)
-	  ,@body))
+  ;; redo function has the same body as the original action
+  (let ((undo-fun-sym (gensym "undo-fun")))
+    `(let ((,undo-fun-sym ,undo-fun))
+       (progn ,@body
+	      (stack-for-undo ,env ,undo-fun-sym (lambda () ,@body) ,label)))))
 
 ; public
 (defmethod undo ((env environment))

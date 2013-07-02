@@ -107,30 +107,53 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
-;; clears facts, activations and rete, keeps templates, fact groups and rules
-;; if there're are some rules, whose conditions are met by empty set of facts
-;; these will appear in the activations thereafter
-; public
-(defmethod clear-env ((env environment))
-  (setf (facts env) ()
-        (activations env) ()
-        (rete env) (make-rete env))
+;; according to what environment slots clear actually clears I divide them to:
+;; 1) durable slots - watchers, templates, fact-groups, strategies and rules
+;; 2) volatile slots - facts, activations, undo/redo stacks and rete
+
+(defun set-volatile-slots (env facts acts ustack rstack rete)
+  (setf (facts env) facts
+        (activations env) acts
+	(undo-stack env) ustack
+	(redo-stack env) rstack
+        (rete env) rete))
+
+(defun clear-undo-fun (env)
+  (let ((original-volatile-slots
+	 (list (facts env) (activations env) (undo-stack env) (redo-stack env)
+	       (rete env))))
+    (lambda () (apply #'set-volatile-slots env original-volatile-slots))))
+
+(defun clear-env% (env)
+  (set-volatile-slots env () () () () (make-rete env))
   (iter (for (name rule) :in-hashtable (rules env))
         (new-production (rete env) rule)))
 
+;; clears volatile slots, keeps durable slots
+;; if there're are some rules, whose conditions are met by empty set of facts
+;; these will appear in the activations thereafter
 ; public
-(defmethod reset-env ((env environment))
-  (clear-env env)
-  (activate-fact-groups env)
-  #+lispworks(exil-gui:update-lists)
-  nil)
+(defmethod clear-env ((env environment) &optional (undo-label "(clear-env)"))
+  (with-undo env undo-label
+      (clear-undo-fun env)
+    (clear-env% env)))
+
+; public
+(defmethod reset-env ((env environment) &optional (undo-label "(reset-env)"))
+  (with-undo env undo-label
+      (clear-undo-fun env)
+    (clear-env% env)
+    (activate-fact-groups env)
+    #+lispworks(exil-gui:update-lists)))
 
 ;; clears everything
-; public, not in use
+; public, used for testing
 (defmethod completely-reset-env ((env environment))
   (setf (facts env) ()
         (activations env) ()
         (fact-groups env) ()
+	(undo-stack env) ()
+	(redo-stack env) ()
         (templates env) (make-hash-table :test 'equalp)
         (rules env) (make-hash-table :test 'equalp)
         (rete env) (make-rete env))
