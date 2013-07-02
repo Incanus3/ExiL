@@ -2,25 +2,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; STRATEGIES
-;; strategy names are keyword symbols
-
-(defun find-strategy (env name)
-  (assoc-value name (strategies env)))
-
-(defun add-strategy% (env name function)
-  (add-assoc-value name (strategies env) function))
-
 ; public
 (defmethod add-strategy ((env environment) (name symbol) (function function)
-			 &optional (undo-label "(defstrategy)"))
-  (let ((key (to-keyword name)))
-    (with-undo env undo-label
-	(let ((original-function (find-strategy env key)))
-	  (lambda () (add-strategy% env key original-function)))
-      (add-strategy% env key function))))
-
-(defun set-strategy-name% (env name)
-  (setf (current-strategy-name env) name))
+			 &optional (undo-label "(add-strategy)"))
+  (with-undo env undo-label
+      (let ((original-function (find-strategy env name)))
+	(lambda () (add-strategy% env name original-function)))
+    (add-strategy% env name function)))
 
 (defun set-strategy-name (env name undo-label)
   (with-undo env undo-label
@@ -30,14 +18,10 @@
 
 ; public
 (defmethod set-strategy ((env environment) &optional (name :default)
-					     (undo-label "(setstrategy)"))
-  (let ((key (to-keyword name)))
-    (if (assoc key (strategies env))
-        (set-strategy-name env key undo-label)
-        (error "unknown strategy ~A" name))))
-
-(defun current-strategy (env)
-  (find-strategy env (current-strategy-name env)))
+					     (undo-label "(set-strategy)"))
+    (if (find-strategy env name)
+        (set-strategy-name env name undo-label)
+        (error "unknown strategy ~A" name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ACTIVATIONS
@@ -45,9 +29,7 @@
 ; public, used by rete
 (defmethod add-match ((env environment) production token)
   (let ((match (make-match production token)))
-    ;; when it wasn't already there
-    (when (and (nth-value 1 (ext-pushnew match (activations env)
-                                         :test #'match-equal-p))
+    (when (and (add-match% env match)
                (watched-p env :activations))
       (format t "~%==> ~A" match)
       #+lispworks(exil-gui:update-lists))))
@@ -55,15 +37,14 @@
 ; public, used by rete
 (defmethod remove-match ((env environment) production token)
   (let ((match (make-match production token)))
-    (multiple-value-bind (new-list altered-p)
-        (ext-delete match (activations env) :test #'match-equal-p)
+    (del-match (new-list altered-p) env match
       (when altered-p
         (setf (activations env) new-list)
         (when (watched-p env :activations)
           (format t "~%<== ~A" match))
         #+lispworks(exil-gui:update-lists)))))
 
-(defun remove-matches (env rule)
+(defun rem-matches-with-rule (env rule)
   (setf (activations env)
         (delete rule (activations env)
                 :test #'rule-equal-p :key #'match-rule))
@@ -81,7 +62,7 @@
 
 ; public
 (defmethod add-rule ((env environment) (rule rule))
-  (setf (gethash (name rule) (rules env)) rule)
+  (add-rule% env rule)
   (new-production (rete env) rule)
   (when (watched-p env :rules)
     (format t "==> ~A" rule))
@@ -91,18 +72,14 @@
   rule)
 
 ; public
-(defmethod find-rule ((env environment) (name symbol))
-  (gethash (to-keyword name) (rules env)))
-
-; public
 (defmethod rem-rule ((env environment) (name symbol))
   (let ((rule (find-rule env name)))
     (when rule
       (when (watched-p env :rules)
         (format t "<== ~A" rule))
-      (remhash name (rules env))
+      (rem-rule% env name)
       (remove-production (rete env) rule)
-      (remove-matches env rule))))
+      (rem-matches-with-rule env rule))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
@@ -125,9 +102,10 @@
     (lambda () (apply #'set-volatile-slots env original-volatile-slots))))
 
 (defun clear-env% (env)
-  (set-volatile-slots env () () () () (make-rete env))
-  (iter (for (name rule) :in-hashtable (rules env))
-        (new-production (rete env) rule)))
+  (set-volatile-slots env () () () () (rete-initform env))
+  (dorules (name rule) env
+    (new-production (rete env) rule))
+  #+lispworks(exil-gui:update-lists))
 
 ;; clears volatile slots, keeps durable slots
 ;; if there're are some rules, whose conditions are met by empty set of facts
@@ -143,19 +121,24 @@
   (with-undo env undo-label
       (clear-undo-fun env)
     (clear-env% env)
-    (activate-fact-groups env)
-    #+lispworks(exil-gui:update-lists)))
+    (activate-fact-groups env)))
+
+;; clears everything except undo and redo stacks
+; public, used for undo testing
+(defmethod almost-completely-reset-env ((env environment))
+  (setf (facts env) ()
+        (activations env) ()
+        (fact-groups env) ()
+        (templates env) (templates-initform)
+        (rules env) (rules-initform)
+        (rete env) (rete-initform env))
+  #+lispworks(exil-gui:update-lists)
+  nil)
 
 ;; clears everything
 ; public, used for testing
 (defmethod completely-reset-env ((env environment))
-  (setf (facts env) ()
-        (activations env) ()
-        (fact-groups env) ()
-	(undo-stack env) ()
-	(redo-stack env) ()
-        (templates env) (make-hash-table :test 'equalp)
-        (rules env) (make-hash-table :test 'equalp)
-        (rete env) (make-rete env))
-  #+lispworks(exil-gui:update-lists)
+  (setf (undo-stack env) ()
+	(redo-stack env) ())
+  (almost-completely-reset-env env)
   nil)

@@ -48,7 +48,7 @@
            :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
            :activations
-           :clear-env :reset-env :completely-reset-env
+           :clear-env :reset-env :completely-reset-env :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
            ;; consider if this is supposed to be environment's responsibility
            :select-activation :activate-rule

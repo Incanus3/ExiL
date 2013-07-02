@@ -26,7 +26,7 @@
   "run inference engine for one turn"
   (when (activations *current-environment*)
     ;; (format t "~%------------------------------------------------------")
-    (activate-rule (select-activation *current-environment*))
+     (activate-rule (select-activation *current-environment*))
     t))
 
 (defvar *exil-running* nil)
