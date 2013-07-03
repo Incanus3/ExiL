@@ -18,12 +18,6 @@
     (assert-true (exil-equal-p object object))
     (assert-false (exil-equal-p object object2))))
 
-(def-test-method test-copy-object ((tests simple-object-tests) :run nil)
-  (with-slots (object) tests
-    (let ((copy (copy-object object)))
-      (assert-true (exil-equal-p object copy))
-      (assert-not-eql object copy))))
-
 (def-test-method test-object-slot ((tests simple-object-tests) :run nil)
   (with-slots (object) tests
     (assert-equal (object-slot object 1) 'box)
@@ -74,12 +68,6 @@
     (assert-true (exil-equal-p object object))
     (assert-false (exil-equal-p object object2))
     (assert-false (exil-equal-p object object3))))
-
-(def-test-method test-copy-object ((tests template-object-tests) :run nil)
-  (with-slots (object) tests
-    (let ((copy (copy-object object)))
-      (assert-true (exil-equal-p object copy))
-      (assert-not-eql object copy))))
 
 #|
 (def-test-method test-has-slot-p ((tests template-object-tests) :run nil)

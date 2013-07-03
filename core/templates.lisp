@@ -35,6 +35,7 @@
 ;; make-template ensures that slot-names are keywords
 ; public
 (defun make-template (name slots)
+  "template constructor"
   (make-instance 'template :name (to-keyword name)
                  :slots (mapcar (lambda (slot-spec)
                                   (cons (to-keyword (car slot-spec))
@@ -45,6 +46,7 @@
 ; given by name and default) in the body
 ; public
 (defmacro doslots ((name default template &optional retval) &body body)
+  "destructuring iteration macro"
   (let ((slot (gensym "slot")))
     `(progn
        (dolist (,slot (slots ,template))

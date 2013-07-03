@@ -61,6 +61,14 @@
 (defmethod make-template-fact ((tmpl template) (slot-spec list))
   (make-tmpl-object tmpl slot-spec 'template-fact))
 
+;; mod-list is a plist mapping slot-name to new value
+(defmethod mod-fact ((fact template-fact) (mod-list list))
+  "returns new fact that differs from fact by application of mod-list"
+  (let ((new-fact (copy-object fact)))
+    (doplist (slot-name val mod-list)
+      (setf (object-slot new-fact slot-name) val))
+    new-fact))
+
 ;;;; inherited from template-object:
 ;; exil-equal-p, format-object, print-object, copy-object, object-slot,
 ;; find-atom, atom-position, description, has-slot-p

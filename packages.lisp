@@ -17,10 +17,10 @@
   (:export :variable-p :template :template-name :slots
            :has-slot-p :make-template :fact :simple-fact
            :atom-position :template-fact :exil-equal-p
-           :slot-default :doslots :copy-object :object-slot
+           :slot-default :doslots :object-slot
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern
-           :make-template-fact :make-template-pattern
+           :make-template-fact :mod-fact :make-template-pattern
            :negated-p :simple-pattern :var-or-equal-p
            :template-pattern :rule :rule-equal-p :make-rule
            :name :conditions :activations :description))

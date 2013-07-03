@@ -15,10 +15,9 @@
 (defmethod set-up ((tests token-tests))
   (with-slots (token1 token2 token3 token4 wme1 wme2) tests
     (setf token1 (erete::make-token wme1 (erete::make-token wme2))
-          token2 (erete::make-token (copy-object wme1)
-                                    (erete::make-token (copy-object wme2)))
-          token3 (erete::make-token (copy-object wme1))
-          token4 (erete::make-token (copy-object wme2)))))
+          token2 (erete::make-token wme1 (erete::make-token wme2))
+          token3 (erete::make-token wme1)
+          token4 (erete::make-token wme2))))
 
 (def-test-method test-token-equal-p ((tests token-tests) :run nil)
   (with-slots (token1 token2 token3 empty-token empty-token2) tests

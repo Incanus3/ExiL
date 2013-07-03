@@ -1,14 +1,17 @@
 (in-package :exil-core)
 
+;; all fact and pattern classes subclass this, all these objects are immutable
+;; from the higher layers' point of view, so there's no need to copy them
 ; private
 (defclass base-object () ())
 
 ; private
 (defgeneric format-object (object stream))
-; public
+; private
 (defgeneric copy-object (object))
 ; public
 (defgeneric object-slot (object slot-spec))
+; private
 (defgeneric (setf object-slot) (val object slot-spec))
 ; public
 (defgeneric atom-position (object atom))
@@ -24,7 +27,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; private
 (defclass simple-object (base-object)
   ((specifier :reader specifier
               :initarg :specifier)))
@@ -35,12 +37,14 @@
 (defmethod format-object ((object simple-object) stream)
   (format stream "~A" (specifier object)))
 
+; private
 (defmethod copy-object ((object simple-object))
   (make-instance (class-of object) :specifier (copy-list (specifier object))))
 
 (defmethod object-slot ((object simple-object) (slot-spec integer))
   (nth slot-spec (specifier object)))
 
+; private
 (defmethod (setf object-slot) (val (object simple-object) (slot-spec integer))
   (setf (nth slot-spec (specifier object)) val))
 
@@ -78,6 +82,7 @@
 (defmethod format-object ((object template-object) stream)
   (format stream "~A" (cons (name (template object)) (slots object))))
 
+; private
 (defmethod copy-object ((object template-object))
   (make-instance (class-of object)
                  :template (template object)
@@ -86,6 +91,7 @@
 (defmethod object-slot ((object template-object) (slot-name symbol))
   (assoc-value slot-name (slots object)))
 
+; private
 (defmethod (setf object-slot) (val (object template-object) (slot-name symbol))
     (setf (assoc-value slot-name (slots object)) val))
 

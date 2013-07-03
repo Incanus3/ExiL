@@ -84,15 +84,11 @@
     (t (error "~A not a valid modify specifier" mod-list))))
 
 ;; modify-fact works for template-facts ONLY!
-;; mod-list is a plist mapping slot-name to new value
 ;; modify-fact is in parser because it needs to support both variants of
 ;; front-end syntax
 ; public
 (defmethod modify-fact ((fact template-fact) (mod-list list))
-  (let ((new-fact (copy-object fact)))
-    (doplist (slot-name val (to-mod-spec-list mod-list))
-      (setf (object-slot new-fact slot-name) val))
-    new-fact))
+  (mod-fact fact (to-mod-spec-list mod-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
