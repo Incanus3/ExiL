@@ -17,7 +17,7 @@
 ;; template of such name
 (defclass alpha-top-node (alpha-node)
   ((dataflow-networks :accessor networks :initform (make-hash-table))
-   (simple-fact-key :reader simple-fact-key
+   (simple-fact-key :accessor simple-fact-key
                     :initform (gensym "simple-fact")))
   (:documentation "Top node of the alpha-part of rete network, stores one
                    dataflow network for each template and one for simple-facts"))
@@ -82,7 +82,7 @@
 ;; appears for the first time in some newly added rule
 (defclass alpha-subtop-node (alpha-node)
   ;; stored for debug purposes
-  ((tmpl-name :reader tmpl-name :initarg :tmpl-name)))
+  ((tmpl-name :accessor tmpl-name :initarg :tmpl-name)))
 
 (defmethod print-object ((node alpha-subtop-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
@@ -99,10 +99,8 @@
 ;; TODO: check if it makes sense to differentiate between memory and child
 ;; activation, if not, memory could be just another child
 (defclass alpha-test-node (alpha-node)
-  ((tested-field :reader tested-field :initarg :tested-field
-                 :initform (error "tested-field slot has to be specified"))
-   (desired-value :reader value :initarg :value
-                  :initform (error "desired-value slot has to be specified"))
+  ((tested-field :reader tested-field :initarg :tested-field)
+   (desired-value :reader value :initarg :value)
    (alpha-memory :accessor memory :initarg :memory
                  :initform nil)))
 
@@ -156,7 +154,7 @@
 ;; stores wmes that passed the constant tests for one condition of some rule
 (defclass alpha-memory-node (alpha-node memory-node)
   ;; stored for debug purposes
-  ((pattern :reader pattern :initarg :pattern)))
+  ((pattern :accessor pattern :initarg :pattern)))
 
 (defmethod print-object ((node alpha-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)

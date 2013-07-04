@@ -21,8 +21,9 @@
 (defclass beta-memory-node (beta-node memory-node)
   ((productions :accessor productions
                 :initform ())
-   (rete :reader rete :initarg :rete
-         :initform (error "rete has to be specified"))))
+   (rete :accessor rete :initarg :rete
+;         :initform (error "rete has to be specified")
+	 )))
 
 (defgeneric environment (node)
   (:documentation "environment in which this rete network is defined"))
@@ -44,7 +45,8 @@
 ;; when this is a new token, signal newly matched productions and activate
 ;; children
 (defmethod activate ((node beta-memory-node) (token token))
-  (when (nth-value 1 (ext-add-item node token #'token-equal-p))
+  ;; when it wasn't already there
+  (when (ext-add-item node token #'token-equal-p)
     (dolist (production (productions node))
       (exil-env:add-match (environment node) production token))
     (activate-children node token)))

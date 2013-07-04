@@ -8,7 +8,7 @@
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
            :push-update :numbered-map :alist-equal-p :plistp :alistp
-           :doplist :weak-equal-p :hash->list))
+           :doplist :weak-equal-p :map-hash-table :copy-hash-table :hash->list))
 
 (defpackage :exil-core
   (:documentation "core functionality of the expert system library - facts,
@@ -29,9 +29,9 @@
   (:documentation "the rete algorithm for matching facts against rule conditions")
   (:nicknames :erete)
   (:use :common-lisp :exil-core :iterate)
-  (:import-from :exil-utils :push-update :ext-pushnew :diff-remove)
+  (:import-from :exil-utils :push-update :ext-pushnew :diff-remove :map-hash-table)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
-           :token->list :token-equal-p))
+           :token->list :token-equal-p :copy-rete))
 
 (defpackage :exil-env
   (:documentation "the exil environment, keeps track of the defined templates

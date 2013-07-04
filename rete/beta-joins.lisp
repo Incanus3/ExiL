@@ -63,8 +63,9 @@
 ;; children are beta-memory-nodes, there's always just one child
 
 (defclass beta-join-node (beta-node)
-  ((alpha-memory :reader alpha-memory :initarg :alpha-memory
-                 :initform (error "alpha-memory slot has to be specified"))
+  ((alpha-memory :accessor alpha-memory :initarg :alpha-memory
+;                 :initform (error "alpha-memory slot has to be specified")
+		 )
    (tests :accessor tests :initarg :tests :initform ())))
 
 (defgeneric beta-memory (node)

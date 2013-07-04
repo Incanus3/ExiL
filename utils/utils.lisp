@@ -170,6 +170,17 @@
 	(collect (list i (funcall fun item)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; HASH-TABLES
+
+(defun map-hash-table (fun hash)
+  "returns new hash with fun applied to each value"
+  (let ((new-hash (make-hash-table :test (hash-table-test hash))))
+    (maphash (lambda (key val) (setf (gethash key new-hash) (funcall fun val)))
+	     hash)
+    new-hash))
+
+(defun copy-hash-table (hash)
+  (map-hash-table #'identity hash))
 
 (defun hash->list (hash)
   "returns list of all values in the hash"

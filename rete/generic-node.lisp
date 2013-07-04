@@ -42,6 +42,10 @@
 (defgeneric inactivate (node object))
 (defgeneric inactivate-children (node object))
 
+(defmethod add-child ((node node) (child node))
+  (pushnew child (children node) :test #'node-equal-p)
+  node)
+
 (defvar *debug-rete* nil)
 
 ;; DEBUG:
@@ -59,10 +63,6 @@
 ;; the nodes according to the children
 (defgeneric node-equal-p (node1 node2)
   (:method ((node1 node) (node2 node)) nil))
-
-(defmethod add-child ((node node) (child node))
-  (pushnew child (children node) :test #'node-equal-p)
-  node)
 
 (defmethod activate-children ((node node) object)
   (dolist (child (children node))
@@ -90,7 +90,8 @@
   (pushnew item (items node) :test test))
 
 (defmethod ext-add-item ((node memory-node) item &optional (test #'exil-equal-p))
-  (ext-pushnew item (items node) :test test))
+  "pushes item to node's items, if it isn't already there, returns true if items were altered"
+  (nth-value 1 (ext-pushnew item (items node) :test test)))
 
 (defmethod delete-item ((node memory-node) item &optional (test #'exil-equal-p))
   (setf (items node) (delete item (items node) :test test)))
