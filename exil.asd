@@ -37,7 +37,8 @@
              (:file "beta-joins"         :depends-on ("beta-memories"))
              (:file "create-alpha-net"   :depends-on ("beta-joins"))
              (:file "create-beta-net"    :depends-on ("create-alpha-net"))
-	     (:file "copy"               :depends-on ("create-beta-net"))))
+	     (:file "copy"               :depends-on ("create-beta-net"))
+	     (:file "traversal"          :depends-on ("copy"))))
    (:module :environment
             :depends-on ("packages" :utils :core :rete)
             :components
@@ -76,7 +77,8 @@
              (:file "tst-tokens"       :depends-on ("tst-patterns"))
              (:file "tst-rete"         :depends-on ("tst-tokens"))
 	     (:file "tst-rete-copy"    :depends-on ("tst-rete"))
-             (:file "tst-environment"  :depends-on ("tst-rete-copy"))
+	     (:file "tst-rete-walk"    :depends-on ("tst-rete-copy"))
+             (:file "tst-environment"  :depends-on ("tst-rete-walk"))
 	     (:file "tst-undo"         :depends-on ("tst-environment"))
 	     (:file "tst-undo2"        :depends-on ("tst-undo"))
              (:file "run-tests"    :depends-on ("tst-undo2"))))

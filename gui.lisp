@@ -25,7 +25,7 @@
 (define-interface templates-gui () ()
   (:panes
    (template-list list-panel
-                  :items (hash->list (templates *current-environment*))
+                  :items (hash-values (templates *current-environment*))
                   :reader template-list))
   (:default-initargs :title "ExiL Templates"
    :visible-min-height 100
@@ -34,7 +34,7 @@
 (define-interface rules-gui () ()
   (:panes
    (rule-list list-panel
-              :items (hash->list (rules *current-environment*))
+              :items (hash-values (rules *current-environment*))
               :reader rule-list)
    (undefrule-button push-button
                      :text "Undefine rule"
@@ -118,9 +118,9 @@
   (setf (collection-items (fact-list (facts-int *exil-gui*)))
         (facts *current-environment*))
   (setf (collection-items (template-list (templates-int *exil-gui*)))
-        (hash->list (templates *current-environment*)))
+        (hash-values (templates *current-environment*)))
   (setf (collection-items (rule-list (rules-int *exil-gui*))) 
-        (hash->list (rules *current-environment*)))
+        (hash-values (rules *current-environment*)))
   (setf (collection-items (agenda-list (agenda-int *exil-gui*)))
         (activations *current-environment*))
   nil)

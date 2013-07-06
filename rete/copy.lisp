@@ -5,9 +5,6 @@
 (defgeneric copy-node (node memo)
   (:method ((node null) memo) nil))
 
-;; (defmethod copy-node :before (node memo)
-;;   (format t "copying ~S~%" node))
-
 (defun with-2nd-param (fun param)
   "parially applies fun with param as second parameter"
   (lambda (x) (funcall fun x param)))

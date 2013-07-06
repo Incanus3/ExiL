@@ -101,15 +101,21 @@
       (push-end val list))
     (assert-equal list '(:a 1 :b 2))))
 
-(def-test-method test-hash->list ((tests utils-tests) :run nil)
+(def-test-method test-hash-values ((tests utils-tests) :run nil)
   (let ((hash (make-hash-table)) list)
     (setf (gethash :a hash) 1)
     (setf (gethash :b hash) 2)
-    (setf list (hash->list hash))
+    (setf list (hash-values hash))
     (assert-true (member 1 list)) ; list should have both values in it
     (assert-true (member 2 list))
     (setf list (delete 1 (delete 2 list)))
     (assert-false list))) ; and nothing more
+
+(def-test-method test-partition ((tests utils-tests) :run nil)
+  (let* ((list '(1 2 3 4 5 6))
+	 (partition (partition list #'oddp)))
+    (assert-true (set-equal-p (assoc-value t partition) '(1 3 5)))
+    (assert-true (set-equal-p (assoc-value nil partition) '(2 4 6)))))
 
 ;(textui-test-run (get-suite utils-tests))
 (add-test-suite 'utils-tests)

@@ -40,13 +40,15 @@
 
 ;; this probably could be done better with defsetf/define-setf-expander
 ;; sets value if key present, otherwise adds the cons
-(defmacro add-assoc-value (the-key alist value)
+(defmacro add-assoc-value (the-key alist value &key (test #'equal))
   (let ((key-sym (gensym "key"))
-        (value-sym (gensym "value")))
+        (value-sym (gensym "value"))
+	(test-sym (gensym "test")))
     `(let ((,key-sym ,the-key)
-           (,value-sym ,value))
-       (if (assoc-value ,key-sym ,alist)
-           (setf (assoc-value ,key-sym ,alist) ,value-sym)
+           (,value-sym ,value)
+	   (,test-sym ,test))
+       (if (assoc-value ,key-sym ,alist :test ,test-sym)
+           (setf (assoc-value ,key-sym ,alist :test ,test-sym) ,value-sym)
            (push (cons ,key-sym ,value-sym) ,alist)))))
 
 (defun assoc-key (value alist)
@@ -182,7 +184,33 @@
 (defun copy-hash-table (hash)
   (map-hash-table #'identity hash))
 
-(defun hash->list (hash)
+(defun hash-values (hash)
   "returns list of all values in the hash"
   (iter (for (key val) :in-hashtable hash)
         (collect val)))
+
+(defun hash-keys (hash)
+  (iter (for (key val) :in-hashtable hash)
+	(collect key)))
+
+(defun hash->alist (hash)
+  (let (alist)
+    (maphash (lambda (key val)
+	       (add-assoc-value key alist val :test (hash-table-test hash)))
+	     hash)
+    alist))
+
+(defun partition-hash (list fun &key (test 'equal))
+  (let ((partition (make-hash-table :test test)))
+    (dolist (item (reverse list))
+      (let ((result (funcall fun item)))
+	(if (gethash result partition)
+	    (push item (gethash result partition))
+	    (setf (gethash result partition) (list item)))))
+    partition))
+
+(defun partition (list fun &key (test 'equal))
+  (hash->alist (partition-hash list fun :test test)))
+
+(defun set-equal-p (set1 set2)
+  (null (set-exclusive-or set1 set2)))

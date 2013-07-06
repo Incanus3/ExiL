@@ -8,7 +8,9 @@
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
            :push-update :numbered-map :alist-equal-p :plistp :alistp
-           :doplist :weak-equal-p :map-hash-table :copy-hash-table :hash->list))
+           :doplist :weak-equal-p
+	   :map-hash-table :copy-hash-table :hash-values :hash-keys
+	   :set-equal-p :partition-hash :partition))
 
 (defpackage :exil-core
   (:documentation "core functionality of the expert system library - facts,
@@ -29,7 +31,8 @@
   (:documentation "the rete algorithm for matching facts against rule conditions")
   (:nicknames :erete)
   (:use :common-lisp :exil-core :iterate)
-  (:import-from :exil-utils :push-update :ext-pushnew :diff-remove :map-hash-table)
+  (:import-from :exil-utils :push-update :ext-pushnew :diff-remove :map-hash-table
+		:hash-values :hash-keys :to-list)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
            :token->list :token-equal-p :copy-rete))
 
@@ -82,7 +85,7 @@
               (:use :common-lisp :capi)
               (:import-from :exil-env :facts :templates :rules :activations
                :rem-fact :rem-rule)
-              (:import-from :exil-utils :hash->list)
+              (:import-from :exil-utils :hash-values)
               (:import-from :exil :*current-environment*)
               (:export :show-gui :update-lists))
 
@@ -108,7 +111,7 @@
 
 (defpackage :rete-tests
   (:documentation "tests for the rete package")
-  (:use :common-lisp :exil-core :exil-rete :xlunit :tests-base))
+  (:use :common-lisp :exil-utils :exil-core :exil-rete :xlunit :tests-base))
 
 (defpackage :env-tests
   (:documentation "tests for the environment package")
