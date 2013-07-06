@@ -8,7 +8,7 @@
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
            :push-update :numbered-map :alist-equal-p :plistp :alistp
-           :doplist :weak-equal-p
+           :doplist :weak-equal-p :gensymedp
 	   :map-hash-table :copy-hash-table :hash-values :hash-keys
 	   :set-equal-p :partition-hash :partition))
 
@@ -32,7 +32,7 @@
   (:nicknames :erete)
   (:use :common-lisp :exil-core :iterate)
   (:import-from :exil-utils :push-update :ext-pushnew :diff-remove :map-hash-table
-		:hash-values :hash-keys :to-list)
+		:hash-values :hash-keys :to-list :set-equal-p :gensymedp :assoc-value)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
            :token->list :token-equal-p :copy-rete))
 
@@ -111,7 +111,7 @@
 
 (defpackage :rete-tests
   (:documentation "tests for the rete package")
-  (:use :common-lisp :exil-utils :exil-core :exil-rete :xlunit :tests-base))
+  (:use :common-lisp :exil-utils :exil-core :exil-rete :xlunit :iterate :tests-base))
 
 (defpackage :env-tests
   (:documentation "tests for the environment package")

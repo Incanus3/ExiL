@@ -35,6 +35,10 @@
 (defgeneric delete-production (node production)
   (:documentation "deletes production from productions list"))
 
+(defmethod weak-node-equal-p ((node1 beta-memory-node) (node2 beta-memory-node))
+  (and (set-equal-p (items node1) (items node2) :test #'token-equal-p)
+       (set-equal-p (productions node1) (productions node2) :test #'rule-equal-p)))
+
 (defmethod print-object ((node beta-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| productions: ~S" (productions node))))

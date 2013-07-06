@@ -1,7 +1,7 @@
 (in-package :exil-rete)
 
 (defgeneric walk-rete (rete &key memo-fun aggreg before))
-(defgeneric rete-nodes (rete))
+(defgeneric rete-nodes (rete &optional type))
 
 
 (defgeneric neighbors (node)
@@ -32,6 +32,19 @@
     (funcall aggreg node (mapcar (lambda (node)
 				   (visit node memo memo-fun aggreg before))
 				 (neighbors node)))))
+
+(defun neighbors-equal-p (node1 node2 mapping)
+  (every (lambda (neigh1 neigh2)
+	   (eql (assoc-value neigh1 mapping) neigh2))
+	 (neighbors node1) (neighbors node2)))
+
+(defun copy-equal-p (nodes1 nodes2)
+  (and (= (length nodes1) (length nodes2))
+       (every #'weak-node-equal-p nodes1 nodes2)
+       (let ((mapping (mapcar #'cons nodes1 nodes2)))
+	 (every (lambda (node1 node2)
+		  (neighbors-equal-p node1 node2 mapping))
+		nodes1 nodes2))))
 
 ;; memo-fun takes a node and what it returns is memoized for that node,
 ;; so it's returned by visit when this node is visited again
@@ -87,10 +100,26 @@
 (defmethod neighbors append ((node beta-node))
   (to-list (parent node)))
 
+(defmethod neighbors append ((node beta-join-node))
+  (to-list (alpha-memory node)))
+
 
 (defmethod walk-rete ((rete rete) &key (memo-fun #'list) (aggreg #'cons)
 				    (before (constantly nil)))
   (walk-graph (alpha-top-node rete) :memo-fun memo-fun :aggreg aggreg :before before))
 
-(defmethod rete-nodes ((rete rete))
-  (graph->list (alpha-top-node rete)))
+(defmethod rete-nodes ((rete rete) &optional type)
+  (let ((nodes (graph->list (alpha-top-node rete))))
+    (if type
+	(remove-if-not (lambda (node) (typep node type)) nodes)
+	nodes)))
+
+;; returns true, if the two instances of rete have exactly the same structure
+;; including the order of children, which is good enough for testing
+;; correctness of copy-rete and of undo/redo functionality, that uses it
+;;
+;; should not be used as a general rete equality predicate as two rete
+;; networks will behave equally even when the order of nodes' children
+;; differs
+(defmethod rete-copy-equal-p ((rete1 rete) (rete2 rete))
+  (copy-equal-p (rete-nodes rete1) (rete-nodes rete2)))

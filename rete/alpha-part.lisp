@@ -39,6 +39,9 @@
   (:documentation "returns dataflow-networks hash-key for given wme
                    i.e. either its tmpl-name or simple-fact-key"))
 
+(defmethod weak-node-equal-p ((node1 alpha-top-node) (node2 alpha-top-node))
+  t)
+
 (defmethod network ((node alpha-top-node)
                     &optional (tmpl-name (simple-fact-key node)))
   (gethash tmpl-name (networks node)))
@@ -84,6 +87,16 @@
   ;; stored for debug purposes
   ((tmpl-name :accessor tmpl-name :initarg :tmpl-name)))
 
+;; subtop-node of simple-facts part of alpha network has tmpl-name generated
+;; by gensym (so that no user-defined template name can collide with it)
+;; thus the test for gensymedp
+(defmethod weak-node-equal-p ((node1 alpha-subtop-node)
+			      (node2 alpha-subtop-node))
+  (let ((tmpl-name1 (tmpl-name node1))
+	(tmpl-name2 (tmpl-name node2)))
+  (or (and (gensymedp tmpl-name1) (gensymedp tmpl-name2))
+      (equal tmpl-name1 tmpl-name2))))
+
 (defmethod print-object ((node alpha-subtop-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| tmpl-name: ~A" (tmpl-name node))))
@@ -108,8 +121,8 @@
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation"))
 
-(defmethod node-equal-p ((node1 alpha-test-node)
-                         (node2 alpha-test-node))
+(defmethod weak-node-equal-p ((node1 alpha-test-node)
+			      (node2 alpha-test-node))
   (and (equalp (tested-field node1)
                (tested-field node2))
        (constant-test (value node1)
@@ -155,6 +168,11 @@
 (defclass alpha-memory-node (alpha-node memory-node)
   ;; stored for debug purposes
   ((pattern :accessor pattern :initarg :pattern)))
+
+(defmethod weak-node-equal-p ((node1 alpha-memory-node)
+			      (node2 alpha-memory-node))
+  (exil-equal-p (pattern node1) (pattern node2))
+  (set-equal-p (items node1) (items node2) :test #'exil-equal-p))
 
 (defmethod print-object ((node alpha-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)

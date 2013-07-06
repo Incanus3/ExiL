@@ -85,11 +85,9 @@
 (defmethod find/add-test-node ((test-node beta-join-node)
                                (parent beta-memory-node)
                                (alpha-mem alpha-memory-node))
-  (or (find-if (lambda (child) (node-equal-p child test-node))
-               (children parent))
-      (progn (add-child parent test-node)
-             (add-child alpha-mem test-node)
-             test-node)))
+  (add-child parent test-node)
+  (add-child alpha-mem test-node)
+  test-node)
 
 ;; find or create child join- or negative-node for given beta-memory-node
 ;; node-type may be beta-join-node or beta-negative-node

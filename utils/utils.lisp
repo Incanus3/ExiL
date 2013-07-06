@@ -40,7 +40,7 @@
 
 ;; this probably could be done better with defsetf/define-setf-expander
 ;; sets value if key present, otherwise adds the cons
-(defmacro add-assoc-value (the-key alist value &key (test #'equal))
+(defmacro add-assoc-value (the-key alist value &key (test '#'equal))
   (let ((key-sym (gensym "key"))
         (value-sym (gensym "value"))
 	(test-sym (gensym "test")))
@@ -212,5 +212,8 @@
 (defun partition (list fun &key (test 'equal))
   (hash->alist (partition-hash list fun :test test)))
 
-(defun set-equal-p (set1 set2)
-  (null (set-exclusive-or set1 set2)))
+(defun set-equal-p (set1 set2 &key (test #'eql))
+  (null (set-exclusive-or set1 set2 :test test)))
+
+(defun gensymedp (symbol)
+  (not (symbol-package symbol)))

@@ -15,6 +15,9 @@
   (copy-watchers '((:facts . nil) (:rules . nil) (:activations . nil))))
 
 ;; templates
+(defun copy-templates (templates)
+  (copy-hash-table templates))
+
 (defun templates-initform ()
   (make-hash-table :test #'equalp))
 
@@ -46,6 +49,9 @@
      ,@body))
 
 ;; fact groups
+(defun copy-fact-groups (fact-groups)
+  (copy-alist fact-groups))
+
 ; public
 (defmethod find-fact-group ((env environment) (group-name symbol))
   (assoc-value (to-keyword group-name) (fact-groups env)))
@@ -99,6 +105,9 @@
      ,@body))
 
 ;; rules
+(defun copy-rules (rules)
+  (copy-hash-table rules))
+
 (defun rules-initform ()
   (make-hash-table :test #'equalp))
 
@@ -162,4 +171,18 @@
   (make-instance 'environment))
 
 ; public, used for testing
-(defmethod copy-environment ((env environment)))
+;; (defmethod copy-environment ((env environment))
+;;   (let ((new-env (make-environment)))
+;;     (with-slots (watchers templates facts fact-groups strategies
+;; 			  current-strategy-name rules rete activations
+;; 			  undo-stack redo-stack) new-env
+;;       (with-accessors 
+;;       (setf watchers (copy-watchers (watchers env))
+;; 	    template (copy-templates (templates env))
+;; 	    facts (copy-list (facts env))
+;; 	    fact-groups (copy-fact-groups (fact-groups env))
+;; 	    strategies (copy-strategies (strategies env))
+;; 	    current-strategy-name (current-strategy-name env)
+;; 	    rules (copy-rules (rules env))
+;; 	    rete (copy-rete (rete env))
+;; 	    activations (copy-act

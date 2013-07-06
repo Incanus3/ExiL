@@ -33,6 +33,9 @@
 
 (defclass node () ((children :accessor children :initform ())))
 
+(defgeneric weak-node-equal-p (node1 node2)
+  (:documentation "compares nodes' static slots but doesn't recursively compere their children")
+  (:method ((node1 node) (node2 node)) nil))
 (defgeneric add-child (node child))
 ;; for top node, called by add-wme, for others, called by their parents
 (defgeneric activate (node object)
@@ -43,7 +46,7 @@
 (defgeneric inactivate-children (node object))
 
 (defmethod add-child ((node node) (child node))
-  (pushnew child (children node) :test #'node-equal-p)
+  (pushnew child (children node))
   node)
 
 (defvar *debug-rete* nil)
@@ -56,13 +59,7 @@
 (defmethod inactivate :before (node object)
   (when *debug-rete*
     (format t "~%~a~%  inactivated by ~a" node object)))
-
-;; TODO: check if the graph defined by rete nodes and their children is a tree
-;; if it is, than the commented variant is probably just too memory-expansive
-;; if it has cycles, than come up with some other good method to compare
-;; the nodes according to the children
-(defgeneric node-equal-p (node1 node2)
-  (:method ((node1 node) (node2 node)) nil))
+;; -----
 
 (defmethod activate-children ((node node) object)
   (dolist (child (children node))
