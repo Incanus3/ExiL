@@ -38,7 +38,8 @@
              (:file "create-alpha-net"   :depends-on ("beta-joins"))
              (:file "create-beta-net"    :depends-on ("create-alpha-net"))
 	     (:file "traversal"          :depends-on ("create-beta-net"))
-	     (:file "copy"               :depends-on ("traversal"))
+	     (:file "rete-equal"         :depends-on ("traversal"))
+	     (:file "copy"               :depends-on ("rete-equal"))
 	     ))
    (:module :environment
             :depends-on ("packages" :utils :core :rete)

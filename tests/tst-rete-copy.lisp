@@ -52,7 +52,7 @@
   (with-slots (rete) tests
     (let* ((new-env (make-instance 'env-mock))
 	   (new-rete (copy-rete rete new-env)))
-      (assert-true (erete::rete-copy-equal-p rete new-rete))
+      (assert-true (erete::rete-copy-p rete new-rete))
       (assert-false (intersection (erete::rete-nodes rete)
 				  (erete::rete-nodes new-rete))))))
 

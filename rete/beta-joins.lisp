@@ -76,9 +76,6 @@
 (defmethod initialize-instance :after ((node beta-join-node) &key rete)
   (add-child node (make-instance 'beta-memory-node :parent node :rete rete)))
 
-(defmethod weak-node-equal-p ((node1 beta-join-node) (node2 beta-join-node))
-  (set-equal-p (tests node1) (tests node2) :test #'test-equal-p))
-
 (defmethod print-object ((node beta-join-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| tests: ~A" (tests node))))
