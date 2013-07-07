@@ -1,8 +1,11 @@
-(in-package :exil-user)
+(in-package :integration-tests)
+(declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(format t "~%~%Running examples with clips-compatible syntax:~%")
+(defclass clisp-integration-tests (test-case)
+  ((env :reader env :initform exil::*current-environment*)))
 
-(complete-reset)
+(defmethod set-up ((tests clisp-integration-tests))
+  (complete-reset)
 
 (deftemplate goal
   (slot action)
@@ -41,10 +44,15 @@
   (modify ?robot (location ?z))
   (modify ?object (location ?z)))
 
-(unwatch all)
-(watch facts)
-;(watch activations)
+  (unwatch all))
 
-(reset)
+(def-test-method clisp-integration-test ((tests clisp-integration-tests) :run nil)
+  (reset)
+  (run)
+  (with-slots (env) tests
+    (let ((in-template (eenv::find-template env :in)))
+      (assert-true (eenv::find-fact env (eenv::make-template-fact
+					 in-template '(:object box :location A)))))))
 
-(run)
+(add-test-suite 'clisp-integration-tests)
+;(textui-test-run (get-suite clisp-integration-tests))

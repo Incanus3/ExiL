@@ -85,12 +85,18 @@
              (:file "tst-environment"    :depends-on (:rete))
 	     (:file "tst-undo"           :depends-on ("tst-environment"))
 	     (:file "tst-undo2"          :depends-on ("tst-undo"))
+	     (:module
+	      :integration :depends-on ("tst-base")
+	      :components
+	      ((:file "simple")
+	       (:file "template")
+	       (:file "clisp")))
              (:file "run-tests"          :depends-on ("tst-undo2"))))
-   (:module :examples                    :depends-on (:front-end)
-            :components
-            ((:file "examples-template")
-             (:file "examples-simple")
-             (:file "examples-clips")))
+   ;; (:module :examples                    :depends-on (:front-end)
+   ;;          :components
+   ;;          ((:file "examples-template")
+   ;;           (:file "examples-simple")
+   ;;           (:file "examples-clips")))
    #+lispworks(:file "gui"     :depends-on (:front-end))
 ;   (:file "pokusy"            :depends-on ("export"))
    )

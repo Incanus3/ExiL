@@ -11,7 +11,7 @@
   (goal push box B A))
 
 (defrule move
-  (goal ?action ?object ?from ?to)
+  (goal push ?object ?from ?to)
   (in ?object ?from)
   (- in robot ?from)
   (in robot ?z)
@@ -20,7 +20,7 @@
   (assert (in robot ?from)))
 
 (defrule push
-  (goal ?action ?object ?from ?to)
+  (goal push ?object ?from ?to)
   (in ?object ?from)
   (in robot ?from)
   =>
@@ -30,7 +30,7 @@
   (assert (in ?object ?to)))
 
 (defrule stop
-  (goal ?action ?object ?from ?to)
+  (goal push ?object ?from ?to)
   (in ?object ?to)
   =>
   (halt))

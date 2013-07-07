@@ -1,11 +1,11 @@
-(in-package :exil-user)
+(in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(setf erete::*debug-rete* nil)
+(defclass template-integration-tests (test-case)
+  ((env :reader env :initform exil::*current-environment*)))
 
-(format t "~%~%Running examples with template facts:~%")
-
-(complete-reset)
+(defmethod set-up ((tests template-integration-tests))
+  (complete-reset)
 
 (deftemplate goal action object from to)
 (deftemplate in object location)
@@ -37,16 +37,15 @@
   =>
   (halt))
 
-(unwatch all)
-(watch facts)
-;(watch activations)
+  (unwatch all))
 
-(reset)
+(def-test-method template-integration-test ((tests template-integration-tests) :run nil)
+  (reset)
+  (run)
+  (with-slots (env) tests
+    (let ((in-template (eenv::find-template env :in)))
+      (assert-true (eenv::find-fact env (eenv::make-template-fact
+					 in-template '(:object box :location A)))))))
 
-#|
-(step)
-|#
-
-;#|
-(run)
-;|#
+(add-test-suite 'template-integration-tests)
+;(textui-test-run (get-suite template-integration-tests))

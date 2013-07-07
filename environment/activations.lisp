@@ -59,6 +59,7 @@
 
 ;; resolve variable bindings, substitue variables in RHS and evaluate the
 ;; RHS expressions
+;; TODO: should check (watched-p :activations) before printing output
 ; public
 (defmethod activate-rule ((activation match))
   (let* ((rule (match-rule activation))
