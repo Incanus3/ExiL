@@ -35,10 +35,6 @@
 (defgeneric delete-production (node production)
   (:documentation "deletes production from productions list"))
 
-(defmethod print-object ((node beta-memory-node) stream)
-  (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| productions: ~S" (productions node))))
-
 (defmethod environment ((node beta-memory-node))
   (environment (rete node)))
 

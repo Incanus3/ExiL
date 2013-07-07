@@ -46,9 +46,9 @@
   (pushnew child (children node))
   node)
 
+;; DEBUG:
 (defvar *debug-rete* nil)
 
-;; DEBUG:
 (defmethod activate :before (node object)
   (when *debug-rete*
     (format t "~%~a~%  activated by ~a" node object)))

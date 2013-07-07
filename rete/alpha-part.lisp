@@ -84,10 +84,6 @@
   ;; stored for debug purposes
   ((tmpl-name :accessor tmpl-name :initarg :tmpl-name)))
 
-(defmethod print-object ((node alpha-subtop-node) stream)
-  (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| tmpl-name: ~A" (tmpl-name node))))
-
 (defmethod activate ((node alpha-subtop-node) (wme fact))
   (activate-children node wme))
 
@@ -107,10 +103,6 @@
 (defgeneric activate-memory (node wme))
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation"))
-
-(defmethod print-object ((node alpha-test-node) stream)
-  (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| field: ~A, value: ~A" (tested-field node) (value node))))
 
 (defmethod activate-memory ((node alpha-test-node) (wme fact))
   (with-slots ((mem alpha-memory)) node
@@ -148,10 +140,6 @@
 (defclass alpha-memory-node (alpha-node memory-node)
   ;; stored for debug purposes
   ((pattern :accessor pattern :initarg :pattern)))
-
-(defmethod print-object ((node alpha-memory-node) stream)
-  (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| pattern: ~A" (pattern node))))
 
 (defmethod activate ((node alpha-memory-node) (wme fact))
   (add-item node wme)

@@ -26,20 +26,6 @@
                  :previous-condition previous-condition
                  :previous-field previous-field))
 
-(defmethod print-object ((test test) stream)
-  (with-slots (current-field-to-test previous-condition-number
-                                     previous-field-to-test) test
-    (if *print-escape*
-        (print-unreadable-object (test stream :type t :identity nil)
-          (format stream
-                  "current-field: ~A, ~A conditions back, previous-field: ~A"
-                  current-field-to-test previous-condition-number
-                  previous-field-to-test))
-        (format stream
-                "(curr-field: ~A, ~A conds back, prev-field: ~A)"
-                current-field-to-test previous-condition-number
-                previous-field-to-test))))
-
 (defmethod test-equal-p ((test1 test) (test2 test))
   (with-accessors ((cf1 current-field) (pc1 previous-condition)
                    (pf1 previous-field)) test1
@@ -75,10 +61,6 @@
 
 (defmethod initialize-instance :after ((node beta-join-node) &key rete)
   (add-child node (make-instance 'beta-memory-node :parent node :rete rete)))
-
-(defmethod print-object ((node beta-join-node) stream)
-  (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| tests: ~A" (tests node))))
 
 (defmethod beta-memory ((node beta-join-node))
   (first (children node)))
