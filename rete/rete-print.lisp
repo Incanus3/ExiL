@@ -33,4 +33,3 @@
 (defmethod print-object ((node beta-join-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| tests: ~A" (tests node))))
-

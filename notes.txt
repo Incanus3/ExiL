@@ -6,3 +6,9 @@ domluvit s dostalem, jestli je treba zachovavat kompatibilitu s clipsem co do
 indexovani faktu cisly (front-end:facts, retract), co do filtrovani faktu
 ve znalostni bazi by bylo lepsi napr. filtrovani faktu podle templatu,
 prip. napr. vypsat fakta konsistentni s patternem
+
+recursive tree-node printing:
+(defun print-node (node depth &optional (stream t))
+  (dotimes (i (1- depth))
+    (format stream " "))
+  (format stream " ~[*-- ~:; `-- ~]~A~%" depth node))
