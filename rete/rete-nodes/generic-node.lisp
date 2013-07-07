@@ -46,18 +46,6 @@
   (pushnew child (children node))
   node)
 
-;; DEBUG:
-(defvar *debug-rete* nil)
-
-(defmethod activate :before (node object)
-  (when *debug-rete*
-    (format t "~%~a~%  activated by ~a" node object)))
-
-(defmethod inactivate :before (node object)
-  (when *debug-rete*
-    (format t "~%~a~%  inactivated by ~a" node object)))
-;; -----
-
 (defmethod activate-children ((node node) object)
   (dolist (child (children node))
     (activate child object)))
@@ -89,3 +77,14 @@
 
 (defmethod delete-item ((node memory-node) item &optional (test #'exil-equal-p))
   (setf (items node) (delete item (items node) :test test)))
+
+;; DEBUG:
+(defvar *debug-rete* nil)
+
+(defmethod activate :before (node object)
+  (when *debug-rete*
+    (format t "~%~a~%  activated by ~a" node object)))
+
+(defmethod inactivate :before (node object)
+  (when *debug-rete*
+    (format t "~%~a~%  inactivated by ~a" node object)))

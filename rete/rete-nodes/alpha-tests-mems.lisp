@@ -11,9 +11,12 @@
    (alpha-memory :accessor memory :initarg :memory
                  :initform nil)))
 
-(defgeneric activate-memory (node wme))
 (defgeneric test (node wme)
   (:documentation "provides testing part of alpha-test-node activation"))
+(defgeneric activate-memory (node wme))
+
+(defmethod test ((node alpha-test-node) (wme fact))
+  (constant-test (value node) (object-slot wme (tested-field node))))
 
 (defmethod activate-memory ((node alpha-test-node) (wme fact))
   (with-slots ((mem alpha-memory)) node
@@ -40,10 +43,6 @@
 (defmethod inactivate :after ((node alpha-test-node) (wme fact))
   (when (memory node)
     (inactivate (memory node) wme)))
-
-(defmethod test ((node alpha-test-node) (wme fact))
-  (constant-test (value node) (object-slot wme (tested-field node))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; children are beta-join-nodes
