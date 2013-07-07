@@ -42,7 +42,8 @@
   (:nicknames :eenv)
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
-                :ext-delete :ext-pushnew :pushnew-end :numbered-map)
+                :ext-delete :ext-pushnew :pushnew-end :numbered-map
+		:copy-hash-table)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :find-template
@@ -119,8 +120,7 @@
 
 (defpackage :undo-tests
   (:documentation "tests for undo/redo functionality")
-  (:use :common-lisp :exil-core :exil-env :xlunit :tests-base)
-  )
+  (:use :common-lisp :exil-core :exil-env :xlunit :tests-base))
 
 (defpackage :integration-tests
   (:use :common-lisp :exil :xlunit :tests-base)

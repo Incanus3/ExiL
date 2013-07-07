@@ -93,6 +93,9 @@
   (setf (current-strategy-name env) (to-keyword name)))
 
 ;; activations
+(defun copy-activations (activations)
+  (mapcar #'copy-match activations))
+
 ; returns true if match was added = wasn't already there
 (defun add-match% (env match)
   (nth-value 1 (ext-pushnew match (activations env)
@@ -171,18 +174,20 @@
   (make-instance 'environment))
 
 ; public, used for testing
-;; (defmethod copy-environment ((env environment))
-;;   (let ((new-env (make-environment)))
-;;     (with-slots (watchers templates facts fact-groups strategies
-;; 			  current-strategy-name rules rete activations
-;; 			  undo-stack redo-stack) new-env
-;;       (with-accessors 
-;;       (setf watchers (copy-watchers (watchers env))
-;; 	    template (copy-templates (templates env))
-;; 	    facts (copy-list (facts env))
-;; 	    fact-groups (copy-fact-groups (fact-groups env))
-;; 	    strategies (copy-strategies (strategies env))
-;; 	    current-strategy-name (current-strategy-name env)
-;; 	    rules (copy-rules (rules env))
-;; 	    rete (copy-rete (rete env))
-;; 	    activations (copy-act
+(defmethod copy-environment ((env environment))
+  (let ((new-env (make-environment)))
+    (with-slots (watchers templates facts fact-groups strategies
+			  current-strategy-name rules rete activations
+			  undo-stack redo-stack) new-env
+      (setf watchers (copy-watchers (watchers env))
+	    templates (copy-templates (templates env))
+	    facts (copy-list (facts env))
+	    fact-groups (copy-fact-groups (fact-groups env))
+	    strategies (copy-strategies (strategies env))
+	    current-strategy-name (current-strategy-name env)
+	    rules (copy-rules (rules env))
+	    rete (copy-rete (rete env) new-env)
+	    activations (copy-activations (activations env))
+	    undo-stack (copy-stack env)
+	    redo-stack (copy-stack env)))
+    new-env))

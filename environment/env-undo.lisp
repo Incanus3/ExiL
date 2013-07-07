@@ -9,20 +9,20 @@
     `(let ((,undo-fun-sym ,undo-fun))
        (prog1
 	 ,@body
-	 (stack-for-undo ,env ,undo-fun-sym (lambda () ,@body) ,label)))))
+	 (stack-for-undo ,env ,undo-fun-sym (lambda (env) ,@body) ,label)))))
 
 ; public
 (defmethod undo ((env environment))
   (when (undo-stack env)
     (pop-undo (undo-fun redo-fun label) env
-      (funcall undo-fun)
+      (funcall undo-fun env)
       (stack-for-redo env redo-fun undo-fun label))))
 
 ; public
 (defmethod redo ((env environment))
   (when (redo-stack env)
     (pop-redo (redo-fun undo-fun label) env
-      (funcall redo-fun)
+      (funcall redo-fun env)
       (stack-for-undo env undo-fun redo-fun label))))
 
 (defun numbered-stack (stack)

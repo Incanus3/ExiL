@@ -20,7 +20,7 @@
 (defun set-one-watcher (env watcher val undo-label)
   (with-undo env undo-label
       (let ((original-value (watched-p env watcher)))
-	(lambda ()
+	(lambda (env)
 	  (set-one-watcher% env watcher original-value)))
     (set-one-watcher% env watcher val)))
 
@@ -34,7 +34,7 @@
 (defun set-all-watchers (env val undo-label)
   (with-undo env undo-label
       (let ((original-watchers (watchers env)))
-	(lambda () (setf (watchers env) original-watchers)))
+	(lambda (env) (setf (watchers env) original-watchers)))
     (set-all-watchers% env val)))
 
 ; public

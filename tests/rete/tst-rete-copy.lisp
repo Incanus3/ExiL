@@ -7,33 +7,33 @@
 
 (defmethod set-up-move ((tests simple-rete-copy-tests))
   (with-slots (rete) tests
-    (let ((move (make-rule
+    (let ((rule (make-rule
 		 :move
 		 (list (make-simple-pattern '(goal ?action ?object ?from ?to))
 		       (make-simple-pattern '(in ?object ?from))
 		       (make-simple-pattern '(in robot ?from) :negated t)
 		       (make-simple-pattern '(in robot ?z)))
 		 ())))
-      (new-production rete move))))
+      (new-production rete rule))))
 
 (defmethod set-up-push ((tests simple-rete-copy-tests))
   (with-slots (rete) tests
-    (let ((move (make-rule
+    (let ((rule (make-rule
 		 :push
 		 (list (make-simple-pattern '(goal ?action ?object ?from ?to))
 		       (make-simple-pattern '(in ?object ?from))
 		       (make-simple-pattern '(in robot ?from)))
 		 ())))
-      (new-production rete move))))
+      (new-production rete rule))))
 
 (defmethod set-up-stop ((tests simple-rete-copy-tests))
   (with-slots (rete) tests
-    (let ((move (make-rule
-		 :push
+    (let ((rule (make-rule
+		 :stop
 		 (list (make-simple-pattern '(goal ?action ?object ?from ?to))
 		       (make-simple-pattern '(in ?object ?to)))
 		 ())))
-      (new-production rete move))))
+      (new-production rete rule))))
 
 (defmethod add-facts ((tests simple-rete-copy-tests))
   (with-slots (rete) tests
@@ -125,4 +125,3 @@
 
 (add-test-suite 'template-rete-copy-tests)
 ;(textui-test-run (get-suite template-rete-copy-tests))
-

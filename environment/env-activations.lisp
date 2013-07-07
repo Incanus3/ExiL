@@ -7,13 +7,13 @@
 			 &optional (undo-label "(add-strategy)"))
   (with-undo env undo-label
       (let ((original-function (find-strategy env name)))
-	(lambda () (add-strategy% env name original-function)))
+	(lambda (env) (add-strategy% env name original-function)))
     (add-strategy% env name function)))
 
 (defun set-strategy-name (env name undo-label)
   (with-undo env undo-label
       (let ((original-strategy (current-strategy-name env)))
-	(lambda () (set-strategy-name% env original-strategy)))
+	(lambda (env) (set-strategy-name% env original-strategy)))
     (set-strategy-name% env name)))
 
 ; public
@@ -99,7 +99,7 @@
   (let ((original-volatile-slots
 	 (list (facts env) (activations env) (undo-stack env) (redo-stack env)
 	       (rete env))))
-    (lambda () (apply #'set-volatile-slots env original-volatile-slots))))
+    (lambda (env) (apply #'set-volatile-slots env original-volatile-slots))))
 
 (defun clear-env% (env)
   (set-volatile-slots env () () () () (rete-initform env))

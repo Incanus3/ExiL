@@ -15,7 +15,7 @@
 (defun add-template% (env template undo-label)
   (with-undo env undo-label
       (let ((original-template (find-template env template)))
-	(lambda () (set-template env (name template) original-template)))
+	(lambda (env) (set-template env (name template) original-template)))
     (set-template env (name template) template)))
 
 (defun template-used-p (env template)
@@ -63,7 +63,7 @@
                            (facts list) &optional (undo-label "(deffacts)"))
   (with-undo env undo-label
       (let ((original-fg (find-fact-group env group-name)))
-	(lambda () (add-fact-group% env group-name original-fg)))
+	(lambda (env) (add-fact-group% env group-name original-fg)))
     (add-fact-group% env group-name facts)))
 
 ; public
@@ -71,7 +71,7 @@
 			   &optional (undo-label "(remfacts)"))
   (with-undo env undo-label
       (let ((original-fg (find-fact-group env group-name)))
-	(lambda () (add-fact-group% env group-name original-fg)))
+	(lambda (env) (add-fact-group% env group-name original-fg)))
     (rem-fact-group% env group-name)))
 
 (defun activate-fact-group (env fact-group)

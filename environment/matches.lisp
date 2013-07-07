@@ -42,3 +42,6 @@
       (format stream "(ACTIVATION ~A ~A)"
               (rule-name match)
               (token->list (match-token match)))))
+
+(defmethod copy-match ((match match))
+  (make-match (match-rule match) (match-token match)))
