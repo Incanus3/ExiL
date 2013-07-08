@@ -118,10 +118,6 @@
   (:documentation "tests for the environment package")
   (:use :common-lisp :exil-core :exil-env :xlunit :tests-base))
 
-(defpackage :undo-tests
-  (:documentation "tests for undo/redo functionality")
-  (:use :common-lisp :exil-core :exil-env :xlunit :tests-base))
-
 (defpackage :integration-tests
   (:use :common-lisp :exil :xlunit :tests-base)
   (:shadowing-import-from :exil :assert :step :run))

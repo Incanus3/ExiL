@@ -16,24 +16,24 @@
   (goal :action push :object box :from B :to A))
 
 (defrule move
-  (goal :action push :object ?x :from ?y)
-  (in :object ?x :location ?y)
-  (- in :object robot :location ?y)
+  (goal :action push :object ?obj :from ?from)
+  (in :object ?obj :location ?from)
+  (- in :object robot :location ?from)
   ?robot <- (in :object robot :location ?)
   =>
-  (modify ?robot :location ?y))
+  (modify ?robot :location ?from))
 
 (defrule push
-  (goal :action push :object ?x :from ?y :to ?z)
-  ?object <- (in :object ?x :location ?y)
-  ?robot <- (in :object robot :location ?y)
+  (goal :action push :object ?obj :from ?from :to ?to)
+  ?object <- (in :object ?obj :location ?from)
+  ?robot <- (in :object robot :location ?from)
   =>
-  (modify ?robot :location ?z)
-  (modify ?object :location ?z))
+  (modify ?robot :location ?to)
+  (modify ?object :location ?to))
 
 (defrule stop
-  (goal :action push :object ?x :to ?y)
-  (in :object ?x :location ?y)
+  (goal :action push :object ?obj :to ?to)
+  (in :object ?obj :location ?to)
   =>
   (halt))
 

@@ -1,32 +1,32 @@
-(in-package :undo-tests)
+(in-package :env-tests)
 
 (declaim (optimize (debug 3) (compilation-speed 0) (space 0) (speed 0)))
 
-(defclass undo-tests (test-case)
+(defclass env-undo-tests (test-case)
   ((env :accessor env)))
 
-(defmethod set-up ((tests undo-tests))
+(defmethod set-up ((tests env-undo-tests))
   (with-slots (env) tests
     (setf env (exil-env:make-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
 
-(def-test-method undo-watch-one ((tests undo-tests) :run nil)
+(def-test-method undo-watch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (unset-watcher env :facts) ; facts unwatched
     (set-watcher env :facts)   ; facts watched
     (undo env)                 ; facts should be unwatched again
     (assert-false (watched-p env :facts))))
 
-(def-test-method undo-unwatch-one ((tests undo-tests) :run nil)
+(def-test-method undo-unwatch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
     (unset-watcher env :facts) ; facts unwatched
     (undo env)                 ; facts should be watched again
     (assert-true (watched-p env :facts))))
 
-(def-test-method undo-watch-all ((tests undo-tests) :run nil)
+(def-test-method undo-watch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (unset-watcher env :facts) ; facts unwatched
     (unset-watcher env :rules) ; rules unwatched
@@ -35,7 +35,7 @@
     (assert-false (watched-p env :facts))
     (assert-false (watched-p env :rules))))
 
-(def-test-method undo-unwatch-all ((tests undo-tests) :run nil)
+(def-test-method undo-unwatch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
     (set-watcher env :rules)   ; rules watched
@@ -44,7 +44,7 @@
     (assert-true (watched-p env :facts))
     (assert-true (watched-p env :rules))))
 
-(def-test-method redo-watch-one ((tests undo-tests) :run nil)
+(def-test-method redo-watch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (unset-watcher env :facts) ; facts unwatched
     (set-watcher env :facts)   ; facts watched
@@ -52,7 +52,7 @@
     (redo env)                 ; facts should be watched again
     (assert-true (watched-p env :facts))))
 
-(def-test-method redo-unwatch-one ((tests undo-tests) :run nil)
+(def-test-method redo-unwatch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
     (unset-watcher env :facts) ; facts unwatched
@@ -60,7 +60,7 @@
     (redo env)                 ; facts should be unwatched again
     (assert-false (watched-p env :facts))))
 
-(def-test-method redo-watch-all ((tests undo-tests) :run nil)
+(def-test-method redo-watch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (unset-watcher env :facts) ; facts unwatched
     (unset-watcher env :rules) ; rules unwatched
@@ -70,7 +70,7 @@
     (assert-true (watched-p env :facts))
     (assert-true (watched-p env :rules))))
 
-(def-test-method redo-unwatch-all ((tests undo-tests) :run nil)
+(def-test-method redo-unwatch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
     (set-watcher env :rules)   ; rules watched
@@ -83,7 +83,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TEMPLATES
 
-(def-test-method undo-add-template ((tests undo-tests) :run nil)
+(def-test-method undo-add-template ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((tmpl1 (make-template :test '(a (b :default 5))))
 	  (tmpl2 (make-template :test '())))
@@ -102,7 +102,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; STRATEGIES
 
-(def-test-method undo-set-strategy ((tests undo-tests) :run nil)
+(def-test-method undo-set-strategy ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-strategy env :depth-strategy)
     (set-strategy env :breadth-strategy)
@@ -111,7 +111,7 @@
     (redo env)
     (assert-equal (current-strategy-name env) :breadth-strategy)))
 
-(def-test-method undo-add-strategy ((tests undo-tests) :run nil)
+(def-test-method undo-add-strategy ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((str1 #'+) (str2 #'-))
       (add-strategy env :my-strategy str1)
@@ -129,7 +129,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS
 
-(def-test-method undo-add-fact-group ((tests undo-tests) :run nil)
+(def-test-method undo-add-fact-group ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((fg1 (list :a)) (fg2 (list :b)))
       (add-fact-group env :my-fg fg1)
@@ -144,7 +144,7 @@
       (redo env)
       (assert-equal (find-fact-group env :my-fg) fg2))))
 
-(def-test-method undo-rem-fact-group ((tests undo-tests) :run nil)
+(def-test-method undo-rem-fact-group ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((fg (list :a)))
       (add-fact-group env :my-fg fg)
@@ -158,7 +158,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
-(def-test-method undo-clear-env ((tests undo-tests) :run nil)
+(def-test-method undo-clear-env ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (add-fact env (make-simple-fact '(:fact)))
     (add-fact env (make-simple-fact '(:fact2)))
@@ -170,7 +170,7 @@
       (redo env)
       (assert-false (facts env)))))
 
-(def-test-method undo-reset-env ((tests undo-tests) :run nil)
+(def-test-method undo-reset-env ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((fact (make-simple-fact '(:fact))))
     (add-fact-group env :facts (list fact))
@@ -181,5 +181,5 @@
     (redo env)
     (assert-true (find-fact env fact)))))
 
-(add-test-suite 'undo-tests)
-;(textui-test-run (get-suite undo-tests))
+(add-test-suite 'env-undo-tests)
+;(textui-test-run (get-suite env-undo-tests))
