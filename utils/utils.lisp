@@ -22,6 +22,9 @@
   (intern (symbol-name symbol) :keyword))
 ;; (to-keyword 'a) => :a
 
+(defun gensymedp (symbol)
+  (not (symbol-package symbol)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ALISTS:
 
@@ -174,16 +177,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HASH-TABLES
 
-(defun map-hash-table (fun hash)
-  "returns new hash with fun applied to each value"
-  (let ((new-hash (make-hash-table :test (hash-table-test hash))))
-    (maphash (lambda (key val) (setf (gethash key new-hash) (funcall fun val)))
-	     hash)
-    new-hash))
-
-(defun copy-hash-table (hash)
-  (map-hash-table #'identity hash))
-
 (defun hash-values (hash)
   "returns list of all values in the hash"
   (iter (for (key val) :in-hashtable hash)
@@ -200,6 +193,22 @@
 	     hash)
     alist))
 
+(defun map-hash-table (fun hash)
+  "returns new hash with fun applied to each value"
+  (let ((new-hash (make-hash-table :test (hash-table-test hash))))
+    (maphash (lambda (key val) (setf (gethash key new-hash) (funcall fun val)))
+	     hash)
+    new-hash))
+
+(defun copy-hash-table (hash)
+  (map-hash-table #'identity hash))
+
+(defun hash-equal-p (hash1 hash2 &key (test #'equal))
+  (and (= (hash-table-count hash1) (hash-table-count hash2))
+       (equalp (hash-table-test hash1) (hash-table-test hash2))
+       (iter (for (key val) :in-hashtable hash1)
+	     (always (funcall test val (gethash key hash2))))))
+
 (defun partition-hash (list fun &key (test 'equal))
   (let ((partition (make-hash-table :test test)))
     (dolist (item (reverse list))
@@ -212,8 +221,8 @@
 (defun partition (list fun &key (test 'equal))
   (hash->alist (partition-hash list fun :test test)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SETS
+
 (defun set-equal-p (set1 set2 &key (test #'eql))
   (null (set-exclusive-or set1 set2 :test test)))
-
-(defun gensymedp (symbol)
-  (not (symbol-package symbol)))

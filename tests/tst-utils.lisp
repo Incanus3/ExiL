@@ -111,6 +111,13 @@
     (setf list (delete 1 (delete 2 list)))
     (assert-false list))) ; and nothing more
 
+(def-test-method test-hash-equal-p ((tests utils-tests) :run t)
+  (let ((hash1 (make-hash-table)) hash2)
+    (setf (gethash :a hash1) 1)
+    (setf (gethash :b hash1) 2)
+    (setf hash2 (copy-hash-table hash1))
+    (assert-true (hash-equal-p hash1 hash2))))
+
 (def-test-method test-partition ((tests utils-tests) :run nil)
   (let* ((list '(1 2 3 4 5 6))
 	 (partition (partition list #'oddp)))

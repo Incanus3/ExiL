@@ -18,7 +18,10 @@
 (defun copy-templates (templates)
   (copy-hash-table templates))
 
-(defun templates-initform ()
+(defun tmpls-equal-p (templates1 templates2)
+  (hash-equal-p templates1 templates2))
+
+(defun tmpls-initform ()
   (make-hash-table :test #'equalp))
 
 ; public
@@ -35,6 +38,9 @@
 
 ;; facts
 ; public
+(defmethod facts-equal-p (facts1 facts2)
+  (set-equal-p facts1 facts2 :test #'exil-equal-p))
+
 (defmethod find-fact ((env environment) (fact fact))
   (find fact (facts env) :test #'exil-equal-p))
 
@@ -49,8 +55,15 @@
      ,@body))
 
 ;; fact groups
-(defun copy-fact-groups (fact-groups)
+(defun copy-fgs (fact-groups)
   (copy-alist fact-groups))
+
+(defun fg-equal-p (fg1 fg2)
+  (and (equalp (car fg1) (car fg2))
+       (set-equal-p (cdr fg1) (cdr fg2) :test #'exil-equal-p)))
+
+(defun fgs-equal-p (fgs1 fgs2)
+  (set-equal-p fgs1 fgs2 :test #'fg-equal-p))
 
 ; public
 (defmethod find-fact-group ((env environment) (group-name symbol))
@@ -70,15 +83,18 @@
   (mapcan #'fg-facts (fact-groups env)))
 
 ;; strategies
-(defun copy-strategies (strategies)
+(defun copy-strats (strategies)
   (copy-alist strategies))
 
-(defun strategies-initform ()
-  (copy-strategies `((:default . ,#'newer-than-p)
-		     (:depth-strategy . ,#'newer-than-p)
-		     (:breadth-strategy . ,#'older-than-p)
-		     (:simplicity-strategy . ,#'simpler-than-p)
-		     (:complexity-strategy . ,#'more-complex-than-p))))
+(defun strats-initform ()
+  (copy-strats `((:default . ,#'newer-than-p)
+		 (:depth-strategy . ,#'newer-than-p)
+		 (:breadth-strategy . ,#'older-than-p)
+		 (:simplicity-strategy . ,#'simpler-than-p)
+		 (:complexity-strategy . ,#'more-complex-than-p))))
+
+(defun strats-equal-p (strats1 strats2)
+  (set-equal-p strats1 strats2 :test #'equal))
 
 (defun find-strategy (env name)
   (assoc-value (to-keyword name) (strategies env)))
@@ -93,8 +109,11 @@
   (setf (current-strategy-name env) (to-keyword name)))
 
 ;; activations
-(defun copy-activations (activations)
+(defun copy-acts (activations)
   (mapcar #'copy-match activations))
+
+(defun acts-equal-p (acts1 acts2)
+  (set-equal-p acts1 acts2 :test #'match-equal-p))
 
 ; returns true if match was added = wasn't already there
 (defun add-match% (env match)
@@ -113,6 +132,9 @@
 
 (defun rules-initform ()
   (make-hash-table :test #'equalp))
+
+(defmethod rules-equal-p (rules1 rules2)
+  (hash-equal-p rules1 rules2 :test #'rule-equal-p))
 
 ; public
 (defmethod find-rule ((env environment) (name symbol))
@@ -163,11 +185,11 @@
 
 (defmethod initialize-instance :after ((env environment) &key)
   (with-slots (watchers templates strategies rules rete) env
-    (setf watchers (watchers-initform)
-	  templates (templates-initform)
-          strategies (strategies-initform)
-	  rules (rules-initform)
-          rete (rete-initform env))))
+    (setf watchers   (watchers-initform)
+	  templates  (tmpls-initform)
+          strategies (strats-initform)
+	  rules      (rules-initform)
+          rete       (rete-initform env))))
 
 ; public
 (defun make-environment ()
@@ -179,15 +201,37 @@
     (with-slots (watchers templates facts fact-groups strategies
 			  current-strategy-name rules rete activations
 			  undo-stack redo-stack) new-env
-      (setf watchers (copy-watchers (watchers env))
-	    templates (copy-templates (templates env))
-	    facts (copy-list (facts env))
-	    fact-groups (copy-fact-groups (fact-groups env))
-	    strategies (copy-strategies (strategies env))
-	    current-strategy-name (current-strategy-name env)
-	    rules (copy-rules (rules env))
-	    rete (copy-rete (rete env) new-env)
-	    activations (copy-activations (activations env))
-	    undo-stack (copy-stack env)
-	    redo-stack (copy-stack env)))
+      (setf watchers    (copy-watchers  (watchers env))
+	    templates   (copy-templates (templates env))
+	    facts       (copy-list      (facts env))
+	    fact-groups (copy-fgs       (fact-groups env))
+	    strategies  (copy-strats    (strategies env))
+	    current-strategy-name       (current-strategy-name env)
+	    rules       (copy-rules     (rules env))
+	    rete        (copy-rete      (rete env) new-env)
+	    activations (copy-acts      (activations env))
+	    undo-stack  (copy-stack     (undo-stack env))
+	    redo-stack  (copy-stack     (redo-stack env))))
     new-env))
+
+; public, used for testing
+;; this isn't a general purpose environment equality predicate
+;; it's too strict, strategies, undo and redo items are fuctions
+;; and as such can only be tested for object equality
+;; thus two environments may behave equally, but this predicate
+;; will still return nil, if these functions aren't same instances
+(defmethod env-copy-p ((env1 environment) (env2 environment))
+  (with-slots (watchers templates facts fact-groups strategies
+			current-strategy-name rules rete activations
+			undo-stack redo-stack) env1
+    (and (equalp         watchers    (watchers env2))
+	 (tmpls-equal-p  templates   (templates env2))
+	 (facts-equal-p  facts       (facts env2))
+	 (fgs-equal-p    fact-groups (fact-groups env2))
+	 (strats-equal-p strategies  (strategies env2))
+	 (equalp current-strategy-name (current-strategy-name env2))
+	 (rules-equal-p  rules       (rules env2))
+	 (rete-copy-p    rete        (rete env2))
+	 (acts-equal-p   activations (activations env2))
+	 (equalp         undo-stack  (undo-stack env2))
+	 (equalp         redo-stack  (redo-stack env2)))))

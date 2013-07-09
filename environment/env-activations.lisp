@@ -129,7 +129,7 @@
   (setf (facts env) ()
         (activations env) ()
         (fact-groups env) ()
-        (templates env) (templates-initform)
+        (templates env) (tmpls-initform)
         (rules env) (rules-initform)
         (rete env) (rete-initform env))
   #+lispworks(exil-gui:update-lists)

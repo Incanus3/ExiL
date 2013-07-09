@@ -10,7 +10,7 @@
            :push-update :numbered-map :alist-equal-p :plistp :alistp
            :doplist :weak-equal-p :gensymedp
 	   :map-hash-table :copy-hash-table :hash-values :hash-keys
-	   :set-equal-p :partition-hash :partition))
+	   :hash-equal-p :set-equal-p :partition-hash :partition))
 
 (defpackage :exil-core
   (:documentation "core functionality of the expert system library - facts,
@@ -34,7 +34,7 @@
   (:import-from :exil-utils :push-update :ext-pushnew :diff-remove :map-hash-table
 		:hash-values :hash-keys :to-list :set-equal-p :gensymedp :assoc-value)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
-           :token->list :token-equal-p :copy-rete))
+           :token->list :token-equal-p :copy-rete :rete-copy-p))
 
 (defpackage :exil-env
   (:documentation "the exil environment, keeps track of the defined templates
@@ -43,7 +43,7 @@
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :numbered-map
-		:copy-hash-table)
+		:copy-hash-table :hash-equal-p :set-equal-p)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :find-template
