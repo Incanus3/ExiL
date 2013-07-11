@@ -3,19 +3,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
 
-(defun watched-p (env watcher)
-  (assoc-value watcher (watchers env)))
-
-(defun is-watcher (env watcher)
-  (assoc watcher (watchers env)))
-
 (defun assert-watcher (env watcher)
   (cl:assert (or (equalp watcher :all)
                  (is-watcher env watcher))
              () "I don't know how to watch ~A" watcher))
-
-(defun set-one-watcher% (env watcher val)
-  (setf (assoc-value watcher (watchers env)) val))
 
 (defun set-one-watcher (env watcher val undo-label)
   (with-undo env undo-label
@@ -23,10 +14,6 @@
 	(lambda (env)
 	  (set-one-watcher% env watcher original-value)))
     (set-one-watcher% env watcher val)))
-
-(defun set-all-watchers% (env val)
-  (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) val))
-			       (watchers env))))
 
 ;; it would seem that original-watchers should store a copy of the watchers
 ;; alist, but this is not necessary, as set-all-watchers% creates new alist

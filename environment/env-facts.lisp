@@ -24,7 +24,7 @@
 
 ; public
 (defmethod add-template ((env environment) (template template)
-			 &optional (undo-label "(deftemplate)"))
+			 &optional (undo-label "(add-template)"))
   (when (template-used-p env template)
     (error "can't redefine template ~A, because there are existing facts using it"
 	   (name template)))
@@ -60,7 +60,7 @@
 
 ; public
 (defmethod add-fact-group ((env environment) (group-name symbol)
-                           (facts list) &optional (undo-label "(deffacts)"))
+                           (facts list) &optional (undo-label "(add-fact-group)"))
   (with-undo env undo-label
       (let ((original-fg (find-fact-group env group-name)))
 	(lambda (env) (add-fact-group% env group-name original-fg)))
@@ -68,7 +68,7 @@
 
 ; public
 (defmethod rem-fact-group ((env environment) (group-name symbol)
-			   &optional (undo-label "(remfacts)"))
+			   &optional (undo-label "(rem-fact-group)"))
   (with-undo env undo-label
       (let ((original-fg (find-fact-group env group-name)))
 	(lambda (env) (add-fact-group% env group-name original-fg)))

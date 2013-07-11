@@ -10,12 +10,15 @@
 ; public
 (defmacro defstrategy (name function)
   "define new strategy"
-  `(add-strategy ',name ,function))
+  `(add-strategy *current-environment* ',name ,function))
 
 ; public
 (defmacro setstrategy (name)
   "set strategy to use"
-  `(set-strategy ',name))
+  `(set-strategy *current-environment* ',name))
+
+(defun current-strategy ()
+  (format nil "~A" (current-strategy-name *current-environment*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rules

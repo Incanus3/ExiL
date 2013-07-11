@@ -14,6 +14,19 @@
 (defun watchers-initform ()
   (copy-watchers '((:facts . nil) (:rules . nil) (:activations . nil))))
 
+(defun watched-p (env watcher)
+  (assoc-value watcher (watchers env)))
+
+(defun is-watcher (env watcher)
+  (assoc watcher (watchers env)))
+
+(defun set-one-watcher% (env watcher val)
+  (setf (assoc-value watcher (watchers env)) val))
+
+(defun set-all-watchers% (env val)
+  (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) val))
+			       (watchers env))))
+
 ;; templates
 (defun copy-templates (templates)
   (copy-hash-table templates))
@@ -194,48 +207,3 @@
 ; public
 (defun make-environment ()
   (make-instance 'environment))
-
-; public, used for testing
-(defgeneric copy-environment (env))
-
-(defmethod copy-environment ((env environment))
-  (let ((new-env (make-environment)))
-    (with-slots (watchers templates facts fact-groups strategies
-			  current-strategy-name rules rete activations
-			  undo-stack redo-stack) new-env
-      (setf watchers    (copy-watchers  (watchers env))
-	    templates   (copy-templates (templates env))
-	    facts       (copy-list      (facts env))
-	    fact-groups (copy-fgs       (fact-groups env))
-	    strategies  (copy-strats    (strategies env))
-	    current-strategy-name       (current-strategy-name env)
-	    rules       (copy-rules     (rules env))
-	    rete        (copy-rete      (rete env) new-env)
-	    activations (copy-acts      (activations env))
-	    undo-stack  (copy-stack     (undo-stack env))
-	    redo-stack  (copy-stack     (redo-stack env))))
-    new-env))
-
-; public, used for testing
-(defgeneric env-copy-p (env1 env2))
-
-;; this isn't a general purpose environment equality predicate
-;; it's too strict, strategies, undo and redo items are fuctions
-;; and as such can only be tested for object equality
-;; thus two environments may behave equally, but this predicate
-;; will still return nil, if these functions aren't same instances
-(defmethod env-copy-p ((env1 environment) (env2 environment))
-  (with-slots (watchers templates facts fact-groups strategies
-			current-strategy-name rules rete activations
-			undo-stack redo-stack) env1
-    (and (equalp         watchers    (watchers env2))
-	 (tmpls-equal-p  templates   (templates env2))
-	 (facts-equal-p  facts       (facts env2))
-	 (fgs-equal-p    fact-groups (fact-groups env2))
-	 (strats-equal-p strategies  (strategies env2))
-	 (equalp current-strategy-name (current-strategy-name env2))
-	 (rules-equal-p  rules       (rules env2))
-	 (rete-copy-p    rete        (rete env2))
-	 (acts-equal-p   activations (activations env2))
-	 (equalp         undo-stack  (undo-stack env2))
-	 (equalp         redo-stack  (redo-stack env2)))))

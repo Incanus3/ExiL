@@ -79,3 +79,5 @@
 
 (add-test-suite 'walk-graph-tests)
 (add-test-suite 'walk-rete-tests)
+;(textui-test-run (get-suite walk-graph-tests))
+;(textui-test-run (get-suite walk-rete-tests))

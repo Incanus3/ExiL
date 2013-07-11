@@ -39,8 +39,8 @@
    (:module :environment
             :components
             ((:file "matches") (:file "activations") (:file "strategies")
-             (:file "env-base") (:file "env-slots") (:file "env-undo")
-	     (:file "env-watchers") (:file "env-facts")
+             (:file "env-class") (:file "env-slots") (:file "env-copy")
+	     (:file "env-undo") (:file "env-watchers") (:file "env-facts")
              (:file "env-activations")))
    (:module :parser
             :components

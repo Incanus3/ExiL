@@ -4,10 +4,21 @@
 
 (defclass simple-env-copy-tests (simple-env-tests) ())
 
-(def-test-method test-copy-rete ((tests simple-env-copy-tests) :run nil)
+(def-test-method copy-has-no-common-slots
+    ((tests simple-env-copy-tests) :run nil)
+  (with-slots (env) tests
+    ;; all slots should be populated
+    (add-fact-group env :facts ())
+    (set-watcher env :facts)
+    (undo env)
+    (let ((env-copy (copy-env env)))
+      (assert-false (common-slots-p env env-copy)))))
+
+(def-test-method copy-can-continue-computation
+    ((tests simple-env-copy-tests) :run nil)
   (with-slots (env) tests
     (do-step env)
-    (let ((env-copy (eenv::copy-environment env)))
+    (let ((env-copy (copy-env env)))
       (setf *env* env-copy)
       (do-step env-copy)
       (do-step env-copy)

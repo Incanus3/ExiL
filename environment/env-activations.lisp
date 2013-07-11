@@ -8,13 +8,15 @@
   (with-undo env undo-label
       (let ((original-function (find-strategy env name)))
 	(lambda (env) (add-strategy% env name original-function)))
-    (add-strategy% env name function)))
+    (add-strategy% env name function))
+  nil)
 
 (defun set-strategy-name (env name undo-label)
   (with-undo env undo-label
       (let ((original-strategy (current-strategy-name env)))
 	(lambda (env) (set-strategy-name% env original-strategy)))
-    (set-strategy-name% env name)))
+    (set-strategy-name% env name))
+  nil)
 
 ; public
 (defmethod set-strategy ((env environment) &optional (name :default)
@@ -98,6 +100,9 @@
 	(redo-stack env) rstack
         (rete env) rete))
 
+;; i shouldn't need to copy the volatile slots, as clear-env resets them
+;; to newly created structures, co they can be no longer modified by the
+;; environment
 (defun clear-undo-fun (env)
   (let ((original-volatile-slots
 	 (list (facts env) (activations env) (undo-stack env) (redo-stack env)

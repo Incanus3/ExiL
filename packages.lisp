@@ -52,11 +52,13 @@
            :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
            :print-activations :do-step
-           :clear-env :reset-env :completely-reset-env :almost-completely-reset-env
+           :clear-env :reset-env :completely-reset-env
+	   :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
-           ;; consider if this is supposed to be environment's responsibility
            ;; called by rete
-           :add-match :remove-match))
+           :add-match :remove-match
+	   ;; used for testing
+	   :copy-env :env-copy-p :common-slots-p))
 
 (defpackage :exil-parser
   (:documentation "parses external representation of objects (facts, patterns,
@@ -75,7 +77,8 @@
   (:import-from :exil-utils :to-keyword)
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
            :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
-           :setstrategy :watch :unwatch :step :halt :run :facts :ppdefrule
+           :setstrategy :current-strategy :watch :unwatch :step :halt :run
+	   :facts :ppdefrule
 	   :undo :redo :undo-stack :redo-stack
            :complete-reset) ;; DEBUG
   (:shadow :assert :step :facts :undo :redo))

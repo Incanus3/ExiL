@@ -111,7 +111,7 @@
     (setf list (delete 1 (delete 2 list)))
     (assert-false list))) ; and nothing more
 
-(def-test-method test-hash-equal-p ((tests utils-tests) :run t)
+(def-test-method test-hash-equal-p ((tests utils-tests) :run nil)
   (let ((hash1 (make-hash-table)) hash2)
     (setf (gethash :a hash1) 1)
     (setf (gethash :b hash1) 2)

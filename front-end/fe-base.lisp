@@ -21,6 +21,7 @@
 ;; strategies:
 ; (defmacro defstrategy (name function))
 ; (defmacro setstrategy (name))
+; (defun current-strategy ())
 ;; rules:
 ; (defmacro defrule (name &body rule))
 ; (defmacro undefrule (name))
