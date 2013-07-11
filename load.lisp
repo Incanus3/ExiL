@@ -14,3 +14,8 @@
 ;(ql:update-client)
 ;(ql:update-all-dists)
 (ql:quickload :exil)
+
+;; (ql:quickload :iterate)
+;; (ql:quickload :xlunit)
+
+;; (asdf:operate 'asdf:load-op 'exil)

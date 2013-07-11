@@ -55,7 +55,7 @@
 ;; activations:
 ;(defgeneric add-match (env production token)) ; forward-declared in rete
 ;(defgeneric remove-match (env production token)) ; forward-declared in rete
-(defgeneric select-activation (env))
+(defgeneric print-activations (env))
 ;; rules:
 (defgeneric add-rule (env rule))
 (defgeneric rem-rule (env rule-name))
@@ -64,3 +64,5 @@
 (defgeneric clear-env (env &optional undo-label))
 (defgeneric reset-env (env &optional undo-label))
 (defgeneric completely-reset-env (env)) ; DEBUG
+;; inference steps
+(defgeneric do-step (env))

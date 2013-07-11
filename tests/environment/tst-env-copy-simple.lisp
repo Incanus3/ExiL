@@ -6,11 +6,11 @@
 
 (def-test-method test-copy-rete ((tests simple-env-copy-tests) :run nil)
   (with-slots (env) tests
-    (simulate-step env)
+    (do-step env)
     (let ((env-copy (eenv::copy-environment env)))
       (setf *env* env-copy)
-      (simulate-step env-copy)
-      (simulate-step env-copy)
+      (do-step env-copy)
+      (do-step env-copy)
       (assert-true (find-fact env-copy (make-simple-fact '(in box A)))))))
 
 (add-test-suite 'simple-env-copy-tests)

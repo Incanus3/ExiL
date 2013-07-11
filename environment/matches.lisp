@@ -43,5 +43,5 @@
               (rule-name match)
               (token->list (match-token match)))))
 
-(defmethod copy-match ((match match))
+(defun copy-match (match)
   (make-match (match-rule match) (match-token match)))

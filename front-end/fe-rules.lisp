@@ -43,5 +43,5 @@
 ;; agenda
 
 (defun agenda ()
-  (princ (activations *current-environment*))
+  (print-activations *current-environment*)
   nil)

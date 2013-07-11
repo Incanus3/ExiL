@@ -60,14 +60,11 @@
   (set-up-stop tests)
   (add-facts tests))
 
-(defun simulate-step (env)
-  (activate-rule (select-activation env)))
-
 (def-test-method test-simple-env ((tests simple-env-tests) :run nil)
   (with-slots (env) tests
-    (simulate-step env)
-    (simulate-step env)
-    (simulate-step env)
+    (do-step env)
+    (do-step env)
+    (do-step env)
     (assert-true (find-fact env (make-simple-fact '(in box A))))))
 
 (add-test-suite 'simple-env-tests)

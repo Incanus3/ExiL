@@ -24,10 +24,7 @@
 ; public
 (defun step ()
   "run inference engine for one turn"
-  (when (activations *current-environment*)
-    ;; (format t "~%------------------------------------------------------")
-     (activate-rule (select-activation *current-environment*))
-    t))
+  (do-step *current-environment*))
 
 (defvar *exil-running* nil)
 

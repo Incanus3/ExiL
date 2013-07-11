@@ -59,5 +59,5 @@
 ;; should not be used as a general rete equality predicate as two rete
 ;; networks will behave equally even when the order of nodes' children
 ;; differs
-(defmethod rete-copy-p ((rete1 rete) (rete2 rete))
+(defun rete-copy-p (rete1 rete2)
   (graph-copy-p (rete-nodes rete1) (rete-nodes rete2)))

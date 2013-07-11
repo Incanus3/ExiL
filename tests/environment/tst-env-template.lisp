@@ -66,14 +66,11 @@
     (set-up-stop tests)
     (add-facts tests)))
 
-(defun simulate-step (env)
-  (activate-rule (select-activation env)))
-
 (def-test-method test-template-env ((tests template-env-tests) :run nil)
   (with-slots (env t-in) tests
-    (simulate-step env)
-    (simulate-step env)
-    (simulate-step env)
+    (do-step env)
+    (do-step env)
+    (do-step env)
     (assert-true (find-fact env (make-template-fact t-in '(:object box :location A))))))
 
 (add-test-suite 'template-env-tests)

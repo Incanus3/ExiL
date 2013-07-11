@@ -51,11 +51,10 @@
            :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
-           :activations
+           :print-activations :do-step
            :clear-env :reset-env :completely-reset-env :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
            ;; consider if this is supposed to be environment's responsibility
-           :select-activation :activate-rule
            ;; called by rete
            :add-match :remove-match))
 

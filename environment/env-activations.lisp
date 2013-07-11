@@ -50,12 +50,15 @@
                 :test #'rule-equal-p :key #'match-rule))
   #+lispworks(exil-gui:update-lists))
 
-; public
-(defmethod select-activation ((env environment))
+(defun select-activation (env)
   (let ((activation (first (sort (activations env) (current-strategy env)))))
     (setf (activations env) (delete activation (activations env)
                                     :test #'match-equal-p))
     activation))
+
+; public
+(defmethod print-activations ((env environment))
+  (princ (activations env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES
@@ -125,6 +128,8 @@
 
 ;; clears everything except undo and redo stacks
 ; public, used for undo testing
+(defgeneric almost-completely-reset-env (env))
+
 (defmethod almost-completely-reset-env ((env environment))
   (setf (facts env) ()
         (activations env) ()
@@ -142,3 +147,12 @@
 	(redo-stack env) ())
   (almost-completely-reset-env env)
   nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; INFERENCE STEPS
+
+;; must return true if there was an activation to fire
+(defmethod do-step ((env environment))
+  (when (activations env)
+    (activate-rule (select-activation env))
+    t))

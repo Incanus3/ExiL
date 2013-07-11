@@ -63,7 +63,8 @@
 	      :rete
 	      :components
 	      ((:file "tst-tokens") (:file "tst-rete")
-	       (:file "tst-rete-walk") (:file "tst-rete-copy")))
+	       (:file "tst-rete-walk") (:file "tst-rete-copy-simple")
+	       (:file "tst-rete-copy-template")))
 	     (:module
 	      :environment
 	      :components

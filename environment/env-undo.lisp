@@ -1,5 +1,8 @@
 (in-package :exil-env)
 
+(defgeneric print-undo-stack (env))
+(defgeneric print-redo-stack (env))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; UNDO/REDO
 

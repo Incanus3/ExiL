@@ -6,11 +6,11 @@
 
 (def-test-method test-copy-rete ((tests template-env-copy-tests) :run nil)
   (with-slots (env t-in) tests
-    (simulate-step env)
+    (do-step env)
     (let ((env-copy (eenv::copy-environment env)))
       (setf *env* env-copy)
-      (simulate-step env-copy)
-      (simulate-step env-copy)
+      (do-step env-copy)
+      (do-step env-copy)
       (assert-true (find-fact env-copy
 			      (make-template-fact t-in '(:object box :location A)))))))
 

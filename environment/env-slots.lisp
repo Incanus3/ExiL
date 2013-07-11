@@ -37,15 +37,15 @@
   (setf (gethash name (templates env)) template))
 
 ;; facts
-; public
-(defmethod facts-equal-p (facts1 facts2)
+(defun facts-equal-p (facts1 facts2)
   (set-equal-p facts1 facts2 :test #'exil-equal-p))
 
+; public
 (defmethod find-fact ((env environment) (fact fact))
   (find fact (facts env) :test #'exil-equal-p))
 
 ; returns true, if fact was added = wasn't already there
-(defmethod add-fact% (env fact)
+(defun add-fact% (env fact)
   (nth-value 1 (pushnew-end fact (facts env) :test #'exil-equal-p)))
 
 (defmacro del-fact ((new-list altered-p) env fact &body body)
@@ -133,7 +133,7 @@
 (defun rules-initform ()
   (make-hash-table :test #'equalp))
 
-(defmethod rules-equal-p (rules1 rules2)
+(defun rules-equal-p (rules1 rules2)
   (hash-equal-p rules1 rules2 :test #'rule-equal-p))
 
 ; public
@@ -196,6 +196,8 @@
   (make-instance 'environment))
 
 ; public, used for testing
+(defgeneric copy-environment (env))
+
 (defmethod copy-environment ((env environment))
   (let ((new-env (make-environment)))
     (with-slots (watchers templates facts fact-groups strategies
@@ -215,6 +217,8 @@
     new-env))
 
 ; public, used for testing
+(defgeneric env-copy-p (env1 env2))
+
 ;; this isn't a general purpose environment equality predicate
 ;; it's too strict, strategies, undo and redo items are fuctions
 ;; and as such can only be tested for object equality

@@ -48,6 +48,8 @@
 ; public
 (defclass template-fact (fact template-object) ())
 
+(defgeneric mod-fact (fact mod-list))
+
 ; private
 (defmethod initialize-instance :after ((fact template-fact) &key)
 ;  (cl:assert (notany #'variable-p (mapcar #'cdr (slots fact)))

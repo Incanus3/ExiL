@@ -12,8 +12,6 @@
 ;; 3) evaluation of selected activation's rule's RHS (i.e. its activations :D)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defgeneric activate-rule (activation))
-
 ;; get variable bindings for single pattern-fact pair
 ;; TODO: these functions access pattern's internal data (specifier for
 ;; simple-pattern, slots for template-pattern), which is not very
@@ -60,8 +58,7 @@
 ;; resolve variable bindings, substitue variables in RHS and evaluate the
 ;; RHS expressions
 ;; TODO: should check (watched-p :activations) before printing output
-; public
-(defmethod activate-rule ((activation match))
+(defun activate-rule (activation)
   (let* ((rule (match-rule activation))
          (token (match-token activation))
          (bindings (get-variable-bindings
