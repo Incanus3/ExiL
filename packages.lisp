@@ -102,7 +102,7 @@
 
 (defpackage :tests-base
   (:use :common-lisp :xlunit :exil-utils)
-  (:export :add-test-suite :run-suites))
+  (:export :add-test-suite :run-tests))
 
 (defpackage :utils-tests
   (:documentation "tests for the utils package")

@@ -17,14 +17,18 @@
     (unset-watcher env :facts) ; facts unwatched
     (set-watcher env :facts)   ; facts watched
     (undo env)                 ; facts should be unwatched again
-    (assert-false (watched-p env :facts))))
+    (assert-false (watched-p env :facts))
+    (redo env)                 ; facts should be watched again
+    (assert-true (watched-p env :facts))))
 
 (def-test-method undo-unwatch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
     (unset-watcher env :facts) ; facts unwatched
     (undo env)                 ; facts should be watched again
-    (assert-true (watched-p env :facts))))
+    (assert-true (watched-p env :facts))
+    (redo env)                 ; facts should be unwatched again
+    (assert-false (watched-p env :facts))))
 
 (def-test-method undo-watch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -33,7 +37,10 @@
     (set-watcher env :all)     ; all watched
     (undo env)                 ; facts and rules should be unwatched again
     (assert-false (watched-p env :facts))
-    (assert-false (watched-p env :rules))))
+    (assert-false (watched-p env :rules))
+    (redo env)                 ; facts and rules should be watched again
+    (assert-true (watched-p env :facts))
+    (assert-true (watched-p env :rules))))
 
 (def-test-method undo-unwatch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -42,40 +49,7 @@
     (unset-watcher env :all)   ; all unwatched
     (undo env)                 ; facts and rules should be watched again
     (assert-true (watched-p env :facts))
-    (assert-true (watched-p env :rules))))
-
-(def-test-method redo-watch-one ((tests env-undo-tests) :run nil)
-  (with-slots (env) tests
-    (unset-watcher env :facts) ; facts unwatched
-    (set-watcher env :facts)   ; facts watched
-    (undo env)                 ; facts unwatched again
-    (redo env)                 ; facts should be watched again
-    (assert-true (watched-p env :facts))))
-
-(def-test-method redo-unwatch-one ((tests env-undo-tests) :run nil)
-  (with-slots (env) tests
-    (set-watcher env :facts)   ; facts watched
-    (unset-watcher env :facts) ; facts unwatched
-    (undo env)                 ; facts watched again
-    (redo env)                 ; facts should be unwatched again
-    (assert-false (watched-p env :facts))))
-
-(def-test-method redo-watch-all ((tests env-undo-tests) :run nil)
-  (with-slots (env) tests
-    (unset-watcher env :facts) ; facts unwatched
-    (unset-watcher env :rules) ; rules unwatched
-    (set-watcher env :all)     ; all watched
-    (undo env)                 ; facts and rules unwatched again
-    (redo env)                 ; facts and rules should be watched again
-    (assert-true (watched-p env :facts))
-    (assert-true (watched-p env :rules))))
-
-(def-test-method redo-unwatch-all ((tests env-undo-tests) :run nil)
-  (with-slots (env) tests
-    (set-watcher env :facts)   ; facts watched
-    (set-watcher env :rules)   ; rules watched
-    (unset-watcher env :all)   ; all unwatched
-    (undo env)                 ; facts and rules watched again
+    (assert-true (watched-p env :rules))
     (redo env)                 ; facts and rules should be unwatched again
     (assert-false (watched-p env :facts))
     (assert-false (watched-p env :rules))))
@@ -158,28 +132,48 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
+(defun modify-all-slots (env)
+  (let ((fact (make-simple-fact '(fact))))
+    (set-watcher env :facts)
+    (add-template env (make-template :in '(object location)))
+    (add-fact env fact)
+    (add-fact-group env :facts (list fact))
+    (add-strategy env :my-strat #'first)
+    (set-strategy env :my-strat)
+    (add-rule env (make-rule :rule (list (make-simple-pattern '(?fact))) ()))
+    ;; stacks
+    (set-watcher env :facts)
+    (undo env)))
+
+(defmacro save-env (env place)
+  `(setf ,place (copy-env ,env)))
+
+(defmacro assert-env-copy (env1 env2)
+  `(assert-true (env-copy-p ,env1 ,env2)))
+
 (def-test-method undo-clear-env ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
-    (add-fact env (make-simple-fact '(:fact)))
-    (add-fact env (make-simple-fact '(:fact2)))
-    (let ((facts (copy-list (facts env))))
+    (let (env1 env2)
+      (modify-all-slots env)
+      (save-env env env1)
       (clear-env env)
-      (assert-false (facts env))
+      (save-env env env2)
       (undo env)
-      (assert-equal (facts env) facts)
+      (assert-env-copy env env1)
       (redo env)
-      (assert-false (facts env)))))
+      (assert-env-copy env env2))))
 
 (def-test-method undo-reset-env ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
-    (let ((fact (make-simple-fact '(:fact))))
-    (add-fact-group env :facts (list fact))
-    (reset-env env)
-    (assert-true (find-fact env fact))
-    (undo env)
-    (assert-false (find-fact env fact))
-    (redo env)
-    (assert-true (find-fact env fact)))))
+    (let (env1 env2)
+      (modify-all-slots env)
+      (save-env env env1)
+      (reset-env env)
+      (save-env env env2)
+      (undo env)
+      (assert-env-copy env env1)
+      (redo env)
+      (assert-env-copy env env2))))
 
 (add-test-suite 'env-undo-tests)
 ;(textui-test-run (get-suite env-undo-tests))
