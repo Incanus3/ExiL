@@ -89,10 +89,7 @@
   (with-saved-vol-slots env undo-label
     (add-fact%% env fact)))
 
-;; remove fact from facts, print watcher output, notify rete
-; public
-(defmethod rem-fact ((env environment) (fact fact) &optional
-						     (undo-label "(rem-fact)"))
+(defun rem-fact% (env fact)
   (del-fact (new-list altered-p) env fact
     (when altered-p
       (setf (facts env) new-list)
@@ -100,6 +97,13 @@
         (format t "~%<== ~A" fact))
       (rem-wme (rete env) fact)
       #+lispworks(exil-gui:update-lists))))
+
+;; remove fact from facts, print watcher output, notify rete
+; public
+(defmethod rem-fact ((env environment) (fact fact) &optional
+						     (undo-label "(rem-fact)"))
+  (with-saved-vol-slots env undo-label
+    (rem-fact% env fact)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS

@@ -38,6 +38,19 @@
       (redo env)
       (assert-env-copy env env2))))
 
+(def-test-method undo-rem-fact ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let ((fact (make-simple-fact '(test fact))) env1 env2)
+      (modify-all-slots env)
+      (add-fact env fact)
+      (save-env env env1)
+      (rem-fact env fact)
+      (save-env env env2)
+      (undo env)
+      (assert-env-copy env env1)
+      (redo env)
+      (assert-env-copy env env2))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
