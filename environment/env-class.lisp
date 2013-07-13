@@ -65,4 +65,4 @@
 (defgeneric reset-env (env &optional undo-label))
 (defgeneric completely-reset-env (env)) ; DEBUG
 ;; inference steps
-(defgeneric do-step (env))
+(defgeneric do-step (env &optional undo-label))

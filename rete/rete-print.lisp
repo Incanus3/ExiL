@@ -10,11 +10,12 @@
 
 (defmethod print-object ((node alpha-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| pattern: ~A" (pattern node))))
+    (format stream "| pattern: ~A, items: ~S" (pattern node) (items node))))
 
 (defmethod print-object ((node beta-memory-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| productions: ~S" (productions node))))
+    (format stream "| productions: ~A, items: ~S"
+	    (mapcar #'name (productions node)) (items node))))
 
 (defmethod print-object ((test test) stream)
   (with-slots (current-field-to-test previous-condition-number
@@ -33,3 +34,7 @@
 (defmethod print-object ((node beta-join-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
     (format stream "| tests: ~A" (tests node))))
+
+(defmethod print-object ((node beta-negative-node) stream)
+  (print-unreadable-object (node stream :type t :identity t)
+    (format stream "| tests: ~A, items: ~S" (tests node) (items node))))

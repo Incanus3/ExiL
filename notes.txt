@@ -12,3 +12,6 @@ recursive tree-node printing:
   (dotimes (i (1- depth))
     (format stream " "))
   (format stream " ~[*-- ~:; `-- ~]~A~%" depth node))
+
+get list of class methods in sbcl:
+(sb-mop:specializer-direct-methods (find-class 'my-object))

@@ -1,7 +1,7 @@
 (in-package :exil-rete)
 
 ; public
-(defgeneric copy-rete (rete new-env))
+(defgeneric copy-rete (rete &optional new-env))
 (defgeneric copy-node (node memo)
   (:method ((node null) memo) nil))
 
@@ -83,6 +83,12 @@
       (setf (rete new-node) (gethash :rete memo))
       new-node)))
 
+(defmethod copy-node ((node beta-negative-node) memo)
+  (with-memo (node memo)
+    (let ((new-node (call-next-method)))
+      (setf (negative-wmes new-node) (copy-tree (negative-wmes node)))
+      new-node)))
+
 (defmethod copy-node ((node beta-top-node) memo)
   (with-memo (node memo)
     (let ((new-node (call-next-method)))
@@ -96,7 +102,7 @@
       (list new-alpha-top (gethash :beta-top memo)))))
 
 ; public
-(defmethod copy-rete ((rete rete) new-env)
+(defmethod copy-rete ((rete rete) &optional (new-env (environment rete)))
   (let ((new-rete (make-rete new-env)))
     (with-slots (alpha-top-node beta-top-node) new-rete
       (destructuring-bind (new-alpha-top new-beta-top)

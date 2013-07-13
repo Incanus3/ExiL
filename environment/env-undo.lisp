@@ -36,8 +36,10 @@
 
 ; public
 (defmethod print-undo-stack ((env environment))
+  (fresh-line)
   (print-stack (undo-stack env)))
 
 ; public
 (defmethod print-redo-stack ((env environment))
+  (fresh-line)
   (print-stack (redo-stack env)))

@@ -32,7 +32,8 @@
   (:nicknames :erete)
   (:use :common-lisp :exil-core :iterate)
   (:import-from :exil-utils :push-update :ext-pushnew :diff-remove :map-hash-table
-		:hash-values :hash-keys :to-list :set-equal-p :gensymedp :assoc-value)
+		:hash-values :hash-keys :to-list :set-equal-p :gensymedp
+		:assoc-value :add-assoc-value)
   (:export :add-wme :rem-wme :new-production :remove-production :make-rete
            :token->list :token-equal-p :copy-rete :rete-copy-p))
 

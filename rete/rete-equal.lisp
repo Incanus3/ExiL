@@ -1,7 +1,7 @@
 (in-package :exil-rete)
 
 (defgeneric weak-node-equal-p (node1 node2)
-  (:documentation "compares nodes' static slots but doesn't recursively compere their children")
+  (:documentation "compares nodes' static slots but doesn't recursively compare their children")
   (:method ((node1 node) (node2 node)) nil))
 
 (defmethod weak-node-equal-p ((node1 alpha-top-node) (node2 alpha-top-node))
@@ -35,6 +35,15 @@
 
 (defmethod weak-node-equal-p ((node1 beta-join-node) (node2 beta-join-node))
   (set-equal-p (tests node1) (tests node2) :test #'test-equal-p))
+
+(defun neg-wmes-eql-p (neg-wmes1 neg-wmes2)
+  (and (token-equal-p (car neg-wmes1) (car neg-wmes2))
+       (set-equal-p (cdr neg-wmes1) (cdr neg-wmes2) :test #'exil-equal-p)))
+
+(defmethod weak-node-equal-p ((node1 beta-negative-node) (node2 beta-negative-node))
+  (and (set-equal-p (items node1) (items node2) :test #'token-equal-p)
+       (set-equal-p (tests node1) (tests node2) :test #'test-equal-p)
+       (set-equal-p (negative-wmes node1) (negative-wmes node2) :test #'neg-wmes-eql-p)))
 
 (defun neighbors-equal-p (node1 node2 mapping)
   (let ((neighbors1 (neighbors node1))

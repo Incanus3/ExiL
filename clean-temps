@@ -1,3 +1,4 @@
-rm -f **/*fasl
-rm -f **/*~
-rm -rf ~/.cache/common-lisp/**/Diplomka
+#!/usr/bin/zsh
+find . -iname '*.fasl' -exec rm {} \;
+find . -iname '*~' -exec rm {} \;
+rm -rf ~/.cache/common-lisp/**/Diplomka(N) # ZSH only

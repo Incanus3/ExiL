@@ -53,7 +53,7 @@
   (dolist (production (productions node))
     (exil-env:remove-match (environment node) production token)))
 
-;; left inactivation - the wme has been removed from working memory
+;; right inactivation - the wme has been removed from working memory
 ;; remove tokens including it and signal broken matches
 (defmethod inactivate :before ((node beta-memory-node) (wme fact))
   (multiple-value-bind (new-items deleted) 
@@ -62,7 +62,7 @@
     (dolist (token deleted)
       (broken-match node token))))
 
-;; right inactivation - some other wme, that matched some of the rule's
+;; left inactivation - some other wme, that matched some of the rule's
 ;; previous conditions, have been removed from working memory, so tokens
 ;; that include token are not valid matches any more
 ;; remove tokens including it and signal broken matches

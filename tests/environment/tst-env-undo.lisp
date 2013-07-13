@@ -7,7 +7,7 @@
 
 (defmethod set-up ((tests env-undo-tests))
   (with-slots (env) tests
-    (setf env (exil-env:make-environment))))
+    (setf env (make-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
@@ -128,52 +128,6 @@
       (assert-equal (find-fact-group env :my-fg) fg)
       (redo env)
       (assert-false (find-fact-group env :my-fg)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ENVIRONMENT CLEANUP
-
-(defun modify-all-slots (env)
-  (let ((fact (make-simple-fact '(fact))))
-    (set-watcher env :facts)
-    (add-template env (make-template :in '(object location)))
-    (add-fact env fact)
-    (add-fact-group env :facts (list fact))
-    (add-strategy env :my-strat #'first)
-    (set-strategy env :my-strat)
-    (add-rule env (make-rule :rule (list (make-simple-pattern '(?fact))) ()))
-    ;; stacks
-    (set-watcher env :facts)
-    (undo env)))
-
-(defmacro save-env (env place)
-  `(setf ,place (copy-env ,env)))
-
-(defmacro assert-env-copy (env1 env2)
-  `(assert-true (env-copy-p ,env1 ,env2)))
-
-(def-test-method undo-clear-env ((tests env-undo-tests) :run nil)
-  (with-slots (env) tests
-    (let (env1 env2)
-      (modify-all-slots env)
-      (save-env env env1)
-      (clear-env env)
-      (save-env env env2)
-      (undo env)
-      (assert-env-copy env env1)
-      (redo env)
-      (assert-env-copy env env2))))
-
-(def-test-method undo-reset-env ((tests env-undo-tests) :run nil)
-  (with-slots (env) tests
-    (let (env1 env2)
-      (modify-all-slots env)
-      (save-env env env1)
-      (reset-env env)
-      (save-env env env2)
-      (undo env)
-      (assert-env-copy env env1)
-      (redo env)
-      (assert-env-copy env env2))))
 
 (add-test-suite 'env-undo-tests)
 ;(textui-test-run (get-suite env-undo-tests))

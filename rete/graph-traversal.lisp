@@ -3,11 +3,6 @@
 (defgeneric walk-rete (rete &key memo-fun aggreg before))
 (defgeneric rete-nodes (rete &optional type))
 
-
-(defgeneric neighbors (node)
-  (:method-combination append)
-  (:method append ((null null)) ()))
-
 (defun getmemo (node memo)
   (gethash node memo :not-found))
 
@@ -74,6 +69,10 @@
   (walk-graph start-node :memo-fun (constantly nil)
 	      :aggreg (lambda (node children)
 			(cons node (apply #'append children)))))
+
+(defgeneric neighbors (node)
+  (:method-combination append)
+  (:method append ((null null)) ()))
 
 (defmethod neighbors append ((node node))
   (children node))

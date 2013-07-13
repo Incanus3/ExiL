@@ -58,13 +58,32 @@
 ;; these conditions are satisfied if there's no fact in the working memory
 ;; congruent with the pattern (with consistent variable bindings)
 
-(defclass beta-negative-node (beta-join-node memory-node) ())
+(defclass beta-negative-node (beta-join-node memory-node)
+  ((negative-wmes :initform () :accessor negative-wmes)))
 
-(defgeneric get-consistent-wmes (node token))
+(defun get-neg-wmes (node token)
+  (assoc-value token (negative-wmes node) :test #'token-equal-p))
+
+(defun set-neg-wmes (node token wmes)
+  (add-assoc-value token (negative-wmes node) wmes :test #'token-equal-p))
+
+(defun ensure-neg-wmes (node token)
+  (unless (get-neg-wmes node token)
+    (set-neg-wmes node token ())))
+
+(defun add-neg-wme (node token wme)
+  (ensure-neg-wmes node token)
+  (pushnew wme (assoc-value token (negative-wmes node) :test #'token-equal-p)
+	   :test #'exil-equal-p))
+
+(defun rem-neg-wme (node token wme)
+  (ensure-neg-wmes node token)
+  (set-neg-wmes node token (delete wme (get-neg-wmes node token)
+				   :test #'exil-equal-p)))
 
 ;; returns list of wmes (from neg-node's alpha-memory), which have consistent
 ;; variable bindings with token, i.e. which pass the consistency tests
-(defmethod get-consistent-wmes ((node beta-negative-node) (token token))
+(defun get-consistent-wmes (node token)
   (remove-if-not (lambda (wme) (perform-join-tests (tests node) token wme))
                  (items (alpha-memory node))))
     
@@ -76,7 +95,7 @@
 (defmethod activate ((node beta-negative-node) (token token))
   (let ((bad-wmes (get-consistent-wmes node token)))
     (unless bad-wmes (activate-children node token))
-    (setf (negative-wmes token) bad-wmes)
+    (set-neg-wmes node token bad-wmes)
     (add-item node token #'token-equal-p)))
 
 ;; right activation
@@ -88,9 +107,9 @@
 (defmethod activate ((node beta-negative-node) (wme fact))
   (dolist (token (items node))
     (when (perform-join-tests (tests node) token wme)
-      (unless (negative-wmes token)
+      (unless (get-neg-wmes node token)
         (inactivate-children node token))
-      (pushnew wme (negative-wmes token) :test #'exil-equal-p))))
+      (add-neg-wme node token wme))))
 
 ;; left inactivation only propagates to children
 
@@ -103,9 +122,8 @@
 (defmethod inactivate ((node beta-negative-node) (wme fact))
   (inactivate-children node wme)
   (dolist (token (items node))
-    (when (and (negative-wmes token)
-               (perform-join-tests (tests node) token wme))
-      (setf (negative-wmes token)
-            (delete wme (negative-wmes token) :test #'exil-equal-p))
-      (unless (negative-wmes token)
+    (when (and (get-neg-wmes node token)
+	       (perform-join-tests (tests node) token wme))
+      (rem-neg-wme node token wme)
+      (unless (get-neg-wmes node token)
         (activate-children node token)))))
