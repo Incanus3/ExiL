@@ -90,40 +90,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
-;; according to what environment slots clear actually clears I divide them to:
-;; 1) durable slots - watchers, templates, fact-groups, strategies and rules
-;; 2) volatile slots - facts, activations and rete
-;; 3) undo/redo stacks - these are actually pretty volatile, but they need to
-;;    be handled separately
-
-(defun copy-volatile-slots (env)
-  "returns copy of facts, activations and rete in a list"
-  (list (copy-list (facts env))
-	(copy-acts (activations env))
-	(copy-rete (rete env))))
-
-(defun set-volatile-slots (env facts acts rete)
-  (setf (facts env) facts
-        (activations env) acts
-	(rete env) rete))
-
-(defun set-stacks (env ustack rstack)
-  (setf (undo-stack env) ustack
-	(redo-stack env) rstack))
-
 ;; i shouldn't need to copy the volatile slots, as clear-env resets them
 ;; to newly created structures, co they can be no longer modified by the
 ;; environment
 (defun clear-undo-fun (env)
-  (let ((original-volatile-slots (list (facts env) (activations env)
-				       (rete env)))
-	(original-stacks (list (undo-stack env) (redo-stack env))))
+  (let ((orig-vol-slots (list (facts env) (activations env) (rete env)))
+	(orig-stacks (list (undo-stack env) (redo-stack env))))
     (lambda (env)
-      (apply #'set-volatile-slots env original-volatile-slots)
-      (apply #'set-stacks         env original-stacks))))
+      (apply #'set-vol-slots env orig-vol-slots)
+      (apply #'set-stacks    env orig-stacks))))
 
 (defun clear-env% (env)
-  (set-volatile-slots env () () (rete-initform env))
+  (set-vol-slots env () () (rete-initform env))
   (set-stacks env () ())
   (dorules (name rule) env
     (new-production (rete env) rule))
@@ -150,38 +128,29 @@
 (defgeneric almost-completely-reset-env (env))
 
 (defmethod almost-completely-reset-env ((env environment))
-  (setf (facts env) ()
-        (activations env) ()
-        (fact-groups env) ()
-        (templates env) (tmpls-initform)
-        (rules env) (rules-initform)
-        (rete env) (rete-initform env))
+  (set-dur-slots env (tmpls-initform) () (rules-initform))
+  (set-vol-slots env () () (rete-initform env))
   #+lispworks(exil-gui:update-lists)
   nil)
 
 ;; clears everything
 ; public, used for testing
 (defmethod completely-reset-env ((env environment))
-  (setf (undo-stack env) ()
-	(redo-stack env) ())
   (almost-completely-reset-env env)
+  (set-stacks env () ())
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INFERENCE STEPS
 
-;; must return true if there was an activation to fire
-(defun do-step% (env)
-  (when (activations env)
-    (activate-rule (select-activation env))
-    t))
-
 ;; during do-step, every env slot may actually change as there may be any
 ;; front-end call in the selected rule's RHS
 ;; for now, suppose that only fact-changing calls are used (assert, retract, modify)
 ;; => store facts, activations, rete
+
+;; must return true if the step was done
 (defmethod do-step ((env environment) &optional (undo-label "(do-step)"))
-  (with-undo env undo-label
-      (let ((original-volatile-slots (copy-volatile-slots env)))
-	(lambda (env) (apply #'set-volatile-slots env original-volatile-slots)))
-    (do-step% env)))
+  (when (activations env)
+    (with-saved-vol-slots env undo-label
+      (activate-rule (select-activation env)))
+    t))

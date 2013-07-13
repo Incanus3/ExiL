@@ -2,6 +2,8 @@
 
 (declaim (optimize (debug 3) (compilation-speed 0) (space 0) (speed 0)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun modify-all-slots (env)
   (let ((fact (make-simple-fact '(fact))))
     (set-watcher env :facts)
@@ -20,6 +22,21 @@
 
 (defmacro assert-env-copy (env1 env2)
   `(assert-true (env-copy-p ,env1 ,env2)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; FACTS MANIPULATION
+
+(def-test-method undo-add-fact ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let (env1 env2)
+      (modify-all-slots env)
+      (save-env env env1)
+      (add-fact env (make-simple-fact '(fact)))
+      (save-env env env2)
+      (undo env)
+      (assert-env-copy env env1)
+      (redo env)
+      (assert-env-copy env env2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP

@@ -6,13 +6,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; UNDO/REDO
 
+(defvar *undo-enabled* t)
+
 (defmacro with-undo (env label undo-fun &body body)
   ;; redo function has the same body as the original action
   (let ((undo-fun-sym (gensym "undo-fun")))
     `(let ((,undo-fun-sym ,undo-fun))
        (prog1
-	 ,@body
-	 (stack-for-undo ,env ,undo-fun-sym (lambda (env) ,@body) ,label)))))
+	   (let ((*undo-enabled* nil))
+	     ,@body)
+	 (when *undo-enabled*
+	   (stack-for-undo ,env ,undo-fun-sym (lambda (env) ,@body) ,label))))))
 
 ; public
 (defmethod undo ((env environment))

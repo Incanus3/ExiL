@@ -1,5 +1,45 @@
 (in-package :exil-env)
 
+;; according rate of change of environment slots I distinguish between:
+;; 1) durable slots - templates, fact-groups and rules
+;;      usually set in the beginning and not changed thereafter
+;; 2) volatile slots - facts, activations and rete
+;;      changed very ofter during inference
+;; 3) undo/redo stacks - these are actually pretty volatile, but they need to
+;;      be handled separately
+;; 4) special slots - watchers, strategies
+;;      watchers don't impact the inference and strategies (if the user even
+;;      changes them) are usualy set once and we don't want to change them at
+;;      all, i.e. not even during complete environment reset
+
+(defun copy-vol-slots (env)
+  "returns copy of facts, activations and rete in a list"
+  (list (copy-list (facts env))
+	(copy-acts (activations env))
+	(copy-rete (rete env))))
+
+(defun set-dur-slots (env tmpls fgs rules)
+  (setf (templates env) tmpls
+	(fact-groups env) fgs
+	(rules env) rules))
+
+(defun set-vol-slots (env facts acts rete)
+  (setf (facts env) facts
+        (activations env) acts
+	(rete env) rete))
+
+(defun set-stacks (env ustack rstack)
+  (setf (undo-stack env) ustack
+	(redo-stack env) rstack))
+
+(defmacro with-saved-vol-slots (env undo-label &body body)
+  (let ((env-sym (gensym "env")))
+    `(let ((,env-sym ,env))
+       (with-undo ,env-sym ,undo-label
+	   (let ((orig-vol-slots (copy-vol-slots ,env-sym)))
+	     (lambda (env) (apply #'set-vol-slots env orig-vol-slots)))
+	 ,@body))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TEMPLATES
 
@@ -35,18 +75,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACTS
 
-; public
-(defmethod add-fact ((env environment) (fact fact))
-  "add fact to facts, print watcher output, notify rete"
+(defun add-fact%% (env fact)
+  "add fact to facts, print watcher output, notify rete, update gui"
   (when (add-fact% env fact)
     (when (watched-p env :facts)
       (format t "~%==> ~A" fact))
     (add-wme (rete env) fact)
     #+lispworks(exil-gui:update-lists)))
 
+; public
+(defmethod add-fact ((env environment) (fact fact) &optional
+						     (undo-label "(add-fact)"))
+  (with-saved-vol-slots env undo-label
+    (add-fact%% env fact)))
+
 ;; remove fact from facts, print watcher output, notify rete
 ; public
-(defmethod rem-fact ((env environment) (fact fact))
+(defmethod rem-fact ((env environment) (fact fact) &optional
+						     (undo-label "(rem-fact)"))
   (del-fact (new-list altered-p) env fact
     (when altered-p
       (setf (facts env) new-list)

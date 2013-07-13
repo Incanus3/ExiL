@@ -18,7 +18,8 @@
     nil))
 
 (defun assert% (fact-spec)
-  (add-fact *current-environment* (parse-fact *current-environment* fact-spec)))
+  (add-fact *current-environment* (parse-fact *current-environment* fact-spec)
+	    (format nil "(assert ~A)" fact-spec)))
 
 ; public
 (defmacro assert (&rest fact-specs)
