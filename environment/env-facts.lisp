@@ -105,6 +105,12 @@
   (with-saved-vol-slots env undo-label
     (rem-fact% env fact)))
 
+(defmethod mod-fact ((env environment) (old-fact fact) (new-fact fact)
+		     &optional (undo-label "(mod-fact)"))
+  (with-saved-vol-slots env undo-label
+    (rem-fact% env old-fact)
+    (add-fact%% env new-fact)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS
 

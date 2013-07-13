@@ -45,6 +45,7 @@
 (defgeneric find-fact (env fact))
 (defgeneric add-fact (env fact &optional undo-label))
 (defgeneric rem-fact (env fact &optional undo-label))
+(defgeneric mod-fact (env old-fact new-fact &optional undo-label))
 ;; fact groups:
 (defgeneric find-fact-group (env group-name))
 (defgeneric add-fact-group (env group-name facts &optional undo-label))

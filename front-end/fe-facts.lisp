@@ -67,8 +67,7 @@
 (defun modify% (fact-spec mod-list)
   (let* ((old-fact (parse-fact *current-environment* fact-spec))
          (new-fact (modify-fact old-fact mod-list)))
-    (rem-fact *current-environment* old-fact)
-    (add-fact *current-environment* new-fact)))
+    (mod-fact *current-environment* old-fact new-fact)))
 
 ;; used as follows:
 ;; (defrule push

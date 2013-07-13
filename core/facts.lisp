@@ -48,7 +48,7 @@
 ; public
 (defclass template-fact (fact template-object) ())
 
-(defgeneric mod-fact (fact mod-list))
+(defgeneric alter-fact (fact mod-list))
 
 ; private
 (defmethod initialize-instance :after ((fact template-fact) &key)
@@ -64,7 +64,7 @@
   (make-tmpl-object tmpl slot-spec 'template-fact))
 
 ;; mod-list is a plist mapping slot-name to new value
-(defmethod mod-fact ((fact template-fact) (mod-list list))
+(defmethod alter-fact ((fact template-fact) (mod-list list))
   "returns new fact that differs from fact by application of mod-list"
   (let ((new-fact (copy-object fact)))
     (doplist (slot-name val mod-list)

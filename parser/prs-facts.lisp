@@ -88,7 +88,7 @@
 ;; front-end syntax
 ; public
 (defmethod modify-fact ((fact template-fact) (mod-list list))
-  (mod-fact fact (to-mod-spec-list mod-list)))
+  (alter-fact fact (to-mod-spec-list mod-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
