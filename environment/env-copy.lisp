@@ -19,8 +19,8 @@
 	    rules       (copy-rules       (rules env))
 	    rete        (copy-rete        (rete env) new-env)
 	    activations (copy-activations (activations env))
-	    undo-stack  (copy-stack       (undo-stack env))
-	    redo-stack  (copy-stack       (redo-stack env))))
+	    undo-stack  (copy-undo-stack  (undo-stack env))
+	    redo-stack  (copy-undo-stack  (redo-stack env))))
     new-env))
 
 ;; this isn't a general purpose environment equality predicate

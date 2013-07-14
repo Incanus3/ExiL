@@ -31,11 +31,11 @@
 (defun copy-templates (templates)
   (copy-hash-table templates))
 
+(defun templates-initform ()
+  (make-hash-table :test #'equalp))
+
 (defun tmpls-equal-p (templates1 templates2)
   (hash-equal-p templates1 templates2))
-
-(defun tmpls-initform ()
-  (make-hash-table :test #'equalp))
 
 ; public
 (defmethod find-template ((env environment) (name symbol))
@@ -52,6 +52,9 @@
 ;; facts
 (defun copy-facts (facts)
   (copy-list facts))
+
+(defun facts-initform ()
+  ())
 
 (defun facts-equal-p (facts1 facts2)
   (set-equal-p facts1 facts2 :test #'exil-equal-p))
@@ -73,6 +76,9 @@
 ;; fact groups
 (defun copy-fact-groups (fact-groups)
   (copy-alist fact-groups))
+
+(defun fact-groups-initform ()
+  ())
 
 (defun fg-equal-p (fg1 fg2)
   (and (equalp (car fg1) (car fg2))
@@ -102,7 +108,7 @@
 (defun copy-strategies (strategies)
   (copy-alist strategies))
 
-(defun strats-initform ()
+(defun strategies-initform ()
   (copy-strategies `((:default . ,#'newer-than-p)
 		     (:depth-strategy . ,#'newer-than-p)
 		     (:breadth-strategy . ,#'older-than-p)
@@ -127,6 +133,9 @@
 ;; activations
 (defun copy-activations (activations)
   (mapcar #'copy-match activations))
+
+(defun activations-initform ()
+  ())
 
 (defun acts-equal-p (acts1 acts2)
   (set-equal-p acts1 acts2 :test #'match-equal-p))
@@ -172,11 +181,24 @@
   (make-rete env))
 
 ;; stacks
-(defun copy-stack (stack)
+(defun copy-undo-stack (stack)
   (copy-tree stack))
+
+(defun undo-stack-initform ()
+  ())
+
+(defun copy-redo-stack (stack)
+  (copy-tree stack))
+
+(defun redo-stack-initform ()
+  ())
 
 (defun stack-for-undo (env undo-fun redo-fun label)
   (push (list undo-fun redo-fun label) (undo-stack env))
+  nil)
+
+(defun stack-for-redo (env redo-fun undo-fun label)
+  (push (list redo-fun undo-fun label) (redo-stack env))
   nil)
 
 (defmacro pop-undo ((undo-fun redo-fun label) env &body body)
@@ -189,23 +211,27 @@
   `(destructuring-bind (,redo-fun ,undo-fun ,label) (pop (redo-stack ,env))
      ,@body))
 
-(defun stack-for-redo (env redo-fun undo-fun label)
-  (push (list redo-fun undo-fun label) (redo-stack env))
-  nil)
-
 (defun stack-item-label (item)
   (third item))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INITIALIZATION
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun rs-setf-forms% (env slots)
+    (iter (for slot :in slots)
+	  (collect `(,slot ,env))
+	  (collect `(,(symbol-append slot "-initform")
+		      ,@(when (equalp slot 'rete) `(,env)))))))
+
+(defmacro reset-slots (env slots)
+  (let ((env-sym (gensym "env")))
+    `(let ((,env-sym ,env))
+	 (setf ,@(rs-setf-forms% env-sym slots))
+	 nil)))
+
 (defmethod initialize-instance :after ((env environment) &key)
-  (with-slots (watchers templates strategies rules rete) env
-    (setf watchers   (watchers-initform)
-	  templates  (tmpls-initform)
-          strategies (strats-initform)
-	  rules      (rules-initform)
-          rete       (rete-initform env))))
+  (reset-slots env (watchers templates strategies rules rete)))
 
 ; public
 (defun make-environment ()

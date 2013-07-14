@@ -90,19 +90,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
-;; i shouldn't need to copy the volatile slots, as clear-env resets them
-;; to newly created structures, co they can be no longer modified by the
-;; environment
-(defun clear-undo-fun (env)
-  (let ((orig-vol-slots (list (facts env) (activations env) (rete env)))
-	(orig-stacks (list (undo-stack env) (redo-stack env))))
-    (lambda (env)
-      (apply #'set-vol-slots env orig-vol-slots)
-      (apply #'set-stacks    env orig-stacks))))
-
 (defun clear-env% (env)
-  (set-vol-slots env () () (rete-initform env))
-  (set-stacks env () ())
+  (reset-slots env (facts activations rete undo-stack redo-stack))
   (dorules (name rule) env
     (new-production (rete env) rule))
   #+lispworks(exil-gui:update-lists))
@@ -112,14 +101,12 @@
 ;; these will appear in the activations thereafter
 ; public
 (defmethod clear-env ((env environment) &optional (undo-label "(clear-env)"))
-  (with-undo env undo-label
-      (clear-undo-fun env)
+  (with-saved-slots env (facts activations rete undo-stack redo-stack) undo-label
     (clear-env% env)))
 
 ; public
 (defmethod reset-env ((env environment) &optional (undo-label "(reset-env)"))
-  (with-undo env undo-label
-      (clear-undo-fun env)
+  (with-saved-slots env (facts activations rete undo-stack redo-stack) undo-label
     (clear-env% env)
     (activate-fact-groups env)))
 
@@ -128,17 +115,15 @@
 (defgeneric almost-completely-reset-env (env))
 
 (defmethod almost-completely-reset-env ((env environment))
-  (set-dur-slots env (tmpls-initform) () (rules-initform))
-  (set-vol-slots env () () (rete-initform env))
-  #+lispworks(exil-gui:update-lists)
-  nil)
+  (reset-slots env (templates fact-groups rules facts activations rete))
+  #+lispworks(exil-gui:update-lists))
 
 ;; clears everything
 ; public, used for testing
 (defmethod completely-reset-env ((env environment))
-  (almost-completely-reset-env env)
-  (set-stacks env () ())
-  nil)
+  (reset-slots env (templates fact-groups rules facts activations rete
+			      undo-stack redo-stack))
+  #+lispworks(exil-gui:update-lists))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INFERENCE STEPS
@@ -151,6 +136,6 @@
 ;; must return true if the step was done
 (defmethod do-step ((env environment) &optional (undo-label "(do-step)"))
   (when (activations env)
-    (with-saved-vol-slots env undo-label
+    (with-saved-slots env (facts activations rete) undo-label
       (activate-rule (select-activation env)))
     t))

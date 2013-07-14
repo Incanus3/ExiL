@@ -33,7 +33,7 @@
     `(let ((,env-sym ,env))
        (with-undo ,env-sym ,undo-label
 	   (let ,(saving-forms env-sym slots)
-	     (lambda (env) (setf ,@(setting-forms env-sym slots))))
+	     (lambda (env) (setf ,@(setting-forms env slots))))
 	 ,@body))))
 
 ; public
