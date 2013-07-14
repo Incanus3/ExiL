@@ -4,13 +4,14 @@
 (defpackage :exil-utils
   (:documentation "general purpose utilities used in the rest of the code")
   (:use :common-lisp :iterate)
-  (:export :to-keyword :assoc-value :add-assoc-value :assoc-key
+  (:export :to-keyword :gensymedp :string-append :symbol-append :weak-equal-p
+	   :assoc-value :add-assoc-value :assoc-key :alistp :alist-equal-p
+	   :plistp :doplist
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
-           :push-update :numbered-map :alist-equal-p :plistp :alistp
-           :doplist :weak-equal-p :gensymedp
-	   :map-hash-table :copy-hash-table :hash-values :hash-keys
-	   :hash-equal-p :set-equal-p :partition-hash :partition))
+           :push-update :numbered-map
+	   :hash-values :hash-keys :hash->alist :map-hash-table :copy-hash-table
+	   :hash-equal-p :partition-hash :partition :set-equal-p))
 
 (defpackage :exil-core
   (:documentation "core functionality of the expert system library - facts,
@@ -44,7 +45,7 @@
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :numbered-map
-		:copy-hash-table :hash-equal-p :set-equal-p)
+		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :find-template

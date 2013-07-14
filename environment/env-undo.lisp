@@ -18,6 +18,24 @@
 	 (when *undo-enabled*
 	   (stack-for-undo ,env ,undo-fun-sym (lambda (env) ,@body) ,label))))))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun saving-forms (env-sym slot-names)
+    (iter (for slot :in slot-names)
+	  (collect `(,slot (,(symbol-append "copy-" slot) (,slot ,env-sym))))))
+
+  (defun setting-forms (env-sym slot-names)
+    (iter (for slot :in slot-names)
+	  (collect `(,slot ,env-sym))
+	  (collect slot))))
+
+(defmacro with-saved-slots (env slots undo-label &body body)
+  (let ((env-sym (gensym "env")))
+    `(let ((,env-sym ,env))
+       (with-undo ,env-sym ,undo-label
+	   (let ,(saving-forms env-sym slots)
+	     (lambda (env) (setf ,@(setting-forms env-sym slots))))
+	 ,@body))))
+
 ; public
 (defmethod undo ((env environment))
   (when (undo-stack env)
@@ -29,7 +47,8 @@
 (defmethod redo ((env environment))
   (when (redo-stack env)
     (pop-redo (redo-fun undo-fun label) env
-      (funcall redo-fun env)
+      (let ((*undo-enabled* nil))
+	(funcall redo-fun env))
       (stack-for-undo env undo-fun redo-fun label))))
 
 (defun numbered-stack (stack)

@@ -10,17 +10,17 @@
     (with-slots (watchers templates facts fact-groups strategies
 			  current-strategy-name rules rete activations
 			  undo-stack redo-stack) new-env
-      (setf watchers    (copy-watchers  (watchers env))
-	    templates   (copy-templates (templates env))
-	    facts       (copy-list      (facts env))
-	    fact-groups (copy-fgs       (fact-groups env))
-	    strategies  (copy-strats    (strategies env))
-	    current-strategy-name       (current-strategy-name env)
-	    rules       (copy-rules     (rules env))
-	    rete        (copy-rete      (rete env) new-env)
-	    activations (copy-acts      (activations env))
-	    undo-stack  (copy-stack     (undo-stack env))
-	    redo-stack  (copy-stack     (redo-stack env))))
+      (setf watchers    (copy-watchers    (watchers env))
+	    templates   (copy-templates   (templates env))
+	    facts       (copy-list        (facts env))
+	    fact-groups (copy-fact-groups (fact-groups env))
+	    strategies  (copy-strategies  (strategies env))
+	    current-strategy-name         (current-strategy-name env)
+	    rules       (copy-rules       (rules env))
+	    rete        (copy-rete        (rete env) new-env)
+	    activations (copy-activations (activations env))
+	    undo-stack  (copy-stack       (undo-stack env))
+	    redo-stack  (copy-stack       (redo-stack env))))
     new-env))
 
 ;; this isn't a general purpose environment equality predicate
@@ -42,8 +42,10 @@
 	 (rules-equal-p  rules       (rules env2))
 	 (rete-copy-p    rete        (rete env2))
 	 (acts-equal-p   activations (activations env2))
-	 ;; (equalp         undo-stack  (undo-stack env2))
-	 ;; (equalp         redo-stack  (redo-stack env2))
+	 (equalp         undo-stack  (undo-stack env2))
+	 ;; redo stack mustn't be checked here, because after executing
+	 ;; same action and the undoing it, the redo stack now contains
+	 ;; the action for possible redo
 	 )))
 
 (defmethod common-slots-p (env1 env2)

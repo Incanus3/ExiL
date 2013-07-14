@@ -14,19 +14,19 @@
 
 (defun copy-vol-slots (env)
   "returns copy of facts, activations and rete in a list"
-  (list (copy-list (facts env))
-	(copy-acts (activations env))
-	(copy-rete (rete env))))
+  (list (copy-facts       (facts env))
+	(copy-activations (activations env))
+	(copy-rete        (rete env))))
 
 (defun set-dur-slots (env tmpls fgs rules)
-  (setf (templates env) tmpls
+  (setf (templates env)   tmpls
 	(fact-groups env) fgs
-	(rules env) rules))
+	(rules env)       rules))
 
 (defun set-vol-slots (env facts acts rete)
-  (setf (facts env) facts
+  (setf (facts env)       facts
         (activations env) acts
-	(rete env) rete))
+	(rete env)        rete))
 
 (defun set-stacks (env ustack rstack)
   (setf (undo-stack env) ustack

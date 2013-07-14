@@ -3,6 +3,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SYMBOLS:
 
+(defun to-keyword (symbol)
+  "get keyword form of symbol"
+  (intern (symbol-name symbol) :keyword))
+;; (to-keyword 'a) => :a
+
+(defun gensymedp (symbol)
+  (not (symbol-package symbol)))
+;; (gensymedp 'abc) => nil
+;; (gensymedp '#:abc) => t
+;; (gensymedp (gensym "abc") => t
+
+(defun string-append (&rest strings)
+  (apply #'concatenate 'string strings))
+;; (string-append "a" "b" "c") => "abc"
+
+(defgeneric symname (object)
+  (:method ((symbol symbol)) (symbol-name symbol))
+  (:method ((string string)) (string-upcase string)))
+;; (symname 'a) => "A"
+;; (symname "a") => "A"
+
+(defun symbol-append (&rest symbols)
+  (intern (apply #'string-append (mapcar #'symname symbols))))
+;; (symbol-append "copy-" 'facts) => copy-facts
+
 (defun symbol-name-equal-p (sym1 sym2)
   "returns true if symbol-names are string-equal"
   (string-equal (symbol-name sym1) (symbol-name sym2)))
@@ -16,14 +41,6 @@
   (:method ((cons1 cons) (cons2 cons))
     (and (weak-equal-p (car cons1) (car cons2))
          (weak-equal-p (cdr cons1) (cdr cons2)))))
-
-(defun to-keyword (symbol)
-  "get keyword form of symbol"
-  (intern (symbol-name symbol) :keyword))
-;; (to-keyword 'a) => :a
-
-(defun gensymedp (symbol)
-  (not (symbol-package symbol)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ALISTS:

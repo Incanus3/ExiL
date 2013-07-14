@@ -50,6 +50,9 @@
   (setf (gethash name (templates env)) template))
 
 ;; facts
+(defun copy-facts (facts)
+  (copy-list facts))
+
 (defun facts-equal-p (facts1 facts2)
   (set-equal-p facts1 facts2 :test #'exil-equal-p))
 
@@ -68,7 +71,7 @@
      ,@body))
 
 ;; fact groups
-(defun copy-fgs (fact-groups)
+(defun copy-fact-groups (fact-groups)
   (copy-alist fact-groups))
 
 (defun fg-equal-p (fg1 fg2)
@@ -96,15 +99,15 @@
   (mapcan #'fg-facts (fact-groups env)))
 
 ;; strategies
-(defun copy-strats (strategies)
+(defun copy-strategies (strategies)
   (copy-alist strategies))
 
 (defun strats-initform ()
-  (copy-strats `((:default . ,#'newer-than-p)
-		 (:depth-strategy . ,#'newer-than-p)
-		 (:breadth-strategy . ,#'older-than-p)
-		 (:simplicity-strategy . ,#'simpler-than-p)
-		 (:complexity-strategy . ,#'more-complex-than-p))))
+  (copy-strategies `((:default . ,#'newer-than-p)
+		     (:depth-strategy . ,#'newer-than-p)
+		     (:breadth-strategy . ,#'older-than-p)
+		     (:simplicity-strategy . ,#'simpler-than-p)
+		     (:complexity-strategy . ,#'more-complex-than-p))))
 
 (defun strats-equal-p (strats1 strats2)
   (set-equal-p strats1 strats2 :test #'equal))
@@ -122,7 +125,7 @@
   (setf (current-strategy-name env) (to-keyword name)))
 
 ;; activations
-(defun copy-acts (activations)
+(defun copy-activations (activations)
   (mapcar #'copy-match activations))
 
 (defun acts-equal-p (acts1 acts2)
