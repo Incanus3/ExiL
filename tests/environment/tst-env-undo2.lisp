@@ -68,7 +68,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES
 
+;; rule is satisfied by the fact, so the addition affects activations as well
+(def-test-method undo-add-rule ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let (env1 env2)
+      (modify-all-slots env)
+      (add-fact env (make-simple-fact '(some fact)))
+      (save-env env env1)
+      (add-rule env (make-rule :rule (list (make-simple-pattern
+					    '(some ?condition))) ()))
+      (save-env env env2)
+      (test-undo-redo env env1 env2))))
 
+;; rule is satisfied by the fact, so the deletion affects activations as well
+(def-test-method undo-add-rule ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let (env1 env2)
+      (modify-all-slots env)
+      (add-fact env (make-simple-fact '(some fact)))
+      (add-rule env (make-rule :rule (list (make-simple-pattern
+					    '(some ?condition))) ()))
+      (save-env env env1)
+      (rem-rule env :rule)
+      (save-env env env2)
+      (test-undo-redo env env1 env2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP

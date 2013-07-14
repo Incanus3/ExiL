@@ -58,8 +58,8 @@
 ;(defgeneric remove-match (env production token)) ; forward-declared in rete
 (defgeneric print-activations (env))
 ;; rules:
-(defgeneric add-rule (env rule))
-(defgeneric rem-rule (env rule-name))
+(defgeneric add-rule (env rule &optional undo-label))
+(defgeneric rem-rule (env rule-name &optional undo-label))
 (defgeneric find-rule (env rule-name))
 ;; environment clean-up:
 (defgeneric clear-env (env &optional undo-label))
