@@ -78,18 +78,20 @@
 ; public
 (defmethod add-fact-group ((env environment) (group-name symbol)
                            (facts list) &optional (undo-label "(add-fact-group)"))
-  (with-undo env undo-label
-      (let ((original-fg (find-fact-group env group-name)))
-	(lambda (env) (add-fact-group% env group-name original-fg)))
-    (add-fact-group% env group-name facts)))
+  (let ((original-fg (find-fact-group env group-name)))
+    (unless (facts-equal-p facts original-fg)
+      (with-undo env undo-label
+	  (lambda (env) (add-fact-group% env group-name original-fg))
+	(add-fact-group% env group-name facts)))))
 
 ; public
 (defmethod rem-fact-group ((env environment) (group-name symbol)
 			   &optional (undo-label "(rem-fact-group)"))
-  (with-undo env undo-label
-      (let ((original-fg (find-fact-group env group-name)))
-	(lambda (env) (add-fact-group% env group-name original-fg)))
-    (rem-fact-group% env group-name)))
+  (let ((original-fg (find-fact-group env group-name)))
+    (when original-fg
+      (with-undo env undo-label
+	  (lambda (env) (add-fact-group% env group-name original-fg))
+	(rem-fact-group% env group-name)))))
 
 (defun activate-fact-group (env fact-group)
   (mapc (lambda (fact) (add-fact env fact))

@@ -80,7 +80,7 @@
 
 (defun fg-equal-p (fg1 fg2)
   (and (equalp (car fg1) (car fg2))
-       (set-equal-p (cdr fg1) (cdr fg2) :test #'exil-equal-p)))
+       (facts-equal-p (cdr fg1) (cdr fg2))))
 
 (defun fgs-equal-p (fgs1 fgs2)
   (set-equal-p fgs1 fgs2 :test #'fg-equal-p))

@@ -162,6 +162,11 @@
       (redo env)
       (assert-equal (find-fact-group env :my-fg) fg2))))
 
+(def-test-method undo-add-fact-group-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (add-fact-group env :my-fg (list (make-simple-fact '(fg fact)))))))
+
 (def-test-method undo-rem-fact-group ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((fg (list :a)))
@@ -172,6 +177,11 @@
       (assert-equal (find-fact-group env :my-fg) fg)
       (redo env)
       (assert-false (find-fact-group env :my-fg)))))
+
+(def-test-method undo-rem-fact-group-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (rem-fact-group env :my-fg))))
 
 (add-test-suite 'env-undo-tests)
 ;(textui-test-run (get-suite env-undo-tests))
