@@ -13,7 +13,7 @@
   (set-strategy env :my-strat)
   (add-rule env (make-rule :rule (list (make-simple-pattern '(?fact))) ()))
   ;; stacks
-  (set-watcher env :facts)
+  (set-watcher env :activations)
   (undo env))
 
 (defmacro save-env (env place)
@@ -81,7 +81,7 @@
       (test-undo-redo env env1 env2))))
 
 ;; rule is satisfied by the fact, so the deletion affects activations as well
-(def-test-method undo-add-rule ((tests env-undo-tests) :run nil)
+(def-test-method undo-rem-rule ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let (env1 env2)
       (modify-all-slots env)

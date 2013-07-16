@@ -19,7 +19,7 @@
 
 (defun assert% (fact-spec)
   (add-fact *current-environment* (parse-fact *current-environment* fact-spec)
-	    (format nil "(assert ~A)" fact-spec)))
+	    (format nil "(assert ~S)" fact-spec)))
 
 ; public
 (defmacro assert (&rest fact-specs)
@@ -35,14 +35,14 @@
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
       (typecase fact-spec
-        (list (push (parse-fact *current-environment* fact-spec)
+        (list (push (cons fact-spec (parse-fact *current-environment* fact-spec))
                     facts-to-remove))
-        (integer (push (nth (1- fact-spec)
-                            (exil-env:facts *current-environment*))
+        (integer (push (cons fact-spec (nth (1- fact-spec)
+					    (exil-env:facts *current-environment*)))
                        facts-to-remove))
         (t (error "~%Don't know how to retract ~A." fact-spec))))
-    (dolist (fact facts-to-remove)
-      (rem-fact *current-environment* fact))))
+    (iter (for (spec . fact) :in (nreverse facts-to-remove))
+	  (rem-fact *current-environment* fact (format nil "(retract ~A)" spec)))))
 
 ; retract supports either full fact specification e.g. (retract (is-animal duck))
 ; or number indices (starting with 1) for clips compatitibity.

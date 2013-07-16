@@ -23,6 +23,7 @@
    (conditions :initarg :conditions :reader conditions)
    (activations :initarg :activations :reader activations)))
 
+(defgeneric name-equal-p (rule1 rule2))
 (defgeneric rule-equal-p (rule1 rule2))
 
 #|
@@ -39,8 +40,17 @@
 |#
 
 ; public
-(defmethod rule-equal-p ((rule1 rule) (rule2 rule))
+(defmethod name-equal-p ((rule1 rule) (rule2 rule))
   (equalp (name rule1) (name rule2)))
+
+(defun conds-equal-p (rule1 rule2)
+  (every #'exil-equal-p (conditions rule1) (conditions rule2)))
+
+; public
+(defmethod rule-equal-p ((rule1 rule) (rule2 rule))
+  (and (name-equal-p rule1 rule2)
+       (conds-equal-p rule1 rule2)
+       (equalp (activations rule1) (activations rule2))))
 
 ; public
 (defmethod print-object ((rule rule) stream)

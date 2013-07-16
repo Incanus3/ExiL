@@ -9,11 +9,12 @@
              () "I don't know how to watch ~A" watcher))
 
 (defun set-one-watcher (env watcher val undo-label)
-  (with-undo env undo-label
-      (let ((original-value (watched-p env watcher)))
-	(lambda (env)
-	  (set-one-watcher% env watcher original-value)))
-    (set-one-watcher% env watcher val)))
+  (let ((original-value (watched-p env watcher)))
+    (unless (equal original-value val)
+      (with-undo env undo-label
+	  (lambda (env)
+	    (set-one-watcher% env watcher original-value))
+	(set-one-watcher% env watcher val)))))
 
 ;; it would seem that original-watchers should store a copy of the watchers
 ;; alist, but this is not necessary, as set-all-watchers% creates new alist

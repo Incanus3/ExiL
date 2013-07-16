@@ -14,8 +14,9 @@
 (defun watchers-initform ()
   (copy-watchers '((:facts . nil) (:rules . nil) (:activations . nil))))
 
-(defun watched-p (env watcher)
-  (assoc-value watcher (watchers env)))
+; public
+(defmethod watched-p ((env environment) (watcher symbol))
+  (assoc-value (to-keyword watcher) (watchers env)))
 
 (defun is-watcher (env watcher)
   (assoc watcher (watchers env)))
@@ -65,13 +66,10 @@
 
 ; returns true, if fact was added = wasn't already there
 (defun add-fact% (env fact)
-  (nth-value 1 (pushnew-end fact (facts env) :test #'exil-equal-p)))
+  (push-end fact (facts env)))
 
-(defmacro del-fact ((new-list altered-p) env fact &body body)
-  "destructuring macro"
-  `(multiple-value-bind (,new-list ,altered-p)
-       (ext-delete ,fact (facts ,env) :test #'exil-equal-p)
-     ,@body))
+(defun del-fact (env fact)
+  (setf (facts env) (delete fact (facts env) :test #'exil-equal-p)))
 
 ;; fact groups
 (defun copy-fact-groups (fact-groups)

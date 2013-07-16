@@ -9,17 +9,31 @@
   (with-slots (env) tests
     (setf env (make-environment))))
 
+(defmacro save-stack (env place)
+  `(setf ,place (eenv::undo-stack ,env)))
+
+(defmacro assert-stack-unchanged (env stack)
+  `(assert-equal ,stack (eenv::undo-stack env)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
 
 (def-test-method undo-watch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
-    (unset-watcher env :facts) ; facts unwatched
-    (set-watcher env :facts)   ; facts watched
-    (undo env)                 ; facts should be unwatched again
-    (assert-false (watched-p env :facts))
-    (redo env)                 ; facts should be watched again
-    (assert-true (watched-p env :facts))))
+      (unset-watcher env :facts)	; facts unwatched
+      (set-watcher env :facts)		; facts watched
+      (undo env)		     ; facts should be unwatched again
+      (assert-false (watched-p env :facts))
+      (redo env)		       ; facts should be watched again
+      (assert-true (watched-p env :facts))))
+
+(def-test-method undo-watch-one-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let (stack1)
+      (set-watcher env :facts)
+      (save-stack env stack1)
+      (set-watcher env :facts)
+      (assert-stack-unchanged env stack1))))
 
 (def-test-method undo-unwatch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests

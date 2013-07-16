@@ -25,7 +25,7 @@
            :constant-test :pattern :make-simple-pattern
            :make-template-fact :alter-fact :make-template-pattern
            :negated-p :simple-pattern :var-or-equal-p
-           :template-pattern :rule :rule-equal-p :make-rule
+           :template-pattern :rule :name-equal-p :rule-equal-p :make-rule
            :name :conditions :activations :description))
 
 (defpackage :exil-rete
@@ -44,7 +44,7 @@
   (:nicknames :eenv)
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
-                :ext-delete :ext-pushnew :pushnew-end :numbered-map
+                :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
 		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
@@ -79,11 +79,12 @@
   (:import-from :exil-utils :to-keyword)
   (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
            :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
-           :setstrategy :current-strategy :watch :unwatch :step :halt :run
+           :setstrategy :current-strategy :watch :unwatch :watched-p
+	   :step :halt :run
 	   :facts :ppdefrule
 	   :undo :redo :undo-stack :redo-stack
            :complete-reset) ;; DEBUG
-  (:shadow :assert :step :facts :undo :redo))
+  (:shadow :assert :step :facts :undo :redo :watched-p))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")

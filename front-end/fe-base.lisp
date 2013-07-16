@@ -83,12 +83,15 @@
   "Unwatch selected item"
   `(unwatch% ',watcher))
 
+(defmacro watched-p (watcher)
+  `(exil-env:watched-p *current-environment* ',watcher))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates
 
 (defun deftemplate% (name slots)
   (add-template *current-environment* (parse-template name slots)
-		(format nil "(deftemplate ~A ~A)" name slots)))
+		(format nil "(deftemplate ~A ~S)" name slots)))
 
 ; public
 (defmacro deftemplate (name &body slots)

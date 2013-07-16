@@ -38,6 +38,7 @@
 ;; watchers:
 (defgeneric set-watcher (env watcher &optional undo-label))
 (defgeneric unset-watcher (env watcher &optional undo-label))
+(defgeneric watched-p (env watcher))
 ;; templates:
 (defgeneric add-template (env template &optional undo-label))
 (defgeneric find-template (env name))

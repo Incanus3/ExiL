@@ -13,10 +13,11 @@
 	   (all-facts env)))
 
 (defun add-template% (env template undo-label)
-  (with-undo env undo-label
-      (let ((original-template (find-template env template)))
-	(lambda (env) (set-template env (name template) original-template)))
-    (set-template env (name template) template)))
+  (let ((original-template (find-template env template)))
+    (unless (exil-equal-p template original-template)
+      (with-undo env undo-label
+	  (lambda (env) (set-template env (name template) original-template))
+	(set-template env (name template) template)))))
 
 (defun template-used-p (env template)
   (and (find-template env template)
@@ -37,33 +38,33 @@
 
 (defun add-fact%% (env fact)
   "add fact to facts, print watcher output, notify rete, update gui"
-  (when (add-fact% env fact)
-    (when (watched-p env :facts)
-      (format t "~%==> ~A" fact))
-    (add-wme (rete env) fact)
-    #+lispworks(exil-gui:update-lists)))
+  (add-fact% env fact)
+  (when (watched-p env :facts)
+    (format t "~%==> ~A" fact))
+  (add-wme (rete env) fact)
+  #+lispworks(exil-gui:update-lists))
 
 ; public
 (defmethod add-fact ((env environment) (fact fact) &optional
 						     (undo-label "(add-fact)"))
-  (with-saved-slots env (facts activations rete) undo-label
-    (add-fact%% env fact)))
+  (unless (find-fact env fact)
+    (with-saved-slots env (facts activations rete) undo-label
+      (add-fact%% env fact))))
 
 (defun rem-fact% (env fact)
-  (del-fact (new-list altered-p) env fact
-    (when altered-p
-      (setf (facts env) new-list)
-      (when (watched-p env :facts)
-        (format t "~%<== ~A" fact))
-      (rem-wme (rete env) fact)
-      #+lispworks(exil-gui:update-lists))))
+  (del-fact env fact)
+  (when (watched-p env :facts)
+    (format t "~%<== ~A" fact))
+  (rem-wme (rete env) fact)
+  #+lispworks(exil-gui:update-lists))
 
 ;; remove fact from facts, print watcher output, notify rete
 ; public
 (defmethod rem-fact ((env environment) (fact fact) &optional
 						     (undo-label "(rem-fact)"))
-  (with-saved-slots env (facts activations rete) undo-label
-    (rem-fact% env fact)))
+  (when (find-fact env fact)
+    (with-saved-slots env (facts activations rete) undo-label
+      (rem-fact% env fact))))
 
 (defmethod mod-fact ((env environment) (old-fact fact) (new-fact fact)
 		     &optional (undo-label "(mod-fact)"))

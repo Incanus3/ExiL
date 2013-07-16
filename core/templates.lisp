@@ -24,7 +24,8 @@
 
 ; public
 (defmethod exil-equal-p ((tmpl1 template) (tmpl2 template))
-  (equalp (name tmpl1) (name tmpl2)))
+  (and (equalp (name tmpl1) (name tmpl2))
+       (equalp (slots tmpl1) (slots tmpl2))))
 
 ; public
 (defmethod print-object ((tmpl template) stream)

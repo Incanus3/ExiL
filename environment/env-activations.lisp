@@ -76,11 +76,16 @@
   #+lispworks(exil-gui:update-lists)
   rule)
 
+(defun rule-already-there (env rule)
+  (let ((orig-rule (find-rule env (name rule))))
+    (and orig-rule (rule-equal-p orig-rule rule))))
+
 ; public
 (defmethod add-rule ((env environment) (rule rule) &optional
 						     (undo-label "(add-rule)"))
-  (with-saved-slots env (rules rete activations) undo-label
-    (add-rule%% env rule)))
+    (unless (rule-already-there env rule)
+      (with-saved-slots env (rules rete activations) undo-label
+	(add-rule%% env rule))))
 
 (defun rem-rule%% (env name)
   (let ((rule (find-rule env name)))

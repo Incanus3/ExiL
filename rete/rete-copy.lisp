@@ -95,17 +95,23 @@
       (setf (gethash :beta-top memo) new-node)
       new-node)))
 
-(defun copy-rete% (alpha-top new-rete)
+(defun copy-rete% (alpha-top beta-top new-rete)
   (let ((memo (make-hash-table)))
     (setf (gethash :rete memo) new-rete)
     (let ((new-alpha-top (copy-node alpha-top memo)))
-      (list new-alpha-top (gethash :beta-top memo)))))
+      (list new-alpha-top
+	    ;; rete network is continuous, we could get from alpha-top
+	    ;; to beta-top
+	    (or (gethash :beta-top memo)
+		;; there aren't any rules yet, so alpha and beta parts
+		;; aren't connected
+		(copy-node beta-top memo))))))
 
 ; public
 (defmethod copy-rete ((rete rete) &optional (new-env (environment rete)))
   (let ((new-rete (make-rete new-env)))
     (with-slots (alpha-top-node beta-top-node) new-rete
       (destructuring-bind (new-alpha-top new-beta-top)
-	  (copy-rete% (alpha-top-node rete) new-rete)
+	  (copy-rete% (alpha-top-node rete) (beta-top-node rete) new-rete)
 	(setf alpha-top-node new-alpha-top beta-top-node new-beta-top)))
     new-rete))

@@ -76,7 +76,7 @@
 ;; add production to productions and signal complete match for already
 ;; matched tokens
 (defmethod add-production ((node beta-memory-node) (production rule))
-  (push-update production (productions node) :test #'rule-equal-p)
+  (push-update production (productions node) :test #'name-equal-p)
   (dolist (token (items node))
     (exil-env:add-match (rete node) production token)))
 
@@ -85,7 +85,7 @@
 ;; activations, so there's no need to signal broken matches
 (defmethod delete-production ((node beta-memory-node) (production rule))
   (setf (productions node)
-        (delete production (productions node) :test #'rule-equal-p)))
+        (delete production (productions node) :test #'name-equal-p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
