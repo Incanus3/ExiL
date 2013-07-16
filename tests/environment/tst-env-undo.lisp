@@ -9,11 +9,14 @@
   (with-slots (env) tests
     (setf env (make-environment))))
 
-(defmacro save-stack (env place)
-  `(setf ,place (eenv::undo-stack ,env)))
-
-(defmacro assert-stack-unchanged (env stack)
-  `(assert-equal ,stack (eenv::undo-stack env)))
+(defmacro assert-no-restack (env &body body)
+  (let ((env-sym (gensym "env"))
+	(stack-sym (gensym "stack")))
+    `(let ((,env-sym ,env))
+       ,@body
+       (let ((,stack-sym (eenv::undo-stack ,env-sym)))
+	 ,@body
+	 (assert-equal ,stack-sym (eenv::undo-stack ,env-sym))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
@@ -29,11 +32,8 @@
 
 (def-test-method undo-watch-one-no-restack ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
-    (let (stack1)
-      (set-watcher env :facts)
-      (save-stack env stack1)
-      (set-watcher env :facts)
-      (assert-stack-unchanged env stack1))))
+    (assert-no-restack env
+      (set-watcher env :facts))))
 
 (def-test-method undo-unwatch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -46,11 +46,8 @@
 
 (def-test-method undo-unwatch-one-no-restack ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
-    (let (stack1)
-      (unset-watcher env :facts)
-      (save-stack env stack1)
-      (unset-watcher env :facts)
-      (assert-stack-unchanged env stack1))))
+    (assert-no-restack env
+      (unset-watcher env :facts))))
 
 (def-test-method undo-watch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -66,11 +63,8 @@
 
 (def-test-method undo-watch-all-no-restack ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
-    (let (stack1)
-      (set-watcher env :all)
-      (save-stack env stack1)
-      (set-watcher env :all)
-      (assert-stack-unchanged env stack1))))
+    (assert-no-restack env
+      (set-watcher env :all))))
 
 (def-test-method undo-unwatch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -86,11 +80,8 @@
 
 (def-test-method undo-unwatch-all-no-restack ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
-    (let (stack1)
-      (unset-watcher env :all)
-      (save-stack env stack1)
-      (unset-watcher env :all)
-      (assert-stack-unchanged env stack1))))
+    (assert-no-restack env
+      (unset-watcher env :all))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TEMPLATES
@@ -111,6 +102,11 @@
       (redo env)                        ; template should be tmpl2 again
       (assert-eql (find-template env :test) tmpl2))))
 
+(def-test-method undo-add-template-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (add-template env (make-template :test '(a (b :default 1)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; STRATEGIES
 
@@ -122,6 +118,11 @@
     (assert-equal (current-strategy-name env) :depth-strategy)
     (redo env)
     (assert-equal (current-strategy-name env) :breadth-strategy)))
+
+(def-test-method undo-set-strategy-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (set-strategy env :breadth-strategy))))
 
 (def-test-method undo-add-strategy ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -137,6 +138,11 @@
       (assert-equal (eenv::find-strategy env :my-strategy) str1)
       (redo env)
       (assert-equal (eenv::find-strategy env :my-strategy) str2))))
+
+(def-test-method undo-add-strategy-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (add-strategy env :my-strategy #'+))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS

@@ -5,18 +5,20 @@
 ; public
 (defmethod add-strategy ((env environment) (name symbol) (function function)
 			 &optional (undo-label "(add-strategy)"))
-  (with-undo env undo-label
-      (let ((original-function (find-strategy env name)))
-	(lambda (env) (add-strategy% env name original-function)))
-    (add-strategy% env name function))
-  nil)
+  (let ((original-function (find-strategy env name)))
+    (unless (equalp function original-function)
+      (with-undo env undo-label
+	  (lambda (env) (add-strategy% env name original-function))
+	(add-strategy% env name function))
+      nil)))
 
 (defun set-strategy-name (env name undo-label)
-  (with-undo env undo-label
-      (let ((original-strategy (current-strategy-name env)))
-	(lambda (env) (set-strategy-name% env original-strategy)))
-    (set-strategy-name% env name))
-  nil)
+  (let ((original-strategy (current-strategy-name env)))
+    (unless (equalp name original-strategy)
+      (with-undo env undo-label
+	  (lambda (env) (set-strategy-name% env original-strategy))
+	(set-strategy-name% env name))
+      nil)))
 
 ; public
 (defmethod set-strategy ((env environment) &optional (name :default)
