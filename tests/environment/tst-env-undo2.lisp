@@ -156,5 +156,13 @@
       (save-env env env2)
       (test-undo-redo env env1 env2))))
 
+(def-test-method undo-run ((tests env-undo-tests2) :run t)
+  (with-slots (env) tests
+    (let (env1 env2)
+      (save-env env env1)
+      (run-env env)
+      (save-env env env2)
+      (test-undo-redo env env1 env2))))
+
 (add-test-suite 'env-undo-tests2)
 ;(textui-test-run (get-suite env-undo-tests2))

@@ -53,10 +53,11 @@
            :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
-           :print-activations :do-step
+           :print-activations
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
+o	   :do-step :halt-env :run-env
            ;; called by rete
            :add-match :remove-match
 	   ;; used for testing

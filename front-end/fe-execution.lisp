@@ -26,19 +26,15 @@
   "run inference engine for one turn"
   (do-step *current-environment*))
 
-(defvar *exil-running* nil)
-
 ; public
 (defun halt ()
   "stop the inference engine"
-  (format t "~%Halting")
-  (setf *exil-running* nil))
+  (halt-env *current-environment*))
 
 ; public
 (defun run ()
   "run the infenece engine"
-  (setf *exil-running* t)
-  (iter (while (and *exil-running* (step)))))
+  (run-env *current-environment*))
 
 ; public
 (defun undo ()

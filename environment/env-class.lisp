@@ -24,7 +24,8 @@
    (undo-stack :initform () :accessor undo-stack
 	       :documentation "stacks closures, that restore previous state")
    (redo-stack :initform () :accessor redo-stack
-	       :documentation "stacks closures, that restore state before undo"))
+	       :documentation "stacks closures, that restore state before undo")
+   (running :initform nil :accessor running))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                      strategies and watchers and stores the asserted facts
                      and the activations"))
@@ -68,3 +69,5 @@
 (defgeneric completely-reset-env (env)) ; DEBUG
 ;; inference steps
 (defgeneric do-step (env &optional undo-label))
+(defgeneric halt-env (env))
+(defgeneric run-env (env &optional undo-label))
