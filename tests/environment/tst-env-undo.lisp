@@ -44,6 +44,14 @@
     (redo env)                 ; facts should be unwatched again
     (assert-false (watched-p env :facts))))
 
+(def-test-method undo-unwatch-one-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let (stack1)
+      (unset-watcher env :facts)
+      (save-stack env stack1)
+      (unset-watcher env :facts)
+      (assert-stack-unchanged env stack1))))
+
 (def-test-method undo-watch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (unset-watcher env :facts) ; facts unwatched
@@ -56,6 +64,14 @@
     (assert-true (watched-p env :facts))
     (assert-true (watched-p env :rules))))
 
+(def-test-method undo-watch-all-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let (stack1)
+      (set-watcher env :all)
+      (save-stack env stack1)
+      (set-watcher env :all)
+      (assert-stack-unchanged env stack1))))
+
 (def-test-method undo-unwatch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
@@ -67,6 +83,14 @@
     (redo env)                 ; facts and rules should be unwatched again
     (assert-false (watched-p env :facts))
     (assert-false (watched-p env :rules))))
+
+(def-test-method undo-unwatch-all-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let (stack1)
+      (unset-watcher env :all)
+      (save-stack env stack1)
+      (unset-watcher env :all)
+      (assert-stack-unchanged env stack1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TEMPLATES

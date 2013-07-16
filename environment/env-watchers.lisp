@@ -16,12 +16,13 @@
 	    (set-one-watcher% env watcher original-value))
 	(set-one-watcher% env watcher val)))))
 
-;; it would seem that original-watchers should store a copy of the watchers
-;; alist, but this is not necessary, as set-all-watchers% creates new alist
-;; from scratch, so the conses are not reused
+(defun all-watchers-set-to (env val)
+  (every (lambda (watcher) (equalp (cdr watcher) val)) (watchers env)))
+
 (defun set-all-watchers (env val undo-label)
-  (with-saved-slots env (watchers) undo-label
-    (set-all-watchers% env val)))
+  (unless (all-watchers-set-to env val)
+    (with-saved-slots env (watchers) undo-label
+      (set-all-watchers% env val))))
 
 ; public
 (defmethod set-watcher ((env environment) (watcher symbol)
