@@ -89,20 +89,20 @@
       (with-saved-slots env (rules rete activations) undo-label
 	(add-rule%% env rule))))
 
-(defun rem-rule%% (env name)
-  (let ((rule (find-rule env name)))
-    (when rule
-      (when (watched-p env :rules)
-        (format t "<== ~A" rule))
-      (rem-rule% env name)
-      (remove-production (rete env) rule)
-      (rem-matches-with-rule env rule))))
+(defun rem-rule%% (env name rule)
+  (when (watched-p env :rules)
+    (format t "<== ~A" rule))
+  (rem-rule% env name)
+  (remove-production (rete env) rule)
+  (rem-matches-with-rule env rule))
 
 ; public
 (defmethod rem-rule ((env environment) (name symbol) &optional
 						     (undo-label "(rem-rule)"))
-  (with-saved-slots env (rules rete activations) undo-label
-    (rem-rule%% env name)))
+  (let ((rule (find-rule env name)))
+    (when rule
+      (with-saved-slots env (rules rete activations) undo-label
+	(rem-rule%% env name rule)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP

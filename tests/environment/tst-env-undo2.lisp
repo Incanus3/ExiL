@@ -42,6 +42,11 @@
       (save-env env env2)
       (test-undo-redo env env1 env2))))
 
+(def-test-method undo-add-fact-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (add-fact env (make-simple-fact '(test fact))))))
+
 (def-test-method undo-rem-fact ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((fact (make-simple-fact '(test fact)))
@@ -52,6 +57,11 @@
       (rem-fact env fact)
       (save-env env env2)
       (test-undo-redo env env1 env2))))
+
+(def-test-method undo-rem-fact-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (rem-fact env (make-simple-fact '(test fact))))))
 
 (def-test-method undo-mod-fact ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -64,6 +74,13 @@
       (mod-fact env fact1 fact2)
       (save-env env env2)
       (test-undo-redo env env1 env2))))
+
+(def-test-method undo-mod-fact-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (mod-fact env
+		(make-simple-fact '(old fact))
+		(make-simple-fact '(new fact))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES
@@ -80,6 +97,12 @@
       (save-env env env2)
       (test-undo-redo env env1 env2))))
 
+(def-test-method undo-add-rule-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (add-rule env (make-rule :rule (list (make-simple-pattern
+					    '(some ?condition))) ())))))
+
 ;; rule is satisfied by the fact, so the deletion affects activations as well
 (def-test-method undo-rem-rule ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -92,6 +115,11 @@
       (rem-rule env :rule)
       (save-env env env2)
       (test-undo-redo env env1 env2))))
+
+(def-test-method undo-rem-rule-no-restack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (assert-no-restack env
+      (rem-rule env :rule))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP

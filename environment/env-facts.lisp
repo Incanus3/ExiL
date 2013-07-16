@@ -68,9 +68,11 @@
 
 (defmethod mod-fact ((env environment) (old-fact fact) (new-fact fact)
 		     &optional (undo-label "(mod-fact)"))
-  (with-saved-slots env (facts activations rete) undo-label
-    (rem-fact% env old-fact)
-    (add-fact%% env new-fact)))
+  (unless (and (not (find-fact env old-fact))
+	       (find-fact env new-fact))
+    (with-saved-slots env (facts activations rete) undo-label
+      (rem-fact% env old-fact)
+      (add-fact%% env new-fact))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS
