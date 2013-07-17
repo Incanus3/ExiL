@@ -156,7 +156,7 @@
       (save-env env env2)
       (test-undo-redo env env1 env2))))
 
-(def-test-method undo-run ((tests env-undo-tests2) :run t)
+(def-test-method undo-run ((tests env-undo-tests2) :run nil)
   (with-slots (env) tests
     (let (env1 env2)
       (save-env env env1)

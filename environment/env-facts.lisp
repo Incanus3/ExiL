@@ -31,7 +31,7 @@
 	   (name template)))
   (add-template% env template undo-label)
   #+lispworks(exil-gui:update-lists)
-  template)
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACTS
@@ -40,7 +40,8 @@
   "add fact to facts, print watcher output, notify rete, update gui"
   (add-fact% env fact)
   (when (watched-p env :facts)
-    (format t "~%==> ~A" fact))
+    (fresh-line)
+    (format t "==> ~A" fact))
   (add-wme (rete env) fact)
   #+lispworks(exil-gui:update-lists))
 
@@ -49,12 +50,14 @@
 						     (undo-label "(add-fact)"))
   (unless (find-fact env fact)
     (with-saved-slots env (facts activations rete) undo-label
-      (add-fact%% env fact))))
+      (add-fact%% env fact)))
+  nil)
 
 (defun rem-fact% (env fact)
   (del-fact env fact)
   (when (watched-p env :facts)
-    (format t "~%<== ~A" fact))
+    (fresh-line)
+    (format t "<== ~A" fact))
   (rem-wme (rete env) fact)
   #+lispworks(exil-gui:update-lists))
 
@@ -64,7 +67,8 @@
 						     (undo-label "(rem-fact)"))
   (when (find-fact env fact)
     (with-saved-slots env (facts activations rete) undo-label
-      (rem-fact% env fact))))
+      (rem-fact% env fact)))
+  nil)
 
 (defmethod mod-fact ((env environment) (old-fact fact) (new-fact fact)
 		     &optional (undo-label "(mod-fact)"))
@@ -72,7 +76,8 @@
 	       (find-fact env new-fact))
     (with-saved-slots env (facts activations rete) undo-label
       (rem-fact% env old-fact)
-      (add-fact%% env new-fact))))
+      (add-fact%% env new-fact)))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS

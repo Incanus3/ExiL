@@ -75,8 +75,7 @@
     (format t "==> ~A" rule))
   (dolist (fact (facts env))
     (add-wme (rete env) fact))
-  #+lispworks(exil-gui:update-lists)
-  rule)
+  #+lispworks(exil-gui:update-lists))
 
 (defun rule-already-there (env rule)
   (let ((orig-rule (find-rule env (name rule))))
@@ -85,9 +84,10 @@
 ; public
 (defmethod add-rule ((env environment) (rule rule) &optional
 						     (undo-label "(add-rule)"))
-    (unless (rule-already-there env rule)
-      (with-saved-slots env (rules rete activations) undo-label
-	(add-rule%% env rule))))
+  (unless (rule-already-there env rule)
+    (with-saved-slots env (rules rete activations) undo-label
+      (add-rule%% env rule)))
+  nil)
 
 (defun rem-rule%% (env name rule)
   (when (watched-p env :rules)
@@ -125,7 +125,8 @@
 (defmethod reset-env ((env environment) &optional (undo-label "(reset-env)"))
   (with-saved-slots env (facts activations rete undo-stack redo-stack) undo-label
     (clear-env% env)
-    (activate-fact-groups env)))
+    (activate-fact-groups env))
+  nil)
 
 ;; clears everything except undo and redo stacks
 ; public, used for undo testing

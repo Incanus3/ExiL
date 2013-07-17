@@ -24,7 +24,8 @@
 ; public
 (defmacro assert (&rest fact-specs)
   "add facts to working memory"
-  `(mapc #'assert% ',fact-specs))
+  `(progn (mapc #'assert% ',fact-specs)
+	  nil))
 
 ;; retract needs to compute the facts to remove first, for when facts are
 ;; specified by indices and one is removed, the other indices shift

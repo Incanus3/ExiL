@@ -37,4 +37,4 @@
 
 (defmethod print-object ((node beta-negative-node) stream)
   (print-unreadable-object (node stream :type t :identity t)
-    (format stream "| tests: ~A, items: ~S" (tests node) (items node))))
+    (format stream "| tests: ~A,~%    items: ~S" (tests node) (items node))))

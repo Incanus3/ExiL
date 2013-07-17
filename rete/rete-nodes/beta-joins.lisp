@@ -121,6 +121,7 @@
 ;; condition to children
 (defmethod inactivate ((node beta-negative-node) (wme fact))
   (inactivate-children node wme)
+  (setf (items node) (delete wme (items node) :test #'included-in-p))
   (dolist (token (items node))
     (when (and (get-neg-wmes node token)
 	       (perform-join-tests (tests node) token wme))

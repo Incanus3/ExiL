@@ -19,12 +19,12 @@
 ; public
 (defun reset ()
   "clear all facts and add all fact groups"
-  (reset-env *current-environment*))
+  (reset-env *current-environment* "(reset)"))
 
 ; public
 (defun step ()
   "run inference engine for one turn"
-  (do-step *current-environment*))
+  (do-step *current-environment* "(step)"))
 
 ; public
 (defun halt ()
@@ -34,7 +34,7 @@
 ; public
 (defun run ()
   "run the infenece engine"
-  (run-env *current-environment*))
+  (run-env *current-environment* "(run)"))
 
 ; public
 (defun undo ()

@@ -48,3 +48,5 @@
 (reset)
 
 (run)
+
+(complete-reset)

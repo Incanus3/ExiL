@@ -31,7 +31,8 @@
     (assert-watcher env name)
     (if (equalp name :all)
         (set-all-watchers env t undo-label)
-	(set-one-watcher env name t undo-label))))
+	(set-one-watcher env name t undo-label)))
+  nil)
 
 ; public
 (defmethod unset-watcher ((env environment) (watcher symbol)
@@ -40,4 +41,5 @@
     (assert-watcher env name)
     (if (equalp name :all)
         (set-all-watchers env nil undo-label)
-	(set-one-watcher env name nil undo-label))))
+	(set-one-watcher env name nil undo-label)))
+  nil)
