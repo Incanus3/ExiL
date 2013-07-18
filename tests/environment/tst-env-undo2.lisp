@@ -47,6 +47,13 @@
     (assert-no-restack env
       (add-fact env (make-simple-fact '(test fact))))))
 
+(def-test-method undo-add-fact-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (add-fact env (make-simple-fact '(test fact))) ; should dump redo stack
+    (assert-stack-dumped env)))
+
 (def-test-method undo-rem-fact ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((fact (make-simple-fact '(test fact)))
@@ -62,6 +69,15 @@
   (with-slots (env) tests
     (assert-no-restack env
       (rem-fact env (make-simple-fact '(test fact))))))
+
+(def-test-method undo-rem-fact-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let ((fact (make-simple-fact '(test fact))))
+      (add-fact env fact)
+      (set-watcher env :facts)		; facts watched
+      (undo env)			; (watch facts) on redo stack
+      (rem-fact env fact)		; should dump redo stack
+      (assert-stack-dumped env))))
 
 (def-test-method undo-mod-fact ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -81,6 +97,16 @@
       (mod-fact env
 		(make-simple-fact '(old fact))
 		(make-simple-fact '(new fact))))))
+
+(def-test-method undo-mod-fact-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (let ((fact (make-simple-fact '(old fact))))
+      (add-fact env fact)
+      (set-watcher env :facts)		; facts watched
+      (undo env)			; (watch facts) on redo stack
+      (mod-fact env fact
+		(make-simple-fact '(new fact)))	; should dump redo stack
+      (assert-stack-dumped env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES
@@ -103,6 +129,15 @@
       (add-rule env (make-rule :rule (list (make-simple-pattern
 					    '(some ?condition))) ())))))
 
+(def-test-method undo-add-rule-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)		; facts watched
+    (undo env)				; (watch facts) on redo stack
+    (add-rule env (make-rule :rule (list (make-simple-pattern
+					    '(some ?condition))) ()))
+					; should dump redo stack
+    (assert-stack-dumped env)))
+
 ;; rule is satisfied by the fact, so the deletion affects activations as well
 (def-test-method undo-rem-rule ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -121,6 +156,15 @@
     (assert-no-restack env
       (rem-rule env :rule))))
 
+(def-test-method undo-rem-rule-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (add-rule env (make-rule :rule (list (make-simple-pattern
+					  '(some ?condition))) ()))
+    (set-watcher env :facts)		; facts watched
+    (undo env)				; (watch facts) on redo stack
+    (rem-rule env :rule)		; should dump redo stack
+    (assert-stack-dumped env)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
@@ -133,6 +177,13 @@
       (save-env env env2)
       (test-undo-redo env env1 env2))))
 
+(def-test-method undo-clear-env-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)		; facts watched
+    (undo env)				; (watch facts) on redo stack
+    (clear-env env)			; should dump redo stack
+    (assert-stack-dumped env)))
+
 (def-test-method undo-reset-env ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let (env1 env2)
@@ -141,6 +192,13 @@
       (reset-env env)
       (save-env env env2)
       (test-undo-redo env env1 env2))))
+
+(def-test-method undo-reset-env-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)		; facts watched
+    (undo env)				; (watch facts) on redo stack
+    (reset-env env)			; should dump redo stack
+    (assert-stack-dumped env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INFERENCE STEPS
@@ -156,6 +214,13 @@
       (save-env env env2)
       (test-undo-redo env env1 env2))))
 
+(def-test-method undo-step-dump-stack ((tests env-undo-tests2) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)		; facts watched
+    (undo env)				; (watch facts) on redo stack
+    (do-step env)			; should dump redo stack
+    (assert-stack-dumped env)))
+
 (def-test-method undo-run ((tests env-undo-tests2) :run nil)
   (with-slots (env) tests
     (let (env1 env2)
@@ -163,6 +228,13 @@
       (run-env env)
       (save-env env env2)
       (test-undo-redo env env1 env2))))
+
+(def-test-method undo-run-dump-stack ((tests env-undo-tests2) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)		; facts watched
+    (undo env)				; (watch facts) on redo stack
+    (run-env env)			; should dump redo stack
+    (assert-stack-dumped env)))
 
 (add-test-suite 'env-undo-tests2)
 ;(textui-test-run (get-suite env-undo-tests2))

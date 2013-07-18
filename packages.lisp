@@ -48,7 +48,7 @@
 		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
-           :add-template :find-template
+           :add-template :find-template :print-template
            :facts :add-fact :rem-fact :mod-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy :current-strategy-name
@@ -78,11 +78,14 @@ o	   :do-step :halt-env :run-env
   (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-parser :exil-env :iterate)
   (:import-from :exil-utils :to-keyword)
-  (:export :deftemplate :assert :retract :retract-all :modify :clear :agenda
-           :deffacts :undeffacts :reset :defrule :undefrule :defstrategy
-           :setstrategy :current-strategy :watch :unwatch :watched-p
-	   :step :halt :run
-	   :facts :ppdefrule
+  (:export :deftemplate :ppdeftemplate
+	   :assert :retract :retract-all :modify
+	   :agenda :facts
+           :deffacts :undeffacts
+	   :defrule :undefrule :ppdefrule
+	   :defstrategy :setstrategy :current-strategy
+	   :watch :unwatch :watched-p
+	   :clear :reset :step :halt :run
 	   :undo :redo :undo-stack :redo-stack
            :complete-reset) ;; DEBUG
   (:shadow :assert :step :facts :undo :redo :watched-p))

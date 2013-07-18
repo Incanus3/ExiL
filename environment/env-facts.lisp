@@ -33,6 +33,11 @@
   #+lispworks(exil-gui:update-lists)
   nil)
 
+(defmethod print-template ((env environment) (name symbol))
+  (fresh-line)
+  (princ (find-template env name))
+  nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACTS
 

@@ -16,6 +16,7 @@
 	   (let ((*undo-enabled* nil))
 	     ,@body)
 	 (when *undo-enabled*
+	   (reset-slots env (redo-stack))
 	   (stack-for-undo ,env ,undo-fun-sym (lambda (env) ,@body) ,label))))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)

@@ -18,6 +18,9 @@
 	 ,@body
 	 (assert-equal ,stack-sym (eenv::undo-stack ,env-sym))))))
 
+(defmacro assert-stack-dumped (env)
+  `(assert-false (eenv::redo-stack ,env)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; WATCHERS
 
@@ -35,6 +38,13 @@
     (assert-no-restack env
       (set-watcher env :facts))))
 
+(def-test-method undo-watch-one-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)
+    (undo env)
+    (set-watcher env :facts) ; should dump redo stack
+    (assert-stack-dumped env)))
+
 (def-test-method undo-unwatch-one ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
@@ -48,6 +58,14 @@
   (with-slots (env) tests
     (assert-no-restack env
       (unset-watcher env :facts))))
+
+(def-test-method undo-unwatch-one-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)   ; facts watched
+    (set-watcher env :activations)
+    (undo env)                 ; (watch activations) on redo stack
+    (unset-watcher env :facts) ; should dump redo stack
+    (assert-stack-dumped env)))
 
 (def-test-method undo-watch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -66,6 +84,13 @@
     (assert-no-restack env
       (set-watcher env :all))))
 
+(def-test-method undo-watch-all-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (set-watcher env :all)     ; should dump redo stack
+    (assert-stack-dumped env)))
+
 (def-test-method undo-unwatch-all ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (set-watcher env :facts)   ; facts watched
@@ -82,6 +107,14 @@
   (with-slots (env) tests
     (assert-no-restack env
       (unset-watcher env :all))))
+
+(def-test-method undo-unwatch-all-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :activations)
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (unset-watcher env :all)   ; should dump redo stack
+    (assert-stack-dumped env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TEMPLATES
@@ -107,6 +140,14 @@
     (assert-no-restack env
       (add-template env (make-template :test '(a (b :default 1)))))))
 
+(def-test-method undo-add-template-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (add-template env
+		  (make-template :test '(a b))) ; should dump redo stack
+    (assert-stack-dumped env)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; STRATEGIES
 
@@ -123,6 +164,13 @@
   (with-slots (env) tests
     (assert-no-restack env
       (set-strategy env :breadth-strategy))))
+
+(def-test-method undo-set-strategy-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (set-strategy env :breadth-strategy) ; should dump redo stack
+    (assert-stack-dumped env)))
 
 (def-test-method undo-add-strategy ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
@@ -143,6 +191,13 @@
   (with-slots (env) tests
     (assert-no-restack env
       (add-strategy env :my-strategy #'+))))
+
+(def-test-method undo-add-strategy-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (add-strategy env :my-strategy #'+) ; should dump redo stack
+    (assert-stack-dumped env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACT GROUPS
@@ -167,6 +222,14 @@
     (assert-no-restack env
       (add-fact-group env :my-fg (list (make-simple-fact '(fg fact)))))))
 
+(def-test-method undo-add-fact-group-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (add-fact-group env :my-fg (list (make-simple-fact '(fg fact))))
+					; should dump redo stack
+    (assert-stack-dumped env)))
+
 (def-test-method undo-rem-fact-group ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let ((fg (list :a)))
@@ -182,6 +245,14 @@
   (with-slots (env) tests
     (assert-no-restack env
       (rem-fact-group env :my-fg))))
+
+(def-test-method undo-rem-fact-group-dump-stack ((tests env-undo-tests) :run nil)
+  (with-slots (env) tests
+    (add-fact-group env :my-fg (list (make-simple-fact '(fg fact))))
+    (set-watcher env :facts)   ; facts watched
+    (undo env)                 ; (watch facts) on redo stack
+    (rem-fact-group env :my-fg)	; should dump redo stack
+    (assert-stack-dumped env)))
 
 (add-test-suite 'env-undo-tests)
 ;(textui-test-run (get-suite env-undo-tests))

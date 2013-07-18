@@ -29,8 +29,10 @@
 
 ; public
 (defmethod print-object ((tmpl template) stream)
-  (print-unreadable-object (tmpl stream :type t)
-    (format stream "~A ~A" (name tmpl) (slots tmpl)))
+  (if *print-escape*
+      (print-unreadable-object (tmpl stream :type t)
+	(format stream "~A ~A" (name tmpl) (slots tmpl)))
+      (format stream "(TEMPLATE ~A~%  ~A)" (name tmpl) (slots tmpl)))
   tmpl)
 
 ;; make-template ensures that slot-names are keywords

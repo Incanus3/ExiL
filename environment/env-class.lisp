@@ -43,6 +43,7 @@
 ;; templates:
 (defgeneric add-template (env template &optional undo-label))
 (defgeneric find-template (env name))
+(defgeneric print-template (env name))
 ;; facts:
 (defgeneric find-fact (env fact))
 (defgeneric add-fact (env fact &optional undo-label))

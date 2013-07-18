@@ -58,7 +58,7 @@
     (if *print-escape*
         (print-unreadable-object (rule stream :type t)
           (format stream "~A" (name rule)))
-        (format t "(RULE ~A~{~%  ~A~}~%  =>~{~%  ~A~})"
+        (format stream "(RULE ~A~{~%  ~A~}~%  =>~{~%  ~A~})"
                 name (conditions rule) (activations rule))))
   rule)
 

@@ -9,6 +9,7 @@
 ; (defmacro unwatch (watcher))
 ;; templates:
 ; (defmacro deftemplate (name &body slots))
+; (defmacro ppdeftemplate (name))
 ;; facts:
 ; (defun facts (&optional start-index end-index at-most))
 ; (defmacro assert (&rest fact-specs))
@@ -97,3 +98,7 @@
 (defmacro deftemplate (name &body slots)
   "define new template"
   `(deftemplate% ',name ',slots))
+
+(defmacro ppdeftemplate (name)
+  "print template"
+  `(print-template *current-environment* ',name))
