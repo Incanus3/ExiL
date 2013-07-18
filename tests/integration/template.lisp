@@ -7,35 +7,35 @@
 (defmethod set-up ((tests template-integration-tests))
   (complete-reset)
 
-(deftemplate goal action object from to)
-(deftemplate in object location)
+  (deftemplate goal action object from to)
+  (deftemplate in object location)
 
-(deffacts world
-  (in :object robot :location A)
-  (in :object box :location B)
-  (goal :action push :object box :from B :to A))
+  (deffacts world
+    (in :object robot :location A)
+    (in :object box :location B)
+    (goal :action push :object box :from B :to A))
 
-(defrule move
-  (goal :action push :object ?x :from ?y)
-  (in :object ?x :location ?y)
-  (- in :object robot :location ?y)
-  ?robot <- (in :object robot :location ?)
-  =>
-  (modify ?robot :location ?y))
+  (defrule move
+    (goal :action push :object ?x :from ?y)
+    (in :object ?x :location ?y)
+    (- in :object robot :location ?y)
+    ?robot <- (in :object robot :location ?)
+    =>
+    (modify ?robot :location ?y))
 
-(defrule push
-  (goal :action push :object ?x :from ?y :to ?z)
-  ?object <- (in :object ?x :location ?y)
-  ?robot <- (in :object robot :location ?y)
-  =>
-  (modify ?robot :location ?z)
-  (modify ?object :location ?z))
+  (defrule push
+    (goal :action push :object ?x :from ?y :to ?z)
+    ?object <- (in :object ?x :location ?y)
+    ?robot <- (in :object robot :location ?y)
+    =>
+    (modify ?robot :location ?z)
+    (modify ?object :location ?z))
 
-(defrule stop
-  (goal :action push :object ?x :to ?y)
-  (in :object ?x :location ?y)
-  =>
-  (halt))
+  (defrule stop
+    (goal :action push :object ?x :to ?y)
+    (in :object ?x :location ?y)
+    =>
+    (halt))
 
   (unwatch all))
 
