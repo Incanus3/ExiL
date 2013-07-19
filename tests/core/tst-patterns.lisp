@@ -39,5 +39,30 @@
   (assert-false (var-or-equal-p 'a 'b))
   (assert-false (var-or-equal-p '?a 'a)))
 
+(def-test-method test-match-fact-against-pattern ((tests pattern-tests)
+						  :run nil)
+  (assert-equal
+   (multiple-value-list
+    (match-fact-against-pattern (make-simple-fact '(in box hall))
+				(make-simple-pattern '(in ?obj ?loc))))
+   '(t ((?obj . box) (?loc . hall))))
+  (assert-false (match-fact-against-pattern (make-simple-fact '(in box hall))
+					    (make-simple-pattern '(in box garden))))
+  (assert-false (match-fact-against-pattern (make-simple-fact '(in box hall))
+					    (make-simple-pattern '(in ?a ?a))))
+  (let ((tmpl (make-template :in '(obj loc))))
+    (assert-equal
+     (multiple-value-list
+      (match-fact-against-pattern
+       (make-template-fact tmpl '(:obj box :loc hall))
+       (make-template-pattern tmpl '(:obj ?obj :loc ?loc))))
+     '(t ((?obj . box) (?loc . hall))))
+    (assert-false (match-fact-against-pattern
+		   (make-template-fact tmpl '(:obj box :loc hall))
+		   (make-template-pattern tmpl '(:obj box :loc garden))))
+    (assert-false (match-fact-against-pattern
+		   (make-template-fact tmpl '(:obj box :loc hall))
+		   (make-template-pattern tmpl '(:obj ?a :loc ?a))))))
+
 (add-test-suite 'pattern-tests)
 ;(textui-test-run (get-suite pattern-tests))

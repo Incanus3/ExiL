@@ -21,8 +21,8 @@
    (:module :utils :components ((:file "utils")))
    (:module :core
             :components
-            ((:file "templates") (:file "base-objects") (:file "patterns")
-             (:file "facts") (:file "rules")))
+            ((:file "templates") (:file "base-objects") (:file "facts")
+	     (:file "patterns") (:file "rules")))
    (:module :rete
             :components
             ((:file "tokens")
@@ -41,7 +41,7 @@
             ((:file "matches") (:file "activations") (:file "strategies")
              (:file "env-class") (:file "env-slots") (:file "env-copy")
 	     (:file "env-undo") (:file "env-watchers") (:file "env-facts")
-             (:file "env-activations")))
+             (:file "env-activations") (:file "env-backward")))
    (:module :parser
             :components
             ((:file "prs-base") (:file "prs-templates") (:file "prs-facts")
@@ -79,11 +79,11 @@
 	      ((:file "simple") (:file "template") (:file "clisp")
 	       (:file "undo-redo")))
              (:file "run-tests")))
-    (:module :examples
-             :components
-             ((:file "examples-template")
-              (:file "examples-simple")
-              (:file "examples-clips")))
+   (:module :examples
+	    :components
+	    ((:file "examples-template")
+	     (:file "examples-simple")
+	     (:file "examples-clips")))
    #+lispworks(:file "gui")
    ;;   (:file "pokusy")
    )

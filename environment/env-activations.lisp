@@ -105,21 +105,6 @@
 	(rem-rule%% env name rule)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; BACKWARD CHAINING
-
-; public
-(defmethod add-goal ((env environment) (goal pattern)
-		     &optional (undo-label "(add-goal)"))
-  (declare (ignore undo-label))
-  (unless (find-goal env goal)
-    (add-goal% env goal)))
-
-; public
-(defmethod print-goals ((env environment))
-  (princ (goals env))
-  nil)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
 (defun clear-env% (env)

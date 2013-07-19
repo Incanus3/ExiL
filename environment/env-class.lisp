@@ -65,9 +65,6 @@
 (defgeneric add-rule (env rule &optional undo-label))
 (defgeneric rem-rule (env rule-name &optional undo-label))
 (defgeneric find-rule (env rule-name))
-;; backward chaining:
-(defgeneric add-goal (env goal &optional undo-label))
-(defgeneric print-goals (env))
 ;; environment clean-up:
 (defgeneric clear-env (env &optional undo-label))
 (defgeneric reset-env (env &optional undo-label))
@@ -76,3 +73,7 @@
 (defgeneric do-step (env &optional undo-label))
 (defgeneric halt-env (env))
 (defgeneric run-env (env &optional undo-label))
+;; backward chaining:
+(defgeneric add-goal (env goal &optional undo-label))
+(defgeneric print-goals (env))
+(defgeneric back-step (env &optional undo-label))

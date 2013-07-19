@@ -109,3 +109,39 @@
   (or (and (variable-p atom1)
            (variable-p atom2))
       (equalp atom1 atom2)))
+
+(defun every-key-once (alist)
+  (every (lambda (pair)
+	   (= (count (car pair) alist :key #'car) 1))
+	 alist))
+
+; returns cons (var . binding), nil or :mismatch
+(defun match-atom% (fact-atom pattern-atom)
+  (if (variable-p pattern-atom)
+      (cons pattern-atom fact-atom)
+      (unless (equalp pattern-atom fact-atom)
+	:mismatch)))
+
+(defmethod match-fact-pattern%% ((fact simple-fact) (pattern simple-pattern))
+  (if (= (length (fact fact)) (length (pattern pattern)))
+      (mapcar #'match-atom% (fact fact) (pattern pattern))
+      (list :mismatch)))
+
+(defmethod match-fact-pattern%% ((fact template-fact) (pattern template-pattern))
+  (if (exil-equal-p (template fact) (template pattern))
+      (iter (for (slot-name . slot-val) :in (slots pattern))
+	    (collect (match-atom% (object-slot fact slot-name) slot-val)))
+      (list :mismatch)))
+
+;; returns list of variable bindings, which may contain the symbol :mismatch
+(defun match-fact-pattern% (fact pattern)
+  (remove-duplicates (delete nil (match-fact-pattern%% fact pattern)) :test #'equalp))
+
+(defmethod match-fact-against-pattern ((fact fact) (pattern pattern))
+  (let* ((bindings (match-fact-pattern% fact pattern))
+	 (match-var (match-var pattern)))
+    (if match-var (push (cons match-var (description fact)) bindings))
+    (if (and (not (find :mismatch bindings))
+	     (every-key-once bindings))
+	(values t bindings)
+	(values nil nil))))
