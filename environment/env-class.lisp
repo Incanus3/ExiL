@@ -25,7 +25,8 @@
 	       :documentation "stacks closures, that restore previous state")
    (redo-stack :initform () :accessor redo-stack
 	       :documentation "stacks closures, that restore state before undo")
-   (running :initform nil :accessor running))
+   (running :initform nil :accessor running)
+   (goals :initform () :accessor goals))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                      strategies and watchers and stores the asserted facts
                      and the activations"))
@@ -64,6 +65,9 @@
 (defgeneric add-rule (env rule &optional undo-label))
 (defgeneric rem-rule (env rule-name &optional undo-label))
 (defgeneric find-rule (env rule-name))
+;; backward chaining:
+(defgeneric add-goal (env goal &optional undo-label))
+(defgeneric print-goals (env))
 ;; environment clean-up:
 (defgeneric clear-env (env &optional undo-label))
 (defgeneric reset-env (env &optional undo-label))

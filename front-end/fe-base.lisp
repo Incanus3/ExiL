@@ -27,6 +27,8 @@
 ; (defmacro defrule (name &body rule))
 ; (defmacro undefrule (name))
 ; (defmacro ppdefrule (name))
+;; backward chaining:
+; (defmacro defgoal (goal-spec))
 ;; execution:
 ; (defun reset ())
 ; (defun step ())

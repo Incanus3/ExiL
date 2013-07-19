@@ -105,6 +105,21 @@
 	(rem-rule%% env name rule)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; BACKWARD CHAINING
+
+; public
+(defmethod add-goal ((env environment) (goal pattern)
+		     &optional (undo-label "(add-goal)"))
+  (declare (ignore undo-label))
+  (unless (find-goal env goal)
+    (add-goal% env goal)))
+
+; public
+(defmethod print-goals ((env environment))
+  (princ (goals env))
+  nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
 (defun clear-env% (env)
@@ -140,7 +155,7 @@
 ; public, used for testing
 (defmethod completely-reset-env ((env environment))
   (reset-slots env (templates fact-groups rules facts activations rete
-			      undo-stack redo-stack))
+			      goals undo-stack redo-stack))
   #+lispworks(exil-gui:update-lists))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

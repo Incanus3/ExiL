@@ -59,3 +59,16 @@
 (defun agenda ()
   (print-activations *current-environment*)
   nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; backward chaining
+
+(defun defgoal% (goal-spec)
+  (add-goal *current-environment* (parse-pattern *current-environment* goal-spec))
+  nil)
+
+(defmacro defgoal (goal-spec)
+  `(defgoal% ',goal-spec))
+
+(defun goals ()
+  (print-goals *current-environment*))

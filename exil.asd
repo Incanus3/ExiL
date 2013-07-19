@@ -70,6 +70,7 @@
 	      :components
 	      ((:file "tst-env-slots")
 	       (:file "tst-env-simple") (:file "tst-env-template")
+	       (:file "tst-env-backward")
 	       (:file "tst-env-copy-simple") (:file "tst-env-copy-template")
 	       (:file "tst-env-undo") (:file "tst-env-undo2")))
 	     (:module

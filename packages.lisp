@@ -53,11 +53,12 @@
            :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
+	   :add-goal :find-goal :print-goals
            :print-activations
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
-o	   :do-step :halt-env :run-env
+	   :do-step :halt-env :run-env
            ;; called by rete
            :add-match :remove-match
 	   ;; used for testing
@@ -83,6 +84,7 @@ o	   :do-step :halt-env :run-env
 	   :agenda :facts
            :deffacts :undeffacts
 	   :defrule :undefrule :ppdefrule
+	   :defgoal :goals
 	   :defstrategy :setstrategy :current-strategy
 	   :watch :unwatch :watched-p
 	   :clear :reset :step :halt :run
