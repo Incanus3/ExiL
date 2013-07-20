@@ -34,9 +34,7 @@
   nil)
 
 (defmethod print-template ((env environment) (name symbol))
-  (fresh-line)
-  (princ (find-template env name))
-  nil)
+  (fresh-princ (find-template env name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; FACTS
@@ -45,8 +43,7 @@
   "add fact to facts, print watcher output, notify rete, update gui"
   (add-fact% env fact)
   (when (watched-p env :facts)
-    (fresh-line)
-    (format t "==> ~A" fact))
+    (fresh-format t "==> ~A" fact))
   (add-wme (rete env) fact)
   #+lispworks(exil-gui:update-lists))
 
@@ -61,8 +58,7 @@
 (defun rem-fact% (env fact)
   (del-fact env fact)
   (when (watched-p env :facts)
-    (fresh-line)
-    (format t "<== ~A" fact))
+    (fresh-format t "<== ~A" fact))
   (rem-wme (rete env) fact)
   #+lispworks(exil-gui:update-lists))
 

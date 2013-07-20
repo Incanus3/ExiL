@@ -191,6 +191,13 @@
 	(for item in list)
 	(collect (list i (funcall fun item)))))
 
+(defun list-difference (list1 list2 &key (test #'equal))
+  (iter (for item :in list1)
+	(unless (find-if (lambda (item2)
+			   (funcall test item item2))
+			 list2)
+	  (collect item))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HASH-TABLES
 
@@ -243,3 +250,15 @@
 
 (defun set-equal-p (set1 set2 &key (test #'eql))
   (null (set-exclusive-or set1 set2 :test test)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; PRINTING OUTPUT
+
+(defun fresh-format (stream control-string &rest args)
+  (fresh-line stream)
+  (apply #'format stream control-string args))
+
+(defun fresh-princ (object &optional stream)
+  (fresh-line stream)
+  (princ object stream)
+  nil)

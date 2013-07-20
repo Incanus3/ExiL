@@ -9,9 +9,10 @@
 	   :plistp :doplist
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
-           :push-update :numbered-map
+           :push-update :numbered-map :list-difference
 	   :hash-values :hash-keys :hash->alist :map-hash-table :copy-hash-table
-	   :hash-equal-p :partition-hash :partition :set-equal-p))
+	   :hash-equal-p :partition-hash :partition :set-equal-p
+	   :fresh-format :fresh-princ))
 
 (defpackage :exil-core
   (:documentation "core functionality of the expert system library - facts,
@@ -46,7 +47,9 @@
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
-		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append)
+		:list-difference
+		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append
+		:fresh-format :fresh-princ)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :find-template :print-template
@@ -79,7 +82,7 @@
 (defpackage :exil
   (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-parser :exil-env :iterate)
-  (:import-from :exil-utils :to-keyword)
+  (:import-from :exil-utils :to-keyword :fresh-princ)
   (:export :deftemplate :ppdeftemplate
 	   :assert :retract :retract-all :modify
 	   :agenda :facts

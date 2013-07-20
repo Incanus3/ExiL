@@ -62,8 +62,7 @@
 
 ; public
 (defmethod print-activations ((env environment))
-  (fresh-line)
-  (princ (activations env)))
+  (fresh-princ (activations env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES

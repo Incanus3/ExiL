@@ -56,14 +56,12 @@
   (numbered-map #'stack-item-label stack))
 
 (defun print-stack (stack)
-  (format t "~:{~5<~a: ~>~a~%~}" (numbered-stack stack)))
+  (fresh-format t "~:{~5<~a: ~>~a~%~}" (numbered-stack stack)))
 
 ; public
 (defmethod print-undo-stack ((env environment))
-  (fresh-line)
   (print-stack (undo-stack env)))
 
 ; public
 (defmethod print-redo-stack ((env environment))
-  (fresh-line)
   (print-stack (redo-stack env)))

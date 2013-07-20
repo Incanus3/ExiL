@@ -26,7 +26,10 @@
    (redo-stack :initform () :accessor redo-stack
 	       :documentation "stacks closures, that restore state before undo")
    (running :initform nil :accessor running)
-   (goals :initform () :accessor goals))
+   (goals :initform () :accessor goals)
+   (back-stack :initform () :accessor back-stack
+	       :documentation "stack for backtracking during backward chaining
+                                 inference"))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                      strategies and watchers and stores the asserted facts
                      and the activations"))

@@ -174,32 +174,11 @@
   `(iter (for (,name ,rule) :in-hashtable (rules ,env))
 	 ,@body))
 
-;; goals
-(defun copy-goals (goals)
-  (copy-list goals))
-
-(defun goals-initform ()
-  ())
-
-(defun goals-equal-p (goals1 goals2)
-  (set-equal-p goals1 goals2 :test #'exil-equal-p))
-
-; public
-(defmethod find-goal ((env environment) (goal pattern))
-  (find goal (goals env) :test #'exil-equal-p))
-
-; returns true, if fact was added = wasn't already there
-(defun add-goal% (env goal)
-  (push goal (goals env)))
-
-(defun del-goal (env goal)
-  (setf (goals env) (delete goal (goals env) :test #'exil-equal-p)))
-
 ;; rete
 (defun rete-initform (env)
   (make-rete env))
 
-;; stacks
+;; undo/redo stacks
 (defun copy-undo-stack (stack)
   (copy-tree stack))
 
@@ -232,6 +211,36 @@
 
 (defun stack-item-label (item)
   (third item))
+
+;; BACKWARD CHAINING
+;; goals
+(defun copy-goals (goals)
+  (copy-list goals))
+
+(defun goals-initform ()
+  ())
+
+(defun goals-equal-p (goals1 goals2)
+  (set-equal-p goals1 goals2 :test #'exil-equal-p))
+
+; public
+(defmethod find-goal ((env environment) (goal pattern))
+  (find goal (goals env) :test #'exil-equal-p))
+
+; returns true, if fact was added = wasn't already there
+(defun add-goal% (env goal)
+  (push-end goal (goals env)))
+
+(defun del-goal (env goal)
+  (setf (goals env) (delete goal (goals env) :test #'exil-equal-p)))
+
+;; back-stack
+(defun stack-for-backtrack (env goals tried-facts)
+  (push (list goals tried-facts) (back-stack env)))
+
+(defmacro pop-backtrack ((goals tried-facts) env &body body)
+  `(destructuring-bind (,goals ,tried-facts) (pop (back-stack ,env))
+     ,@body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INITIALIZATION

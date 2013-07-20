@@ -44,9 +44,7 @@
 	     (format nil "(undefrule ~A)" ',name)))
 
 (defun ppdefrule% (name)
-  (fresh-line)
-  (princ (find-rule *current-environment* name))
-  nil)
+  (fresh-princ (find-rule *current-environment* name)))
 
 ; public
 (defmacro ppdefrule (name)
