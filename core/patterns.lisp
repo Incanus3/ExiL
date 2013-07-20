@@ -19,10 +19,13 @@
 ;(defclass simple-pattern (pattern simple-object) (specifier))
 ;(defun make-simple-pattern (pattern-spec &key negated match-var))
 ;(defclass template-pattern (pattern template-object) ())
-;(defgeneric make-template-pattern (template slot-spec &key negated match-var))
+(defgeneric make-template-pattern (template slot-spec &key negated match-var)
+  (:documentation "finds values for pattern's slots, creates new tmpl-patter"))
 ;(defun variable-p (expr))
 ;(defun constant-test (desired-value real-value))
 ;(defun var-or-equal-p (atom1 atom2))
+(defgeneric match-fact-against-pattern (fact pattern))
+(defgeneric substitute-variables (pattern bindings))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -71,9 +74,6 @@
                 (cons (name (template object)) (slots object))))
 
 ; public
-(defgeneric make-template-pattern (template slot-spec &key negated match-var)
-  (:documentation "finds values for pattern's slots, creates new tmpl-patter"))
-
 (defmethod make-template-pattern ((tmpl template) (slot-spec list)
                                   &key negated match-var)
   (let ((pattern (make-tmpl-object tmpl slot-spec 'template-pattern)))
@@ -145,3 +145,20 @@
 	     (every-key-once bindings))
 	(values t bindings)
 	(values nil nil))))
+
+(defun subst-var (var bindings)
+  (let ((binding (assoc-value var bindings)))
+    (if binding binding var)))
+
+(defmethod substitute-variables ((pattern simple-pattern) (bindings list))
+  (make-simple-pattern
+   (mapcar (lambda (atom) (subst-var atom bindings)) (pattern pattern))
+   :negated (negated-p pattern)))
+
+(defmethod substitute-variables ((pattern template-pattern) (bindings list))
+  (make-template-pattern
+   (template pattern)
+   (iter (for (slot-name . slot-val) :in (slots pattern))
+	 (nconcing (list slot-name (subst-var slot-val bindings))))
+   :negated (negated-p pattern)
+   :match-var (match-var pattern)))

@@ -25,7 +25,7 @@
            :constant-test :pattern :make-simple-pattern
            :make-template-fact :alter-fact :make-template-pattern
            :negated-p :simple-pattern :var-or-equal-p
-	   :match-fact-against-pattern
+	   :match-fact-against-pattern :substitute-variables
            :template-pattern :rule :name-equal-p :rule-equal-p :make-rule
            :name :conditions :activations :description))
 

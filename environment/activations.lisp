@@ -26,7 +26,7 @@
    :test #'equalp))
 
 ;; substitute variables in rule's RHS by their bindings
-(defun substitute-variables (activations-with-vars var-bind-list)
+(defun subst-vars-in-activations (activations-with-vars var-bind-list)
   (let ((activations (copy-tree activations-with-vars)))
     (dolist (binding var-bind-list activations)
       (setf activations (subst (cdr binding) (car binding) activations)))))
@@ -40,8 +40,8 @@
          (bindings (get-variable-bindings
                     (token->list token)
 		    (remove-if #'negated-p (conditions rule))))
-         (activations (substitute-variables (activations rule)
-                                            bindings)))
+         (activations (subst-vars-in-activations (activations rule)
+						 bindings)))
     (format t "~%Firing ~A" (rule-name activation))
     (dolist (activation activations)
       (eval activation))))

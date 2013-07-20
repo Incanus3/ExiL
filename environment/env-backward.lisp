@@ -43,7 +43,8 @@
 	  (make-goal-match goal fact bindings))))))
 
 (defun substitute-vars-in-goals (env bindings)
-  )
+  (setf (goals env)
+	(mapcar (lambda (goal) (substitute-variables goal bindings)) (goals env))))
 
 ; public
 (defmethod back-step ((env environment) &optional (undo-label "(back-step)"))
