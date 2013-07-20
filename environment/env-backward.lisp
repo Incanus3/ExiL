@@ -48,23 +48,28 @@
 (defun select-match (matches)
   (first matches))
 
+(defvar *print-match* t)
+
 (defun make-back-step (env match &optional tried-facts)
-  (print-match match)
-  (stack-for-backtrack env (copy-list (goals env)) (cons (match-fact match) tried-facts))
+  (when *print-match* (print-match match))
+  (stack-for-backtrack env (copy-list (goals env)) (cons (match-fact match) tried-facts) match)
   (del-goal env (match-goal match))
-  (substitute-vars-in-goals env (match-bindings match)))
+  (substitute-vars-in-goals env (match-bindings match))
+  t)
+
+(defun find-unused-matches (env goal tried-facts)
+  (list-difference (find-matching-facts env goal)
+		   tried-facts
+		   :test (lambda (match fact)
+			   (exil-equal-p (match-fact match) fact))))
 
 (defun backtrack (env)
-  (iter (pop-backtrack (goals tried-facts) env
-	  (let ((matches (list-difference
-			  (find-matching-facts env (select-goal goals))
-			  tried-facts
-			  :test (lambda (match fact)
-				  (exil-equal-p (match-fact match) fact)))))
+  (iter (while (back-stack env))
+	(pop-backtrack (goals tried-facts) env
+	  (let ((matches (find-unused-matches env (select-goal goals) tried-facts)))
 	    (when matches
 	      (setf (goals env) goals)
-	      (make-back-step env (select-match matches) tried-facts)
-	      (return))))))
+	      (return (make-back-step env (select-match matches) tried-facts)))))))
 
 ; public
 (defmethod back-step ((env environment) &optional (undo-label "(back-step)"))
@@ -76,4 +81,24 @@
 	(if matches
 	    (make-back-step env (select-match matches))
 	    (backtrack env)))
-      (fresh-format t "There are no goals")))
+      (if *print-match* (fresh-format t "All goals have been satisfied"))))
+
+; temporary implementation
+(defun compose-substitutions (substitutions)
+  (remove-duplicates (apply #'append substitutions)))
+
+(defun print-inference-report (env)
+  (fresh-format t "All goals have been satisfied")
+  (let ((matches (back-stack-matches env)))
+    (dolist (match matches)
+      (print-match match))
+    (fresh-format t "These variable bindings have been used:~%~A"
+		  (compose-substitutions (mapcar #'match-bindings matches)))))
+
+(defmethod back-run ((env environment) &optional (undo-label "(back-run)"))
+  (declare (ignore undo-label))
+  (let (*print-match*)
+    (iter (while (back-step env))))
+  (if (goals env)
+      (fresh-format t "No feasible answer found")
+      (print-inference-report env)))
