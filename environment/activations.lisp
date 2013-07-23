@@ -14,7 +14,7 @@
 
 (defun get-var-bindings% (fact pattern)
   (multiple-value-bind (valid-match bindings)
-      (match-fact-against-pattern fact pattern)
+      (match-against-pattern fact pattern)
     (if valid-match
 	bindings
 	;; this should never happen
@@ -29,7 +29,7 @@
 (defun subst-vars-in-activations (activations-with-vars var-bind-list)
   (let ((activations (copy-tree activations-with-vars)))
     (dolist (binding var-bind-list activations)
-      (setf activations (subst (cdr binding) (car binding) activations)))))
+      (setf activations (nsubst (cdr binding) (car binding) activations)))))
 
 ;; resolve variable bindings, substitue variables in RHS and evaluate the
 ;; RHS expressions

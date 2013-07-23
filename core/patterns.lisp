@@ -15,17 +15,44 @@
 ;; not appear in the rule's activations (see rules).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;(defun variable-p (expr))
+;(defun constant-test (desired-value real-value))
+;(defun var-or-equal-p (atom1 atom2))
 ;(defclass pattern () (negated match-variable))
 ;(defclass simple-pattern (pattern simple-object) (specifier))
 ;(defun make-simple-pattern (pattern-spec &key negated match-var))
 ;(defclass template-pattern (pattern template-object) ())
 (defgeneric make-template-pattern (template slot-spec &key negated match-var)
   (:documentation "finds values for pattern's slots, creates new tmpl-patter"))
-;(defun variable-p (expr))
-;(defun constant-test (desired-value real-value))
-;(defun var-or-equal-p (atom1 atom2))
-(defgeneric match-fact-against-pattern (fact pattern))
+(defgeneric variables-in-pattern (pattern))
+(defgeneric match-against-pattern (object pattern))
 (defgeneric substitute-variables (pattern bindings))
+
+; private
+(defgeneric match-against-pattern%% (object pattern))
+(defgeneric match-against-pattern%%% (object pattern atom-matcher))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; public
+(defun variable-p (expr)
+  "is expr an exil variable?"
+  (and (symbolp expr)
+       (char-equal (char (symbol-name expr) 0) #\?)))
+
+(defun variables-in-list (list)
+  (remove-duplicates (remove-if-not #'variable-p list)))
+
+; public, used by rete
+(defun constant-test (desired-value real-value)
+  (or (variable-p desired-value)
+      (equalp desired-value real-value)))
+
+; public, used by rete
+(defun var-or-equal-p (atom1 atom2)
+  (or (and (variable-p atom1)
+           (variable-p atom2))
+      (equalp atom1 atom2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -61,6 +88,9 @@
   (format stream "~@[~A <- ~]~:[~;NOT ~]~A" (match-var pattern)
                      (negated-p pattern) (pattern pattern)))
 
+(defmethod variables-in-pattern ((pattern simple-pattern))
+  (variables-in-list (pattern pattern)))
+
 ;;;; inherited from simple-object:
 ;; print-object, copy-object, object-slot, find-atom, atom-position, description
 
@@ -85,30 +115,16 @@
 ;; print-object, copy-object, object-slot, find-atom, atom-position,
 ;; description, has-slot-p
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; pattern's slot, for which user supplies no value and it's default value isn't
 ;; specified in the template definition, defaults to the anonymous variable '?
 ; private
 (defmethod slot-default ((type (eql 'template-pattern)))
   '?)
 
-; public
-(defun variable-p (expr)
-  "is expr an exil variable?"
-  (and (symbolp expr)
-       (char-equal (char (symbol-name expr) 0) #\?)))
+(defmethod variables-in-pattern ((pattern template-pattern))
+  (variables-in-list (slot-values pattern)))
 
-; public, used by rete
-(defun constant-test (desired-value real-value)
-  (or (variable-p desired-value)
-      (equalp desired-value real-value)))
-
-; public, used by rete
-(defun var-or-equal-p (atom1 atom2)
-  (or (and (variable-p atom1)
-           (variable-p atom2))
-      (equalp atom1 atom2)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun every-key-once (alist)
   (every (lambda (pair)
@@ -116,35 +132,54 @@
 	 alist))
 
 ; returns cons (var . binding), nil or :mismatch
-(defun match-atom% (fact-atom pattern-atom)
+(defun match-fact-atom (fact-atom pattern-atom)
   (if (variable-p pattern-atom)
       (cons pattern-atom fact-atom)
       (unless (equalp pattern-atom fact-atom)
 	:mismatch)))
 
-(defmethod match-fact-pattern%% ((fact simple-fact) (pattern simple-pattern))
-  (if (= (length (fact fact)) (length (pattern pattern)))
-      (mapcar #'match-atom% (fact fact) (pattern pattern))
+; returns cons (var . binding), nil or :mismatch
+(defun match-pattern-atom (pattern1-atom pattern2-atom)
+  (cond ((variable-p pattern1-atom) (cons pattern1-atom pattern2-atom))
+	((variable-p pattern2-atom) (cons pattern2-atom pattern1-atom))
+	((not (equalp pattern1-atom pattern2-atom)) :mismatch)))
+
+(defmethod match-against-pattern%%% ((object simple-object) (pattern simple-pattern)
+				     (atom-matcher function))
+  (if (= (length (specifier object)) (length (pattern pattern)))
+      (mapcar atom-matcher (specifier object) (pattern pattern))
       (list :mismatch)))
 
-(defmethod match-fact-pattern%% ((fact template-fact) (pattern template-pattern))
-  (if (exil-equal-p (template fact) (template pattern))
+(defmethod match-against-pattern%%% ((object template-object) (pattern template-pattern)
+				     (atom-matcher function))
+  (if (exil-equal-p (template object) (template pattern))
       (iter (for (slot-name . slot-val) :in (slots pattern))
-	    (collect (match-atom% (object-slot fact slot-name) slot-val)))
+	    (collect (funcall atom-matcher (object-slot object slot-name) slot-val)))
       (list :mismatch)))
+
+(defmethod match-against-pattern%% ((fact fact) (pattern pattern))
+  (match-against-pattern%%% fact pattern #'match-fact-atom))
+
+(defmethod match-against-pattern%% ((pattern1 pattern) (pattern2 pattern))
+  (match-against-pattern%%% pattern1 pattern2 #'match-pattern-atom))
 
 ;; returns list of variable bindings, which may contain the symbol :mismatch
-(defun match-fact-pattern% (fact pattern)
-  (remove-duplicates (delete nil (match-fact-pattern%% fact pattern)) :test #'equalp))
+(defun match-against-pattern% (fact pattern)
+  (remove-duplicates (delete nil (match-against-pattern%% fact pattern)) :test #'equalp))
 
-(defmethod match-fact-against-pattern ((fact fact) (pattern pattern))
-  (let* ((bindings (match-fact-pattern% fact pattern))
+;; match fact against a pattern, returns two values
+;; 1) whether the fact matches the pattern
+;; 2) variable bindings of the match (or nil when they don't match)
+(defmethod match-against-pattern ((object base-object) (pattern pattern))
+  (let* ((bindings (match-against-pattern% object pattern))
 	 (match-var (match-var pattern)))
-    (if match-var (push (cons match-var (description fact)) bindings))
+    (if match-var (push (cons match-var (description object)) bindings))
     (if (and (not (find :mismatch bindings))
 	     (every-key-once bindings))
 	(values t bindings)
 	(values nil nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun subst-var (var bindings)
   (let ((binding (assoc-value var bindings)))

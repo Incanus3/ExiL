@@ -74,8 +74,6 @@
 (back-step)
 (goals) ; => ((female ?mother) (parent-of ?mother george))
 (back-step)
-(goals) ; => ((female ?mother) (parent-of ?mother george))
-(back-step)
 ; (female ?mother) satisfied by (female jane)
 (goals) ; => ((parent-of jane george))
 (back-step)

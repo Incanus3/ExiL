@@ -198,6 +198,21 @@
 			 list2)
 	  (collect item))))
 
+;; finds element of list for which func returns true, returning the element
+;; and the results of application of func to the element (as subsequent values)
+(defun find-if-func-result (func list)
+  (iter (for item :in list)
+	(for results = (multiple-value-list (funcall func item)))
+	(when (first results)
+	  (return (values-list (cons item results))))))
+
+;; trees
+(defun tree-find-all-if (pred tree)
+  (if (listp tree)
+      (mapcan (lambda (subtree)
+		(tree-find-all-if pred subtree)) tree)
+      (when (funcall pred tree) (list tree))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HASH-TABLES
 

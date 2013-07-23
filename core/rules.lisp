@@ -70,3 +70,8 @@
           "Rule must have at least one condition")
   (make-instance 'rule :name name :conditions conditions
                  :activations activations))
+
+; public
+(defmethod variables-in-rule ((rule rule))
+  (remove-duplicates (nconc (mapcan #'variables-in-pattern (conditions rule))
+			    (tree-find-all-if #'variable-p (activations rule)))))

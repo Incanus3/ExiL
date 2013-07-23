@@ -9,7 +9,8 @@
 	   :plistp :doplist
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
-           :push-update :numbered-map :list-difference
+           :push-update :numbered-map :list-difference :find-if-func-result
+	   :tree-find-all-if
 	   :hash-values :hash-keys :hash->alist :map-hash-table :copy-hash-table
 	   :hash-equal-p :partition-hash :partition :set-equal-p
 	   :fresh-format :fresh-princ))
@@ -26,7 +27,8 @@
            :constant-test :pattern :make-simple-pattern
            :make-template-fact :alter-fact :make-template-pattern
            :negated-p :simple-pattern :var-or-equal-p
-	   :match-fact-against-pattern :substitute-variables
+	   :variables-in-pattern
+	   :match-against-pattern :substitute-variables
            :template-pattern :rule :name-equal-p :rule-equal-p :make-rule
            :name :conditions :activations :description))
 
@@ -47,7 +49,7 @@
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
-		:list-difference
+		:list-difference :find-if-func-result
 		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append
 		:fresh-format :fresh-princ)
   (:export :environment :make-environment
@@ -57,12 +59,14 @@
            :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
-	   :add-goal :find-goal :print-goals
            :print-activations
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
 	   :do-step :halt-env :run-env
+	   ;; backward chaining
+	   :add-goal :find-goal :print-goals
+	   :back-step :back-run
            ;; called by rete
            :add-match :remove-match
 	   ;; used for testing

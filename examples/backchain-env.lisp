@@ -2,23 +2,23 @@
 
 (defparameter env (make-environment))
 
-(add-fact env (make-simple-fact '(in box1 hall)))
-(add-fact env (make-simple-fact '(color box1 green)))
-(add-fact env (make-simple-fact '(in box2 hall)))
-(add-fact env (make-simple-fact '(color box2 blue)))
-(add-fact env (make-simple-fact '(size box2 small)))
-(add-fact env (make-simple-fact '(in box3 hall)))
-(add-fact env (make-simple-fact '(color box3 blue)))
-(add-fact env (make-simple-fact '(size box3 big)))
+(add-fact env (make-simple-fact '(female jane)))
+(add-fact env (make-simple-fact '(parent-of jane george)))
 
-(facts env)
+(add-rule env (make-rule
+	       :mother
+	       (list (make-simple-pattern '(female ?mother))
+		     (make-simple-pattern '(parent-of ?mother ?child)))
+	       (list '(assert (mother-of ?mother ?child)))))
 
-(add-goal env (make-simple-pattern '(in ?object hall)))
-(add-goal env (make-simple-pattern '(color ?object blue)))
-(add-goal env (make-simple-pattern '(size ?object big)))
-
-(goals env)
+(add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
 
 #|
+(goals env) ;=> ((mother-of ?mother george))
 (back-step env)
+(goals env) ;=> ((female ?mother) (parent-of ?mother george))
+(back-step env)
+(goals env) ;=> ((parent-of jane george))
+(back-step env)
+(goals env) ;=> ()
 |#

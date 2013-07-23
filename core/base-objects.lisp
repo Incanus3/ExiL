@@ -68,8 +68,11 @@
              :initform (error "template has to be specified"))
    (slots :accessor slots :initarg :slots :initform ())))
 
+; public
 (defgeneric template-name (object))
 ; public
+(defgeneric slot-values (object))
+
 (defmethod template-name ((object template-object))
   (name (template object)))
 
@@ -94,6 +97,9 @@
 ; private
 (defmethod (setf object-slot) (val (object template-object) (slot-name symbol))
     (setf (assoc-value slot-name (slots object)) val))
+
+(defmethod slot-values ((object template-object))
+  (mapcar #'cdr (slots object)))
 
 ; public, used by rete
 (defmethod atom-position ((object template-object) atom)
