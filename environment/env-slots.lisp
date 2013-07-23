@@ -235,15 +235,16 @@
   (setf (goals env) (delete goal (goals env) :test #'exil-equal-p)))
 
 ;; back-stack
-(defun stack-for-backtrack (env goals tried-facts match)
-  (push (list goals tried-facts match) (back-stack env)))
+(defun stack-for-backtrack (env goals tried-facts tried-rules match)
+  (push (list goals tried-facts tried-rules match) (back-stack env)))
 
-(defmacro pop-backtrack ((goals tried-facts) env &body body)
-  `(destructuring-bind (,goals ,tried-facts) (butlast (pop (back-stack ,env)))
+(defmacro pop-backtrack ((goals tried-facts tried-rules) env &body body)
+  `(destructuring-bind (,goals ,tried-facts ,tried-rules)
+       (butlast (pop (back-stack ,env)))
      ,@body))
 
 (defun back-stack-matches (env)
-  (mapcar #'third (reverse (back-stack env))))
+  (mapcar #'fourth (reverse (back-stack env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INITIALIZATION

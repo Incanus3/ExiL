@@ -26,11 +26,14 @@
   (first match))
 
 ; match can hold either fact or rule
-(defun goal-match-fact (match)
+(defun goal-match-object (match)
   (second match))
 
+(defun goal-match-fact (match)
+  (goal-match-object match))
+
 (defun goal-match-rule (match)
-  (second match))
+  (goal-match-object match))
 
 (defun goal-match-bindings (match)
   (third match))
@@ -93,29 +96,57 @@
 
 (defvar *print-match* t)
 
-(defun make-back-step (env match &optional tried-facts)
+(defun stack-match-for-backtrack (env match tried-facts tried-rules)
+  (let ((goal-match-object (goal-match-object match)))
+    (etypecase goal-match-object
+      (fact (push goal-match-object tried-facts))
+      (rule (push goal-match-object tried-rules)))
+    (stack-for-backtrack env (copy-list (goals env))
+			 tried-facts tried-rules match)))
+
+(defun add-rule-conditions-to-goals (env rule)
+  (dolist (condition (reverse (conditions rule)))
+    (add-goal env condition)))
+
+(defun make-back-step (env match &optional tried-facts tried-rules)
   (when *print-match* (print-goal-match match))
-  (stack-for-backtrack
-   env (copy-list (goals env)) (cons (goal-match-fact match) tried-facts) match)
+  (stack-match-for-backtrack env match tried-facts tried-rules)
   (del-goal env (goal-match-goal match))
+  (let ((goal-match-object (goal-match-object match)))
+    (when (typep goal-match-object 'rule)
+      (add-rule-conditions-to-goals env goal-match-object)))
   (substitute-vars-in-goals env (goal-match-bindings match))
   t)
 
-(defun find-unused-matches (env goal tried-facts)
+(defun find-matches (env goal)
+  (or (find-matching-facts env goal)
+      (find-matching-rules env goal)))
+
+(defun find-unused-fact-matches (env goal tried-facts)
   (list-difference (find-matching-facts env goal)
 		   tried-facts
 		   :test (lambda (match fact)
 			   (exil-equal-p (goal-match-fact match) fact))))
 
+(defun find-unused-rule-matches (env goal tried-rules)
+  (list-difference (find-matching-rules env goal)
+		   tried-rules
+		   :test (lambda (match rule)
+			   (rule-equal-p (goal-match-rule match) rule))))
+
+(defun find-unused-matches (env goal tried-facts tried-rules)
+  (or (find-unused-fact-matches env goal tried-facts)
+      (find-unused-rule-matches env goal tried-rules)))
+
 (defun backtrack (env)
   (iter (while (back-stack env))
-	(pop-backtrack (goals tried-facts) env
+	(pop-backtrack (goals tried-facts tried-rules) env
 	  (let ((matches (find-unused-matches
-			  env (select-goal goals) tried-facts)))
+			  env (select-goal goals) tried-facts tried-rules)))
 	    (when matches
 	      (setf (goals env) goals)
 	      (return (make-back-step
-		       env (select-match matches) tried-facts)))))))
+		       env (select-match matches) tried-facts tried-rules)))))))
 
 ; public
 (defmethod back-step ((env environment) &optional (undo-label "(back-step)"))
@@ -123,7 +154,7 @@
   (declare (ignore undo-label))
   (if (goals env)
       (let* ((goal (select-goal (goals env)))
-	     (matches (find-matching-facts env goal)))
+	     (matches (find-matches env goal)))
 	(if matches
 	    (make-back-step env (select-match matches))
 	    (backtrack env)))
