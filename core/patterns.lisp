@@ -140,8 +140,8 @@
 
 ; returns cons (var . binding), nil or :mismatch
 (defun match-pattern-atom (pattern1-atom pattern2-atom)
-  (cond ((variable-p pattern1-atom) (cons pattern1-atom pattern2-atom))
-	((variable-p pattern2-atom) (cons pattern2-atom pattern1-atom))
+  (cond ((variable-p pattern2-atom) (cons pattern2-atom pattern1-atom))
+	((variable-p pattern1-atom) (cons pattern1-atom pattern2-atom))
 	((not (equalp pattern1-atom pattern2-atom)) :mismatch)))
 
 (defmethod match-against-pattern%%% ((object simple-object) (pattern simple-pattern)

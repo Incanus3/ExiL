@@ -122,6 +122,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LISTS:
 
+(defun last1 (list)
+  (car (last list)))
+
 (defun to-list (x)
   "when given an atom, returns list containing it,
    when given a list, just returns it"

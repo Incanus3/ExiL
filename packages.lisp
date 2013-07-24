@@ -4,9 +4,9 @@
 (defpackage :exil-utils
   (:documentation "general purpose utilities used in the rest of the code")
   (:use :common-lisp :iterate)
-  (:export :to-keyword :gensymedp :string-append :symbol-append :weak-equal-p
-	   :assoc-value :add-assoc-value :assoc-key :alistp :alist-equal-p
-	   :plistp :doplist
+  (:export :last1 :to-keyword :gensymedp :string-append :symbol-append
+	   :weak-equal-p :alistp :assoc-value :add-assoc-value :assoc-key
+	   :alist-equal-p :plistp :doplist
            :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
            :push-update :numbered-map :list-difference :find-if-func-result
@@ -51,7 +51,7 @@
                 :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
 		:list-difference :find-if-func-result
 		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append
-		:fresh-format :fresh-princ)
+		:fresh-format :fresh-princ :last1)
   (:export :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :find-template :print-template

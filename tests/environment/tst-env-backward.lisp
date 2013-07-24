@@ -26,9 +26,25 @@
     (add-goal env (make-simple-pattern '(size ?object big)))
 
     (let ((substitutions (back-run env)))
-
       (assert-false (eenv::goals env))
       (assert-equal substitutions '((?object . box))))))
+
+(def-test-method test-rule-matching ((tests backward-env-tests) :run nil)
+  (with-slots (env) tests
+    (add-fact env (make-simple-fact '(female jane)))
+    (add-fact env (make-simple-fact '(parent-of jane george)))
+
+    (add-rule env (make-rule
+		   :mother
+		   (list (make-simple-pattern '(female ?mother))
+			 (make-simple-pattern '(parent-of ?mother ?child)))
+		   (list '(assert (mother-of ?mother ?child)))))
+
+    (add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
+
+    (let ((substitutions (back-run env)))
+      (assert-false (eenv::goals env))
+      (assert-equal substitutions '((?mother-of-george . jane))))))
 
 (def-test-method test-fact-matching-with-backtracking
     ((tests backward-env-tests) :run nil)

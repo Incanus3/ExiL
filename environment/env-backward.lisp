@@ -56,8 +56,8 @@
 ;; forward declaration
 (defgeneric exil-parser:parse-pattern (env pattern-spec &key match-var))
 
-(defun variables-in-goals (env)
-  (remove-duplicates (mapcan #'variables-in-pattern (goals env))))
+(defun variables-in-goals (goals)
+  (remove-duplicates (mapcan #'variables-in-pattern goals)))
 
 (defun rule-rhs-assert-forms (rule)
   (remove-if-not (lambda (form)
@@ -105,7 +105,7 @@
 			 tried-facts tried-rules match)))
 
 (defun add-rule-conditions-to-goals (env rule)
-  (dolist (condition (reverse (conditions rule)))
+  (dolist (condition (conditions rule))
     (add-goal env condition)))
 
 (defun make-back-step (env match &optional tried-facts tried-rules)
@@ -162,17 +162,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; temporary implementation
+(defun compose-substs (subst1 subst2)
+  (iter (with result = (copy-alist subst1))
+	(for (var . val) :in subst2)
+	(for (old-var . old-val) = (find var subst1 :key #'cdr))
+	(if old-var
+	    (setf (assoc-value old-var result) val)
+	    (push-end (cons var val) result))
+	(finally (return result))))
+
 (defun compose-substitutions (substitutions)
-  (remove-duplicates (apply #'append substitutions)))
+  (remove-if (lambda (binding)
+	       (equalp (car binding) (cdr binding)))
+	     (reduce #'compose-substs substitutions)))
+
+(defun original-goals (env)
+  (first (last1 (back-stack env))))
+
+(defun used-substitutions (env)
+  (remove-if-not
+   (lambda (subst) (find (car subst) (variables-in-goals (original-goals env))))
+   (compose-substitutions
+    (mapcar #'goal-match-bindings (back-stack-matches env)))))
 
 (defun print-inference-report (env)
   (fresh-format t "All goals have been satisfied")
-  (let* ((matches (back-stack-matches env))
-	 (substitutions (compose-substitutions
-			 (mapcar #'goal-match-bindings matches))))
-    (dolist (match matches)
-      (print-goal-match match))
+  (dolist (match (back-stack-matches env))
+    (print-goal-match match))
+  (let ((substitutions (used-substitutions env)))
     (fresh-format t "These variable bindings have been used:~%~A"
 		  substitutions)
     substitutions))
