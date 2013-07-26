@@ -15,6 +15,8 @@
       (add-goal env goal)
       (assert-true (find-goal env goal)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (def-test-method test-fact-matching ((tests backward-env-tests) :run nil)
   (with-slots (env) tests
     (add-fact env (make-simple-fact '(in box hall)))
@@ -28,23 +30,6 @@
     (let ((substitutions (back-run env)))
       (assert-false (eenv::goals env))
       (assert-equal substitutions '((?object . box))))))
-
-(def-test-method test-rule-matching ((tests backward-env-tests) :run nil)
-  (with-slots (env) tests
-    (add-fact env (make-simple-fact '(female jane)))
-    (add-fact env (make-simple-fact '(parent-of jane george)))
-
-    (add-rule env (make-rule
-		   :mother
-		   (list (make-simple-pattern '(female ?mother))
-			 (make-simple-pattern '(parent-of ?mother ?child)))
-		   (list '(assert (mother-of ?mother ?child)))))
-
-    (add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
-
-    (let ((substitutions (back-run env)))
-      (assert-false (eenv::goals env))
-      (assert-equal substitutions '((?mother-of-george . jane))))))
 
 (def-test-method test-fact-matching-with-backtracking
     ((tests backward-env-tests) :run nil)
@@ -66,6 +51,50 @@
 
       (assert-false (eenv::goals env))
       (assert-equal substitutions '((?object . box3))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def-test-method test-rule-matching ((tests backward-env-tests) :run nil)
+  (with-slots (env) tests
+    (add-fact env (make-simple-fact '(female jane)))
+    (add-fact env (make-simple-fact '(parent-of jane george)))
+
+    (add-rule env (make-rule
+		   :mother
+		   (list (make-simple-pattern '(female ?mother))
+			 (make-simple-pattern '(parent-of ?mother ?child)))
+		   (list '(assert (mother-of ?mother ?child)))))
+
+    (add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
+
+    (let ((substitutions (back-run env)))
+      (assert-false (eenv::goals env))
+      (assert-equal substitutions '((?mother-of-george . jane))))))
+
+(def-test-method test-rule-matching-with-backtracking
+    ((tests backward-env-tests) :run t)
+  (with-slots (env) tests
+    (add-fact env (make-simple-fact '(female jane)))
+    (add-fact env (make-simple-fact '(parent-of jane george)))
+
+    (add-rule env (make-rule
+		   :mother-is-daughter-of-grandpa
+		   (list (make-simple-pattern '(grandpa-of ?grandpa ?child))
+			 (make-simple-pattern '(daughter-of ?mother ?grandpa)))
+		   (list '(assert (mother-of ?mother ?child)))))
+    (add-rule env (make-rule
+		   :mother-is-female-parent
+		   (list (make-simple-pattern '(female ?mother))
+			 (make-simple-pattern '(parent-of ?mother ?child)))
+		   (list '(assert (mother-of ?mother ?child)))))
+
+    (add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
+
+    (let ((substitutions (back-run env)))
+      (assert-false (eenv::goals env))
+      (assert-equal substitutions '((?mother-of-george . jane))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (add-test-suite 'backward-env-tests)
 ;(textui-test-run (get-suite backward-env-tests))

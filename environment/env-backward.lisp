@@ -75,8 +75,9 @@
 	(find-if-func-result (lambda (pattern)
 			       (match-against-pattern pattern goal))
 			     patterns)
-      (declare (ignore matching-pattern valid-match))
-      (values t bindings))))
+      (declare (ignore valid-match))
+      (when matching-pattern
+	(values t bindings)))))
 
 (defun find-matching-rules (env goal)
   (iter (for (name rule) :in-hashtable (rules env))
