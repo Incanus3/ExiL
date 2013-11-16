@@ -1,10 +1,10 @@
 (in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(defclass clisp-integration-tests (test-case)
+(defclass clips-integration-tests (test-case)
   ((env :reader env :initform exil::*current-environment*)))
 
-(defmethod set-up ((tests clisp-integration-tests))
+(defmethod set-up ((tests clips-integration-tests))
   (complete-reset)
 
   (deftemplate goal
@@ -46,7 +46,7 @@
 
   (unwatch all))
 
-(def-test-method clisp-integration-test ((tests clisp-integration-tests) :run nil)
+(def-test-method clips-integration-test ((tests clips-integration-tests) :run nil)
   (reset)
   (run)
   (with-slots (env) tests
@@ -54,5 +54,5 @@
       (assert-true (eenv::find-fact env (eenv::make-template-fact
 					 in-template '(:object box :location A)))))))
 
-(add-test-suite 'clisp-integration-tests)
-;(textui-test-run (get-suite clisp-integration-tests))
+(add-test-suite 'clips-integration-tests)
+;(textui-test-run (get-suite clips-integration-tests))

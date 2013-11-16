@@ -37,10 +37,19 @@
   (run-env *current-environment* "(run)"))
 
 ; public
+(defun back-step ()
+  (eenv:back-step *current-environment*))2
+
+; public
+(defun back-run ()
+  (eenv:back-run *current-environment*))
+
+; public
 (defun undo ()
   "undo the last action"
   (eenv:undo *current-environment*))
 
+; public
 (defun redo ()
   "redo the last undone action"
   (eenv:redo *current-environment*))

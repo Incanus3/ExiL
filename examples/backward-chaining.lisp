@@ -80,6 +80,11 @@
 ; (parent-of jane george) satisfied by (parent-of jane george)
 (goals) ; => ()
 
+(reset)
+
+(defgoal (mother-of ?mother george))
+(back-run)
+
 ;(defgoal (father-of ?father george))
 ;(defgoal (grandparent-of ?grandparent george))
 ;(defgoal (sibling george ?sibling))

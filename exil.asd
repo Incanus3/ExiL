@@ -76,7 +76,7 @@
 	     (:module
 	      :integration
 	      :components
-	      ((:file "simple") (:file "template") (:file "clisp")
+	      ((:file "simple") (:file "template") (:file "clips")
 	       (:file "undo-redo")))
              (:file "run-tests")))
    (:module :examples

@@ -97,8 +97,9 @@
 	   :watch :unwatch :watched-p
 	   :clear :reset :step :halt :run
 	   :undo :redo :undo-stack :redo-stack
+	   :back-step :back-run
            :complete-reset) ;; DEBUG
-  (:shadow :assert :step :facts :undo :redo :watched-p))
+  (:shadow :assert :step :facts :undo :redo :watched-p :back-step :back-run))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")
