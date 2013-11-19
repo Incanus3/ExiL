@@ -5,36 +5,42 @@
 ;; similar to facts, but they may contain variables - special symbols whose
 ;; names start by ?, and which represent wildcards in the conditions. When
 ;; the rete mechanism tries to find a match for a given rule, it checks mutual
-;; compatibility of the variable bindings between the conditions as well as
+;; consistency of the variable bindings between the conditions as well as
 ;; within the condition itself - e.g. when there's the same variable used in
 ;; several conditions or in several places within one condition, the matching
 ;; fact(s) have to have the same values in those positions. One exception is
-;; the anonymous variable '?, which isn't checked for binding compatibility -
-;; it's as if each of its occurrence was actually a different variable (it very
-;; similar to prolog's anonymous variable _). The anonymous variable '? may
+;; the anonymous variable '?, which isn't checked for binding consistency -
+;; it's as if each of its occurrence was actually a different variable
+;; (similar to prolog's anonymous variable _). The anonymous variable '? may
 ;; not appear in the rule's activations (see rules).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; public interface:
 
 ;(defun variable-p (expr))
 ;(defun constant-test (desired-value real-value))
 ;(defun var-or-equal-p (atom1 atom2))
+
 ;(defclass pattern () (negated match-variable))
+
 ;(defclass simple-pattern (pattern simple-object) (specifier))
 ;(defun make-simple-pattern (pattern-spec &key negated match-var))
+;;;; inherited from simple-object:
+;; print-object, copy-object, object-slot, find-atom, atom-position, description
+
 ;(defclass template-pattern (pattern template-object) ())
 (defgeneric make-template-pattern (template slot-spec &key negated match-var)
   (:documentation "finds values for pattern's slots, creates new tmpl-patter"))
+;;;; inherited from template-object:
+;; print-object, copy-object, object-slot, find-atom, atom-position,
+;; description, has-slot-p
+
 (defgeneric variables-in-pattern (pattern))
 (defgeneric match-against-pattern (object pattern))
 (defgeneric substitute-variables (pattern bindings))
 
-; private
-(defgeneric match-against-pattern%% (object pattern))
-(defgeneric match-against-pattern%%% (object pattern atom-matcher))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; public
 (defun variable-p (expr)
   "is expr an exil variable?"
   (and (symbolp expr)
@@ -43,12 +49,10 @@
 (defun variables-in-list (list)
   (remove-duplicates (remove-if-not #'variable-p list)))
 
-; public, used by rete
 (defun constant-test (desired-value real-value)
   (or (variable-p desired-value)
       (equalp desired-value real-value)))
 
-; public, used by rete
 (defun var-or-equal-p (atom1 atom2)
   (or (and (variable-p atom1)
            (variable-p atom2))
@@ -56,7 +60,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; public, virtual
 (defclass pattern () ((negated :initform nil
                                :initarg :negated
                                :accessor negated-p)
@@ -70,13 +73,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; public
 (defclass simple-pattern (pattern simple-object)
   ((specifier :initform (error "pattern slot must be specified")
               :initarg :pattern
               :reader pattern)))
 
-; public
 (defun make-simple-pattern (pattern-spec &key negated match-var)
   (make-instance 'simple-pattern
                  :pattern (copy-list pattern-spec)
@@ -91,19 +92,14 @@
 (defmethod variables-in-pattern ((pattern simple-pattern))
   (variables-in-list (pattern pattern)))
 
-;;;; inherited from simple-object:
-;; print-object, copy-object, object-slot, find-atom, atom-position, description
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; public
 (defclass template-pattern (pattern template-object) ())
 
 (defmethod format-object ((object template-pattern) stream)
   (format stream "~:[~;NOT ~]~A" (negated-p object)
                 (cons (name (template object)) (slots object))))
 
-; public
 (defmethod make-template-pattern ((tmpl template) (slot-spec list)
                                   &key negated match-var)
   (let ((pattern (make-tmpl-object tmpl slot-spec 'template-pattern)))
@@ -111,13 +107,8 @@
     (setf (match-var pattern) match-var)
     pattern))
 
-;;;; inherited from template-object:
-;; print-object, copy-object, object-slot, find-atom, atom-position,
-;; description, has-slot-p
-
 ;; pattern's slot, for which user supplies no value and it's default value isn't
 ;; specified in the template definition, defaults to the anonymous variable '?
-; private
 (defmethod slot-default ((type (eql 'template-pattern)))
   '?)
 
@@ -143,6 +134,9 @@
   (cond ((variable-p pattern2-atom) (cons pattern2-atom pattern1-atom))
 	((variable-p pattern1-atom) (cons pattern1-atom pattern2-atom))
 	((not (equalp pattern1-atom pattern2-atom)) :mismatch)))
+
+(defgeneric match-against-pattern%% (object pattern))
+(defgeneric match-against-pattern%%% (object pattern atom-matcher))
 
 (defmethod match-against-pattern%%% ((object simple-object) (pattern simple-pattern)
 				     (atom-matcher function))

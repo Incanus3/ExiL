@@ -1,7 +1,8 @@
 (in-package :exil-core)
 
-;; all fact and pattern classes subclass this, all these objects are immutable
-;; from the higher layers' point of view, so there's no need to copy them
+;; virtual, all fact and pattern classes subclass this
+;; all these objects are immutable from the higher layers' point of view,
+;;   so there's no need to copy them
 ; private
 (defclass base-object () ())
 
@@ -13,11 +14,11 @@
 (defgeneric object-slot (object slot-spec))
 ; private
 (defgeneric (setf object-slot) (val object slot-spec))
-; public
+; public, used by rete
 (defgeneric atom-position (object atom))
 ; public
 (defgeneric description (object))
-
+; public
 (defmethod print-object ((object base-object) stream)
   (if *print-escape*
       (print-unreadable-object (object stream :type t :identity nil)
@@ -27,6 +28,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; virtual, simple-fact and simple-pattern subclass this
+; private
 (defclass simple-object (base-object)
   ((specifier :reader specifier
               :initarg :specifier)))
@@ -37,18 +40,15 @@
 (defmethod format-object ((object simple-object) stream)
   (format stream "~A" (specifier object)))
 
-; private
 (defmethod copy-object ((object simple-object))
   (make-instance (class-of object) :specifier (copy-list (specifier object))))
 
 (defmethod object-slot ((object simple-object) (slot-spec integer))
   (nth slot-spec (specifier object)))
 
-; private
 (defmethod (setf object-slot) (val (object simple-object) (slot-spec integer))
   (setf (nth slot-spec (specifier object)) val))
 
-; public, used by rete
 (defmethod atom-position ((object simple-object) atom)
   (position atom (specifier object)))
 
@@ -57,11 +57,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; virtual, template-fact and template-pattern will inherit from this one
+;; virtual, template-fact and template-pattern subclass this
 ;; template-name is a keyword
 ;; slots holds alist of slot names and values
 ;; slot names are keyword symbols
-; private for package
+; private
 (defclass template-object (base-object)
   ((template :reader template
              :initarg :template
@@ -72,6 +72,7 @@
 (defgeneric template-name (object))
 ; public
 (defgeneric slot-values (object))
+
 
 (defmethod template-name ((object template-object))
   (name (template object)))
@@ -85,7 +86,6 @@
 (defmethod format-object ((object template-object) stream)
   (format stream "~A" (cons (name (template object)) (slots object))))
 
-; private
 (defmethod copy-object ((object template-object))
   (make-instance (class-of object)
                  :template (template object)
@@ -94,19 +94,16 @@
 (defmethod object-slot ((object template-object) (slot-name symbol))
   (assoc-value slot-name (slots object)))
 
-; private
 (defmethod (setf object-slot) (val (object template-object) (slot-name symbol))
     (setf (assoc-value slot-name (slots object)) val))
 
 (defmethod slot-values ((object template-object))
   (mapcar #'cdr (slots object)))
 
-; public, used by rete
 (defmethod atom-position ((object template-object) atom)
   "get the atom position in template-object slots"
   (assoc-key atom (slots object)))
 
-; public
 (defmethod description ((object template-object))
   (cons (name (template object))
         (iter (for (slot . val) :in (slots object))

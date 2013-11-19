@@ -8,7 +8,6 @@
 ;(defmacro doslots ((name default template &optional retval) &body body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; template class
 
 ;; stores template for template facts and patterns
 ;; slot "slots" holds alist of slot specifiers (plists):
@@ -46,7 +45,7 @@
                                 (to-list-of-lists slots))))
 
 ; iterates over template's slots, introducing variables (whose names are
-; given by name and default) in the body
+; given by name and default) in the body, hiding actual slots representation
 ; public
 (defmacro doslots ((name default template &optional retval) &body body)
   "destructuring iteration macro"

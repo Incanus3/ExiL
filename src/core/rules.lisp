@@ -13,18 +13,21 @@
 ;; example of other usage.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; public interface:
+
 ;(defclass rule () (name conditions activations))
-;(defgeneric rule-equal-p (rule1 rule2))
+(defgeneric name-equal-p (rule1 rule2))
+(defgeneric rule-equal-p (rule1 rule2))
+;; conditions - list of patterns
+;; activations - list of s-expressions, that are evaluated when the rule is fired
 ;(defun make-rule (name conditions activations)
 
-; public
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defclass rule ()
   ((name :initarg :name :reader name)
    (conditions :initarg :conditions :reader conditions)
    (activations :initarg :activations :reader activations)))
-
-(defgeneric name-equal-p (rule1 rule2))
-(defgeneric rule-equal-p (rule1 rule2))
 
 #|
 (defmethod rule-equal-p ((rule1 rule) (rule2 rule))
@@ -39,20 +42,17 @@
            (every #'weak-equal-p acts1 acts2)))))
 |#
 
-; public
 (defmethod name-equal-p ((rule1 rule) (rule2 rule))
   (equalp (name rule1) (name rule2)))
 
 (defun conds-equal-p (rule1 rule2)
   (every #'exil-equal-p (conditions rule1) (conditions rule2)))
 
-; public
 (defmethod rule-equal-p ((rule1 rule) (rule2 rule))
   (and (name-equal-p rule1 rule2)
        (conds-equal-p rule1 rule2)
        (equalp (activations rule1) (activations rule2))))
 
-; public
 (defmethod print-object ((rule rule) stream)
   (with-slots (name conditions activations) rule
     (if *print-escape*
@@ -62,16 +62,12 @@
                 name (conditions rule) (activations rule))))
   rule)
 
-;public
-;; conditions - list of patterns
-;; activations - list of s-expressions, that are evaluated when the rule is fired
 (defun make-rule (name conditions activations)
   (assert (plusp (length conditions)) ()
           "Rule must have at least one condition")
   (make-instance 'rule :name name :conditions conditions
                  :activations activations))
 
-; public
 (defmethod variables-in-rule ((rule rule))
   (remove-duplicates (nconc (mapcan #'variables-in-pattern (conditions rule))
 			    (tree-find-all-if #'variable-p (activations rule)))))
