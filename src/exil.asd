@@ -9,16 +9,23 @@
 (defsystem exil
   :name "EXpert system In Lisp"
   :author "Jakub Kalab <jakubkalab@gmail.com>"
-  ;;  :version "0.1"
+  ;; :version "0.1"
   :maintainer "Jakub Kalab <jakubkalab@gmail.com>"
-  ;;  :licence "BSD"
+  ;; :licence "BSD"
   :description "EXpert system In Lisp"
-  ;;  :long-description ""
+  ;; :long-description ""
   :depends-on (:xlunit :iterate)
   :serial t
   :components
   ((:file "packages")
-   (:module :utils :components ((:file "utils")))
+   (:module :utils
+            :components
+            ((:file "symbols")
+             (:file "alists")
+             (:file "plists")
+             (:file "lists")
+             (:file "hash-tables")
+             (:file "misc")))
    (:module :core
             :components
             ((:file "templates") (:file "base-objects") (:file "facts")
@@ -85,8 +92,4 @@
 	     (:file "examples-simple")
 	     (:file "examples-clips")))
    #+lispworks(:file "gui")
-   ;;   (:file "pokusy")
-   )
-  ;;  :properties ((:author-email . "jakubkalab@gmail.com")
-  ;;               (:date . "4.9.2010")
-  )
+   ))
