@@ -6,7 +6,7 @@ retract: supports multiple retractions,
 watch: supports (watch all)
 unwatch: supports (unwatch all)
 defrule: supports optional rule title string
-defrule: supports the &fact <- <pattern> notation
+defrule: supports the ?fact <- <pattern> notation
 
 added retract-all (to replace clips (retract *))
 added ppdefrule
