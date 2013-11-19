@@ -12,7 +12,6 @@
   (setf (object tests) (make-instance 'exil-core::simple-object
                                       :specifier (copy-list '(in box hall)))))
 
-;; simple-fact tests
 (def-test-method test-exil-equal-p ((tests simple-object-tests) :run nil)
   (with-slots (object object2) tests
     (assert-true (exil-equal-p object object))

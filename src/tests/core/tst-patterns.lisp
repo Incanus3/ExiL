@@ -40,16 +40,16 @@
   (assert-false (var-or-equal-p '?a 'a)))
 
 (def-test-method test-match-against-pattern ((tests pattern-tests)
-						  :run nil)
+                                             :run nil)
   (assert-equal
    (multiple-value-list
     (match-against-pattern (make-simple-fact '(in box hall))
-				(make-simple-pattern '(in ?obj ?loc))))
+                           (make-simple-pattern '(in ?obj ?loc))))
    '(t ((?obj . box) (?loc . hall))))
   (assert-false (match-against-pattern (make-simple-fact '(in box hall))
-					    (make-simple-pattern '(in box garden))))
+                                       (make-simple-pattern '(in box garden))))
   (assert-false (match-against-pattern (make-simple-fact '(in box hall))
-					    (make-simple-pattern '(in ?a ?a))))
+                                       (make-simple-pattern '(in ?a ?a))))
   (let ((tmpl (make-template :in '(obj loc))))
     (assert-equal
      (multiple-value-list

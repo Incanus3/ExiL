@@ -15,11 +15,11 @@
 
 ;; public interface:
 
+;; conditions - list of patterns
+;; activations - list of s-expressions, that are evaluated when the rule is fired
 ;(defclass rule () (name conditions activations))
 (defgeneric name-equal-p (rule1 rule2))
 (defgeneric rule-equal-p (rule1 rule2))
-;; conditions - list of patterns
-;; activations - list of s-expressions, that are evaluated when the rule is fired
 ;(defun make-rule (name conditions activations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

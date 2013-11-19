@@ -25,7 +25,7 @@
    (:module :core
             :components
             ((:file "templates") (:file "base-objects") (:file "facts")
-	     (:file "patterns") (:file "rules")))
+	     (:file "patterns") (:file "pattern-matching") (:file "rules")))
    (:module :rete
             :components
             ((:file "tokens")
