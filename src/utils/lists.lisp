@@ -17,6 +17,7 @@
   (mapcar #'to-list list))
 ;; (to-list-of-lists '(a (b :default 10))) => ((a) (b :default 10))
 
+;; this is very inefficient
 (defmacro ext-pushnew (item place &key (test '#'equalp) (key '#'identity))
   "like pushnew, but as a second value returns,
    whether the list was actualy altered"
@@ -31,6 +32,7 @@
   `(progn (if ,list (nconc ,list (cons ,item nil)) (setf ,list (list ,item)))
           ,list))
 
+;; not used
 (defmacro pushnew-end (item list &key (key '#'identity) (test '#'equalp))
   "pushes the item at the end of list, if it's not yet in the list
    as a second value, returns whether the list was actualy altered"
@@ -86,10 +88,3 @@
 	(for results = (multiple-value-list (funcall func item)))
 	(when (first results)
 	  (return (values-list (cons item results))))))
-
-;; trees
-(defun tree-find-all-if (pred tree)
-  (if (listp tree)
-      (mapcan (lambda (subtree)
-		(tree-find-all-if pred subtree)) tree)
-      (when (funcall pred tree) (list tree))))

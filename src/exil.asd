@@ -20,12 +20,8 @@
   ((:file "packages")
    (:module :utils
             :components
-            ((:file "symbols")
-             (:file "alists")
-             (:file "plists")
-             (:file "lists")
-             (:file "hash-tables")
-             (:file "misc")))
+            ((:file "symbols") (:file "alists") (:file "plists")
+             (:file "lists") (:file "hash-tables") (:file "misc")))
    (:module :core
             :components
             ((:file "templates") (:file "base-objects") (:file "facts")

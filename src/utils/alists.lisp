@@ -37,6 +37,7 @@
            (and (listp elem) (= (length elem) 2)))
          list))
 
+;; this is very inefficient
 (defun alist-equal-p (alist1 alist2)
   (and (= (length alist1) (length alist2))
        (every (lambda (x)

@@ -1,6 +1,14 @@
 (in-package :exil-utils)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TREES
+(defun tree-find-all-if (pred tree)
+  (if (listp tree)
+      (mapcan (lambda (subtree)
+		(tree-find-all-if pred subtree)) tree)
+      (when (funcall pred tree) (list tree))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SETS
 
 (defun set-equal-p (set1 set2 &key (test #'eql))
