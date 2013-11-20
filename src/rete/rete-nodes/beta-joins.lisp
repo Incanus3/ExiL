@@ -1,7 +1,7 @@
 (in-package :exil-rete)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; beta-join-node provides testing of variable binding consistency between
+;; beta join node handles testing of variable binding consistency between
 ;; current rule condition (matching wmes stored in alpha memory feeding into
 ;; this node) and previous conditions (matchin tokens stored in beta memory
 ;; feeding into this node)
@@ -9,7 +9,7 @@
 ;; the current condition, or by the beta memory when newly added wme matches
 ;; some of the previous conditions, in both cases the other memory is searched
 ;; for items with consistent variable bindings
-;; children are beta-memory-nodes, there's always just one child
+;; children are beta memory nodes, there's always just one child
 
 (defclass beta-join-node (beta-node)
   ((alpha-memory :accessor alpha-memory :initarg :alpha-memory
@@ -53,7 +53,7 @@
         (activate-children node (make-token wme token)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; beta-negative-node handles join tests (variable binding consistency tests
+;; beta negative node handles join tests (variable binding consistency tests
 ;; between rule's conditions) for negated conditions
 ;; these conditions are satisfied if there's no fact in the working memory
 ;; congruent with the pattern (with consistent variable bindings)

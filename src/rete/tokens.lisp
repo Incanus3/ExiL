@@ -4,15 +4,18 @@
 ;; Token constitutes a linked list of facts that meet some rule's conditions,
 ;; e.g. if token's wme is some fact that meets some rule's third condition
 ;; then its parent's wme is a fact that meets the rule's second condition, etc.
+;; The end of this linked list is marked by an empty token (which has no wme).
+;;
 ;; Together with the rule the token forms a match (either partial or complete,
 ;; if a set of facts is found, that meets all the rule's conditions).
-;; By pairing the token's wmes (facts) to the rule's conditions (patterns)
+;; By pairing the token's wmes (facts) with the rule's conditions (patterns)
 ;; we get the variable bindings, that are then used in the rule's activations.
+;;
 ;; WME stands for working memory element, which is RETE's terminology for facts
 ;; that are matched against some rule's conditions. The RETE network keeps
-;; tokens (complete or partial matches) in each of its nodes, so many copies
-;; of the same WME may exist at the moment, whereas the environment stores only
-;; one instance of the fact.
+;; tokens (complete or partial matches) in each of its beta memory nodes, so
+;; many copies of the same WME may exist at the moment, whereas the environment
+;; stores only one instance of the fact.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defclass token () ((parent :reader parent :initarg :parent)

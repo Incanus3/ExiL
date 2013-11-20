@@ -4,7 +4,7 @@
                                     :initform nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; beta-memory-node store (complete or partial) matches (sequences of wmes
+;; beta memory nodes store (complete or partial) matches (sequences of wmes
 ;; that match some consecutive rule conditions)
 ;; botom beta-memory-nodes store productions (rules) that
 ;; are satisfied when the node is activated (i.e. the network path leading

@@ -1,27 +1,12 @@
 (in-package :exil-rete)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; RETE is the algorithm that matches the facts in the knowledge base of an
+;; RETE is the algorithm that matches facts of the knowledge base of an
 ;; expert system against conditions of its productions (inferences rules).
 ;; Without this algorithm, matching of each rule against each set of facts
 ;; would have unfeasible computational complexity even for medium-sized expert
 ;; systems.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; terminology note:
-;; be sure about distiction of following expressions
-;; a) template-facts - instances of class template-fact
-;;      - they're just facts with named slots
-;;      - e.g. (car :color red :mph 160)
-;; b) templates - instances of class template
-;;      - prescriptions for template-facts - describe the slot names,
-;;        default values, etc.
-;;      - you can't create template-fact using make-fact without having
-;;        a template for it
-;; c) patterns - could be either in simple-object or in template-object form
-;;      - they're not facts, they can include wildcards, variables, etc.
-;;      - e.g. (on red-box ?some-other-box) ; simple-pattern
-;;      - or (car :color ?some-color)       ; template-pattern
 
 ;; this is needed in order to compare lists of exil objects
 ;; all these lists should be sets according to exil-equal-p, as they're all

@@ -1,5 +1,26 @@
 (in-package :exil-core)
 
+;; terminology note:
+;; be sure to recognize the difference between following concepts
+;; a) objects - facts vs. patterns
+;;    - patterns are very similar to facts, but can include variables
+;;    - e.g. (on red-box blue-box)        - fact
+;;    - e.g. (on red-box ?some-other-box) - pattern
+;; b) simple vs. template objects
+;;    - object slots can be identified either by position - simple objects
+;;      or by name - template objects
+;;    - e.g. (on red-box blue-box)       - simple fact
+;;    - e.g. (on red-box ?other-box)     - simple pattern
+;;    - e.g. (car :color red :mph 160)   - template-fact
+;;      equal to (car :mph 160 :color red)
+;;    - e.g. (car :color ?clr :mph ?mph) - template-pattern
+;; c) templates - instances of class template
+;;    - prescriptions for template objects - describe slots and default values
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; public interface:
+
 ;(defclass template () (name slots))
 (defgeneric exil-equal-p (obj1 obj2)
   (:documentation "ExiL default equality predicate")
