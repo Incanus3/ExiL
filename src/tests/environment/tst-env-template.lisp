@@ -68,9 +68,9 @@
 
 (def-test-method test-template-env ((tests template-env-tests) :run nil)
   (with-slots (env t-in) tests
-    (do-step env)
-    (do-step env)
-    (do-step env)
+    (step-env env)
+    (step-env env)
+    (step-env env)
     (assert-true (find-fact env (make-template-fact t-in '(:object box :location A))))))
 
 (add-test-suite 'template-env-tests)

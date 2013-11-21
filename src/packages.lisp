@@ -63,7 +63,7 @@
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
-	   :do-step :halt-env :run-env
+	   :step-env :halt-env :run-env
 	   ;; backward chaining
 	   :add-goal :find-goal :print-goals
 	   :back-step :back-run
@@ -87,7 +87,8 @@
   (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-parser :exil-env :iterate)
   (:import-from :exil-utils :to-keyword :fresh-princ)
-  (:export :deftemplate :ppdeftemplate
+  (:export :defenv :setenv :current-env-name
+           :deftemplate :ppdeftemplate
 	   :assert :retract :retract-all :modify
 	   :agenda :facts
            :deffacts :undeffacts

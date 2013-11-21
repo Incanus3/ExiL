@@ -26,6 +26,8 @@
    :test #'equalp))
 
 ;; substitute variables in rule's RHS by their bindings
+;; if I only used subst, the resulting expression list would share conses
+;; with the original, which may cause errors in future
 (defun subst-vars-in-activations (activations-with-vars var-bind-list)
   (let ((activations (copy-tree activations-with-vars)))
     (dolist (binding var-bind-list activations)
@@ -34,6 +36,9 @@
 ;; resolve variable bindings, substitue variables in RHS and evaluate the
 ;; RHS expressions
 ;; TODO: should check (watched-p :activations) before printing output
+;; ACTIVATIONS ARE EVALUATED IN DIFFERENT CONTEXT THAN THEY WERE CREATED
+;; IT WOULD BE NICE IF THIS COULD BE ENCAPSULATED IN A CLOSURE, BUT THAN
+;; I COULDN'T SUBSTITUTE THE VARIABLES
 (defun activate-rule (activation)
   (let* ((rule (match-rule activation))
          (token (match-token activation))

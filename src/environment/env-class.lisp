@@ -34,7 +34,7 @@
                      strategies and watchers and stores the asserted facts
                      and the activations"))
 
-;; PUBLIC METHODS
+;; PUBLIC INTERFACE
 ;; constructor:
 ;(defun make-environment ())
 ;; undo/redo:
@@ -73,7 +73,7 @@
 (defgeneric reset-env (env &optional undo-label))
 (defgeneric completely-reset-env (env)) ; DEBUG
 ;; inference steps
-(defgeneric do-step (env &optional undo-label))
+(defgeneric step-env (env &optional undo-label))
 (defgeneric halt-env (env))
 (defgeneric run-env (env &optional undo-label))
 ;; backward chaining:

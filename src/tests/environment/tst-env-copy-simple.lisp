@@ -17,11 +17,11 @@
 (def-test-method copy-can-continue-computation
     ((tests simple-env-copy-tests) :run nil)
   (with-slots (env) tests
-    (do-step env)
+    (step-env env)
     (let ((env-copy (copy-env env)))
       (setf *env* env-copy)
-      (do-step env-copy)
-      (do-step env-copy)
+      (step-env env-copy)
+      (step-env env-copy)
       (assert-true (find-fact env-copy (make-simple-fact '(in box A)))))))
 
 (add-test-suite 'simple-env-copy-tests)

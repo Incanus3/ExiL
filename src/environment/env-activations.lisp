@@ -145,13 +145,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INFERENCE STEPS
 
-;; during do-step and run-env, every env slot may actually change as there may
+;; during step-env and run-env, every env slot may actually change as there may
 ;; be any front-end call in the selected rule's RHS
 ;; for now, suppose that only fact-changing calls are used (assert, retract, modify)
 ;; => store facts, activations, rete
 
 ;; must return true if the step was done
-(defmethod do-step ((env environment) &optional (undo-label "(do-step)"))
+(defmethod step-env ((env environment) &optional (undo-label "(step-env)"))
   (when (activations env)
     (with-saved-slots env (facts activations rete) undo-label
       (activate-rule (select-activation env)))
@@ -164,4 +164,4 @@
 (defmethod run-env ((env environment) &optional (undo-label "(run-env)"))
   (with-saved-slots env (facts activations rete) undo-label
     (setf (running env) t)
-    (iter (while (and (running env) (do-step env))))))
+    (iter (while (and (running env) (step-env env))))))

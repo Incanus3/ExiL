@@ -62,9 +62,9 @@
 
 (def-test-method test-simple-env ((tests simple-env-tests) :run nil)
   (with-slots (env) tests
-    (do-step env)
-    (do-step env)
-    (do-step env)
+    (step-env env)
+    (step-env env)
+    (step-env env)
     (assert-true (find-fact env (make-simple-fact '(in box A))))))
 
 (add-test-suite 'simple-env-tests)

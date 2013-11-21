@@ -4,6 +4,7 @@
 ;; multiple environments:
 ; (defmacro defenv (name &key redefine))
 ; (defmacro setenv (name))
+; (defun current-env-name ())
 ;; watchers:
 ; (defmacro watch (watcher))
 ; (defmacro unwatch (watcher))
@@ -19,6 +20,7 @@
 ;; fact groups:
 ; (defmacro deffacts (name &body descriptions))
 ; (defmacro undeffacts (name))
+; TODO: implement ppdeffacts
 ;; strategies:
 ; (defmacro defstrategy (name function))
 ; (defmacro setstrategy (name))
@@ -43,6 +45,15 @@
 
 (defvar *environments* (make-hash-table))
 (defvar *current-environment*)
+(defvar *current-env-name*)
+
+;; private
+(defun set-env-name (name)
+  (setf *current-env-name* name))
+
+;; public
+(defun current-env-name ()
+  *current-env-name*)
 
 ;; public
 (defmacro defenv (name &key redefine)
@@ -58,9 +69,13 @@
 ;; public
 (defmacro setenv (name)
   "set current environment to one previously defined with name"
-  (let ((env (gensym "env")))
-    `(let ((,env (gethash (to-keyword ',name) *environments*)))
-       (when ,env (setf *current-environment* ,env)))))
+  (let ((env (gensym "env"))
+        (env-name (gensym "env-name")))
+    `(let* ((,env-name (to-keyword ',name))
+            (,env (gethash ,env-name *environments*)))
+       (when ,env
+         (setf *current-environment* ,env)
+         (set-env-name ,env-name)))))
 
 (defenv :default)
 (setenv :default)

@@ -24,7 +24,7 @@
 ; public
 (defun step ()
   "run inference engine for one turn"
-  (do-step *current-environment* "(step)"))
+  (step-env *current-environment* "(step)"))
 
 ; public
 (defun halt ()

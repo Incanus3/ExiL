@@ -210,7 +210,7 @@
   (with-slots (env) tests
     (let (env1 env2)
       (save-env env env1)
-      (do-step env)
+      (step-env env)
       (save-env env env2)
       (test-undo-redo env env1 env2))))
 
@@ -218,7 +218,7 @@
   (with-slots (env) tests
     (set-watcher env :facts)		; facts watched
     (undo env)				; (watch facts) on redo stack
-    (do-step env)			; should dump redo stack
+    (step-env env)			; should dump redo stack
     (assert-stack-dumped env)))
 
 (def-test-method undo-run ((tests env-undo-tests2) :run nil)

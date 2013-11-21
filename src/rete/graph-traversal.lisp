@@ -16,7 +16,8 @@
     `(let* ((,node-sym ,node)
 	    (,memo-sym ,memo)
 	    (,memo-result-sym (getmemo ,node-sym ,memo-sym)))
-       (if (not (equal ,memo-result-sym :not-found)) ,memo-result-sym
+       (if (not (equal ,memo-result-sym :not-found))
+           ,memo-result-sym
 	   (progn
 	     (memoize ,node-sym ,memo-sym (funcall ,memo-fun ,node-sym))
 	     ,@body)))))
@@ -69,6 +70,7 @@
   (walk-graph start-node :memo-fun (constantly nil)
 	      :aggreg (lambda (node children)
 			(cons node (apply #'append children)))))
+
 
 (defgeneric neighbors (node)
   (:method-combination append)
