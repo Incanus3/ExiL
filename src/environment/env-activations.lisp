@@ -139,7 +139,7 @@
 ; public, used for testing
 (defmethod completely-reset-env ((env environment))
   (reset-slots env (templates fact-groups rules facts activations rete
-			      goals undo-stack redo-stack))
+			      goals undo-stack redo-stack back-stack))
   #+lispworks(exil-gui:update-lists))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

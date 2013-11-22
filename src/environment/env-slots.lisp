@@ -244,8 +244,12 @@
 (defun del-goal (env goal)
   (setf (goals env) (delete goal (goals env) :test #'exil-equal-p)))
 
-
 ;; back-stack
+;; TODO: implement copy-backstack for undo/redo to work
+
+(defun back-stack-initform ()
+  ())
+
 (defun stack-for-backtrack (env goals tried-facts tried-rules match)
   (push (list goals tried-facts tried-rules match) (back-stack env)))
 

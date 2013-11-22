@@ -75,9 +75,12 @@
 (defun original-goals (env)
   (first (last1 (back-stack env))))
 
+(defun original-variable-p (var env)
+  (find var (variables-in-goals (original-goals env))))
+
 (defun used-substitutions (env)
   (remove-if-not
-   (lambda (subst) (find (car subst) (variables-in-goals (original-goals env))))
+   (lambda (subst) (original-variable-p (car subst) env))
    (compose-substitutions
     (mapcar #'goal-match-bindings (back-stack-matches env)))))
 

@@ -26,9 +26,14 @@
 		 (activations rule)))
 
 ;; this creates a kind of cyclic dependency between parser and environment
-;; - parser needs environment to find templates in, but this environment
-;;   functionality needs parser to parse assert forms appearing in rules'
-;;   activations (rhs) to be able to unify these patterns with goals
+;; - parser needs environment to find templates in, but to match facts, that
+;;   will result from firing a rule with subgoals, environment needs parser
+;;   to parse assert forms appearing in rules' activations (rhs)
+;;
+;; we're parsing these forms as patterns, as opposed to forward chaining, which
+;; evaluates them and assert parses them as facts, this is because when they're
+;; parsed by assert, the variables are already substituted, which obviously
+;; doesn't hold for backward chaining
 (defun rule-rhs-assert-patterns (env rule)
   (mapcar (lambda (pattern-spec)
 	    (exil-parser:parse-pattern env pattern-spec))
