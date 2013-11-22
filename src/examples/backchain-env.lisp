@@ -14,6 +14,11 @@
 (add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
 
 #|
+(print-goals env)
+
+;; back-run could store the list of goals to restore it after successfull
+;; run, but then it would also need to store dump backtrack stack, making
+;; asking for alternative answers impossible
 (back-run env)
 
 OUTPUT:

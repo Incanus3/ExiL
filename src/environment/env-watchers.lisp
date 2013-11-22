@@ -6,7 +6,7 @@
 (defun assert-watcher (env watcher)
   (cl:assert (or (equalp watcher :all)
                  (is-watcher env watcher))
-             () "I don't know how to watch ~A" watcher))
+             () "~A is not a watcher name" watcher))
 
 (defun set-one-watcher (env watcher val undo-label)
   (let ((original-value (watched-p env watcher)))

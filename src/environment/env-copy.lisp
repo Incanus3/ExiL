@@ -1,6 +1,7 @@
 (in-package :exil-env)
 
 ; public, used for testing
+; TODO: unexport these once properly tested
 (defgeneric copy-env (env))
 (defgeneric env-copy-p (env1 env2))
 (defgeneric common-slots-p (env1 env2))

@@ -80,3 +80,4 @@
 (defgeneric add-goal (env goal &optional undo-label))
 (defgeneric print-goals (env))
 (defgeneric back-step (env &optional undo-label))
+(defgeneric back-run (env &optional undo-label))

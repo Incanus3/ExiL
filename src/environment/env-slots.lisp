@@ -3,9 +3,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SLOT ABSTRACTION
 
-;; abstract access to slots that are not simple values or lists, this way if
-;; the implementation changes (which it does from time to time) I only have to
-;; modify these
+;; these functions and methods abstract low-level access to environment slots
+;; that are not simple values or lists, this way if the implementation changes
+;; (which it does from time to time) I only have to modify these
+;; this low-level access isn't recorded in undo/redo stacks
 
 ;; watchers
 (defun copy-watchers (watchers)
@@ -27,6 +28,7 @@
 (defun set-all-watchers% (env val)
   (setf (watchers env) (mapcar (lambda (pair) (cons (car pair) val))
 			       (watchers env))))
+
 
 ;; templates
 (defun copy-templates (templates)
@@ -50,6 +52,7 @@
 (defun set-template (env name template)
   (setf (gethash name (templates env)) template))
 
+
 ;; facts
 (defun copy-facts (facts)
   (copy-list facts))
@@ -70,6 +73,7 @@
 
 (defun del-fact (env fact)
   (setf (facts env) (delete fact (facts env) :test #'exil-equal-p)))
+
 
 ;; fact groups
 (defun copy-fact-groups (fact-groups)
@@ -102,6 +106,7 @@
 (defun all-fg-facts (env)
   (mapcan #'fg-facts (fact-groups env)))
 
+
 ;; strategies
 (defun copy-strategies (strategies)
   (copy-alist strategies))
@@ -128,6 +133,7 @@
 (defun set-strategy-name% (env name)
   (setf (current-strategy-name env) (to-keyword name)))
 
+
 ;; activations
 (defun copy-activations (activations)
   (mapcar #'copy-match activations))
@@ -148,6 +154,7 @@
   `(multiple-value-bind (,new-list ,altered-p)
        (ext-delete ,match (activations ,env) :test #'match-equal-p)
      ,@body))
+
 
 ;; rules
 (defun copy-rules (rules)
@@ -174,9 +181,11 @@
   `(iter (for (,name ,rule) :in-hashtable (rules ,env))
 	 ,@body))
 
+
 ;; rete
 (defun rete-initform (env)
   (make-rete env))
+
 
 ;; undo/redo stacks
 (defun copy-undo-stack (stack)
@@ -212,6 +221,7 @@
 (defun stack-item-label (item)
   (third item))
 
+
 ;; BACKWARD CHAINING
 ;; goals
 (defun copy-goals (goals)
@@ -233,6 +243,7 @@
 
 (defun del-goal (env goal)
   (setf (goals env) (delete goal (goals env) :test #'exil-equal-p)))
+
 
 ;; back-stack
 (defun stack-for-backtrack (env goals tried-facts tried-rules match)
