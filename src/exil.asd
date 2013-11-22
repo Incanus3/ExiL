@@ -44,7 +44,8 @@
             ((:file "matches") (:file "activations") (:file "strategies")
              (:file "env-class") (:file "env-slots") (:file "env-copy")
 	     (:file "env-undo") (:file "env-watchers") (:file "env-facts")
-             (:file "env-activations") (:file "env-backward")))
+             (:file "env-activations") (:file "env-backward-base")
+             (:file "env-backward-matching") (:file "env-backward-inference")))
    (:module :parser
             :components
             ((:file "prs-base") (:file "prs-templates") (:file "prs-facts")
