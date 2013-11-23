@@ -4,10 +4,11 @@
 (defpackage :exil-utils
   (:documentation "general purpose utilities used in the rest of the code")
   (:use :common-lisp :iterate)
-  (:export :last1 :to-keyword :gensymedp :string-append :symbol-append
-	   :weak-equal-p :alistp :assoc-value :add-assoc-value :assoc-key
-	   :alist-equal-p :plistp :doplist
-           :to-list :to-list-of-lists
+  (:export :to-keyword :gensymedp :string-append :symbol-append
+	   :symbol-name-equal-p :weak-equal-p
+           :alistp :assoc-value :add-assoc-value :assoc-key :alist-equal-p
+           :plistp :doplist
+           :last1 :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
            :push-update :numbered-map :list-difference :find-if-func-result
 	   :tree-find-all-if
@@ -47,7 +48,8 @@
                    and rules and stores the asserted facts")
   (:nicknames :eenv)
   (:use :common-lisp :exil-core :exil-rete :iterate)
-  (:import-from :exil-utils :to-keyword :assoc-value :add-assoc-value
+  (:import-from :exil-utils :to-keyword :symbol-name-equal-p
+                :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
 		:list-difference :find-if-func-result
 		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append

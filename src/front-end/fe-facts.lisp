@@ -12,7 +12,7 @@
                 (at-most end-index))
   "return at most at-most facts from start-index to end-index"
   (progn
-    (princ (subseq (exil-env:facts *current-environment*)
+    (fresh-princ (subseq (exil-env:facts *current-environment*)
                    (1- start-index)
                    (min end-index (+ start-index at-most -1))))
     nil))

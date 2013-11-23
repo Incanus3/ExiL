@@ -22,7 +22,7 @@
 
 (defun rule-rhs-assert-forms (rule)
   (remove-if-not (lambda (form)
-		   (equalp (first form) 'assert))
+		   (symbol-name-equal-p (first form) 'assert))
 		 (activations rule)))
 
 ;; this creates a kind of cyclic dependency between parser and environment

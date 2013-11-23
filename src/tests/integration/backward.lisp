@@ -4,11 +4,11 @@
 (defclass backward-integration-tests (test-case)
   ((env :reader env :initform exil::*current-environment*)))
 
-(defmethod set-up ((tests template-integration-tests))
+(defmethod set-up ((tests backward-integration-tests))
   (complete-reset)
   (unwatch all))
 
-(def-test-method test-fact-matching ((tests template-integration-tests) :run t)
+(def-test-method test-fact-matching ((tests backward-integration-tests) :run nil)
   (deffacts world
     (in box hall)
     (color box blue)
@@ -21,15 +21,12 @@
   (reset)
   (back-run)
 
-  ;; ASSERT USED BINDINGS HERE, IDEALLY USING ONLY FRONT-END API
-  ;; (with-slots (env) tests
-  ;;   (let ((in-template (eenv::find-template env :in)))
-  ;;     (assert-true (eenv::find-fact env (eenv::make-template-fact
-  ;;       				 in-template '(:object box :location A))))))
-  )
+  (with-slots (env) tests
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?object . box)))))
 
 (def-test-method test-fact-matching-with-backtracking
-    ((tests template-integration-tests) :run t)
+    ((tests backward-integration-tests) :run nil)
   (deffacts world
     (in box1 hall)
     (color box1 green)
@@ -49,12 +46,86 @@
   (reset)
   (back-run)
 
-  ;; ASSERT USED BINDINGS HERE
-  ;; (with-slots (env) tests
-  ;;   (let ((in-template (eenv::find-template env :in)))
-  ;;     (assert-true (eenv::find-fact env (eenv::make-template-fact
-  ;;       				 in-template '(:object box :location A))))))
-  )
+  (with-slots (env) tests
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?object . box3)))))
 
-(add-test-suite 'template-integration-tests)
-                                        ;(textui-test-run (get-suite template-integration-tests))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def-test-method test-rule-matching
+    ((tests backward-integration-tests) :run nil)
+  (deffacts world
+    (female jane)
+    (parent-of jane george))
+
+  (defrule mother
+    (female ?mother)
+    (parent-of ?mother ?child)
+    =>
+    (assert (mother-of ?mother ?child)))
+
+  (defgoal (mother-of ?mother-of-george george))
+
+  (reset)
+  (back-run)
+
+  (with-slots (env) tests
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?mother-of-george . jane)))))
+
+(def-test-method test-rule-matching-with-backtracking
+    ((tests backward-integration-tests) :run nil)
+  (deffacts world
+    (female jane)
+    (parent-of jane george))
+
+  (defrule mother-is-daughter-of-grandpa
+    (grandpa-of ?grandpa ?child)
+    (daughter-of ?mother ?grandpa)
+    =>
+    (assert (mother-of ?mother ?child)))
+
+  (defrule mother-is-female-parent
+    (female ?mother)
+    (parent-of ?mother ?child)
+    =>
+    (assert (mother-of ?mother ?child)))
+
+  (defgoal (mother-of ?mother-of-george george))
+
+  (reset)
+  (back-run)
+
+  (with-slots (env) tests
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?mother-of-george . jane)))))
+
+(def-test-method test-rule-matching-with-backtracking-inverted-rules
+    ((tests backward-integration-tests) :run nil)
+  (deffacts world
+    (female jane)
+    (parent-of jane george))
+
+  (defrule mother-is-female-parent
+    (female ?mother)
+    (parent-of ?mother ?child)
+    =>
+    (assert (mother-of ?mother ?child)))
+
+  (defrule mother-is-daughter-of-grandpa
+    (grandpa-of ?grandpa ?child)
+    (daughter-of ?mother ?grandpa)
+    =>
+    (assert (mother-of ?mother ?child)))
+
+  (defgoal (mother-of ?mother-of-george george))
+
+  (reset)
+  (back-run)
+
+  (with-slots (env) tests
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?mother-of-george . jane)))))
+
+(add-test-suite 'backward-integration-tests)
+;;(textui-test-run (get-suite backward-integration-tests))

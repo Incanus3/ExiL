@@ -81,7 +81,7 @@
 	      :integration
 	      :components
 	      ((:file "simple") (:file "template") (:file "clips")
-	       (:file "undo-redo")))
+	       (:file "undo-redo") (:file "backward")))
              (:file "run-tests")))
    (:module :examples
 	    :components

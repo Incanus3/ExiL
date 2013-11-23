@@ -85,7 +85,7 @@
     (mapcar #'goal-match-bindings (back-stack-matches env)))))
 
 (defun print-inference-report (env)
-  (fresh-format t "All goals have been satisfied")
+  (fresh-format t "~%All goals have been satisfied")
   (dolist (match (back-stack-matches env))
     (print-goal-match match))
   (let ((substitutions (used-substitutions env)))
