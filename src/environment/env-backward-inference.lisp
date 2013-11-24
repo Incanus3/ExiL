@@ -89,4 +89,4 @@
           (if match-found-p
               (unless (goals env)
                 (return (print-inference-report env)))
-              (fresh-format t "No feasible answer found")))))
+              (return (fresh-format t "No feasible answer found"))))))

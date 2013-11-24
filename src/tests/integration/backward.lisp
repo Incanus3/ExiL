@@ -54,21 +54,35 @@
     ((tests backward-integration-tests) :run nil)
   (deffacts world
     (in box1 hall)
-    (in box2 hall))
+    (color box1 blue)
+
+    (in box2 hall)
+    (color box2 red)
+    (size box2 big)
+
+    (in box3 hall)
+    (color box3 red)
+    (size box3 small)
+
+    (in box4 hall)
+    (color box4 red)
+    (size box4 big))
 
   (defgoal (in ?object hall))
+  (defgoal (color ?object red))
+  (defgoal (size ?object big))
 
   (reset)
   (back-run)
 
   (with-slots (env) tests
     (assert-false (eenv::goals env))
-    (assert-equal (eenv::used-substitutions env) '((?object . box1)))
+    (assert-equal (eenv::used-substitutions env) '((?object . box2)))
 
     (back-run)
 
     (assert-false (eenv::goals env))
-    (assert-equal (eenv::used-substitutions env) '((?object . box2)))))
+    (assert-equal (eenv::used-substitutions env) '((?object . box4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
