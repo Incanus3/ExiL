@@ -113,8 +113,11 @@
 (defun original-variable-p (var env)
   (find var (variables-in-goals (original-goals env))))
 
+(defun all-used-substitutions (env)
+  (compose-substitutions
+   (mapcar #'goal-match-bindings (back-stack-matches env))))
+
 (defun used-substitutions (env)
   (remove-if-not
    (lambda (subst) (original-variable-p (car subst) env))
-   (compose-substitutions
-    (mapcar #'goal-match-bindings (back-stack-matches env)))))
+   (all-used-substitutions env)))

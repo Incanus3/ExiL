@@ -161,5 +161,44 @@
     (assert-false (eenv::goals env))
     (assert-equal (eenv::used-substitutions env) '((?mother-of-george . jane)))))
 
+(def-test-method test-rule-matching-with-alternative-answers
+    ((tests backward-integration-tests) :run nil)
+  (deffacts world
+    (grandpa-of joseph george)
+    (daughter-of jane joseph)
+    (female jane)
+    (parent-of jane george))
+
+  (defrule mother-is-daughter-of-grandpa
+    (grandpa-of ?grandpa ?child)
+    (daughter-of ?mother ?grandpa)
+    =>
+    (assert (mother-of ?mother ?child)))
+
+  (defrule mother-is-female-parent
+    (female ?mother)
+    (parent-of ?mother ?child)
+    =>
+    (assert (mother-of ?mother ?child)))
+
+  (defgoal (mother-of ?mother-of-george george))
+
+  (reset)
+  (with-slots (env) tests
+    (back-run)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::all-used-substitutions env)
+                  '((?mother-of-george . jane)
+                    (?child . george)
+                    (?grandpa . joseph)))
+
+    (back-run)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::all-used-substitutions env)
+                  '((?mother-of-george . jane)
+                    (?child . george)))))
+
 (add-test-suite 'backward-integration-tests)
 ;;(textui-test-run (get-suite backward-integration-tests))
