@@ -30,7 +30,7 @@
            :negated-p :simple-pattern :var-or-equal-p
 	   :variables-in-pattern
 	   :match-against-pattern :substitute-variables
-           :template-pattern :rule :name-equal-p :rule-equal-p :make-rule
+           :template-pattern :rule :rulep :name-equal-p :rule-equal-p :make-rule
            :name :conditions :activations :description))
 
 (defpackage :exil-rete

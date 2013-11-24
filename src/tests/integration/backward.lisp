@@ -50,6 +50,28 @@
     (assert-false (eenv::goals env))
     (assert-equal (eenv::used-substitutions env) '((?object . box3)))))
 
+;; (def-test-method test-fact-matching-with-alternative-answers
+;;     ((tests backward-integration-tests) :run t)
+;;   (deffacts world
+;;     (in box1 hall)
+;;     (in box2 hall))
+
+;;   (defgoal (in ?object hall))
+
+;;   (reset)
+;;   (back-run)
+
+;;   ;; HOW TO ASK FOR ALTERNATIVE ANSWERS?
+;;   ;; - run (back-run) again
+;;   ;;   - we need to restore the goals to the state they were in, before locking on this answer
+
+;;   ;; what happens when back-run is called and there are no goals?
+;;   (back-run)
+
+;;   (with-slots (env) tests
+;;     (assert-false (eenv::goals env))
+;;     (assert-equal (eenv::used-substitutions env) '((?object . box3)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def-test-method test-rule-matching

@@ -29,6 +29,9 @@
    (conditions :initarg :conditions :reader conditions)
    (activations :initarg :activations :reader activations)))
 
+(defun rulep (object)
+  (typep object 'rule))
+
 #|
 (defmethod rule-equal-p ((rule1 rule) (rule2 rule))
   (with-slots ((name1 name)

@@ -12,46 +12,61 @@
 
 (defvar *print-match* t)
 
-(defun stack-match-for-backtrack (env match tried-facts tried-rules)
-  (let ((goal-match-object (goal-match-object match)))
-    (etypecase goal-match-object
-      (fact (push goal-match-object tried-facts))
-      (rule (push goal-match-object tried-rules)))
-    (stack-for-backtrack env (copy-list (goals env))
-			 tried-facts tried-rules match)))
+(defmacro add-object-to-tried-list (object tried-facts tried-rules)
+  (let ((object-sym (gensym "object")))
+    `(let ((,object-sym ,object))
+       (etypecase ,object
+         (fact (push ,object ,tried-facts))
+         (rule (push ,object ,tried-rules))))))
 
-(defun add-rule-conditions-to-goals (env rule)
-  (dolist (condition (conditions rule))
-    (add-goal env condition)))
+(defun stack-match-for-backtrack (env match tried-facts tried-rules)
+  (add-object-to-tried-list (goal-match-object match) tried-facts tried-rules)
+  (stack-for-backtrack env (copy-list (goals env)) tried-facts tried-rules match))
+
+(defun add-rule-conditions-to-goals (env goal-match-object)
+  (when (rulep goal-match-object)
+    (dolist (condition (conditions goal-match-object))
+      (add-goal env condition))))
 
 (defun make-back-step (env match &optional tried-facts tried-rules)
   (when *print-match* (print-goal-match match))
   (stack-match-for-backtrack env match tried-facts tried-rules)
   (del-goal env (goal-match-goal match))
-  (let ((goal-match-object (goal-match-object match)))
-    (when (typep goal-match-object 'rule)
-      (add-rule-conditions-to-goals env goal-match-object)))
+  (add-rule-conditions-to-goals env (goal-match-object match))
   (substitute-vars-in-goals env (goal-match-bindings match))
   t)
 
 (defun backtrack (env)
+  ;; WHEN WE RUN OUT OF ALTERNATIVES, THE STACK SHOULD BE EMPTY
   (iter (while (back-stack env))
 	(pop-backtrack (goals tried-facts tried-rules) env
 	  (let ((matches (find-unused-matches
 			  env (select-goal goals) tried-facts tried-rules)))
+            ;; WHEN NO MATCHES, LOOP CONTINUES
 	    (when matches
 	      (setf (goals env) goals)
 	      (return (make-back-step
 		       env (select-match matches) tried-facts tried-rules)))))))
 
-; public
+;; public
+;; TODO: this should be undoable
+;; RELEVANT STATE: goals, back-stack
+;; if there are no more goals, back-step recognizes this as final success
+;; and returns nil, which is how back-run knows matches were found
+
+;; possible states:
+;; no more goals - answer was found (but may not be the last one)
+;; goals present because only partial match was found in last step
+;; goals present because there are no more matches
+;; => back-run can't test only goals to know whether to continue
 (defmethod back-step ((env environment) &optional (undo-label "(back-step)"))
   "make one inference step using backward chaining"
   (declare (ignore undo-label))
+  ;; IF NO GOALS, SEE IF WE CAN BACKTRACK
   (if (goals env)
-      (let* ((goal (select-goal (goals env)))
-	     (matches (find-matches env goal)))
+      (let ((matches (find-matches env (select-goal (goals env)))))
 	(if matches
+            ;; SEVERAL MATCHES CAN BE FOUND IN ONE STEP, THESE SHOULD BE ITERATED
 	    (make-back-step env (select-match matches))
 	    (backtrack env)))
       (if *print-match* (fresh-format t "All goals have been satisfied"))))

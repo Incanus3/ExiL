@@ -66,7 +66,7 @@
 (defun goal-match-goal (match)
   (first match))
 
-                                        ; match can hold either fact or rule
+;; match can hold either fact or rule
 (defun goal-match-object (match)
   (second match))
 
