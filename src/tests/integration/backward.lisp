@@ -61,10 +61,6 @@
 ;;   (reset)
 ;;   (back-run)
 
-;;   ;; HOW TO ASK FOR ALTERNATIVE ANSWERS?
-;;   ;; - run (back-run) again
-;;   ;;   - we need to restore the goals to the state they were in, before locking on this answer
-
 ;;   ;; what happens when back-run is called and there are no goals?
 ;;   (back-run)
 

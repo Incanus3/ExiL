@@ -81,3 +81,40 @@
 
 (defun print-goal-match (match)
   (fresh-format t "~A satisfied by ~A" (goal-match-goal match) (goal-match-fact match)))
+
+(defun select-match (matches)
+  (first matches))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SUBSTITUTIONS
+
+(defun compose-substs (subst1 subst2)
+  (iter (with result = (copy-alist subst1))
+	(for (var . val) :in subst2)
+	(for (old-var . old-val) = (find var subst1 :key #'cdr))
+	(if old-var
+	    (setf (assoc-value old-var result) val)
+	    (push-end (cons var val) result))
+	(finally (return result))))
+
+(defun compose-substitutions (substitutions)
+  (remove-if (lambda (binding)
+	       (equalp (car binding) (cdr binding)))
+	     (reduce #'compose-substs substitutions)))
+
+(defun substitute-vars-in-goals (env bindings)
+  (setf (goals env)
+	(mapcar (lambda (goal) (substitute-variables goal bindings))
+		(goals env))))
+
+(defun original-goals (env)
+  (first (last1 (back-stack env))))
+
+(defun original-variable-p (var env)
+  (find var (variables-in-goals (original-goals env))))
+
+(defun used-substitutions (env)
+  (remove-if-not
+   (lambda (subst) (original-variable-p (car subst) env))
+   (compose-substitutions
+    (mapcar #'goal-match-bindings (back-stack-matches env)))))
