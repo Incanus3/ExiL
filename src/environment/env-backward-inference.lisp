@@ -69,7 +69,7 @@
             ;; SEVERAL MATCHES CAN BE FOUND IN ONE STEP, THESE SHOULD BE ITERATED
 	    (make-back-step env (select-match matches))
 	    (backtrack env)))
-      (if *print-match* (fresh-format t "All goals have been satisfied"))))
+      (backtrack env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -85,7 +85,8 @@
 (defmethod back-run ((env environment) &optional (undo-label "(back-run)"))
   (declare (ignore undo-label))
   (let (*print-match*)
-    (iter (while (back-step env))))
-  (if (goals env)
-      (fresh-format t "No feasible answer found")
-      (print-inference-report env)))
+    (iter (for match-found-p = (back-step env))
+          (if match-found-p
+              (unless (goals env)
+                (return (print-inference-report env)))
+              (fresh-format t "No feasible answer found")))))

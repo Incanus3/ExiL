@@ -27,9 +27,10 @@
     (add-goal env (make-simple-pattern '(color ?object blue)))
     (add-goal env (make-simple-pattern '(size ?object big)))
 
-    (let ((substitutions (back-run env)))
-      (assert-false (eenv::goals env))
-      (assert-equal substitutions '((?object . box))))))
+    (back-run env)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?object . box)))))
 
 (def-test-method test-fact-matching-with-backtracking
     ((tests backward-env-tests) :run nil)
@@ -47,9 +48,10 @@
     (add-goal env (make-simple-pattern '(color ?object blue)))
     (add-goal env (make-simple-pattern '(size ?object big)))
 
-    (let ((substitutions (back-run env)))
-      (assert-false (eenv::goals env))
-      (assert-equal substitutions '((?object . box3))))))
+    (back-run env)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?object . box3)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -66,9 +68,10 @@
 
     (add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
 
-    (let ((substitutions (back-run env)))
-      (assert-false (eenv::goals env))
-      (assert-equal substitutions '((?mother-of-george . jane))))))
+    (back-run env)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?mother-of-george . jane)))))
 
 (def-test-method test-rule-matching-with-backtracking
     ((tests backward-env-tests) :run nil)
@@ -89,9 +92,10 @@
 
     (add-goal env (make-simple-pattern '(mother-of ?mother-of-george george)))
 
-    (let ((substitutions (back-run env)))
-      (assert-false (eenv::goals env))
-      (assert-equal substitutions '((?mother-of-george . jane))))))
+    (back-run env)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?mother-of-george . jane)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
