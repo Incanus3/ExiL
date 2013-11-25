@@ -184,6 +184,7 @@
   (defgoal (mother-of ?mother-of-george george))
 
   (reset)
+
   (with-slots (env) tests
     (back-run)
 
@@ -199,6 +200,55 @@
     (assert-equal (eenv::all-used-substitutions env)
                   '((?mother-of-george . jane)
                     (?child . george)))))
+
+(def-test-method test-backward-chaining-overall
+    ((tests backward-integration-tests) :run t)
+  (deffacts world
+    (in box1 hall)
+    (color box1 blue)
+
+    (in box2 hall)
+    (color box2 red)
+    (size box2 big)
+
+    (in box3 hall)
+    (color box3 red)
+    (size box3 small)
+
+    (in box4 hall)
+    (color box4 red)
+    (size box4 big))
+
+  ;; this actually adds conditions to goals again, but since only
+  ;; assertions are allowed in backward-chaining rules' activations
+  ;; this will never cycle
+  (defrule grow-box
+    (in ?box hall)
+    (color ?box red)
+    (size ?box small)
+    =>
+    (assert (size ?box big)))
+
+  (defgoal (in ?object hall))
+  (defgoal (color ?object red))
+  (defgoal (size ?object big))
+
+  (reset)
+  (back-run)
+
+  (with-slots (env) tests
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?object . box2)))
+
+    (back-run)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?object . box3)))
+
+    (back-run)
+
+    (assert-false (eenv::goals env))
+    (assert-equal (eenv::used-substitutions env) '((?object . box4)))))
 
 (add-test-suite 'backward-integration-tests)
 ;;(textui-test-run (get-suite backward-integration-tests))
