@@ -84,7 +84,6 @@
     substitutions))
 
 (defmethod back-run ((env environment) &optional (undo-label "(back-run)"))
-;;  (declare (ignore undo-label))
   (with-saved-slots env (goals back-stack) undo-label
     (let (*print-match*)
       (iter (for match-found-p = (back-step env))

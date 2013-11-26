@@ -1,44 +1,47 @@
 (in-package :exil)
 
-;;; EXPORTED FUNCTIONS AND MACROS:
-;; multiple environments:
-; (defmacro defenv (name &key redefine))
-; (defmacro setenv (name))
-; (defun current-env-name ())
-;; watchers:
-; (defmacro watch (watcher))
-; (defmacro unwatch (watcher))
-;; templates:
-; (defmacro deftemplate (name &body slots))
-; (defmacro ppdeftemplate (name))
-;; facts:
-; (defun facts (&optional start-index end-index at-most))
-; (defmacro assert (&rest fact-specs))
-; (defmacro retract (&rest fact-specs))
-; (defun retract-all ())
-; (defmacro modify (fact-spec &rest mod-list))
-;; fact groups:
-; (defmacro deffacts (name &body descriptions))
-; (defmacro undeffacts (name))
-; TODO: implement ppdeffacts
-;; strategies:
-; (defmacro defstrategy (name function))
-; (defmacro setstrategy (name))
-; (defun current-strategy ())
-;; rules:
-; (defmacro defrule (name &body rule))
-; (defmacro undefrule (name))
-; (defmacro ppdefrule (name))
-;; backward chaining:
-; (defmacro defgoal (goal-spec))
-;; execution:
-; (defun reset ())
-; (defun step ())
-; (defun halt ())
-; (defun run ())
-;; environment cleanup:
-; (defun clear ())
-; (defun complete-reset ())
+;;;; EXPORTED FUNCTIONS AND MACROS:
+;;; multiple environments:
+;; (defmacro defenv (name &key redefine))
+;; (defmacro setenv (name))
+;; (defun current-env-name ())
+;;; watchers:
+;; (defmacro watch (watcher))
+;; (defmacro unwatch (watcher))
+;;; templates:
+;; (defmacro deftemplate (name &body slots))
+;; (defmacro ppdeftemplate (name))
+;;; facts:
+;; (defun facts (&optional start-index end-index at-most))
+;; (defmacro assert (&rest fact-specs))
+;; (defmacro retract (&rest fact-specs))
+;; (defun retract-all ())
+;; (defmacro modify (fact-spec &rest mod-list))
+;;; fact groups:
+;; (defmacro deffacts (name &body descriptions))
+;; (defmacro undeffacts (name))
+;; TODO: implement ppdeffacts
+;;; strategies:
+;; (defmacro defstrategy (name function))
+;; (defmacro setstrategy (name))
+;; (defun current-strategy ())
+;;; rules:
+;; (defmacro defrule (name &body rule))
+;; (defmacro undefrule (name))
+;; (defmacro ppdefrule (name))
+;;; backward chaining:
+;; (defmacro defgoal (goal-spec))
+;; (defun goals ())
+;; (defun back-step ())
+;; (defun back-run ())
+;;; execution:
+;; (defun reset ())
+;; (defun step ())
+;; (defun halt ())
+;; (defun run ())
+;;; environment cleanup:
+;; (defun clear ())
+;; (defun complete-reset ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; support for multiple environments
