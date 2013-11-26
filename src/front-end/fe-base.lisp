@@ -62,27 +62,30 @@
 (defun current-environment ()
   *current-env-name*)
 
+(defun defenvf (name &key redefine)
+  (let ((env-name (to-keyword name)))
+    (when (or (not (gethash env-name *environments*))
+              redefine)
+       (setf (gethash env-name *environments*)
+             (make-environment)))))
+
 ;; public
 (defmacro defenv (name &key redefine)
   "define new environment with given name, if redefine is true, will redefine
    existing environment with that name, if one exists"
-  (let ((env-name (gensym "env-name")))
-    `(let ((,env-name (to-keyword ',name)))
-       (when (or (not (gethash ,env-name *environments*))
-                 ,redefine)
-         (setf (gethash ,env-name *environments*)
-               (make-environment))))))
+  `(defenvf ',name :redefine ,redefine))
+
+(defun setenvf (name)
+  (let* ((env-name (to-keyword name))
+          (env (gethash env-name *environments*)))
+     (when env
+       (setf *current-environment* env)
+       (set-env-name env-name))))
 
 ;; public
 (defmacro setenv (name)
   "set current environment to one previously defined with name"
-  (let ((env (gensym "env"))
-        (env-name (gensym "env-name")))
-    `(let* ((,env-name (to-keyword ',name))
-            (,env (gethash ,env-name *environments*)))
-       (when ,env
-         (setf *current-environment* ,env)
-         (set-env-name ,env-name)))))
+  `(setenvf ',name))
 
 (defenv :default)
 (setenv :default)
