@@ -3,42 +3,60 @@
 ;;;; EXPORTED FUNCTIONS AND MACROS:
 ;;; multiple environments:
 ;; (defmacro defenv (name &key redefine))
+;; (defun defenvf (name &key redefine))
 ;; (defmacro setenv (name))
+;; (defun setenvf (name))
 ;; (defun current-environment ())
+
 ;;; watchers:
 ;; (defmacro watch (watcher))
+;; (defun watchf (watcher))
 ;; (defmacro unwatch (watcher))
+;; (defun unwatchf (watcher))
+;; (defmacro watchedp (watcher))
+;; (defun watchedpf (watcher))
+
 ;;; templates:
 ;; (defmacro deftemplate (name &body slots))
+;; (defun deftemplatef (name slots))
 ;; (defmacro ppdeftemplate (name))
+;; (defun find-template (name)) => external template representation
+;; (defun templates ())         => list of names
+
 ;;; facts:
 ;; (defun facts (&optional start-index end-index at-most))
 ;; (defmacro assert (&rest fact-specs))
 ;; (defmacro retract (&rest fact-specs))
 ;; (defun retract-all ())
 ;; (defmacro modify (fact-spec &rest mod-list))
+
 ;;; fact groups:
 ;; (defmacro deffacts (name &body descriptions))
 ;; (defmacro undeffacts (name))
 ;; TODO: implement ppdeffacts
+
 ;;; strategies:
 ;; (defmacro defstrategy (name function))
 ;; (defmacro setstrategy (name))
 ;; (defun current-strategy ())
+
 ;;; rules:
 ;; (defmacro defrule (name &body rule))
 ;; (defmacro undefrule (name))
 ;; (defmacro ppdefrule (name))
+
 ;;; backward chaining:
 ;; (defmacro defgoal (goal-spec))
 ;; (defun goals ())
 ;; (defun back-step ())
 ;; (defun back-run ())
+
 ;;; execution:
 ;; (defun reset ())
 ;; (defun step ())
 ;; (defun halt ())
 ;; (defun run ())
+
 ;;; environment cleanup:
 ;; (defun clear ())
 ;; (defun complete-reset ())
@@ -93,26 +111,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; watchers
 
-(defun watch% (watcher)
+(defun watchf (watcher)
   (set-watcher *current-environment* watcher
 	       (format nil "(watch ~A)" watcher)))
 
 ; public
 (defmacro watch (watcher)
   "Watch selected item (facts, rules, activations)"
-  `(watch% ',watcher))
+  `(watchf ',watcher))
 
-(defun unwatch% (watcher)
+(defun unwatchf (watcher)
   (unset-watcher *current-environment* watcher
 		 (format nil "(unwatch ~A)" watcher)))
 
 ; public
 (defmacro unwatch (watcher)
   "Unwatch selected item"
-  `(unwatch% ',watcher))
+  `(unwatchf ',watcher))
 
-(defmacro watched-p (watcher)
-  `(exil-env:watched-p *current-environment* ',watcher))
+(defun watchedpf (watcher)
+  (exil-env:watched-p *current-environment* watcher))
+
+(defmacro watchedp (watcher)
+  `(watchedpf ',watcher))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates

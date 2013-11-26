@@ -4,6 +4,8 @@
 (defclass functional-integration-tests (test-case)
   ((env :reader env :initform exil::*current-environment*)))
 
+;; CHECK AND DOCUMENT ALL FRONT-END RETURN VALUES
+
 ;; all front-end macros, that take symbolic representation of ExiL entities
 ;; (facts, patterns, templates, rules, goals, watcher names, environment names,
 ;; strategies), should have functional counterparts that take these expressions
@@ -12,20 +14,14 @@
 ;; e.g. when you write a function, that returns the list '(in box hall)
 ;; there's currently no way to assert this as a fact => the macros are only
 ;; useful for interactive usage, not programmatic
-;; defenvf, setenvf
-;; deftemplatef
 ;; assertf, retractf, modifyf
 ;; deffactsf undeffactsf
 ;; defrulef, undefrulef
 ;; defgoalf, undefgoalf
 ;; defstrategyf, setstrategyf
-;; watchf, unwatchf, watchedpf
 
 ;; there should also be a complete set of query functions, that return this
 ;; symbolic representation (instead of just printing it):
-;; environments - just names
-;; templates - just names
-;; find-template - specifier
 ;; facts - specifiers
 ;; fact-groups - just names
 ;; find-fact-group - specifier
@@ -43,18 +39,21 @@
   (complete-reset))
 
 (def-test-method functional-integration-test ((tests functional-integration-tests) :run t)
-  (reset)
-  (run)
+  (watchf :facts)
+  (assert-true (watchedpf :facts))
+
+  (unwatchf :facts)
+  (assert-false (watchedpf :facts))
+
+  (deftemplatef :goal '((action :default run) object from to))
+  (assert-equal (find-template :goal)
+                '(:goal ((:action :default run) (:object) (:from) (:to))))
+
+  (deftemplatef :in '(object location))
+
+  (assert-equal (templates) '(:goal :in))
 
   (with-slots (env) tests
-    (deftemplatef :goal '((action :default run) object from to))
-    (assert-equal (find-template :goal)
-                  '(:goal ((:action :default run) (:object) (:from) (:to))))
-
-    (deftemplatef :in '(object location))
-
-    (assert-equal (templates) '(:goal :in))
-
     ;; (deffactsf :world
     ;;     '((in :object robot :location A)
     ;;       (in :object box :location B)
