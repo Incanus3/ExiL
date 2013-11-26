@@ -4,7 +4,7 @@
 ;;; multiple environments:
 ;; (defmacro defenv (name &key redefine))
 ;; (defmacro setenv (name))
-;; (defun current-env-name ())
+;; (defun current-environment ())
 ;;; watchers:
 ;; (defmacro watch (watcher))
 ;; (defmacro unwatch (watcher))
@@ -47,6 +47,10 @@
 ;; support for multiple environments
 
 (defvar *environments* (make-hash-table))
+
+(defun environments ()
+  (hash-keys *environments*))
+
 (defvar *current-environment*)
 (defvar *current-env-name*)
 
@@ -55,7 +59,7 @@
   (setf *current-env-name* name))
 
 ;; public
-(defun current-env-name ()
+(defun current-environment ()
   *current-env-name*)
 
 ;; public
@@ -110,15 +114,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; templates
 
-(defun deftemplate% (name slots)
+(defun deftemplatef (name slots)
   (add-template *current-environment* (parse-template name slots)
 		(format nil "(deftemplate ~A ~S)" name slots)))
 
 ; public
 (defmacro deftemplate (name &body slots)
   "define new template"
-  `(deftemplate% ',name ',slots))
+  `(deftemplatef ',name ',slots))
 
 (defmacro ppdeftemplate (name)
   "print template"
   `(print-template *current-environment* ',name))
+
+(defun find-template (name)
+  (external (exil-env:find-template *current-environment* name)))
+
+(defun templates ()
+  (template-names *current-environment*))

@@ -19,14 +19,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; public interface:
+;;; public interface:
+;; (defclass template () (name slots))
+;; (defun make-template (name slots))
+;; (defmacro doslots ((name default template &optional retval) &body body))
 
-;(defclass template () (name slots))
 (defgeneric exil-equal-p (obj1 obj2)
   (:documentation "ExiL default equality predicate")
   (:method (obj1 obj2) nil))
-;(defun make-template (name slots))
-;(defmacro doslots ((name default template &optional retval) &body body))
+
+(defgeneric external (obj)
+  (:documentation "Constructs an external representation of given object")
+  (:method (null) nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -35,19 +39,23 @@
 ;; (<name> . (:default <default> [:type <type> \ planned \]))
 ;; it is a bit redundant, since there's only one supported option
 ;; so far, but it's easily extensible
-; public
+;; public
 (defclass template ()
   ((name :reader name :initarg :name
          :initform (error "name has to be specified"))
    (slots :reader slots :initarg :slots
           :initform (error "slots have to be specified"))))
 
-; public
+;; public
+(defmethod external ((tmpl template))
+  (list (name tmpl) (copy-tree (slots tmpl))))
+
+;; public
 (defmethod exil-equal-p ((tmpl1 template) (tmpl2 template))
   (and (equalp (name tmpl1) (name tmpl2))
        (equalp (slots tmpl1) (slots tmpl2))))
 
-; public
+;; public
 (defmethod print-object ((tmpl template) stream)
   (if *print-escape*
       (print-unreadable-object (tmpl stream :type t)
@@ -56,7 +64,7 @@
   tmpl)
 
 ;; make-template ensures that slot-names are keywords
-; public
+;; public
 (defun make-template (name slots)
   "template constructor"
   (make-instance 'template :name (to-keyword name)
@@ -65,9 +73,9 @@
                                         (cdr slot-spec)))
                                 (to-list-of-lists slots))))
 
-; iterates over template's slots, introducing variables (whose names are
-; given by name and default) in the body, hiding actual slots representation
-; public
+;; iterates over template's slots, introducing variables (whose names are
+;; given by name and default) in the body, hiding actual slots representation
+;; public
 (defmacro doslots ((name default template &optional retval) &body body)
   "destructuring iteration macro"
   (let ((slot (gensym "slot")))

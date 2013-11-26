@@ -40,7 +40,11 @@
 (defun tmpls-equal-p (templates1 templates2)
   (hash-equal-p templates1 templates2))
 
-; public
+;; public
+(defmethod template-names ((env environment))
+  (hash-keys (templates env)))
+
+;; public
 (defmethod find-template ((env environment) (name symbol))
   "finds template in env with given name"
   (gethash (to-keyword name) (templates env)))

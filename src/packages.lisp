@@ -22,7 +22,8 @@
   (:use :common-lisp :exil-utils :iterate)
   (:export :variable-p :template :template-name :slots
            :has-slot-p :make-template :fact :simple-fact
-           :atom-position :template-fact :exil-equal-p
+           :atom-position :template-fact
+           :exil-equal-p :external
            :slot-default :doslots :object-slot
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern
@@ -52,11 +53,12 @@
                 :assoc-value :add-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
 		:list-difference :find-if-func-result
-		:copy-hash-table :hash-equal-p :set-equal-p :symbol-append
+		:copy-hash-table :hash-equal-p :hash-keys
+                :set-equal-p :symbol-append
 		:fresh-format :fresh-princ :last1)
-  (:export :environment :make-environment
+  (:export :external :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
-           :add-template :find-template :print-template
+           :add-template :find-template :print-template :template-names
            :facts :add-fact :rem-fact :mod-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy :current-strategy-name
@@ -88,21 +90,23 @@
 (defpackage :exil
   (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-parser :exil-env :iterate)
-  (:import-from :exil-utils :to-keyword :fresh-princ)
-  (:export :defenv :setenv :current-env-name
-           :deftemplate :ppdeftemplate
-	   :assert :retract :retract-all :modify
+  (:import-from :exil-utils :to-keyword :fresh-princ :hash-keys)
+  (:export :defenv :defenvf :setenv :setenvf :environments :current-environment
+           :deftemplate :deftemplatef :ppdeftemplate :templates :find-template
+	   :assert :assertf :retract :retractf :retract-all :modify :modifyf
 	   :agenda :facts
-           :deffacts :undeffacts
-	   :defrule :undefrule :ppdefrule
-	   :defgoal :goals
-	   :defstrategy :setstrategy :current-strategy
-	   :watch :unwatch :watched-p
+           :deffacts :deffactsf :undeffacts :undeffactsf
+           :fact-groups :find-fact-group
+	   :defrule :defrulef :undefrule :undefrulef :ppdefrule
+	   :defgoal :defgoalf :undefgoal :undefgoalf :goals
+	   :defstrategy :defstrategyf :setstrategy :setstrategyf :current-strategy
+	   :watch :watchf :unwatch :unwatchf :watchedp :watchedpf
 	   :clear :reset :step :halt :run
 	   :undo :redo :undo-stack :redo-stack
 	   :back-step :back-run
            :complete-reset) ;; DEBUG
-  (:shadow :assert :step :facts :undo :redo :watched-p :back-step :back-run))
+  (:shadow :assert :step :facts :undo :redo :watched-p :back-step :back-run
+           :find-template))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")

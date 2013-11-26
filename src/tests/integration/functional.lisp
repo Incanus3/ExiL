@@ -12,11 +12,18 @@
 ;; e.g. when you write a function, that returns the list '(in box hall)
 ;; there's currently no way to assert this as a fact => the macros are only
 ;; useful for interactive usage, not programmatic
+;; defenvf, setenvf
+;; deftemplatef
+;; assertf, retractf, modifyf
+;; deffactsf undeffactsf
+;; defrulef, undefrulef
+;; defgoalf, undefgoalf
+;; defstrategyf, setstrategyf
+;; watchf, unwatchf, watchedpf
 
 ;; there should also be a complete set of query functions, that return this
 ;; symbolic representation (instead of just printing it):
 ;; environments - just names
-;; watchers - just names
 ;; templates - just names
 ;; find-template - specifier
 ;; facts - specifiers
@@ -33,46 +40,49 @@
 ;; what to do with rule condition ?fact <- (pattern) notation?
 
 (defmethod set-up ((tests functional-integration-tests))
-  (complete-reset)
+  (complete-reset))
 
-  (deftemplatef :goal '(action object from to))
-  (deftemplatef :in '(object location))
-
-  (deffactsf :world
-      '((in :object robot :location A)
-        (in :object box :location B)
-        (goal :action push :object box :from B :to A)))
-
-  (defrulef :move
-      '((goal :action push :object ?x :from ?y)
-        (in :object ?x :location ?y)
-        (- in :object robot :location ?y)
-        ?robot <- (in :object robot :location ?))
-    '((modify ?robot :location ?y)))
-
-  (defrulef :push
-      '((goal :action push :object ?x :from ?y :to ?z)
-        ?object <- (in :object ?x :location ?y)
-        ?robot <- (in :object robot :location ?y))
-    '((modify ?robot :location ?z)
-      (modify ?object :location ?z)))
-
-  (defrulef :stop
-      '((goal :action push :object ?x :to ?y)
-        (in :object ?x :location ?y))
-    '((halt)))
-
-  (unwatchf :all))
-
-(def-test-method functional-integration-test ((tests functional-integration-tests) :run nil)
+(def-test-method functional-integration-test ((tests functional-integration-tests) :run t)
   (reset)
   (run)
 
   (with-slots (env) tests
-    ;; (let ((in-template (eenv::find-template env :in)))
-    ;;   (assert-true (eenv::find-fact env (eenv::make-template-fact
-    ;;     				 in-template '(:object box :location A)))))
-    (assert-true (find '(in :object box :location A) (facts)))
+    (deftemplatef :goal '((action :default run) object from to))
+    (assert-equal (find-template :goal)
+                  '(:goal ((:action :default run) (:object) (:from) (:to))))
+
+    (deftemplatef :in '(object location))
+
+    (assert-equal (templates) '(:goal :in))
+
+    ;; (deffactsf :world
+    ;;     '((in :object robot :location A)
+    ;;       (in :object box :location B)
+    ;;       (goal :action push :object box :from B :to A)))
+
+    ;; (defrulef :move
+    ;;     '((goal :action push :object ?x :from ?y)
+    ;;       (in :object ?x :location ?y)
+    ;;       (- in :object robot :location ?y)
+    ;;       ?robot <- (in :object robot :location ?))
+    ;;   '((modify ?robot :location ?y)))
+
+    ;; (defrulef :push
+    ;;     '((goal :action push :object ?x :from ?y :to ?z)
+    ;;       ?object <- (in :object ?x :location ?y)
+    ;;       ?robot <- (in :object robot :location ?y))
+    ;;   '((modify ?robot :location ?z)
+    ;;     (modify ?object :location ?z)))
+
+    ;; (defrulef :stop
+    ;;     '((goal :action push :object ?x :to ?y)
+    ;;       (in :object ?x :location ?y))
+    ;;   '((halt)))
+
+    ;; (unwatchf :all)    ;; (let ((in-template (eenv::find-template env :in)))
+    ;; ;;   (assert-true (eenv::find-fact env (eenv::make-template-fact
+    ;; ;;     				 in-template '(:object box :location A)))))
+    ;; (assert-true (find '(in :object box :location A) (facts)))
     ))
 
 (add-test-suite 'functional-integration-tests)
