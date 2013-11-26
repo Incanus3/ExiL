@@ -107,7 +107,8 @@
 ;; ENVIRONMENT CLEANUP
 
 (defun clear-env% (env)
-  (reset-slots env (facts activations rete undo-stack redo-stack))
+  (reset-slots env (facts activations rete undo-stack redo-stack
+                          goals back-stack))
   (dorules (name rule) env
     (new-production (rete env) rule))
   #+lispworks(exil-gui:update-lists))
@@ -117,12 +118,14 @@
 ;; these will appear in the activations thereafter
 ; public
 (defmethod clear-env ((env environment) &optional (undo-label "(clear-env)"))
-  (with-saved-slots env (facts activations rete undo-stack redo-stack) undo-label
+  (with-saved-slots env (facts activations rete undo-stack redo-stack
+                               goals back-stack) undo-label
     (clear-env% env)))
 
 ; public
 (defmethod reset-env ((env environment) &optional (undo-label "(reset-env)"))
-  (with-saved-slots env (facts activations rete undo-stack redo-stack) undo-label
+  (with-saved-slots env (facts activations rete undo-stack redo-stack
+                               goals back-stack) undo-label
     (clear-env% env)
     (activate-fact-groups env))
   nil)

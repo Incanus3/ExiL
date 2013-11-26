@@ -14,11 +14,12 @@
     (color box blue)
     (size box big))
 
+  (reset)
+
   (defgoal (in ?object hall))
   (defgoal (color ?object blue))
   (defgoal (size ?object big))
 
-  (reset)
   (back-run)
 
   (with-slots (env) tests
@@ -39,11 +40,12 @@
     (color box3 blue)
     (size box3 big))
 
+  (reset)
+
   (defgoal (in ?object hall))
   (defgoal (color ?object blue))
   (defgoal (size ?object big))
 
-  (reset)
   (back-run)
 
   (with-slots (env) tests
@@ -68,11 +70,12 @@
     (color box4 red)
     (size box4 big))
 
+  (reset)
+
   (defgoal (in ?object hall))
   (defgoal (color ?object red))
   (defgoal (size ?object big))
 
-  (reset)
   (back-run)
 
   (with-slots (env) tests
@@ -98,9 +101,10 @@
     =>
     (assert (mother-of ?mother ?child)))
 
+  (reset)
+
   (defgoal (mother-of ?mother-of-george george))
 
-  (reset)
   (back-run)
 
   (with-slots (env) tests
@@ -125,9 +129,10 @@
     =>
     (assert (mother-of ?mother ?child)))
 
+  (reset)
+
   (defgoal (mother-of ?mother-of-george george))
 
-  (reset)
   (back-run)
 
   (with-slots (env) tests
@@ -152,9 +157,10 @@
     =>
     (assert (mother-of ?mother ?child)))
 
+  (reset)
+
   (defgoal (mother-of ?mother-of-george george))
 
-  (reset)
   (back-run)
 
   (with-slots (env) tests
@@ -181,9 +187,9 @@
     =>
     (assert (mother-of ?mother ?child)))
 
-  (defgoal (mother-of ?mother-of-george george))
-
   (reset)
+
+  (defgoal (mother-of ?mother-of-george george))
 
   (with-slots (env) tests
     (back-run)
@@ -202,7 +208,7 @@
                     (?child . george)))))
 
 (def-test-method test-backward-chaining-overall
-    ((tests backward-integration-tests) :run t)
+    ((tests backward-integration-tests) :run nil)
   (deffacts world
     (in box1 hall)
     (color box1 blue)
@@ -229,11 +235,12 @@
     =>
     (assert (size ?box big)))
 
+  (reset)
+
   (defgoal (in ?object hall))
   (defgoal (color ?object red))
   (defgoal (size ?object big))
 
-  (reset)
   (back-run)
 
   (with-slots (env) tests

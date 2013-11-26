@@ -4,8 +4,8 @@
   (let ((object-sym (gensym "object")))
     `(let ((,object-sym ,object))
        (etypecase ,object
-         (fact (push ,object ,tried-facts))
-         (rule (push ,object ,tried-rules))))))
+         (fact (push ,object-sym ,tried-facts))
+         (rule (push ,object-sym ,tried-rules))))))
 
 (defun stack-match-for-backtrack (env match tried-facts tried-rules)
   (add-object-to-tried-list (goal-match-object match) tried-facts tried-rules)
@@ -20,15 +20,16 @@
 
 (defvar *print-match* t)
 
-(defun make-back-step (env match &optional tried-facts tried-rules)
-  (when *print-match* (print-goal-match match))
-  (stack-match-for-backtrack env match tried-facts tried-rules)
-  (del-goal env (goal-match-goal match))
-  (add-rule-conditions-to-goals env (goal-match-object match))
-  (substitute-vars-in-goals env (goal-match-bindings match))
-  t)
+(defun make-back-step (env match undo-label &optional tried-facts tried-rules)
+  (with-saved-slots env (goals back-stack) undo-label
+    (when *print-match* (print-goal-match match))
+    (stack-match-for-backtrack env match tried-facts tried-rules)
+    (del-goal env (goal-match-goal match))
+    (add-rule-conditions-to-goals env (goal-match-object match))
+    (substitute-vars-in-goals env (goal-match-bindings match))
+    t))
 
-(defun backtrack (env)
+(defun backtrack (env undo-label)
   ;; WHEN WE RUN OUT OF ALTERNATIVES, THE STACK SHOULD BE EMPTY
   (iter (while (back-stack env))
 	(pop-backtrack (goals tried-facts tried-rules) env
@@ -39,7 +40,8 @@
 	      (setf (goals env) goals)
               ;; SEVERAL MATCHES CAN BE FOUND IN ONE STEP, THESE SHOULD BE ITERATED
 	      (return (make-back-step
-		       env (select-match matches) tried-facts tried-rules)))))))
+		       env (select-match matches) undo-label
+                       tried-facts tried-rules)))))))
 
 ;; public
 ;; TODO: this should be undoable
@@ -61,15 +63,14 @@
 ;;     match was found in last step
 (defmethod back-step ((env environment) &optional (undo-label "(back-step)"))
   "make one inference step using backward chaining"
-  (declare (ignore undo-label))
   ;; IF NO GOALS, SEE IF WE CAN BACKTRACK
   (if (goals env)
       (let ((matches (find-matches env (select-goal (goals env)))))
 	(if matches
             ;; SEVERAL MATCHES CAN BE FOUND IN ONE STEP, THESE SHOULD BE ITERATED
-	    (make-back-step env (select-match matches))
-	    (backtrack env)))
-      (backtrack env)))
+	    (make-back-step env (select-match matches) undo-label)
+	    (backtrack env undo-label)))
+      (backtrack env undo-label)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -83,10 +84,11 @@
     substitutions))
 
 (defmethod back-run ((env environment) &optional (undo-label "(back-run)"))
-  (declare (ignore undo-label))
-  (let (*print-match*)
-    (iter (for match-found-p = (back-step env))
-          (if match-found-p
-              (unless (goals env)
-                (return (print-inference-report env)))
-              (return (fresh-format t "No feasible answer found"))))))
+;;  (declare (ignore undo-label))
+  (with-saved-slots env (goals back-stack) undo-label
+    (let (*print-match*)
+      (iter (for match-found-p = (back-step env))
+            (if match-found-p
+                (unless (goals env)
+                  (return (print-inference-report env)))
+                (return (fresh-format t "No feasible answer found")))))))

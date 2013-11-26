@@ -4,14 +4,15 @@
 (defun add-test-suite (suite-name)
   (push-end suite-name *test-suites*))
 (defun run-tests ()
-  (let ((fail-count 0) (err-count 0))
+  (let ((fail-count 0) (err-count 0) (total-count 0))
     (dolist (suite *test-suites*)
       (format t "~%Running test suite ~a " suite)
       (let ((results (textui-test-run (suite (make-instance suite)))))
+        (incf total-count (xlunit::run-tests results))
 	(incf fail-count (xlunit::failure-count results))
 	(incf err-count (xlunit::error-count results))))
     (format t "~%------------------------------------------------------------~%")
-    (format t "ERRORS: ~A~%FAILURES: ~A" err-count fail-count)
+    (format t "TOTAL: ~A~%ERRORS: ~A~%FAILURES: ~A" total-count err-count fail-count)
     (format t "~%------------------------------------------------------------")))
 
 #|

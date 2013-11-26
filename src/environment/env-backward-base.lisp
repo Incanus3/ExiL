@@ -98,9 +98,10 @@
 	(finally (return result))))
 
 (defun compose-substitutions (substitutions)
-  (remove-if (lambda (binding)
-	       (equalp (car binding) (cdr binding)))
-	     (reduce #'compose-substs substitutions)))
+  (when substitutions
+    (remove-if (lambda (binding)
+                 (equalp (car binding) (cdr binding)))
+               (reduce #'compose-substs substitutions))))
 
 (defun substitute-vars-in-goals (env bindings)
   (setf (goals env)

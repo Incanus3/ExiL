@@ -246,6 +246,8 @@
 
 ;; back-stack
 ;; TODO: implement copy-backstack for undo/redo to work
+(defun copy-back-stack (stack)
+  (copy-tree stack))
 
 (defun back-stack-initform ()
   ())
