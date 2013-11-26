@@ -55,6 +55,9 @@
 (defmethod description ((object simple-object))
   (specifier object))
 
+(defmethod external ((object simple-object))
+  (description object))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; virtual, template-fact and template-pattern subclass this
@@ -108,6 +111,9 @@
   (cons (name (template object))
         (iter (for (slot . val) :in (slots object))
               (appending (list (to-keyword slot) val)))))
+
+(defmethod external ((object template-object))
+  (description object))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

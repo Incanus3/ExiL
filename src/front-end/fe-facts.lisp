@@ -11,28 +11,32 @@
                 (end-index (length (exil-env:facts *current-environment*)))
                 (at-most end-index))
   "return at most at-most facts from start-index to end-index"
-  (progn
-    (fresh-princ (subseq (exil-env:facts *current-environment*)
-                   (1- start-index)
-                   (min end-index (+ start-index at-most -1))))
-    nil))
+  (mapcar #'external (subseq (exil-env:facts *current-environment*)
+                             (1- start-index)
+                             (min end-index (+ start-index at-most -1)))))
 
 (defun assert% (fact-spec)
   (add-fact *current-environment* (parse-fact *current-environment* fact-spec)
 	    (format nil "(assert ~S)" fact-spec)))
 
+(defun assertf (&rest fact-specs)
+  (mapc #'assert% fact-specs)
+  nil)
+
+(defun quote-each (list)
+  (mapcar (lambda (spec) `(quote ,spec)) list))
+
 ; public
 (defmacro assert (&rest fact-specs)
   "add facts to working memory"
-  `(progn (mapc #'assert% ',fact-specs)
-	  nil))
+  `(assertf ,@(quote-each fact-specs)))
 
 ;; retract needs to compute the facts to remove first, for when facts are
 ;; specified by indices and one is removed, the other indices shift
 ;; TODO: domluvit s dostalem, jestli je podpora specifikace faktu cislem
 ;; zadouci, pripadne odstranit podporu pro integerovy fact-spec
 ;; TODO: check for fact index out of range
-(defun retract% (fact-specs)
+(defun retractf (&rest fact-specs)
   (let (facts-to-remove)
     (dolist (fact-spec fact-specs)
       (typecase fact-spec
@@ -52,7 +56,7 @@
 ; public
 (defmacro retract (&rest fact-specs)
   "remove facts from working memory"
-  `(retract% ',fact-specs))
+  `(retractf ,@(quote-each fact-specs)))
 
 ; public
 (defun retract-all ()
@@ -65,7 +69,7 @@
 ;; external representation of mod-list
 ;; this should ask parser to parse fact-spec, then to modify the fact
 ;; than remove the old fact from environment and add the modified one
-(defun modify% (fact-spec mod-list)
+(defun modifyf (fact-spec mod-list)
   (let* ((old-fact (parse-fact *current-environment* fact-spec))
          (new-fact (modify-fact old-fact mod-list)))
     (mod-fact *current-environment* old-fact new-fact)))
@@ -85,7 +89,7 @@
 ; public
 (defmacro modify (fact-spec &rest mod-list)
   "modify fact-spec by mod-list"
-  `(modify% ',fact-spec ',mod-list))
+  `(modifyf ',fact-spec ',mod-list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fact groups

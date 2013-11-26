@@ -14,7 +14,6 @@
 ;; e.g. when you write a function, that returns the list '(in box hall)
 ;; there's currently no way to assert this as a fact => the macros are only
 ;; useful for interactive usage, not programmatic
-;; assertf, retractf, modifyf
 ;; deffactsf undeffactsf
 ;; defrulef, undefrulef
 ;; defgoalf, undefgoalf
@@ -22,7 +21,6 @@
 
 ;; there should also be a complete set of query functions, that return this
 ;; symbolic representation (instead of just printing it):
-;; facts - specifiers
 ;; fact-groups - just names
 ;; find-fact-group - specifier
 ;; strategies - just names
@@ -50,8 +48,22 @@
                 '(:goal ((:action :default run) (:object) (:from) (:to))))
 
   (deftemplatef :in '(object location))
-
   (assert-equal (templates) '(:goal :in))
+
+  (assertf '(in box hall))
+  (assert-equal (facts) '((in box hall)))
+
+  (retractf '(in box hall))
+  (assert-false (facts))
+
+  (assertf '(in :object box :location hall))
+  (assert-equal (facts) '((:in :object box :location hall)))
+
+  (modifyf '(in :object box :location hall) '(:location kitchen))
+  (assert-equal (facts) '((:in :object box :location kitchen)))
+
+  (retractf '(in :object box :location kitchen))
+  (assert-false (facts))
 
   (with-slots (env) tests
     ;; (deffactsf :world

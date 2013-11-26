@@ -82,7 +82,7 @@
 	      :components
 	      ((:file "simple") (:file "template") (:file "clips")
 	       (:file "undo-redo") (:file "backward")
-               (:file "undo-redo-backward")))
+               (:file "undo-redo-backward") (:file "functional")))
              (:file "run-tests")))
    (:module :examples
 	    :components
