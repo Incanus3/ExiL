@@ -69,7 +69,7 @@
 	   :undo :redo :print-undo-stack :print-redo-stack
 	   :step-env :halt-env :run-env
 	   ;; backward chaining
-	   :add-goal :find-goal :print-goals
+	   :add-goal :find-goal :print-goals :goals
 	   :back-step :back-run
            ;; called by rete
            :add-match :remove-match
@@ -106,7 +106,7 @@
 	   :back-step :back-run
            :complete-reset) ;; DEBUG
   (:shadow :assert :step :facts :undo :redo :watched-p :back-step :back-run
-           :find-template))
+           :find-template :goals))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")

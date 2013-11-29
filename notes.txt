@@ -1,11 +1,56 @@
-retract% will have to take the whole list. if it doesn't and retract is called with
-list of numbers, it can act very strangely, because after each retraction, the list
-is reindexed.
+TODO:
 
-domluvit s dostalem, jestli je treba zachovavat kompatibilitu s clipsem co do
-indexovani faktu cisly (front-end:facts, retract), co do filtrovani faktu
-ve znalostni bazi by bylo lepsi napr. filtrovani faktu podle templatu,
-prip. napr. vypsat fakta konsistentni s patternem
+CHECK AND DOCUMENT ALL FRONT-END RETURN VALUES
+
+all front-end macros, that take symbolic representation of ExiL entities
+(facts, patterns, templates, rules, goals, watcher names, environment names,
+strategies), should have functional counterparts that take these expressions
+(symbols, lists) as arguments so that other code can retrieve, manipulate,
+generate, etc. the entities' sybmolic representation
+e.g. when you write a function, that returns the list '(in box hall)
+there's currently no way to assert this as a fact => the macros are only
+useful for interactive usage, not programmatic
+deffactsf, undeffactsf
+defrulef, undefrulef
+undefgoalf
+defstrategyf, setstrategyf
+
+there should also be a complete set of query functions, that return this
+symbolic representation (instead of just printing it):
+fact-groups - just names
+find-fact-group - specifier
+strategies - just names
+find-strategy - function
+rules - just names
+find-rule - specifier
+
+I'll suffix these functional counterparts with f for now, e.g. deftemplatef
+
+what to do with rule condition ?fact <- (pattern) notation?
+
+FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
+(facts) should be (assertf)-able, (retractf)-able and (modifyf)-able
+(find-template :tmpl) should be (deftemplatef)-able => only one param
+(find-fact-group :grp) should be (deffactsf)-able => only one param
+(find-rule) should be (defrulef)-able => only one param
+
+ACTIONS SHOULD HAVE INVERSES (including functional counterparts)
+watch - unwatch
+deftemplate - UNDEFTEMPLATE
+assert - retract
+deffacts - undeffacts
+defstrategy - UNDEFSTRATEGY
+defrule - undefrule
+defgoal - UNDEFGOAL
+
+TASKS
+- define all query functions to return external representation
+- define all functional counterparts to expect external representation
+  - in case of multiple parts, these are splat as params
+  - e.g. (find-rule) returns (name conditions activations),
+    defrulef takes 3 params - name, conditions, activations, but these
+    need to be compatible
+- test this compatibility
 
 recursive tree-node printing:
 (defun print-node (node depth &optional (stream t))

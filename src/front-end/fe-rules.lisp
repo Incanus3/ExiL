@@ -61,12 +61,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; backward chaining
 
-(defun defgoal% (goal-spec)
+(defun defgoalf (goal-spec)
   (add-goal *current-environment* (parse-pattern *current-environment* goal-spec))
   nil)
 
 (defmacro defgoal (goal-spec)
-  `(defgoal% ',goal-spec))
+  `(defgoalf ',goal-spec))
 
 (defun goals ()
-  (print-goals *current-environment*))
+  (mapcar #'external (exil-env:goals *current-environment*)))

@@ -57,7 +57,7 @@
     (assert-true (eenv::find-goal
                   env (eenv::make-simple-pattern '(color box1 red))))))
 
-(def-test-method undo-back-step-test ((tests undo-redo-backward-tests) :run nil)
+(def-test-method undo-back-run-test ((tests undo-redo-backward-tests) :run nil)
   (with-slots (env) tests
     (back-run)
 
