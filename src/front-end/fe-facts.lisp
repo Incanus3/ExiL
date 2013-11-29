@@ -104,14 +104,14 @@
   "create group of facts to be asserted after (reset)"
   `(deffactsf ',name ',fact-specs))
 
-(defun undeffacts% (name)
+(defun undeffactsf (name)
   (rem-fact-group *current-environment* name
 		  (format nil "(undeffacts ~A)" name)))
 
 ; public
 (defmacro undeffacts (name)
   "delete fact group"
-  `(undeffacts% ',name))
+  `(undeffactsf ',name))
 
 (defun fact-groups ()
   (fact-group-names *current-environment*))
@@ -122,4 +122,5 @@
 ;; so that we can define methods for it
 (defun find-fact-group (name)
   (let ((facts (eenv:find-fact-group *current-environment* name)))
-    (cons (to-keyword name) (mapcar #'external facts))))
+    (when facts
+      (cons (to-keyword name) (mapcar #'external facts)))))

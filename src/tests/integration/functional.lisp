@@ -109,7 +109,11 @@
                       (goal :action push :object box :from B :to A))))
     (deffactsf :world fact-specs)
     (assert-equal (fact-groups) '(:world))
-    (assert-equal (find-fact-group :world) (cons :world fact-specs))))
+    (assert-equal (find-fact-group :world) (cons :world fact-specs))
+
+    (undeffactsf :world)
+    (assert-false (fact-groups))
+    (assert-false (find-fact-group :world))))
 
 ;; (def-test-method test-functional-counterparts
 ;;     ((tests functional-integration-tests) :run nil)
