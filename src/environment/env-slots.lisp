@@ -96,7 +96,7 @@
 (defun fgs-equal-p (fgs1 fgs2)
   (set-equal-p fgs1 fgs2 :test #'fg-equal-p))
 
-; public
+;; public
 (defmethod find-fact-group ((env environment) (group-name symbol))
   (assoc-value (to-keyword group-name) (fact-groups env)))
 
@@ -106,6 +106,10 @@
 
 (defun rem-fact-group% (env name)
   (setf (fact-groups env) (delete (to-keyword name) (fact-groups env) :key #'car)))
+
+;; public
+(defmethod fact-group-names ((env environment))
+  (mapcar #'car (fact-groups env)))
 
 (defun fg-facts (fg)
   (rest fg))

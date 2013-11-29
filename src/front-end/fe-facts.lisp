@@ -94,7 +94,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fact groups
 
-(defun deffacts% (name fact-specs)
+(defun deffactsf (name fact-specs)
   (add-fact-group *current-environment* name
 		  (parse-fact-group *current-environment* fact-specs)
 		  (format nil "(deffacts ~A ~A)" name fact-specs)))
@@ -102,7 +102,7 @@
 ; public
 (defmacro deffacts (name &body fact-specs)
   "create group of facts to be asserted after (reset)"
-  `(deffacts% ',name ',fact-specs))
+  `(deffactsf ',name ',fact-specs))
 
 (defun undeffacts% (name)
   (rem-fact-group *current-environment* name
@@ -112,3 +112,14 @@
 (defmacro undeffacts (name)
   "delete fact group"
   `(undeffacts% ',name))
+
+(defun fact-groups ()
+  (fact-group-names *current-environment*))
+
+;; this isn't a great solution - front-end shouldn't be responsible for
+;; creating fact-group's external representation
+;; fact-group should probably be an object (even though only a simple wrapper)
+;; so that we can define methods for it
+(defun find-fact-group (name)
+  (let ((facts (eenv:find-fact-group *current-environment* name)))
+    (cons (to-keyword name) (mapcar #'external facts))))

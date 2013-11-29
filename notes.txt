@@ -28,8 +28,6 @@ defstrategyf, setstrategyf
 THERE SHOULD ALSO BE A COMPLETE SET OF QUERY FUNCTIONS, THAT RETURN THIS
 SYMBOLIC REPRESENTATION (INSTEAD OF JUST PRINTING IT):
 
-fact-groups - just names
-find-fact-group - specifier
 strategies - just names
 find-strategy - function
 rules - just names

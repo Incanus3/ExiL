@@ -61,7 +61,7 @@
            :add-template :rem-template :find-template :print-template
            :template-names
            :facts :add-fact :rem-fact :mod-fact :find-fact
-           :add-fact-group :rem-fact-group :find-fact-group
+           :add-fact-group :rem-fact-group :find-fact-group :fact-group-names
            :add-strategy :set-strategy :current-strategy-name
            :add-rule :rem-rule :find-rule
            :print-activations
@@ -108,7 +108,7 @@
 	   :back-step :back-run
            :complete-reset) ;; DEBUG
   (:shadow :assert :step :facts :undo :redo :watched-p :back-step :back-run
-           :find-template :goals))
+           :find-template :find-fact-group :goals))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")

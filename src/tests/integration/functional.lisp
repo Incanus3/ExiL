@@ -101,12 +101,18 @@
   (defgoalf '(in ?box hall))
   (assert-equal (goals) '((in ?box hall))))
 
-;; (def-test-method test-functional-counterparts ((tests functional-integration-tests) :run nil)
-;;   (deffactsf :world
-;;     '((in :object robot :location A)
-;;       (in :object box :location B)
-;;       (goal :action push :object box :from B :to A)))
 
+(def-test-method test-fact-groups
+    ((tests functional-integration-tests) :run nil)
+  (let ((fact-specs '((in :object robot :location A)
+                      (in :object box :location B)
+                      (goal :action push :object box :from B :to A))))
+    (deffactsf :world fact-specs)
+    (assert-equal (fact-groups) '(:world))
+    (assert-equal (find-fact-group :world) (cons :world fact-specs))))
+
+;; (def-test-method test-functional-counterparts
+;;     ((tests functional-integration-tests) :run nil)
 ;;   (defrulef :move
 ;;     '((goal :action push :object ?x :from ?y)
 ;;       (in :object ?x :location ?y)
