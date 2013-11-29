@@ -1,49 +1,4 @@
 TODO:
-
-CHECK AND DOCUMENT ALL FRONT-END RETURN VALUES
-
-all front-end macros, that take symbolic representation of ExiL entities
-(facts, patterns, templates, rules, goals, watcher names, environment names,
-strategies), should have functional counterparts that take these expressions
-(symbols, lists) as arguments so that other code can retrieve, manipulate,
-generate, etc. the entities' sybmolic representation
-e.g. when you write a function, that returns the list '(in box hall)
-there's currently no way to assert this as a fact => the macros are only
-useful for interactive usage, not programmatic
-deffactsf, undeffactsf
-defrulef, undefrulef
-undefgoalf
-defstrategyf, setstrategyf
-
-there should also be a complete set of query functions, that return this
-symbolic representation (instead of just printing it):
-fact-groups - just names
-find-fact-group - specifier
-strategies - just names
-find-strategy - function
-rules - just names
-find-rule - specifier
-
-I'll suffix these functional counterparts with f for now, e.g. deftemplatef
-
-what to do with rule condition ?fact <- (pattern) notation?
-
-FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
-(facts) should be (assertf)-able, (retractf)-able and (modifyf)-able
-(find-template :tmpl) should be (deftemplatef)-able => only one param
-(find-fact-group :grp) should be (deffactsf)-able => only one param
-(find-rule) should be (defrulef)-able => only one param
-
-ACTIONS SHOULD HAVE INVERSES (including functional counterparts)
-watch - unwatch
-deftemplate - UNDEFTEMPLATE
-assert - retract
-deffacts - undeffacts
-defstrategy - UNDEFSTRATEGY
-defrule - undefrule
-defgoal - UNDEFGOAL
-
-TASKS
 - define all query functions to return external representation
 - define all functional counterparts to expect external representation
   - in case of multiple parts, these are splat as params
@@ -51,6 +6,45 @@ TASKS
     defrulef takes 3 params - name, conditions, activations, but these
     need to be compatible
 - test this compatibility
+
+CHECK AND DOCUMENT ALL FRONT-END RETURN VALUES
+
+ALL FRONT-END MACROS, THAT TAKE SYMBOLIC REPRESENTATION OF EXIL ENTITIES
+(FACTS, PATTERNS, TEMPLATES, RULES, GOALS, WATCHER NAMES, ENVIRONMENT NAMES,
+STRATEGIES), SHOULD HAVE FUNCTIONAL COUNTERPARTS THAT TAKE THESE EXPRESSIONS
+(SYMBOLS, LISTS) AS ARGUMENTS SO THAT OTHER CODE CAN RETRIEVE, MANIPULATE,
+GENERATE, ETC. THE ENTITIES' SYMBOLIC REPRESENTATION
+I'll suffix these functional counterparts with f for now, e.g. deftemplatef
+what to do with rule condition ?fact <- (pattern) notation?
+e.g. when you write a function, that returns the list '(in box hall)
+there's currently no way to assert this as a fact => the macros are only
+
+useful for interactive usage, not programmatic
+deffactsf, undeffactsf
+defrulef, undefrulef
+undefgoalf
+defstrategyf, setstrategyf
+
+THERE SHOULD ALSO BE A COMPLETE SET OF QUERY FUNCTIONS, THAT RETURN THIS
+SYMBOLIC REPRESENTATION (INSTEAD OF JUST PRINTING IT):
+
+fact-groups - just names
+find-fact-group - specifier
+strategies - just names
+find-strategy - function
+rules - just names
+find-rule - specifier
+
+FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
+
+(find-template :tmpl) should be (deftemplatef)-able (after deconsing)
+(find-fact-group :grp) should be (deffactsf)-able (after deconsing)
+(find-rule) should be (defrulef)-able (after deconsing)
+
+ACTIONS SHOULD HAVE INVERSES (including functional counterparts)
+
+defstrategy - UNDEFSTRATEGY
+defgoal - UNDEFGOAL
 
 recursive tree-node printing:
 (defun print-node (node depth &optional (stream t))

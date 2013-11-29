@@ -9,26 +9,30 @@
   (complete-reset)
   (unwatch :all))
 
-(def-test-method test-environments ((tests functional-integration-tests) :run nil)
+(def-test-method test-environments
+    ((tests functional-integration-tests) :run nil)
   "env modifiers take symbols"
   (defenvf 'test)
   (setenvf 'test)
   "current-environment always returns keyword"
   (assert-equal (current-environment) :test))
 
-(def-test-method test-environments-keywords ((tests functional-integration-tests) :run nil)
+(def-test-method test-environments-keywords
+    ((tests functional-integration-tests) :run nil)
   "env modifiers take keywords"
   (defenvf :test)
   (setenvf :test)
   (assert-equal (current-environment) :test))
 
-(def-test-method test-environments-mixed ((tests functional-integration-tests) :run nil)
+(def-test-method test-environments-mixed
+    ((tests functional-integration-tests) :run nil)
   "keywords and symbols are interchangeable"
   (defenvf 'test)
   (setenvf :test)
   (assert-equal (current-environment) :test))
 
-(def-test-method test-environments-not-defined ((tests functional-integration-tests) :run nil)
+(def-test-method test-environments-not-defined
+    ((tests functional-integration-tests) :run nil)
   "nothing happends when environment not defined"
   ;; TODO: show warning
   (setenvf :test)
@@ -42,7 +46,8 @@
   (unwatchf 'facts)
   (assert-false (watchedpf 'facts)))
 
-(def-test-method test-watchers-keywords ((tests functional-integration-tests) :run nil)
+(def-test-method test-watchers-keywords
+    ((tests functional-integration-tests) :run nil)
   (watchf :facts)
   (assert-true (watchedpf :facts))
 
@@ -50,7 +55,7 @@
   (assert-false (watchedpf :facts)))
 
 
-(def-test-method test-templates ((tests functional-integration-tests) :run t)
+(def-test-method test-templates ((tests functional-integration-tests) :run nil)
   (deftemplatef 'in '(object location))
   (assert-equal (find-template 'in) '(:in ((:object) (:location))))
   (assert-equal (templates) '(:in))
@@ -60,7 +65,8 @@
   (assert-false (find-template 'in))
   (assert-false (templates)))
 
-(def-test-method test-templates-keywords ((tests functional-integration-tests) :run t)
+(def-test-method test-templates-keywords
+    ((tests functional-integration-tests) :run nil)
   (deftemplatef :in '(object location))
   (assert-equal (find-template :in) '(:in ((:object) (:location))))
   (assert-equal (templates) '(:in))
@@ -70,36 +76,32 @@
   (assert-false (templates)))
 
 
+(def-test-method test-facts ((tests functional-integration-tests) :run nil)
+  (let ((fact-spec '(in box hall)))
+    (assertf fact-spec)
+    (assert-equal (facts) (list fact-spec))
+
+    (retractf fact-spec)
+    (assert-false (facts)))
+
+  (let ((fact-spec '(:in :object box :location hall)))
+    (deftemplatef :in '(object location))
+
+    (assertf fact-spec)
+    (assert-equal (facts) (list fact-spec))
+
+    (modifyf fact-spec '(:location kitchen))
+    (assert-equal (facts) '((:in :object box :location kitchen)))
+
+    (retractf '(in :object box :location kitchen))
+    (assert-false (facts))))
+
+
 (def-test-method test-goals ((tests functional-integration-tests) :run nil)
   (defgoalf '(in ?box hall))
   (assert-equal (goals) '((in ?box hall))))
 
 ;; (def-test-method test-functional-counterparts ((tests functional-integration-tests) :run nil)
-;;   (deftemplatef :goal '((action :default run) object from to))
-;;   (assert-equal (find-template :goal)
-;;                 '(:goal ((:action :default run) (:object) (:from) (:to))))
-
-;;   (deftemplatef :in '(object location))
-;;   (assert-equal (templates) '(:goal :in))
-
-;;   (assertf '(in box hall))
-;;   (assert-equal (facts) '((in box hall)))
-
-;;   (retractf '(in box hall))
-;;   (assert-false (facts))
-
-;;   (assertf '(in :object box :location hall))
-;;   (assert-equal (facts) '((:in :object box :location hall)))
-
-;;   (modifyf '(in :object box :location hall) '(:location kitchen))
-;;   (assert-equal (facts) '((:in :object box :location kitchen)))
-
-;;   (retractf '(in :object box :location kitchen))
-;;   (assert-false (facts))
-
-;;   (defgoalf '(in ?box hall))
-;;   (assert-equal (goals) '((in ?box hall)))
-
 ;;   (deffactsf :world
 ;;     '((in :object robot :location A)
 ;;       (in :object box :location B)

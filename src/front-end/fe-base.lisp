@@ -19,6 +19,8 @@
 ;;; templates:
 ;; (defmacro deftemplate (name &body slots))
 ;; (defun deftemplatef (name slots))
+;; (defmacro undeftemplate (name))
+;; (defun undeftemplatef (name))
 ;; (defmacro ppdeftemplate (name))
 ;; (defun find-template (name)) => external template representation
 ;; (defun templates ())         => list of names
