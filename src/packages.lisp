@@ -58,7 +58,8 @@
 		:fresh-format :fresh-princ :last1)
   (:export :external :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
-           :add-template :find-template :print-template :template-names
+           :add-template :rem-template :find-template :print-template
+           :template-names
            :facts :add-fact :rem-fact :mod-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group
            :add-strategy :set-strategy :current-strategy-name
@@ -92,7 +93,8 @@
   (:use :common-lisp :exil-parser :exil-env :iterate)
   (:import-from :exil-utils :to-keyword :fresh-princ :hash-keys)
   (:export :defenv :defenvf :setenv :setenvf :environments :current-environment
-           :deftemplate :deftemplatef :ppdeftemplate :templates :find-template
+           :deftemplate :deftemplatef :undeftemplate :undeftemplatef
+           :ppdeftemplate :templates :find-template
 	   :assert :assertf :retract :retractf :retract-all :modify :modifyf
 	   :agenda :facts
            :deffacts :deffactsf :undeffacts :undeffactsf

@@ -34,6 +34,7 @@
   (setenvf :test)
   (assert-equal (current-environment) :test))
 
+
 (def-test-method test-watchers ((tests functional-integration-tests) :run nil)
   (watchf 'facts)
   (assert-true (watchedpf 'facts))
@@ -48,17 +49,30 @@
   (unwatchf :facts)
   (assert-false (watchedpf :facts)))
 
+
+(def-test-method test-templates ((tests functional-integration-tests) :run t)
+  (deftemplatef 'in '(object location))
+  (assert-equal (find-template 'in) '(:in ((:object) (:location))))
+  (assert-equal (templates) '(:in))
+
+  (undeftemplatef 'in)
+  (print (templates))
+  (assert-false (find-template 'in))
+  (assert-false (templates)))
+
+(def-test-method test-templates-keywords ((tests functional-integration-tests) :run t)
+  (deftemplatef :in '(object location))
+  (assert-equal (find-template :in) '(:in ((:object) (:location))))
+  (assert-equal (templates) '(:in))
+
+  (undeftemplatef :in)
+  (assert-false (find-template :in))
+  (assert-false (templates)))
+
+
 (def-test-method test-goals ((tests functional-integration-tests) :run nil)
   (defgoalf '(in ?box hall))
   (assert-equal (goals) '((in ?box hall))))
-
-;; (def-test-method test-templates ((tests functional-integration-tests) :run nil)
-;;   (deftemplatef '(in (object location)))
-;;   (assert-equal (find-template :in) '(in (object location)))
-;;   (assert-include (templates) '(in (object location)))
-;;   (undeftemplate (find-template :in))
-;;   (assert-false (find-template :in))
-;;   (assert-false (templates)))
 
 ;; (def-test-method test-functional-counterparts ((tests functional-integration-tests) :run nil)
 ;;   (deftemplatef :goal '((action :default run) object from to))

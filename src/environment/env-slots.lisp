@@ -56,6 +56,9 @@
 (defun set-template (env name template)
   (setf (gethash name (templates env)) template))
 
+(defun del-template (env name)
+  (remhash (to-keyword name) (templates env)))
+
 
 ;; facts
 (defun copy-facts (facts)

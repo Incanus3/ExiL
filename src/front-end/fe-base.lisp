@@ -140,12 +140,21 @@
 
 (defun deftemplatef (name slots)
   (add-template *current-environment* (parse-template name slots)
-		(format nil "(deftemplate ~A ~S)" name slots)))
+		(format nil "(deftemplate ~A ~S)" name slots))
+  nil)
 
 ; public
 (defmacro deftemplate (name &body slots)
   "define new template"
   `(deftemplatef ',name ',slots))
+
+(defun undeftemplatef (name)
+  (rem-template *current-environment* name
+                (format nil "(undeftemplatef ~A)" name))
+  nil)
+
+(defmacro undeftemplate (name)
+  `(undeftemplatef ',name))
 
 (defmacro ppdeftemplate (name)
   "print template"

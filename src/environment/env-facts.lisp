@@ -7,10 +7,18 @@
   "returns all facts in facts and fact-groups of env"
   (append (facts env) (all-fg-facts env)))
 
-(defun find-fact-with-template (env template)
+(defun find-fact-with-template (env name)
   "finds first fact in all-facts, that is based on template"
-  (find-if (lambda (fact) (equalp (name template) (template-name fact)))
-	   (all-facts env)))
+  (find name (all-facts env) :key #'template-name))
+
+(defun template-used-p (env name)
+  (and (find-template env name)
+       (find-fact-with-template env name)))
+
+(defun ensure-tmpl-not-used (env name action)
+  (when (template-used-p env name)
+    (error "can't ~A template ~A, because there are existing facts using it"
+	   action name)))
 
 (defun add-template% (env template undo-label)
   (let ((original-template (find-template env template)))
@@ -19,19 +27,25 @@
 	  (lambda (env) (set-template env (name template) original-template))
 	(set-template env (name template) template)))))
 
-(defun template-used-p (env template)
-  (and (find-template env template)
-       (find-fact-with-template env template)))
+(defun del-template% (env name undo-label)
+  (let ((template (find-template env name)))
+    (with-undo env undo-label
+        (lambda (env) (set-template env name template))
+      (del-template env name))))
 
-; public
+;; public
 (defmethod add-template ((env environment) (template template)
 			 &optional (undo-label "(add-template)"))
-  (when (template-used-p env template)
-    (error "can't redefine template ~A, because there are existing facts using it"
-	   (name template)))
+  (ensure-tmpl-not-used env (name template) "redefine")
   (add-template% env template undo-label)
-  #+lispworks(exil-gui:update-lists)
-  nil)
+  #+lispworks(exil-gui:update-lists))
+
+;; public
+(defmethod rem-template ((env environment) (name symbol)
+			 &optional (undo-label "(del-template)"))
+  (ensure-tmpl-not-used env name "undefine")
+  (del-template% env name undo-label)
+  #+lispworks(exil-gui:update-lists))
 
 (defmethod print-template ((env environment) (name symbol))
   (fresh-princ (find-template env name)))
