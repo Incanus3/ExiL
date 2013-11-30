@@ -147,6 +147,14 @@
 (defun strategy-names (env)
   (mapcar #'car (strategies env)))
 
+(defun rem-strategy% (env name)
+  (if (equalp name :default)
+      (error "Can't remove default strategy")
+      (progn
+        (when (equalp name (current-strategy-name env))
+          (set-strategy-name% env :default))
+        (del-assoc-value (to-keyword name) (strategies env)))))
+
 
 ;; activations
 (defun copy-activations (activations)

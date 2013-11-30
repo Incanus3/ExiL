@@ -121,7 +121,15 @@
 
   (assert-true (find :test (strategies)))
   (assert-equal (current-strategy) :test)
-  (assert-equal (find-strategy :test) #'first))
+  (assert-equal (find-strategy :test) #'first)
+
+  (undefstrategyf :test)
+
+  (assert-false (find :test (strategies)))
+  (assert-equal (current-strategy) :default)
+  (assert-false (find-strategy :test))
+
+  (assert-condition 'error (undefstrategy :default)))
 
 ;; (def-test-method test-functional-counterparts
 ;;     ((tests functional-integration-tests) :run nil)

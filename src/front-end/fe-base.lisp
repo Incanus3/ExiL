@@ -39,25 +39,31 @@
 
 ;;; strategies:
 ;; (defmacro defstrategy (name function))
+;; (defun defstrategyf (name function))
+;; (defmacro undefstrategy (name))
+;; (defun undefstrategyf (name))
 ;; (defmacro setstrategy (name))
+;; (defun setstrategyf (name))
 ;; (defun current-strategy ())
+;; (defun strategies ())
+;; (defun find-strategy (name))
 
 ;;; rules:
 ;; (defmacro defrule (name &body rule))
 ;; (defmacro undefrule (name))
 ;; (defmacro ppdefrule (name))
 
-;;; backward chaining:
-;; (defmacro defgoal (goal-spec))
-;; (defun goals ())
-;; (defun back-step ())
-;; (defun back-run ())
-
-;;; execution:
+;;; forward chaning inference execution:
 ;; (defun reset ())
 ;; (defun step ())
 ;; (defun halt ())
 ;; (defun run ())
+
+;;; backward chaining inference execution:
+;; (defmacro defgoal (goal-spec))
+;; (defun goals ())
+;; (defun back-step ())
+;; (defun back-run ())
 
 ;;; environment cleanup:
 ;; (defun clear ())

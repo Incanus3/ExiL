@@ -9,16 +9,29 @@
 ;; and then store the strategy in the environment under given name
 (defun defstrategyf (name function)
   (add-strategy *current-environment* name function
-		(format nil "(defstrategy ~A ~A)" name function)))
-; public
+		(format nil "(defstrategy ~A ~A)" name function))
+  nil)
+
+;; public
 (defmacro defstrategy (name function)
   "define new strategy"
   `(defstrategyf ',name ,function))
 
+(defun undefstrategyf (name)
+  (rem-strategy *current-environment* name
+		(format nil "(undefstrategy ~A)" name))
+  nil)
+
+;; public
+(defmacro undefstrategy (name)
+  "define new strategy"
+  `(undefstrategyf ',name))
+
 (defun setstrategyf (name)
   "set strategy to use"
   (set-strategy *current-environment* name
-                (format nil "(setstrategy ~A)" name)))
+                (format nil "(setstrategy ~A)" name))
+  nil)
 
 ; public
 (defmacro setstrategy (name)

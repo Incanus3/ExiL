@@ -26,6 +26,12 @@
            (setf (assoc-value ,key-sym ,alist :test ,test-sym) ,value-sym)
            (push (cons ,key-sym ,value-sym) ,alist)))))
 
+(defun rem-assoc-value (key alist &key (test #'equal))
+  (remove key alist :key #'car :test test))
+
+(defmacro del-assoc-value (key alist &key (test '#'equal))
+  `(setf ,alist (rem-assoc-value ,key ,alist :test ,test)))
+
 (defun assoc-key (value alist)
   "get key from assoc-list according to the value"
   (car (rassoc value alist)))

@@ -6,7 +6,8 @@
   (:use :common-lisp :iterate)
   (:export :to-keyword :gensymedp :string-append :symbol-append
 	   :symbol-name-equal-p :weak-equal-p
-           :alistp :assoc-value :add-assoc-value :assoc-key :alist-equal-p
+           :alistp :assoc-value :add-assoc-value :rem-assoc-value
+           :del-assoc-value :assoc-key :alist-equal-p
            :plistp :doplist
            :last1 :to-list :to-list-of-lists
            :ext-pushnew :push-end :pushnew-end :ext-delete :diff-remove
@@ -50,7 +51,7 @@
   (:nicknames :eenv)
   (:use :common-lisp :exil-core :exil-rete :iterate)
   (:import-from :exil-utils :to-keyword :symbol-name-equal-p
-                :assoc-value :add-assoc-value
+                :assoc-value :add-assoc-value :del-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
 		:list-difference :find-if-func-result
 		:copy-hash-table :hash-equal-p :hash-keys
@@ -62,8 +63,8 @@
            :template-names
            :facts :add-fact :rem-fact :mod-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group :fact-group-names
-           :add-strategy :set-strategy :current-strategy-name :strategy-names
-           :find-strategy
+           :add-strategy :rem-strategy :set-strategy :current-strategy-name
+           :strategy-names :find-strategy
            :add-rule :rem-rule :find-rule
            :print-activations
            :clear-env :reset-env :completely-reset-env
@@ -102,7 +103,8 @@
            :fact-groups :find-fact-group
 	   :defrule :defrulef :undefrule :undefrulef :ppdefrule
 	   :defgoal :defgoalf :undefgoal :undefgoalf :goals
-	   :defstrategy :defstrategyf :setstrategy :setstrategyf
+	   :defstrategy :defstrategyf :undefstrategy :undefstrategyf
+           :setstrategy :setstrategyf
            :strategies :current-strategy :find-strategy
 	   :watch :watchf :unwatch :unwatchf :watchedp :watchedpf
 	   :clear :reset :step :halt :run
