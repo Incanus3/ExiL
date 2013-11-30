@@ -115,6 +115,14 @@
     (assert-false (fact-groups))
     (assert-false (find-fact-group :world))))
 
+(def-test-method test-strategies ((tests functional-integration-tests) :run nil)
+  (defstrategyf :test #'first)
+  (setstrategyf :test)
+
+  (assert-true (find :test (strategies)))
+  (assert-equal (current-strategy) :test)
+  (assert-equal (find-strategy :test) #'first))
+
 ;; (def-test-method test-functional-counterparts
 ;;     ((tests functional-integration-tests) :run nil)
 ;;   (defrulef :move

@@ -20,16 +20,11 @@ e.g. when you write a function, that returns the list '(in box hall)
 there's currently no way to assert this as a fact => the macros are only
 
 useful for interactive usage, not programmatic
-deffactsf, undeffactsf
 defrulef, undefrulef
-undefgoalf
-defstrategyf, setstrategyf
 
 THERE SHOULD ALSO BE A COMPLETE SET OF QUERY FUNCTIONS, THAT RETURN THIS
 SYMBOLIC REPRESENTATION (INSTEAD OF JUST PRINTING IT):
 
-strategies - just names
-find-strategy - function
 rules - just names
 find-rule - specifier
 

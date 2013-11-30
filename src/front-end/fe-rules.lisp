@@ -7,22 +7,32 @@
 ;; a function definition - it should take name and body, pass the body to parser
 ;; to create the strategy (which will probably still be just a function)
 ;; and then store the strategy in the environment under given name
-(defun defstrategy% (name function)
+(defun defstrategyf (name function)
   (add-strategy *current-environment* name function
 		(format nil "(defstrategy ~A ~A)" name function)))
 ; public
 (defmacro defstrategy (name function)
   "define new strategy"
-  `(defstrategy% ',name ,function))
+  `(defstrategyf ',name ,function))
+
+(defun setstrategyf (name)
+  "set strategy to use"
+  (set-strategy *current-environment* name
+                (format nil "(setstrategy ~A)" name)))
 
 ; public
 (defmacro setstrategy (name)
   "set strategy to use"
-  `(set-strategy *current-environment* ',name
-		 (format nil "(setstrategy ~A)" ',name)))
+  `(setstrategyf ',name))
 
 (defun current-strategy ()
-  (format nil "~A" (current-strategy-name *current-environment*)))
+  (current-strategy-name *current-environment*))
+
+(defun strategies ()
+  (strategy-names *current-environment*))
+
+(defun find-strategy (name)
+  (eenv:find-strategy *current-environment* name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rules

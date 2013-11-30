@@ -144,6 +144,9 @@
 (defun set-strategy-name% (env name)
   (setf (current-strategy-name env) (to-keyword name)))
 
+(defun strategy-names (env)
+  (mapcar #'car (strategies env)))
+
 
 ;; activations
 (defun copy-activations (activations)
