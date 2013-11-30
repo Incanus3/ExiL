@@ -65,7 +65,7 @@
            :add-fact-group :rem-fact-group :find-fact-group :fact-group-names
            :add-strategy :rem-strategy :set-strategy :current-strategy-name
            :strategy-names :find-strategy
-           :add-rule :rem-rule :find-rule
+           :add-rule :rem-rule :find-rule :rule-names
            :print-activations
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
@@ -101,7 +101,7 @@
 	   :agenda :facts
            :deffacts :deffactsf :undeffacts :undeffactsf
            :fact-groups :find-fact-group
-	   :defrule :defrulef :undefrule :undefrulef :ppdefrule
+	   :defrule :defrulef :undefrule :undefrulef :ppdefrule :rules :find-rule
 	   :defgoal :defgoalf :undefgoal :undefgoalf :goals
 	   :defstrategy :defstrategyf :undefstrategy :undefstrategyf
            :setstrategy :setstrategyf
@@ -112,7 +112,8 @@
 	   :back-step :back-run
            :complete-reset) ;; DEBUG
   (:shadow :assert :step :facts :undo :redo :watched-p :back-step :back-run
-           :find-template :find-fact-group :find-strategy :goals))
+           :find-template :find-fact-group :find-strategy :find-rule
+           :goals))
 
 #+lispworks (defpackage :exil-gui
               (:documentation "the ExiL GUI for LispWorks")

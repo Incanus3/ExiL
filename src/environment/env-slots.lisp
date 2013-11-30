@@ -203,6 +203,9 @@
   `(iter (for (,name ,rule) :in-hashtable (rules ,env))
 	 ,@body))
 
+(defmethod rule-names ((env environment))
+  (hash-keys (rules env)))
+
 
 ;; rete
 (defun rete-initform (env)

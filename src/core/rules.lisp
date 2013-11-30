@@ -65,6 +65,21 @@
                 name (conditions rule) (activations rule))))
   rule)
 
+(defun external% (condition)
+  (let* ((ext (external condition))
+         (ext2 (if (negated-p condition)
+                   (cons :- ext)
+                   ext)))
+    (if (match-var condition)
+        (list (match-var condition) :<- ext2)
+        (list ext2))))
+
+(defmethod external ((rule rule))
+  (list (name rule)
+        (append (mapcan #'external% (conditions rule))
+                (list :=>)
+                (activations rule))))
+
 (defun make-rule (name conditions activations)
   (assert (plusp (length conditions)) ()
           "Rule must have at least one condition")

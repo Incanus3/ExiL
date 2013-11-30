@@ -56,8 +56,8 @@
 
 
 (def-test-method test-templates ((tests functional-integration-tests) :run nil)
-  (deftemplatef 'in '(object location))
-  (assert-equal (find-template 'in) '(:in ((:object) (:location))))
+  (deftemplatef 'in '(object (location :default hall)))
+  (assert-equal (find-template 'in) '(:in ((:object) (:location :default hall))))
   (assert-equal (templates) '(:in))
 
   (undeftemplatef 'in)
@@ -131,27 +131,37 @@
 
   (assert-condition 'error (undefstrategy :default)))
 
-;; (def-test-method test-functional-counterparts
-;;     ((tests functional-integration-tests) :run nil)
-;;   (defrulef :move
-;;     '((goal :action push :object ?x :from ?y)
-;;       (in :object ?x :location ?y)
-;;       (- in :object robot :location ?y)
-;;       ?robot <- (in :object robot :location ?))
-;;     '((modify ?robot :location ?y)))
+(def-test-method test-rules
+    ((tests functional-integration-tests) :run nil)
+  (defrulef :move
+      '((goal :action push :object ?x :from ?y)
+        (in :object ?x :location ?y)
+        (- in :object robot :location ?y)
+        ?robot <- (in :object robot :location ?)
+        =>
+        (modify ?robot :location ?y)))
 
-;;   (defrulef :push
-;;     '((goal :action push :object ?x :from ?y :to ?z)
-;;       ?object <- (in :object ?x :location ?y)
-;;       ?robot <- (in :object robot :location ?y))
-;;     '((modify ?robot :location ?z)
-;;      (modify ?object :location ?z)))
+  (defrulef :push
+      '((goal :action push :object ?x :from ?y :to ?z)
+        ?object <- (in :object ?x :location ?y)
+        ?robot <- (in :object robot :location ?y)
+        =>
+        (modify ?robot :location ?z)
+        (modify ?object :location ?z)))
 
-;;   (defrulef :stop
-;;     '((goal :action push :object ?x :to ?y)
-;;       (in :object ?x :location ?y))
-;;     '((halt)))
-;; ))
+  (assert-equal (rules) '(:move :push))
+  (assert-equal (find-rule :move)
+                '(:move ((goal :action push :object ?x :from ?y)
+                         (in :object ?x :location ?y)
+                         (:- in :object robot :location ?y)
+                         ?robot :<- (in :object robot :location ?)
+                         :=>
+                         (modify ?robot :location ?y))))
+
+  (undefrulef :move)
+
+  (assert-equal (rules) '(:push))
+  (assert-false (find-rule :move)))
 
 (add-test-suite 'functional-integration-tests)
 ;;(textui-test-run (get-suite functional-integration-tests))

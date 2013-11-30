@@ -50,29 +50,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rules
 
-(defun defrule% (name body)
+(defun defrulef (name body)
   (add-rule *current-environment*
              (parse-rule *current-environment* name body)
 	     (format nil "(defrule ~A ~A)" name body)))
 
-; public
+;; public
 (defmacro defrule (name &body body)
   "define rule"
-  `(defrule% ',name ',body))
+  `(defrulef ',name ',body))
 
-; public
+(defun undefrulef (name)
+  (rem-rule *current-environment* name
+            (format nil "(undefrule ~A)" name)))
+
+;; public
 (defmacro undefrule (name)
   "undefine rule"
-  `(rem-rule *current-environment* ',name
-	     (format nil "(undefrule ~A)" ',name)))
+  `(undefrulef ',name))
 
 (defun ppdefrule% (name)
   (fresh-princ (find-rule *current-environment* name)))
 
-; public
+;; public
 (defmacro ppdefrule (name)
   "pretty-print rule definition"
   `(ppdefrule% ',name))
+
+(defun rules ()
+  (rule-names *current-environment*))
+
+(defun find-rule (name)
+  (external (exil-env:find-rule *current-environment* name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; agenda

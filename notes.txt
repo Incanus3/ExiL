@@ -6,44 +6,10 @@ TODO:
     defrulef takes 3 params - name, conditions, activations, but these
     need to be compatible
 - test this compatibility
+- test all front-end return values
 
-CHECK AND DOCUMENT ALL FRONT-END RETURN VALUES
-
-ALL FRONT-END MACROS, THAT TAKE SYMBOLIC REPRESENTATION OF EXIL ENTITIES
-(FACTS, PATTERNS, TEMPLATES, RULES, GOALS, WATCHER NAMES, ENVIRONMENT NAMES,
-STRATEGIES), SHOULD HAVE FUNCTIONAL COUNTERPARTS THAT TAKE THESE EXPRESSIONS
-(SYMBOLS, LISTS) AS ARGUMENTS SO THAT OTHER CODE CAN RETRIEVE, MANIPULATE,
-GENERATE, ETC. THE ENTITIES' SYMBOLIC REPRESENTATION
-I'll suffix these functional counterparts with f for now, e.g. deftemplatef
-what to do with rule condition ?fact <- (pattern) notation?
-e.g. when you write a function, that returns the list '(in box hall)
-there's currently no way to assert this as a fact => the macros are only
-
-useful for interactive usage, not programmatic
-defrulef, undefrulef
-
-THERE SHOULD ALSO BE A COMPLETE SET OF QUERY FUNCTIONS, THAT RETURN THIS
-SYMBOLIC REPRESENTATION (INSTEAD OF JUST PRINTING IT):
-
-rules - just names
-find-rule - specifier
 
 FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
-
 (find-template :tmpl) should be (deftemplatef)-able (after deconsing)
 (find-fact-group :grp) should be (deffactsf)-able (after deconsing)
 (find-rule) should be (defrulef)-able (after deconsing)
-
-ACTIONS SHOULD HAVE INVERSES (including functional counterparts)
-
-defstrategy - UNDEFSTRATEGY
-defgoal - UNDEFGOAL
-
-recursive tree-node printing:
-(defun print-node (node depth &optional (stream t))
-  (dotimes (i (1- depth))
-    (format stream " "))
-  (format stream " ~[*-- ~:; `-- ~]~A~%" depth node))
-
-get list of class methods in sbcl:
-(sb-mop:specializer-direct-methods (find-class 'my-object))
