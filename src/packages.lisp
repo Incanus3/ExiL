@@ -115,14 +115,14 @@
            :find-template :find-fact-group :find-strategy :find-rule
            :goals))
 
-#+lispworks (defpackage :exil-gui
-              (:documentation "the ExiL GUI for LispWorks")
-              (:use :common-lisp :capi)
-              (:import-from :exil-env :facts :templates :rules :activations
-               :rem-fact :rem-rule)
-              (:import-from :exil-utils :hash-values)
-              (:import-from :exil :*current-environment*)
-              (:export :show-gui :update-lists))
+;;;; #+lispworks (defpackage :exil-gui
+;;;;               (:documentation "the ExiL GUI for LispWorks")
+;;;;               (:use :common-lisp :capi)
+;;;;               (:import-from :exil-env :facts :templates :rules :activations
+;;;;                :rem-fact :rem-rule)
+;;;;               (:import-from :exil-utils :hash-values)
+;;;;               (:import-from :exil :*current-environment*)
+;;;;               (:export :show-gui :update-lists))
 
 (defpackage :exil-user
   (:documentation "the user program is defined in this package")

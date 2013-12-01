@@ -42,7 +42,8 @@
     (when (and (add-match% env match)
                (watched-p env :activations))
       (format t "~%==> ~A" match)
-      #+lispworks(exil-gui:update-lists))))
+;      #+lispworks(exil-gui:update-lists)
+      )))
 
 ; public, used by rete
 (defmethod remove-match ((env environment) production token)
@@ -52,13 +53,15 @@
         (setf (activations env) new-list)
         (when (watched-p env :activations)
           (format t "~%<== ~A" match))
-        #+lispworks(exil-gui:update-lists)))))
+;        #+lispworks(exil-gui:update-lists)
+        ))))
 
 (defun rem-matches-with-rule (env rule)
   (setf (activations env)
         (delete rule (activations env)
                 :test #'rule-equal-p :key #'match-rule))
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 (defun select-activation (env)
   (let ((activation (first (sort (activations env) (current-strategy env)))))
@@ -80,7 +83,8 @@
     (format t "==> ~A" rule))
   (dolist (fact (facts env))
     (add-wme (rete env) fact))
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 (defun rule-already-there (env rule)
   (let ((orig-rule (find-rule env (name rule))))
@@ -117,7 +121,8 @@
                           goals back-stack))
   (dorules (name rule) env
     (new-production (rete env) rule))
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 ;; clears volatile slots, keeps durable slots
 ;; if there're are some rules, whose conditions are met by empty set of facts
@@ -142,21 +147,24 @@
 
 (defmethod almost-completely-reset-env ((env environment))
   (reset-slots env (templates fact-groups rules facts activations rete))
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 ;; clears everything
 ; public, used for testing
 (defmethod completely-reset-env ((env environment))
   (reset-slots env (templates fact-groups rules facts activations rete
 			      goals undo-stack redo-stack back-stack))
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INFERENCE STEPS
 
 ;; during step-env and run-env, every env slot may actually change as there may
 ;; be any front-end call in the selected rule's RHS
-;; for now, suppose that only fact-changing calls are used (assert, retract, modify)
+;; for now, suppose that only fact-changing calls are used
+;;   (assert, retract, modify)
 ;; => store facts, activations, rete
 
 ;; must return true if the step was done

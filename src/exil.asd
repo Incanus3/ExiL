@@ -89,5 +89,5 @@
 	    ((:file "examples-template")
 	     (:file "examples-simple")
 	     (:file "examples-clips")))
-   #+lispworks(:file "gui")
+;   #+lispworks(:file "gui")
    ))

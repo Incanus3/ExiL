@@ -16,8 +16,9 @@
 (defgeneric modify-fact (fact mod-list)
   (:documentation "create new fact from fact and mod-list"))
 ;; used by parse-rule for creating patterns from rule's conditions
-(defgeneric parse-pattern (env pattern-spec &key match-var)
-  (:documentation "create pattern from external representation"))
+;; this is forward-declared in env-backward-matching
+;(defgeneric parse-pattern (env pattern-spec &key match-var)
+;  (:documentation "create pattern from external representation"))
 ;; used by front-end:deffacts
 (defgeneric parse-fact-group (env fact-specs)
   (:documentation "create fact group from external representation"))

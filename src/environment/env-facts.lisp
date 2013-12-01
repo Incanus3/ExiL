@@ -38,14 +38,16 @@
 			 &optional (undo-label "(add-template)"))
   (ensure-tmpl-not-used env (name template) "redefine")
   (add-template% env template undo-label)
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 ;; public
 (defmethod rem-template ((env environment) (name symbol)
 			 &optional (undo-label "(del-template)"))
   (ensure-tmpl-not-used env name "undefine")
   (del-template% env name undo-label)
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 (defmethod print-template ((env environment) (name symbol))
   (fresh-princ (find-template env name)))
@@ -59,7 +61,8 @@
   (when (watched-p env :facts)
     (fresh-format t "==> ~A" fact))
   (add-wme (rete env) fact)
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 ; public
 (defmethod add-fact ((env environment) (fact fact) &optional
@@ -74,7 +77,8 @@
   (when (watched-p env :facts)
     (fresh-format t "<== ~A" fact))
   (rem-wme (rete env) fact)
-  #+lispworks(exil-gui:update-lists))
+;  #+lispworks(exil-gui:update-lists)
+  )
 
 ;; remove fact from facts, print watcher output, notify rete
 ; public
