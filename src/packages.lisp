@@ -154,4 +154,5 @@
 
 (defpackage :integration-tests
   (:use :common-lisp :exil :xlunit :tests-base)
+  (:import-from :exil-utils :set-equal-p)
   (:shadowing-import-from :exil :assert :step :run))

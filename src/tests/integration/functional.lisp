@@ -149,7 +149,7 @@
         (modify ?robot :location ?z)
         (modify ?object :location ?z)))
 
-  (assert-equal (rules) '(:move :push))
+  (assert-true (set-equal-p (rules) '(:move :push)))
   (assert-equal (find-rule :move)
                 '(:move ((goal :action push :object ?x :from ?y)
                          (in :object ?x :location ?y)

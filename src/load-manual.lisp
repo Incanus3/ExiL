@@ -48,7 +48,30 @@
    "front-end/fe-base" "front-end/fe-facts"
    "front-end/fe-rules" "front-end/fe-execution"))
 
-(defparameter *files* (append *base* *core* *rete* *env* *parser* *front-end*))
+(defvar *examples*
+  (list
+   "examples/examples-template" "examples/examples-simple" "examples/examples-clips"))
+
+(defvar *tests*
+  (list
+   "tests/tst-base" "tests/tst-utils"
+   "tests/core/tst-templates" "tests/core/tst-base-objects" "tests/core/tst-patterns"
+   "tests/rete/tst-tokens" "tests/rete/tst-rete" "tests/rete/tst-rete-walk"
+   "tests/rete/tst-rete-copy-simple" "tests/rete/tst-rete-copy-template"
+   "tests/environment/tst-env-slots" "tests/environment/tst-env-simple"
+   "tests/environment/tst-env-template" "tests/environment/tst-env-backward"
+   "tests/environment/tst-env-copy-simple" "tests/environment/tst-env-copy-template"
+   "tests/environment/tst-env-undo" "tests/environment/tst-env-undo2"
+   "tests/integration/simple" "tests/integration/template" "tests/integration/clips"
+   "tests/integration/undo-redo" "tests/integration/backward"
+   "tests/integration/undo-redo-backward""tests/integration/functional"
+   "tests/run-tests"))
+
+(defparameter *files*
+  (append *base* *core* *rete* *env* *parser* *front-end*
+          ;; *examples*
+          *tests*
+          ))
 
 (dolist (file *files*)
   (load (merge-pathnames file *path*) :verbose t))

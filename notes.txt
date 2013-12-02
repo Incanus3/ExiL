@@ -1,4 +1,9 @@
 TODO:
+- fix watcher printing - no newlines in LW
+  - fresh-line doesn't seem to work
+- fix quicklisp/asdf loading in LW - experiment with eval-when around
+  (defenv default) (setenv default)
+
 - define all query functions to return external representation
 - define all functional counterparts to expect external representation
   - in case of multiple parts, these are splat as params
@@ -6,6 +11,7 @@ TODO:
     defrulef takes 3 params - name, conditions, activations, but these
     need to be compatible
 - test this compatibility
+
 - test all front-end return values
 - test env-copy-p, common-slots-p and ability to continue computation
   after undo/redo with respect to backward inference
@@ -15,3 +21,6 @@ FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
 (find-template :tmpl) should be (deftemplatef)-able (after deconsing)
 (find-fact-group :grp) should be (deffactsf)-able (after deconsing)
 (find-rule) should be (defrulef)-able (after deconsing)
+
+- examples cause 50% stack depletion in LW, but that's probably not
+  a problem I need to solve
