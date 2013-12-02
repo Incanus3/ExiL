@@ -1,15 +1,12 @@
 (in-package :exil-env)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; environment's activations are themselves matches
+;; environment's agenda consists of matches (CLIPS calls these activations)
 ;; folowing code implements:
 ;; 1) variable bindings resolution between rule's conditions (patterns) and the
 ;;    facts that satisfy them
-;; 2) substitution of variables by their bindings in rule's RHS
-;;    (which is, confusingly enough, called activations too; this is because
-;;    the rete autors call rule's RHS activations, but clips authors use
-;;    the term activations for matches in the agenda)
-;; 3) evaluation of selected activation's rule's RHS (i.e. its activations :D)
+;; 2) substitution of variables by their bindings in rule's RHS (activations)
+;; 3) evaluation of selected match's rule's RHS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun get-var-bindings% (fact pattern)
@@ -39,14 +36,14 @@
 ;; ACTIVATIONS ARE EVALUATED IN DIFFERENT CONTEXT THAN THEY WERE CREATED
 ;; IT WOULD BE NICE IF THIS COULD BE ENCAPSULATED IN A CLOSURE, BUT THAN
 ;; I COULDN'T SUBSTITUTE THE VARIABLES
-(defun activate-rule (activation)
-  (let* ((rule (match-rule activation))
-         (token (match-token activation))
+(defun activate-rule (match)
+  (let* ((rule (match-rule match))
+         (token (match-token match))
          (bindings (get-variable-bindings
                     (token->list token)
 		    (remove-if #'negated-p (conditions rule))))
          (activations (subst-vars-in-activations (activations rule)
 						 bindings)))
-    (format t "~%Firing ~A" (rule-name activation))
+    (format t "~%Firing ~A" (rule-name match))
     (dolist (activation activations)
       (eval activation))))

@@ -19,7 +19,7 @@
    (rules :accessor rules
           :documentation "hash table, assigns rule instance to name")
    (rete :accessor rete :documentation "the rete singleton instance")
-   (activations :initform () :accessor activations
+   (agenda :initform () :accessor agenda
            :documentation "list of matches")
    (undo-stack :initform () :accessor undo-stack
 	       :documentation "stacks closures, that restore previous state")
@@ -31,8 +31,8 @@
 	       :documentation "stack for backtracking during backward chaining
                                  inference"))
   (:documentation "keeps track of defined fact-groups, templates, rules,
-                     strategies and watchers and stores the asserted facts
-                     and the activations"))
+                   strategies and watchers and stores the asserted facts
+                   and the agenda"))
 
 ;; PUBLIC INTERFACE
 ;; constructor:
@@ -63,7 +63,7 @@
 ;; activations:
 ;(defgeneric add-match (env production token)) ; forward-declared in rete
 ;(defgeneric remove-match (env production token)) ; forward-declared in rete
-(defgeneric print-activations (env))
+(defgeneric print-agenda (env))
 ;; rules:
 (defgeneric add-rule (env rule &optional undo-label))
 (defgeneric rem-rule (env rule-name &optional undo-label))

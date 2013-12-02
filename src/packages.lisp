@@ -66,7 +66,7 @@
            :add-strategy :rem-strategy :set-strategy :current-strategy-name
            :strategy-names :find-strategy
            :add-rule :rem-rule :find-rule :rule-names
-           :print-activations
+           :print-agenda
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
@@ -118,7 +118,7 @@
 ;;;; #+lispworks (defpackage :exil-gui
 ;;;;               (:documentation "the ExiL GUI for LispWorks")
 ;;;;               (:use :common-lisp :capi)
-;;;;               (:import-from :exil-env :facts :templates :rules :activations
+;;;;               (:import-from :exil-env :facts :templates :rules :agenda
 ;;;;                :rem-fact :rem-rule)
 ;;;;               (:import-from :exil-utils :hash-values)
 ;;;;               (:import-from :exil :*current-environment*)

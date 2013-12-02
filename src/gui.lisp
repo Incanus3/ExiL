@@ -60,7 +60,7 @@
 (define-interface agenda-gui () ()
   (:panes
    (agenda-list list-panel
-                :items (activations *current-environment*)
+                :items (agenda *current-environment*)
                 :reader agenda-list
                 :print-function #'pprint->string))
   (:default-initargs :title "ExiL Agenda"
@@ -122,7 +122,7 @@
   (setf (collection-items (rule-list (rules-int *exil-gui*))) 
         (hash-values (rules *current-environment*)))
   (setf (collection-items (agenda-list (agenda-int *exil-gui*)))
-        (activations *current-environment*))
+        (agenda *current-environment*))
   nil)
 
 (show-gui)

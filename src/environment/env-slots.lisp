@@ -12,6 +12,8 @@
 (defun copy-watchers (watchers)
   (copy-alist watchers))
 
+;; CLIPS calls the matches in agenda (and thus the watcher) activations
+;; which I'll adhere to for now, don't confuse with rule's activations
 (defun watchers-initform ()
   (copy-watchers '((:facts . nil) (:rules . nil) (:activations . nil))))
 
@@ -156,11 +158,11 @@
         (del-assoc-value (to-keyword name) (strategies env)))))
 
 
-;; activations
-(defun copy-activations (activations)
-  (mapcar #'copy-match activations))
+;; agenda
+(defun copy-agenda (agenda)
+  (mapcar #'copy-match agenda))
 
-(defun activations-initform ()
+(defun agenda-initform ()
   ())
 
 (defun acts-equal-p (acts1 acts2)
@@ -168,13 +170,13 @@
 
 ; returns true if match was added = wasn't already there
 (defun add-match% (env match)
-  (nth-value 1 (ext-pushnew match (activations env)
+  (nth-value 1 (ext-pushnew match (agenda env)
 			    :test #'match-equal-p)))
 
 (defmacro del-match ((new-list altered-p) env match &body body)
   "destructuring macro"
   `(multiple-value-bind (,new-list ,altered-p)
-       (ext-delete ,match (activations ,env) :test #'match-equal-p)
+       (ext-delete ,match (agenda ,env) :test #'match-equal-p)
      ,@body))
 
 

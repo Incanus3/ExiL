@@ -50,28 +50,28 @@
   (let ((match (make-match production token)))
     (del-match (new-list altered-p) env match
       (when altered-p
-        (setf (activations env) new-list)
+        (setf (agenda env) new-list)
         (when (watched-p env :activations)
           (format t "~%<== ~A" match))
 ;        #+lispworks(exil-gui:update-lists)
         ))))
 
 (defun rem-matches-with-rule (env rule)
-  (setf (activations env)
-        (delete rule (activations env)
+  (setf (agenda env)
+        (delete rule (agenda env)
                 :test #'rule-equal-p :key #'match-rule))
 ;  #+lispworks(exil-gui:update-lists)
   )
 
-(defun select-activation (env)
-  (let ((activation (first (sort (activations env) (current-strategy env)))))
-    (setf (activations env) (delete activation (activations env)
+(defun select-match (env)
+  (let ((match (first (sort (agenda env) (current-strategy env)))))
+    (setf (agenda env) (delete match (agenda env)
                                     :test #'match-equal-p))
-    activation))
+    match))
 
 ; public
-(defmethod print-activations ((env environment))
-  (fresh-princ (activations env)))
+(defmethod print-agenda ((env environment))
+  (fresh-princ (agenda env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES
@@ -94,7 +94,7 @@
 (defmethod add-rule ((env environment) (rule rule) &optional
 						     (undo-label "(add-rule)"))
   (unless (rule-already-there env rule)
-    (with-saved-slots env (rules rete activations) undo-label
+    (with-saved-slots env (rules rete agenda) undo-label
       (add-rule%% env rule)))
   nil)
 
@@ -110,14 +110,14 @@
 						     (undo-label "(rem-rule)"))
   (let ((rule (find-rule env name)))
     (when rule
-      (with-saved-slots env (rules rete activations) undo-label
+      (with-saved-slots env (rules rete agenda) undo-label
 	(rem-rule%% env name rule)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ENVIRONMENT CLEANUP
 
 (defun clear-env% (env)
-  (reset-slots env (facts activations rete undo-stack redo-stack
+  (reset-slots env (facts agenda rete undo-stack redo-stack
                           goals back-stack))
   (dorules (name rule) env
     (new-production (rete env) rule))
@@ -126,16 +126,16 @@
 
 ;; clears volatile slots, keeps durable slots
 ;; if there're are some rules, whose conditions are met by empty set of facts
-;; these will appear in the activations thereafter
+;; these will appear in the agenda thereafter
 ; public
 (defmethod clear-env ((env environment) &optional (undo-label "(clear-env)"))
-  (with-saved-slots env (facts activations rete undo-stack redo-stack
+  (with-saved-slots env (facts agenda rete undo-stack redo-stack
                                goals back-stack) undo-label
     (clear-env% env)))
 
 ; public
 (defmethod reset-env ((env environment) &optional (undo-label "(reset-env)"))
-  (with-saved-slots env (facts activations rete undo-stack redo-stack
+  (with-saved-slots env (facts agenda rete undo-stack redo-stack
                                goals back-stack) undo-label
     (clear-env% env)
     (activate-fact-groups env))
@@ -146,14 +146,14 @@
 (defgeneric almost-completely-reset-env (env))
 
 (defmethod almost-completely-reset-env ((env environment))
-  (reset-slots env (templates fact-groups rules facts activations rete))
+  (reset-slots env (templates fact-groups rules facts agenda rete))
 ;  #+lispworks(exil-gui:update-lists)
   )
 
 ;; clears everything
 ; public, used for testing
 (defmethod completely-reset-env ((env environment))
-  (reset-slots env (templates fact-groups rules facts activations rete
+  (reset-slots env (templates fact-groups rules facts agenda rete
 			      goals undo-stack redo-stack back-stack))
 ;  #+lispworks(exil-gui:update-lists)
   )
@@ -165,13 +165,13 @@
 ;; be any front-end call in the selected rule's RHS
 ;; for now, suppose that only fact-changing calls are used
 ;;   (assert, retract, modify)
-;; => store facts, activations, rete
+;; => store facts, agenda, rete
 
 ;; must return true if the step was done
 (defmethod step-env ((env environment) &optional (undo-label "(step-env)"))
-  (when (activations env)
-    (with-saved-slots env (facts activations rete) undo-label
-      (activate-rule (select-activation env)))
+  (when (agenda env)
+    (with-saved-slots env (facts agenda rete) undo-label
+      (activate-rule (select-match env)))
     t))
 
 (defmethod halt-env ((env environment))
@@ -179,6 +179,6 @@
   (setf (running env) nil))
 
 (defmethod run-env ((env environment) &optional (undo-label "(run-env)"))
-  (with-saved-slots env (facts activations rete) undo-label
+  (with-saved-slots env (facts agenda rete) undo-label
     (setf (running env) t)
     (iter (while (and (running env) (step-env env))))))

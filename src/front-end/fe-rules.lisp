@@ -87,7 +87,7 @@
 ;; agenda
 
 (defun agenda ()
-  (print-activations *current-environment*)
+  (print-agenda *current-environment*)
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -111,7 +111,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RULES
 
-;; rule is satisfied by the fact, so the addition affects activations as well
+;; rule is satisfied by the fact, so the addition affects agenda as well
 (def-test-method undo-add-rule ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let (env1 env2)
@@ -138,7 +138,7 @@
 					; should dump redo stack
     (assert-stack-dumped env)))
 
-;; rule is satisfied by the fact, so the deletion affects activations as well
+;; rule is satisfied by the fact, so the deletion affects agenda as well
 (def-test-method undo-rem-rule ((tests env-undo-tests) :run nil)
   (with-slots (env) tests
     (let (env1 env2)

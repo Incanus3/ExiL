@@ -40,7 +40,7 @@
 	      (setf (goals env) goals)
               ;; SEVERAL MATCHES CAN BE FOUND IN ONE STEP, THESE SHOULD BE ITERATED
 	      (return (make-back-step
-		       env (select-match matches) undo-label
+		       env (select-back-match matches) undo-label
                        tried-facts tried-rules)))))))
 
 ;; public
@@ -68,7 +68,7 @@
       (let ((matches (find-matches env (select-goal (goals env)))))
 	(if matches
             ;; SEVERAL MATCHES CAN BE FOUND IN ONE STEP, THESE SHOULD BE ITERATED
-	    (make-back-step env (select-match matches) undo-label)
+	    (make-back-step env (select-back-match matches) undo-label)
 	    (backtrack env undo-label)))
       (backtrack env undo-label)))
 

@@ -3,9 +3,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; match represents a rule whose conditions have been satisfied by a list of
 ;; facts (represented by token)
-;; in the environment, matches manifest as activations that make up its agenda
-;; from which they're then selected and fired (the variable bindings are
-;; resolved and substituted in rule's RHS activations before its evaluation)
+;; environment's agenda keeps track of matches from which they're then selected
+;; and the match rules fired (the variable bindings are resolved and substituted
+;; in rule's RHS activations before its evaluation)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; public
@@ -38,7 +38,7 @@
       (print-unreadable-object (match stream :type t :identity t)
         (format stream "~S" (list (match-rule match)
                                   (token->list (match-token match)))))
-      (format stream "(ACTIVATION ~A ~A)"
+      (format stream "(MATCH ~A ~A)"
               (rule-name match)
               (token->list (match-token match)))))
 

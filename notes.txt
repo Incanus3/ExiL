@@ -7,6 +7,8 @@ TODO:
     need to be compatible
 - test this compatibility
 - test all front-end return values
+- test env-copy-p, common-slots-p and ability to continue computation
+  after undo/redo with respect to backward inference
 
 
 FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:

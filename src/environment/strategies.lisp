@@ -1,8 +1,8 @@
 (in-package :exil-env)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; strategies are functions, that implement activation comparison by which
-;; the activations are sorted before popping the first one, which is than fired
+;; strategies are functions, that implement match comparison by which
+;; the agenda is sorted before popping the first one, which is than fired
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgeneric newer-than-p (match1 match2))

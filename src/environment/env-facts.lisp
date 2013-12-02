@@ -68,7 +68,7 @@
 (defmethod add-fact ((env environment) (fact fact) &optional
 						     (undo-label "(add-fact)"))
   (unless (find-fact env fact)
-    (with-saved-slots env (facts activations rete) undo-label
+    (with-saved-slots env (facts agenda rete) undo-label
       (add-fact%% env fact)))
   nil)
 
@@ -85,7 +85,7 @@
 (defmethod rem-fact ((env environment) (fact fact) &optional
 						     (undo-label "(rem-fact)"))
   (when (find-fact env fact)
-    (with-saved-slots env (facts activations rete) undo-label
+    (with-saved-slots env (facts agenda rete) undo-label
       (rem-fact% env fact)))
   nil)
 
@@ -93,7 +93,7 @@
 		     &optional (undo-label "(mod-fact)"))
   (unless (and (not (find-fact env old-fact))
 	       (find-fact env new-fact))
-    (with-saved-slots env (facts activations rete) undo-label
+    (with-saved-slots env (facts agenda rete) undo-label
       (rem-fact% env old-fact)
       (add-fact%% env new-fact)))
   nil)

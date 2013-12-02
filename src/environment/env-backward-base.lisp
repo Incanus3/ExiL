@@ -82,7 +82,7 @@
 (defun print-goal-match (match)
   (fresh-format t "~A satisfied by ~A" (goal-match-goal match) (goal-match-fact match)))
 
-(defun select-match (matches)
+(defun select-back-match (matches)
   (first matches))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

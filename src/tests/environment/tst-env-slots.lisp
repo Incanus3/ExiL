@@ -84,7 +84,7 @@
       ;; should remove matches with rule
       (rem-rule env :rule)
       (assert-false (find-rule env :rule))
-      (assert-false (find match (activations env))))))
+      (assert-false (find match (exil-env::agenda env))))))
 
 ;; environment cleanup functions are really simple, so they shouldn't need to be
 ;; tested
