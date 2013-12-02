@@ -2,6 +2,7 @@
 *~
 .#*
 \#*
+*.swp
 message
 src/dependencies/cache*
 src/dependencies/cache/

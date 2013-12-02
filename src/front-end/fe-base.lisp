@@ -116,9 +116,9 @@
   "set current environment to one previously defined with name"
   `(setenvf ',name))
 
-;(eval-when (:compile-toplevel :load-toplevel :execute)
-(defenv default)
-(setenv default)
+(eval-when (:load-toplevel :execute)
+  (defenv default)
+  (setenv default))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; watchers
