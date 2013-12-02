@@ -41,11 +41,14 @@
 	     (:file "rete-copy")))
    (:module :environment
             :components
-            ((:file "matches") (:file "activations") (:file "strategies")
-             (:file "env-class") (:file "env-slots") (:file "env-copy")
-	     (:file "env-undo") (:file "env-watchers") (:file "env-facts")
-             (:file "env-activations") (:file "env-backward-base")
-             (:file "env-backward-matching") (:file "env-backward-inference")))
+            ((:file "matches") (:file "activate-rule") (:file "strategies")
+             (:file "env-class") (:file "env-slots")
+             (:file "env-copy") (:file "env-undo")
+             (:file "env-watchers") (:file "env-templates") (:file "env-facts")
+             (:file "env-strategies") (:file "env-agenda") (:file "env-rules")
+             (:file "env-cleanup") (:file "env-inference")
+             (:file "env-backward-base") (:file "env-backward-matching")
+             (:file "env-backward-inference")))
    (:module :parser
             :components
             ((:file "prs-base") (:file "prs-templates") (:file "prs-facts")

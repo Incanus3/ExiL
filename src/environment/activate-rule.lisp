@@ -1,12 +1,12 @@
 (in-package :exil-env)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; environment's agenda consists of matches (CLIPS calls these activations)
+;; environment's agenda consists of matches
 ;; folowing code implements:
 ;; 1) variable bindings resolution between rule's conditions (patterns) and the
 ;;    facts that satisfy them
-;; 2) substitution of variables by their bindings in rule's RHS (activations)
-;; 3) evaluation of selected match's rule's RHS
+;; 2) substitution of variables by their bindings in rule's activations (RHS)
+;; 3) evaluation of selected match's rule's activations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun get-var-bindings% (fact pattern)

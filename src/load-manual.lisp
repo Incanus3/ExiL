@@ -30,11 +30,14 @@
 
 (defvar *env*
   (list
-   "environment/matches" "environment/activations" "environment/strategies"
-   "environment/env-class" "environment/env-slots" "environment/env-copy"
-   "environment/env-undo" "environment/env-watchers" "environment/env-facts"
-   "environment/env-activations" "environment/env-backward-base"
-   "environment/env-backward-matching" "environment/env-backward-inference"))
+   "environment/matches" "environment/activate-rule" "environment/strategies"
+   "environment/env-class" "environment/env-slots"
+   "environment/env-copy" "environment/env-undo"
+   "environment/env-watchers" "environment/env-templates" "environment/env-facts"
+   "environment/env-strategies" "environment/env-agenda" "environment/env-rules"
+   "environment/env-cleanup" "environment/env-inference"
+   "environment/env-backward-base" "environment/env-backward-matching"
+   "environment/env-backward-inference"))
 
 (defvar *parser*
   (list
