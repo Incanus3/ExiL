@@ -295,7 +295,7 @@
   (defun rs-setf-forms% (env slots)
     (iter (for slot :in slots)
 	  (collect `(,slot ,env))
-	  (collect `(,(symbol-append slot "-initform")
+	  (collect `(,(symbol-append (list slot "-initform") :exil-env)
 		      ,@(when (equalp slot 'rete) `(,env)))))))
 
 (defmacro reset-slots (env slots)

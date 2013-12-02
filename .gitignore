@@ -3,5 +3,9 @@
 .#*
 \#*
 message
-dependencies/cache*
+src/dependencies/cache*
+src/dependencies/cache/
+src/dependencies/dists/
+src/dependencies/local-projects/
+src/dependencies/tmp/
 *pokus*

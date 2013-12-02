@@ -54,40 +54,40 @@
             :components
             ((:file "fe-base") (:file "fe-facts") (:file "fe-rules")
              (:file "fe-execution")))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   (:module :tests
-            :components
-            ((:file "tst-base") (:file "tst-utils")
-	     (:module
-	      :core
-	      :components
-	      ((:file "tst-templates") (:file "tst-base-objects")
-	       (:file "tst-patterns")))
-	     (:module
-	      :rete
-	      :components
-	      ((:file "tst-tokens") (:file "tst-rete")
-	       (:file "tst-rete-walk") (:file "tst-rete-copy-simple")
-	       (:file "tst-rete-copy-template")))
-	     (:module
-	      :environment
-	      :components
-	      ((:file "tst-env-slots")
-	       (:file "tst-env-simple") (:file "tst-env-template")
-	       (:file "tst-env-backward")
-	       (:file "tst-env-copy-simple") (:file "tst-env-copy-template")
-	       (:file "tst-env-undo") (:file "tst-env-undo2")))
-	     (:module
-	      :integration
-	      :components
-	      ((:file "simple") (:file "template") (:file "clips")
-	       (:file "undo-redo") (:file "backward")
-               (:file "undo-redo-backward") (:file "functional")))
-             (:file "run-tests")))
-   (:module :examples
-	    :components
-	    ((:file "examples-template")
-	     (:file "examples-simple")
-	     (:file "examples-clips")))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   #-lispworks(:module :tests
+               :components
+               ((:file "tst-base") (:file "tst-utils")
+                (:module
+                 :core
+                 :components
+                 ((:file "tst-templates") (:file "tst-base-objects")
+                  (:file "tst-patterns")))
+                (:module
+                 :rete
+                 :components
+                 ((:file "tst-tokens") (:file "tst-rete")
+                  (:file "tst-rete-walk") (:file "tst-rete-copy-simple")
+                  (:file "tst-rete-copy-template")))
+                (:module
+                 :environment
+                 :components
+                 ((:file "tst-env-slots")
+                  (:file "tst-env-simple") (:file "tst-env-template")
+                  (:file "tst-env-backward")
+                  (:file "tst-env-copy-simple") (:file "tst-env-copy-template")
+                  (:file "tst-env-undo") (:file "tst-env-undo2")))
+                (:module
+                 :integration
+                 :components
+                 ((:file "simple") (:file "template") (:file "clips")
+                  (:file "undo-redo") (:file "backward")
+                  (:file "undo-redo-backward") (:file "functional")))
+                (:file "run-tests")))
+   #-lispworks(:module :examples
+               :components
+               ((:file "examples-template")
+                (:file "examples-simple")
+                (:file "examples-clips")))
 ;   #+lispworks(:file "gui")
    ))

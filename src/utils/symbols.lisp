@@ -11,19 +11,21 @@
 ;; (gensymedp '#:abc) => t
 ;; (gensymedp (gensym "abc") => t
 
-(defun string-append (&rest strings)
-  (apply #'concatenate 'string strings))
-;; (string-append "a" "b" "c") => "abc"
-
 (defgeneric symname (object)
   (:method ((symbol symbol)) (symbol-name symbol))
   (:method ((string string)) (string-upcase string)))
 ;; (symname 'a) => "A"
 ;; (symname "a") => "A"
 
-(defun symbol-append (&rest symbols)
-  (intern (apply #'string-append (mapcar #'symname symbols))))
-;; (symbol-append "copy-" 'facts) => copy-facts
+;; these are used by env-slots (slot-initform) and env-udno (copy-slot)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun string-append (&rest strings)
+               (apply #'concatenate 'string strings))
+
+  (defun symbol-append (symbols &optional (package *package*))
+    (intern (apply #'string-append (mapcar #'symname symbols))
+            package)))
+;; (symbol-append (list "copy-" 'facts) :exil-env) => exil-env:copy-facts
 
 (defun symbol-name-equal-p (sym1 sym2)
   "returns true if symbol-names are string-equal"

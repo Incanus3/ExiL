@@ -72,11 +72,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; support for multiple environments
 
+;(eval-when (:compile-toplevel :load-toplevel :execute)
 (defvar *environments* (make-hash-table))
-
-(defun environments ()
-  (hash-keys *environments*))
-
 (defvar *current-environment*)
 (defvar *current-env-name*)
 
@@ -85,15 +82,28 @@
   (setf *current-env-name* name))
 
 ;; public
-(defun current-environment ()
-  *current-env-name*)
-
 (defun defenvf (name &key redefine)
   (let ((env-name (to-keyword name)))
     (when (or (not (gethash env-name *environments*))
               redefine)
-       (setf (gethash env-name *environments*)
-             (make-environment)))))
+      (setf (gethash env-name *environments*)
+            (make-environment)))))
+
+;; public
+(defun setenvf (name)
+  (let* ((env-name (to-keyword name))
+         (env (gethash env-name *environments*)))
+    (when env
+      (setf *current-environment* env)
+      (set-env-name env-name))))
+
+;; public
+(defun environments ()
+  (hash-keys *environments*))
+
+;; public
+(defun current-environment ()
+  *current-env-name*)
 
 ;; public
 (defmacro defenv (name &key redefine)
@@ -101,20 +111,14 @@
    existing environment with that name, if one exists"
   `(defenvf ',name :redefine ,redefine))
 
-(defun setenvf (name)
-  (let* ((env-name (to-keyword name))
-          (env (gethash env-name *environments*)))
-     (when env
-       (setf *current-environment* env)
-       (set-env-name env-name))))
-
 ;; public
 (defmacro setenv (name)
   "set current environment to one previously defined with name"
   `(setenvf ',name))
 
-(defenv :default)
-(setenv :default)
+;(eval-when (:compile-toplevel :load-toplevel :execute)
+(defenv default)
+(setenv default)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; watchers

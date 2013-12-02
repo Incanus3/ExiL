@@ -22,7 +22,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun saving-forms (env-sym slot-names)
     (iter (for slot :in slot-names)
-	  (collect `(,slot (,(symbol-append "copy-" slot) (,slot ,env-sym))))))
+	  (collect `(,slot (,(symbol-append (list "copy-" slot) :exil-env)
+                            (,slot ,env-sym))))))
 
   (defun setting-forms (env-sym slot-names)
     (iter (for slot :in slot-names)
