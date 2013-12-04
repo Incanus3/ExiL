@@ -1,13 +1,11 @@
 (in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(defclass functional-integration-tests (test-case)
-  ((env :reader env :initform exil::*current-environment*)))
+(defclass functional-integration-tests (integration-tests) ())
 
 (defmethod set-up ((tests functional-integration-tests))
-;;  (reset-environments)
-  (complete-reset)
-  (unwatch :all))
+  (call-next-method)
+  (unwatchf :all))
 
 (def-test-method test-environments
     ((tests functional-integration-tests) :run nil)

@@ -260,7 +260,7 @@
 (defun goals-equal-p (goals1 goals2)
   (set-equal-p goals1 goals2 :test #'exil-equal-p))
 
-; public
+; public - used for testing
 (defmethod find-goal ((env environment) (goal pattern))
   (find goal (goals env) :test #'exil-equal-p))
 
@@ -308,7 +308,3 @@
 
 (defmethod initialize-instance :after ((env environment) &key)
   (reset-slots env (watchers templates strategies rules rete)))
-
-; public
-(defun make-environment ()
-  (make-instance 'environment))

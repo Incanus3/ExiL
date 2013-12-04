@@ -1,11 +1,10 @@
 (in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(defclass template-integration-tests (test-case)
-  ((env :reader env :initform exil::*current-environment*)))
+(defclass template-integration-tests (integration-tests) ())
 
 (defmethod set-up ((tests template-integration-tests))
-  (complete-reset)
+  (call-next-method)
 
   (deftemplate goal action object from to)
   (deftemplate in object location)

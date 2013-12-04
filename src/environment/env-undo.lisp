@@ -44,7 +44,7 @@
     (pop-undo (undo-fun redo-fun label) env
       (funcall undo-fun env)
       (stack-for-redo env redo-fun undo-fun label))
-    #+lispworks(exil-gui:update-lists)))
+    (notify env)))
 
 ; public
 (defmethod redo ((env environment))
@@ -53,7 +53,7 @@
       (let ((*undo-enabled* nil))
 	(funcall redo-fun env))
       (stack-for-undo env undo-fun redo-fun label))
-    #+lispworks(exil-gui:update-lists)))
+    (notify env)))
 
 (defun numbered-stack (stack)
   (numbered-map #'stack-item-label stack))

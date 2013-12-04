@@ -111,6 +111,9 @@
 (defun original-goals (env)
   (first (last1 (back-stack env))))
 
+(defun variables-in-goals (goals)
+  (remove-duplicates (mapcan #'variables-in-pattern goals)))
+
 (defun original-variable-p (var env)
   (find var (variables-in-goals (original-goals env))))
 

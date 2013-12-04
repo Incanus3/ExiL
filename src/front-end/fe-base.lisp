@@ -86,8 +86,11 @@
   (let ((env-name (to-keyword name)))
     (when (or (not (gethash env-name *environments*))
               redefine)
-      (setf (gethash env-name *environments*)
-            (make-environment)))))
+      (let ((environment (make-environment)))
+        (setf (gethash env-name *environments*)
+              environment)
+        #+lispworks(set-gui environment (exil-gui:make-gui environment)))))
+  nil)
 
 ;; public
 (defun setenvf (name)
@@ -116,9 +119,11 @@
   "set current environment to one previously defined with name"
   `(setenvf ',name))
 
-(eval-when (:load-toplevel :execute)
-  (defenv default)
-  (setenv default))
+;; used by gui
+(defun getenv (name)
+  (if name
+      (gethash name *environments*)
+    *current-environment*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; watchers

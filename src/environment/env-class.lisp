@@ -29,7 +29,8 @@
    (goals :initform () :accessor goals)
    (back-stack :initform () :accessor back-stack
 	       :documentation "stack for backtracking during backward chaining
-                                 inference"))
+                                 inference")
+   #+lispworks(gui :initarg :gui :accessor gui))
   (:documentation "keeps track of defined fact-groups, templates, rules,
                    strategies and watchers and stores the asserted facts
                    and the agenda"))
@@ -46,8 +47,10 @@
 (defgeneric watched-p (env watcher))
 ;; templates:
 (defgeneric add-template (env template &optional undo-label))
+(defgeneric rem-template (env name &optional undo-label))
 (defgeneric find-template (env name))
 (defgeneric print-template (env name))
+(defgeneric template-names (env))
 ;; facts:
 (defgeneric find-fact (env fact))
 (defgeneric add-fact (env fact &optional undo-label))
@@ -57,8 +60,10 @@
 (defgeneric find-fact-group (env group-name))
 (defgeneric add-fact-group (env group-name facts &optional undo-label))
 (defgeneric rem-fact-group (env group-name &optional undo-label))
+(defgeneric fact-group-names (env))
 ;; strategies:
 (defgeneric add-strategy (env strat-name function &optional undo-label))
+(defgeneric rem-strategy (env strat-name &optional undo-label))
 (defgeneric set-strategy (env &optional strat-name undo-label))
 ;; activations:
 ;(defgeneric add-match (env production token)) ; forward-declared in rete
@@ -68,6 +73,7 @@
 (defgeneric add-rule (env rule &optional undo-label))
 (defgeneric rem-rule (env rule-name &optional undo-label))
 (defgeneric find-rule (env rule-name))
+(defgeneric rule-names (env))
 ;; environment clean-up:
 (defgeneric clear-env (env &optional undo-label))
 (defgeneric reset-env (env &optional undo-label))
@@ -81,3 +87,20 @@
 (defgeneric print-goals (env))
 (defgeneric back-step (env &optional undo-label))
 (defgeneric back-run (env &optional undo-label))
+(defgeneric find-goal (env goal)) ; used for testing
+;; gui
+#+lispworks(defgeneric set-gui (env gui))
+
+(defun notify (env)
+  #-lispworks(declare (ignore env))
+  #+lispworks(exil-gui:update-lists (gui env))
+  nil)
+
+#+lispworks(defmethod set-gui ((env environment) gui)
+             (setf (gui env) gui))
+
+;; public
+(defun make-environment (&optional gui)
+  #-lispworks(declare (ignore gui))
+  #-lispworks(make-instance 'environment)
+  #+lispworks(make-instance 'environment :gui gui))

@@ -1,3 +1,5 @@
+(in-package :cl-user)
+
 (defvar *path*
   (pathname
    (directory-namestring
@@ -16,7 +18,7 @@
 
 (defvar *core*
   (list
-   "core/templates" "core/base-objects" "core/facts" "core/patterns"
+   "core/templates" "core/base-objects" "core/patterns" "core/facts"
    "core/pattern-matching" "core/rules"))
 
 (defvar *rete*
@@ -68,11 +70,21 @@
    "tests/run-tests"))
 
 (defparameter *files*
-  (append *base* *core* *rete* *env* *parser* *front-end*
+  (append *base*
+          *core*
+          *rete*
+          *env*
+          *parser*
+          *front-end*
           ;; *examples*
           ;; *tests*
-          (list "gui.lisp")
+          #+lispworks(list "gui.lisp")
           ))
 
 (dolist (file *files*)
   (load (merge-pathnames file *path*) :verbose t))
+
+(exil:defenv default)
+(exil:setenv default)
+
+#+lispworks(exil-gui:show-gui)

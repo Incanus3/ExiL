@@ -21,6 +21,8 @@ TODO:
 - test env-copy-p, common-slots-p and ability to continue computation
   after undo/redo with respect to backward inference
 
+- integration tests should no more access environment directly
+  - all they need to assert success should be now available
 
 FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
 (find-template :tmpl) should be (deftemplatef)-able (after deconsing)

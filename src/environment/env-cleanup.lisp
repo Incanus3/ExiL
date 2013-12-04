@@ -8,8 +8,7 @@
                           goals back-stack))
   (dorules (name rule) env
     (new-production (rete env) rule))
-  #+lispworks(exil-gui:update-lists)
-  )
+  (notify env))
 
 ;; clears volatile slots, keeps durable slots
 ;; if there're are some rules, whose conditions are met by empty set of facts
@@ -34,13 +33,11 @@
 
 (defmethod almost-completely-reset-env ((env environment))
   (reset-slots env (templates fact-groups rules facts agenda rete))
-  #+lispworks(exil-gui:update-lists)
-  )
+  (notify env))
 
 ;; clears everything
                                         ; public, used for testing
 (defmethod completely-reset-env ((env environment))
   (reset-slots env (templates fact-groups rules facts agenda rete
 			      goals undo-stack redo-stack back-stack))
-  #+lispworks(exil-gui:update-lists)
-  )
+  (notify env))

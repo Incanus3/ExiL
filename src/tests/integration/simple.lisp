@@ -1,11 +1,19 @@
 (in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(defclass simple-integration-tests (test-case)
-  ((env :reader env :initform exil::*current-environment*)))
+(defclass integration-tests (test-case)
+  ((env :accessor env)))
+
+(defmethod set-up ((tests integration-tests))
+  (defenv test :redefine t)
+  (setenv test)
+  (setf (env tests) (getenv :test)))
+
+
+(defclass simple-integration-tests (integration-tests) ())
 
 (defmethod set-up ((tests simple-integration-tests))
-  (complete-reset)
+  (call-next-method)
 
   (deffacts world
     (in robot A)

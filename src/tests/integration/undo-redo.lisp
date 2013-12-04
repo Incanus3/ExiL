@@ -1,11 +1,10 @@
 (in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(defclass undo-redo-integration-tests (test-case)
-  ((env :reader env :initform exil::*current-environment*)))
+(defclass undo-redo-integration-tests (integration-tests) ())
 
 (defmethod set-up ((tests undo-redo-integration-tests))
-  (complete-reset)
+  (call-next-method)
 
   (undo)				; should do nothing
   (watch facts)

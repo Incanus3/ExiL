@@ -10,8 +10,7 @@
     (format t "==> ~A" rule))
   (dolist (fact (facts env))
     (add-wme (rete env) fact))
-  #+lispworks(exil-gui:update-lists)
-  )
+  (notify env))
 
 (defun rule-already-there (env rule)
   (let ((orig-rule (find-rule env (name rule))))
@@ -30,7 +29,8 @@
     (format t "<== ~A" rule))
   (rem-rule% env name)
   (remove-production (rete env) rule)
-  (rem-matches-with-rule env rule))
+  (rem-matches-with-rule env rule)
+  (notify env))
 
                                         ; public
 (defmethod rem-rule ((env environment) (name symbol) &optional

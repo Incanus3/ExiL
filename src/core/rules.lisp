@@ -20,6 +20,7 @@
 ;(defclass rule () (name conditions activations))
 (defgeneric name-equal-p (rule1 rule2))
 (defgeneric rule-equal-p (rule1 rule2))
+(defgeneric variables-in-rule (rule))
 ;(defun make-rule (name conditions activations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

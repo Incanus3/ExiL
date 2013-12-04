@@ -17,9 +17,6 @@
 ;; forward declaration
 (defgeneric exil-parser:parse-pattern (env pattern-spec &key match-var))
 
-(defun variables-in-goals (goals)
-  (remove-duplicates (mapcan #'variables-in-pattern goals)))
-
 (defun rule-rhs-assert-forms (rule)
   (remove-if-not (lambda (form)
 		   (symbol-name-equal-p (first form) 'assert))

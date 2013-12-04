@@ -1,3 +1,1 @@
-(in-package :tests-base)
-
-(run-tests)
+(tests-base:run-tests)

@@ -69,19 +69,19 @@
   "undefine rule"
   `(undefrulef ',name))
 
-(defun ppdefrule% (name)
-  (fresh-princ (find-rule *current-environment* name)))
-
-;; public
-(defmacro ppdefrule (name)
-  "pretty-print rule definition"
-  `(ppdefrule% ',name))
-
 (defun rules ()
   (rule-names *current-environment*))
 
 (defun find-rule (name)
   (external (exil-env:find-rule *current-environment* name)))
+
+(defun ppdefrulef (name)
+  (fresh-princ (exil-env:find-rule *current-environment* name)))
+
+;; public
+(defmacro ppdefrule (name)
+  "pretty-print rule definition"
+  `(ppdefrulef ',name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; agenda

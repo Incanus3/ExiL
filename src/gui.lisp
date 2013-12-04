@@ -1,9 +1,10 @@
 (in-package :exil-gui)
 
-(define-interface facts-gui () ()
+(define-interface facts-gui ()
+  ((env :initarg :env :accessor env)
+   (main-gui :initarg :main :accessor main-gui))
   (:panes
    (fact-list list-panel
-              :items (facts exil::*current-environment*)
               :reader fact-list)
    (retract-button push-button
                    :text "Retract fact"
@@ -18,13 +19,21 @@
   (choice-selected-item (fact-list interface)))
 
 (defmethod retract-fact ((interface facts-gui))
-  (rem-fact exil::*current-environment* (selected-fact interface))
-  (update-lists))
+  (rem-fact (env interface) (selected-fact interface)))
+;  (update-lists (main-gui interface)))
 
-(define-interface templates-gui () ()
+(defmethod update-list ((interface facts-gui))
+  (setf (collection-items (fact-list interface))
+        (facts (env interface))))
+
+(defmethod initialize-instance :after ((interface facts-gui) &key)
+  (update-list interface))
+
+(define-interface templates-gui ()
+  ((env :initarg :env :accessor env)
+   (main-gui :initarg :main :accessor main-gui))
   (:panes
    (template-list list-panel
-                  :items (hash-values (templates exil::*current-environment*))
                   :reader template-list)
    (retract-button push-button
                    :text "Undefine template"
@@ -39,13 +48,21 @@
   (choice-selected-item (template-list interface)))
 
 (defmethod undef-template ((interface templates-gui))
-  (rem-template exil::*current-environment* (name (selected-template interface)))
-  (update-lists))
+  (rem-template (env interface) (name (selected-template interface))))
+;  (update-lists (main-gui interface)))
 
-(define-interface rules-gui () ()
+(defmethod update-list ((interface templates-gui))
+  (setf (collection-items (template-list interface))
+        (hash-values (templates (env interface)))))
+
+(defmethod initialize-instance :after ((interface templates-gui) &key)
+  (update-list interface))
+
+(define-interface rules-gui ()
+  ((env :initarg :env :accessor env)
+   (main-gui :initarg :main :accessor main-gui))
   (:panes
    (rule-list list-panel
-              :items (hash-values (rules exil::*current-environment*))
               :reader rule-list)
    (undefrule-button push-button
                      :text "Undefine rule"
@@ -59,74 +76,83 @@
   (choice-selected-item (rule-list interface)))
 
 (defmethod undef-rule ((interface rules-gui))
-  (rem-rule exil::*current-environment* (name (selected-rule interface)))
-  (update-lists))
+  (rem-rule (env interface) (name (selected-rule interface))))
+;  (update-lists (main-gui interface)))
 
-(define-interface agenda-gui () ()
+(defmethod update-list ((interface rules-gui))
+  (setf (collection-items (rule-list interface))
+        (hash-values (rules (env interface)))))
+
+(defmethod initialize-instance :after ((interface rules-gui) &key)
+  (update-list interface))
+
+(define-interface agenda-gui ()
+  ((env :initarg :env :accessor env))
   (:panes
    (agenda-list list-panel
-                :items (agenda exil::*current-environment*)
                 :reader agenda-list))
   (:default-initargs :title "ExiL Agenda"
    :visible-min-height 300
    :visible-min-width 500))
 
+(defmethod update-list ((interface agenda-gui))
+  (setf (collection-items (agenda-list interface))
+        (agenda (env interface))))
+
+(defmethod initialize-instance :after ((interface agenda-gui) &key)
+  (update-list interface))
+
 (define-interface exil-gui ()
-  ()
+  ((facts :accessor facts-int)
+   (templates :accessor templates-int)
+   (rules :accessor rules-int)
+   (agenda :accessor agenda-int))
   (:panes
-   (facts push-button
+   (facts-button push-button
           :text "Facts"
           :callback 'show-facts
-          :callback-type :none)
-   (templates push-button
+          :callback-type :interface)
+   (templates-button push-button
               :text "Templates"
               :callback 'show-templates
-              :callback-type :none)
-   (rules push-button
+              :callback-type :interface)
+   (rules-button push-button
           :text "Rules"
           :callback 'show-rules
-          :callback-type :none)
-   (agenda push-button
+          :callback-type :interface)
+   (agenda-button push-button
            :text "Agenda"
            :callback 'show-agenda
-           :callback-type :none))
-  (:layouts 
-   (buttons row-layout '(facts templates rules agenda)))
+           :callback-type :interface))
+  (:layouts
+   (buttons row-layout '(facts-button templates-button rules-button agenda-button)))
   (:default-initargs :title "ExiL Debug Tools" :auto-menus nil))
 
-(defclass gui-tools ()
-  ((main-gui :initform (make-instance 'exil-gui) :accessor main-int)
-   (facts :initform (make-instance 'facts-gui) :accessor facts-int)
-   (templates :initform (make-instance 'templates-gui) :accessor templates-int)
-   (rules :initform (make-instance 'rules-gui) :accessor rules-int)
-   (agenda :initform (make-instance 'agenda-gui) :accessor agenda-int)))
+(defmethod show-facts ((gui exil-gui))
+  (display (facts-int gui)))
 
-(defparameter *exil-gui* (make-instance 'gui-tools))
+(defmethod show-templates ((gui exil-gui))
+  (display (templates-int gui)))
 
-(defun show-facts ()
-  (display (facts-int *exil-gui*)))
+(defmethod show-rules ((gui exil-gui))
+  (display (rules-int gui)))
 
-(defun show-templates ()
-  (display (templates-int *exil-gui*)))
+(defmethod show-agenda ((gui exil-gui))
+  (display (agenda-int gui)))
 
-(defun show-rules ()
-  (display (rules-int *exil-gui*)))
+(defmethod initialize-instance :after ((gui exil-gui) &key environment)
+  (with-slots (facts templates rules agenda) gui
+    (setf facts (make-instance 'facts-gui :env environment :main gui)
+          templates (make-instance 'templates-gui :env environment :main gui)
+          rules (make-instance 'rules-gui :env environment :main gui)
+          agenda (make-instance 'agenda-gui :env environment))))
 
-(defun show-agenda ()
-  (display (agenda-int *exil-gui*)))
+(defun make-gui (environment)
+  (make-instance 'exil-gui :environment environment))
 
-(defun show-gui ()
-  (display (main-int *exil-gui*)))
+(defmethod update-lists ((gui exil-gui))
+  (with-slots (facts templates rules agenda) gui
+    (mapc #'update-list (list facts templates rules agenda))))
 
-(defun update-lists ()
-  (setf (collection-items (fact-list (facts-int *exil-gui*)))
-        (facts exil::*current-environment*))
-  (setf (collection-items (template-list (templates-int *exil-gui*)))
-        (hash-values (templates exil::*current-environment*)))
-  (setf (collection-items (rule-list (rules-int *exil-gui*))) 
-        (hash-values (rules exil::*current-environment*)))
-  (setf (collection-items (agenda-list (agenda-int *exil-gui*)))
-        (agenda exil::*current-environment*))
-  nil)
-
-(show-gui)
+(defun show-gui (&optional environment)
+  (display (gui (exil:getenv environment))))

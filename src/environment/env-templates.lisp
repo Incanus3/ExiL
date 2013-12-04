@@ -41,16 +41,14 @@
                          &optional (undo-label "(add-template)"))
   (ensure-tmpl-not-used env (name template) "redefine")
   (add-template% env template undo-label)
-  #+lispworks(exil-gui:update-lists)
-  )
+  (notify env))
 
 ;; public
 (defmethod rem-template ((env environment) (name symbol)
                          &optional (undo-label "(del-template)"))
   (ensure-tmpl-not-used env name "undefine")
   (del-template% env name undo-label)
-  #+lispworks(exil-gui:update-lists)
-  )
+  (notify env))
 
 (defmethod print-template ((env environment) (name symbol))
   (fresh-princ (find-template env name)))

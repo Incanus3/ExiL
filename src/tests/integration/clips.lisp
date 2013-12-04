@@ -1,11 +1,10 @@
 (in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(defclass clips-integration-tests (test-case)
-  ((env :reader env :initform exil::*current-environment*)))
+(defclass clips-integration-tests (integration-tests) ())
 
 (defmethod set-up ((tests clips-integration-tests))
-  (complete-reset)
+  (call-next-method)
 
   (deftemplate goal
     (slot action)

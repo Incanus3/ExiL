@@ -22,6 +22,10 @@
 	     (memoize ,node-sym ,memo-sym (funcall ,memo-fun ,node-sym))
 	     ,@body)))))
 
+(defgeneric neighbors (node)
+  (:method-combination append)
+  (:method append ((null null)) ()))
+
 (defun visit (node memo memo-fun aggreg before)
   (with-memoize (node memo memo-fun)
     (funcall before node)
@@ -71,10 +75,6 @@
 	      :aggreg (lambda (node children)
 			(cons node (apply #'append children)))))
 
-
-(defgeneric neighbors (node)
-  (:method-combination append)
-  (:method append ((null null)) ()))
 
 (defmethod neighbors append ((node node))
   (children node))

@@ -1,11 +1,10 @@
 (in-package :integration-tests)
 (declaim (optimize (compilation-speed 0) (debug 3) (space 0) (speed 0)))
 
-(defclass backward-integration-tests (test-case)
-  ((env :reader env :initform exil::*current-environment*)))
+(defclass backward-integration-tests (integration-tests) ())
 
 (defmethod set-up ((tests backward-integration-tests))
-  (complete-reset)
+  (call-next-method)
   (unwatch all))
 
 (def-test-method test-fact-matching ((tests backward-integration-tests) :run nil)

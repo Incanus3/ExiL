@@ -9,8 +9,7 @@
     (when (and (add-match% env match)
                (watched-p env :activations))
       (format t "~%==> ~A" match)
-      #+lispworks(exil-gui:update-lists)
-      )))
+      (notify env))))
 
 ;; public, used by rete
 (defmethod remove-match ((env environment) production token)
@@ -20,15 +19,13 @@
         (setf (agenda env) new-list)
         (when (watched-p env :activations)
           (format t "~%<== ~A" match))
-        #+lispworks(exil-gui:update-lists)
-        ))))
+        (notify env)))))
 
 (defun rem-matches-with-rule (env rule)
   (setf (agenda env)
         (delete rule (agenda env)
                 :test #'rule-equal-p :key #'match-rule))
-  #+lispworks(exil-gui:update-lists)
-  )
+  (notify env))
 
 (defun select-match (env)
   (let ((match (first (sort (agenda env) (current-strategy env)))))

@@ -74,6 +74,7 @@
 	   ;; backward chaining
 	   :add-goal :find-goal :print-goals :goals
 	   :back-step :back-run
+           :gui :set-gui ; gui
            ;; called by rete
            :add-match :remove-match
 	   ;; used for testing
@@ -95,6 +96,7 @@
   (:use :common-lisp :exil-parser :exil-env :iterate)
   (:import-from :exil-utils :to-keyword :fresh-princ :hash-keys)
   (:export :defenv :defenvf :setenv :setenvf :environments :current-environment
+           :getenv ; used by gui
            :deftemplate :deftemplatef :undeftemplate :undeftemplatef
            :ppdeftemplate :templates :find-template
 	   :assert :assertf :retract :retractf :retract-all :modify :modifyf
@@ -122,8 +124,8 @@
              (:import-from :exil-utils :hash-values)
              (:import-from :exil-core :name)
              (:import-from :exil-env :facts :templates :rules :agenda
-                           :rem-template :rem-fact :rem-rule)
-             (:export :show-gui :update-lists))
+                           :rem-template :rem-fact :rem-rule :gui)
+             (:export :make-gui :show-gui :update-lists))
 
 (defpackage :exil-user
   (:documentation "the user program is defined in this package")
