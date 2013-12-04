@@ -26,6 +26,8 @@
       (format-object object stream))
   object)
 
+(defgeneric template-object-p (object))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; virtual, simple-fact and simple-pattern subclass this
@@ -33,6 +35,9 @@
 (defclass simple-object (base-object)
   ((specifier :reader specifier
               :initarg :specifier)))
+
+(defmethod template-object-p ((object simple-object))
+  nil)
 
 (defmethod exil-equal-p ((object1 simple-object) (object2 simple-object))
   (weak-equal-p (specifier object1) (specifier object2)))
@@ -76,6 +81,8 @@
 ; public
 (defgeneric slot-values (object))
 
+(defmethod template-object-p ((object template-object))
+  t)
 
 (defmethod template-name ((object template-object))
   (name (template object)))

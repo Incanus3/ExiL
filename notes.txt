@@ -3,6 +3,11 @@ TODO:
   - fresh-line doesn't seem to work
 - fix quicklisp/asdf loading in LW - experiment with eval-when around
   (defenv default) (setenv default)
+- gui
+  - walk through environment, consider if some other methods should
+    update gui lists
+  - add undo and redo stack to gui
+  - add buttons for step, run, reset, undo, redo to gui
 
 - define all query functions to return external representation
 - define all functional counterparts to expect external representation

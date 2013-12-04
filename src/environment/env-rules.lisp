@@ -10,7 +10,7 @@
     (format t "==> ~A" rule))
   (dolist (fact (facts env))
     (add-wme (rete env) fact))
-                                        ;  #+lispworks(exil-gui:update-lists)
+  #+lispworks(exil-gui:update-lists)
   )
 
 (defun rule-already-there (env rule)

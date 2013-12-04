@@ -21,7 +21,7 @@
   (:documentation "core functionality of the expert system library - facts,
                    templates, patterns and rules")
   (:use :common-lisp :exil-utils :iterate)
-  (:export :variable-p :template :template-name :slots
+  (:export :variable-p :template :template-name :template-object-p :slots
            :has-slot-p :make-template :fact :simple-fact
            :atom-position :template-fact
            :exil-equal-p :external
@@ -60,13 +60,13 @@
   (:export :external :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :rem-template :find-template :print-template
-           :template-names
+           :template-names :templates
            :facts :add-fact :rem-fact :mod-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group :fact-group-names
            :add-strategy :rem-strategy :set-strategy :current-strategy-name
            :strategy-names :find-strategy
-           :add-rule :rem-rule :find-rule :rule-names
-           :print-agenda
+           :add-rule :rem-rule :find-rule :rule-names :rules
+           :print-agenda :agenda
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
 	   :undo :redo :print-undo-stack :print-redo-stack
@@ -111,18 +111,19 @@
 	   :undo :redo :undo-stack :redo-stack
 	   :back-step :back-run
            :complete-reset) ;; DEBUG
-  (:shadow :assert :step :facts :undo :redo :watched-p :back-step :back-run
+  (:shadow :assert :step :templates :facts :agenda :rules
+           :undo :redo :watched-p :back-step :back-run
            :find-template :find-fact-group :find-strategy :find-rule
            :goals))
 
-;;;; #+lispworks (defpackage :exil-gui
-;;;;               (:documentation "the ExiL GUI for LispWorks")
-;;;;               (:use :common-lisp :capi)
-;;;;               (:import-from :exil-env :facts :templates :rules :agenda
-;;;;                :rem-fact :rem-rule)
-;;;;               (:import-from :exil-utils :hash-values)
-;;;;               (:import-from :exil :*current-environment*)
-;;;;               (:export :show-gui :update-lists))
+#+lispworks(defpackage :exil-gui
+             (:documentation "the ExiL GUI for LispWorks")
+             (:use :common-lisp :capi)
+             (:import-from :exil-utils :hash-values)
+             (:import-from :exil-core :name)
+             (:import-from :exil-env :facts :templates :rules :agenda
+                           :rem-template :rem-fact :rem-rule)
+             (:export :show-gui :update-lists))
 
 (defpackage :exil-user
   (:documentation "the user program is defined in this package")

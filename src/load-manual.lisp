@@ -70,7 +70,8 @@
 (defparameter *files*
   (append *base* *core* *rete* *env* *parser* *front-end*
           ;; *examples*
-          *tests*
+          ;; *tests*
+          (list "gui.lisp")
           ))
 
 (dolist (file *files*)

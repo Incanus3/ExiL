@@ -32,9 +32,10 @@
   (modify ?object :location ?to))
 
 (defrule stop
-  (goal :action push :object ?obj :to ?to)
+  ?goal <- (goal :action push :object ?obj :to ?to)
   (in :object ?obj :location ?to)
   =>
+  (retract ?goal)
   (halt))
 
 (unwatch all)

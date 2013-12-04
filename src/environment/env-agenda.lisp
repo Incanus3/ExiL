@@ -9,7 +9,7 @@
     (when (and (add-match% env match)
                (watched-p env :activations))
       (format t "~%==> ~A" match)
-      ;; #+lispworks(exil-gui:update-lists)
+      #+lispworks(exil-gui:update-lists)
       )))
 
 ;; public, used by rete
@@ -20,14 +20,14 @@
         (setf (agenda env) new-list)
         (when (watched-p env :activations)
           (format t "~%<== ~A" match))
-        ;; #+lispworks(exil-gui:update-lists)
+        #+lispworks(exil-gui:update-lists)
         ))))
 
 (defun rem-matches-with-rule (env rule)
   (setf (agenda env)
         (delete rule (agenda env)
                 :test #'rule-equal-p :key #'match-rule))
-  ;; #+lispworks(exil-gui:update-lists)
+  #+lispworks(exil-gui:update-lists)
   )
 
 (defun select-match (env)

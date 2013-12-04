@@ -3,7 +3,7 @@
 (define-interface facts-gui () ()
   (:panes
    (fact-list list-panel
-              :items (facts *current-environment*)
+              :items (facts exil::*current-environment*)
               :reader fact-list)
    (retract-button push-button
                    :text "Retract fact"
@@ -11,61 +11,65 @@
                    :callback-type :interface)
    )
   (:default-initargs :title "ExiL Facts"
-   :visible-min-height 100
-   :visible-min-width 300)
-  )
+   :visible-min-height 300
+   :visible-min-width 500))
 
 (defmethod selected-fact ((interface facts-gui))
   (choice-selected-item (fact-list interface)))
 
 (defmethod retract-fact ((interface facts-gui))
-  (rem-fact *current-environment* (selected-fact interface))
+  (rem-fact exil::*current-environment* (selected-fact interface))
   (update-lists))
 
 (define-interface templates-gui () ()
   (:panes
    (template-list list-panel
-                  :items (hash-values (templates *current-environment*))
-                  :reader template-list))
+                  :items (hash-values (templates exil::*current-environment*))
+                  :reader template-list)
+   (retract-button push-button
+                   :text "Undefine template"
+                   :callback 'undef-template
+                   :callback-type :interface)
+)
   (:default-initargs :title "ExiL Templates"
-   :visible-min-height 100
-   :visible-min-width 300))
+   :visible-min-height 300
+   :visible-min-width 500))
+
+(defmethod selected-template ((interface templates-gui))
+  (choice-selected-item (template-list interface)))
+
+(defmethod undef-template ((interface templates-gui))
+  (rem-template exil::*current-environment* (name (selected-template interface)))
+  (update-lists))
 
 (define-interface rules-gui () ()
   (:panes
    (rule-list list-panel
-              :items (hash-values (rules *current-environment*))
+              :items (hash-values (rules exil::*current-environment*))
               :reader rule-list)
    (undefrule-button push-button
                      :text "Undefine rule"
                      :callback 'undef-rule
                      :callback-type :interface))
   (:default-initargs :title "ExiL Rules"
-   :visible-min-height 100
-   :visible-min-width 300))
+   :visible-min-height 300
+   :visible-min-width 500))
 
 (defmethod selected-rule ((interface rules-gui))
   (choice-selected-item (rule-list interface)))
 
 (defmethod undef-rule ((interface rules-gui))
-  (rem-rule *current-environment* (selected-rule interface))
+  (rem-rule exil::*current-environment* (name (selected-rule interface)))
   (update-lists))
-
-(defun pprint->string (obj)
-  (let ((s (with-output-to-string (s)
-             (pprint obj s)
-             s)))
-    (subseq s 1 (length s))))
 
 (define-interface agenda-gui () ()
   (:panes
    (agenda-list list-panel
-                :items (agenda *current-environment*)
-                :reader agenda-list
-                :print-function #'pprint->string))
+                :items (agenda exil::*current-environment*)
+                :reader agenda-list))
   (:default-initargs :title "ExiL Agenda"
-   :visible-min-height 100
-   :visible-min-width 300))
+   :visible-min-height 300
+   :visible-min-width 500))
 
 (define-interface exil-gui ()
   ()
@@ -100,29 +104,29 @@
 (defparameter *exil-gui* (make-instance 'gui-tools))
 
 (defun show-facts ()
-  (display-dialog (facts-int *exil-gui*)))
+  (display (facts-int *exil-gui*)))
 
 (defun show-templates ()
-  (display-dialog (templates-int *exil-gui*)))
+  (display (templates-int *exil-gui*)))
 
 (defun show-rules ()
-  (display-dialog (rules-int *exil-gui*)))
+  (display (rules-int *exil-gui*)))
 
 (defun show-agenda ()
-  (display-dialog (agenda-int *exil-gui*)))
+  (display (agenda-int *exil-gui*)))
 
 (defun show-gui ()
   (display (main-int *exil-gui*)))
 
 (defun update-lists ()
   (setf (collection-items (fact-list (facts-int *exil-gui*)))
-        (facts *current-environment*))
+        (facts exil::*current-environment*))
   (setf (collection-items (template-list (templates-int *exil-gui*)))
-        (hash-values (templates *current-environment*)))
+        (hash-values (templates exil::*current-environment*)))
   (setf (collection-items (rule-list (rules-int *exil-gui*))) 
-        (hash-values (rules *current-environment*)))
+        (hash-values (rules exil::*current-environment*)))
   (setf (collection-items (agenda-list (agenda-int *exil-gui*)))
-        (agenda *current-environment*))
+        (agenda exil::*current-environment*))
   nil)
 
 (show-gui)

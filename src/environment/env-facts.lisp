@@ -9,7 +9,7 @@
   (when (watched-p env :facts)
     (fresh-format t "==> ~A" fact))
   (add-wme (rete env) fact)
-;  #+lispworks(exil-gui:update-lists)
+  #+lispworks(exil-gui:update-lists)
   )
 
 ; public
@@ -25,7 +25,7 @@
   (when (watched-p env :facts)
     (fresh-format t "<== ~A" fact))
   (rem-wme (rete env) fact)
-;  #+lispworks(exil-gui:update-lists)
+  #+lispworks(exil-gui:update-lists)
   )
 
 ;; remove fact from facts, print watcher output, notify rete
