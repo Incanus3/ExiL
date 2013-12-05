@@ -51,6 +51,7 @@
 (defgeneric find-template (env name))
 (defgeneric print-template (env name))
 (defgeneric template-names (env))
+(defgeneric template-list (env)) ; used by gui
 ;; facts:
 (defgeneric find-fact (env fact))
 (defgeneric add-fact (env fact &optional undo-label))
@@ -74,6 +75,7 @@
 (defgeneric rem-rule (env rule-name &optional undo-label))
 (defgeneric find-rule (env rule-name))
 (defgeneric rule-names (env))
+(defgeneric rule-list (env)) ; used by gui
 ;; environment clean-up:
 (defgeneric clear-env (env &optional undo-label))
 (defgeneric reset-env (env &optional undo-label))
@@ -90,6 +92,9 @@
 (defgeneric find-goal (env goal)) ; used for testing
 ;; gui
 #+lispworks(defgeneric set-gui (env gui))
+
+;; forward declaration
+#+lispworks(defgeneric exil-gui:update-lists (gui))
 
 (defun notify (env)
   #-lispworks(declare (ignore env))

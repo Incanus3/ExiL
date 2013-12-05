@@ -54,18 +54,18 @@
                 :assoc-value :add-assoc-value :del-assoc-value
                 :ext-delete :ext-pushnew :pushnew-end :push-end :numbered-map
 		:list-difference :find-if-func-result
-		:copy-hash-table :hash-equal-p :hash-keys
+		:copy-hash-table :hash-equal-p :hash-keys :hash-values
                 :set-equal-p :symbol-append
 		:fresh-format :fresh-princ :last1)
   (:export :external :environment :make-environment
            :set-watcher :unset-watcher :watch-all :unwatch-all :watched-p
            :add-template :rem-template :find-template :print-template
-           :template-names :templates
+           :template-names :template-list
            :facts :add-fact :rem-fact :mod-fact :find-fact
            :add-fact-group :rem-fact-group :find-fact-group :fact-group-names
            :add-strategy :rem-strategy :set-strategy :current-strategy-name
            :strategy-names :find-strategy
-           :add-rule :rem-rule :find-rule :rule-names :rules
+           :add-rule :rem-rule :find-rule :rule-names :rules :rule-list
            :print-agenda :agenda
            :clear-env :reset-env :completely-reset-env
 	   :almost-completely-reset-env
@@ -123,7 +123,7 @@
              (:use :common-lisp :capi)
              (:import-from :exil-utils :hash-values)
              (:import-from :exil-core :name)
-             (:import-from :exil-env :facts :templates :rules :agenda
+             (:import-from :exil-env :facts :rules :agenda
                            :rem-template :rem-fact :rem-rule :gui)
              (:export :make-gui :show-gui :update-lists))
 

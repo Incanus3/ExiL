@@ -9,8 +9,7 @@
    (retract-button push-button
                    :text "Retract fact"
                    :callback 'retract-fact
-                   :callback-type :interface)
-   )
+                   :callback-type :interface))
   (:default-initargs :title "ExiL Facts"
    :visible-min-height 300
    :visible-min-width 500))
@@ -20,7 +19,6 @@
 
 (defmethod retract-fact ((interface facts-gui))
   (rem-fact (env interface) (selected-fact interface)))
-;  (update-lists (main-gui interface)))
 
 (defmethod update-list ((interface facts-gui))
   (setf (collection-items (fact-list interface))
@@ -28,6 +26,7 @@
 
 (defmethod initialize-instance :after ((interface facts-gui) &key)
   (update-list interface))
+
 
 (define-interface templates-gui ()
   ((env :initarg :env :accessor env)
@@ -38,8 +37,7 @@
    (retract-button push-button
                    :text "Undefine template"
                    :callback 'undef-template
-                   :callback-type :interface)
-)
+                   :callback-type :interface))
   (:default-initargs :title "ExiL Templates"
    :visible-min-height 300
    :visible-min-width 500))
@@ -49,14 +47,14 @@
 
 (defmethod undef-template ((interface templates-gui))
   (rem-template (env interface) (name (selected-template interface))))
-;  (update-lists (main-gui interface)))
 
 (defmethod update-list ((interface templates-gui))
   (setf (collection-items (template-list interface))
-        (hash-values (templates (env interface)))))
+        (exil-env:template-list (env interface))))
 
 (defmethod initialize-instance :after ((interface templates-gui) &key)
   (update-list interface))
+
 
 (define-interface rules-gui ()
   ((env :initarg :env :accessor env)
@@ -77,14 +75,14 @@
 
 (defmethod undef-rule ((interface rules-gui))
   (rem-rule (env interface) (name (selected-rule interface))))
-;  (update-lists (main-gui interface)))
 
 (defmethod update-list ((interface rules-gui))
   (setf (collection-items (rule-list interface))
-        (hash-values (rules (env interface)))))
+        (exil-env:rule-list (env interface))))
 
 (defmethod initialize-instance :after ((interface rules-gui) &key)
   (update-list interface))
+
 
 (define-interface agenda-gui ()
   ((env :initarg :env :accessor env))
@@ -101,6 +99,7 @@
 
 (defmethod initialize-instance :after ((interface agenda-gui) &key)
   (update-list interface))
+
 
 (define-interface exil-gui ()
   ((facts :accessor facts-int)
@@ -147,8 +146,8 @@
           rules (make-instance 'rules-gui :env environment :main gui)
           agenda (make-instance 'agenda-gui :env environment))))
 
-(defun make-gui (environment)
-  (make-instance 'exil-gui :environment environment))
+(defmethod make-gui ((env exil-env:environment))
+  (make-instance 'exil-gui :environment env))
 
 (defmethod update-lists ((gui exil-gui))
   (with-slots (facts templates rules agenda) gui

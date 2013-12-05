@@ -14,11 +14,12 @@
 ;(ql:update-client)
 ;(ql:update-all-dists)
 
-(ql:quickload :exil)
+#-lispworks(ql:quickload :exil)
 
-;(ql:quickload :iterate)
-;(ql:quickload :xlunit)
-;(asdf:operate 'asdf:load-op 'exil)
+#+lispworks(ql:quickload :iterate)
+#+lispworks(ql:quickload :xlunit)
+#+lispworks(asdf:operate 'asdf:load-op 'exil)
 
-(exil:defenv default)
-(exil:setenv default)
+(eval-when (:execute)
+  (exil:defenv default)
+  (exil:setenv default))

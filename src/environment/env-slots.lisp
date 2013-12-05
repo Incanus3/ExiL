@@ -46,6 +46,9 @@
 (defmethod template-names ((env environment))
   (hash-keys (templates env)))
 
+(defmethod template-list ((env environment))
+  (hash-values (templates env)))
+
 ;; public
 (defmethod find-template ((env environment) (name symbol))
   "finds template in env with given name"
@@ -207,6 +210,9 @@
 
 (defmethod rule-names ((env environment))
   (hash-keys (rules env)))
+
+(defmethod rule-list ((env environment))
+  (hash-values (rules env)))
 
 
 ;; rete

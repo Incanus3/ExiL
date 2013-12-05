@@ -81,6 +81,9 @@
 (defun set-env-name (name)
   (setf *current-env-name* name))
 
+;; forward declaration
+#+lispworks(defgeneric exil-gui:make-gui (env))
+
 ;; public
 (defun defenvf (name &key redefine)
   (let ((env-name (to-keyword name)))
