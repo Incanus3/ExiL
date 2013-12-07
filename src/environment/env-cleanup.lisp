@@ -7,6 +7,7 @@
   (reset-slots env (facts agenda rete undo-stack redo-stack
                           goals back-stack))
   (dorules (name rule) env
+    (declare (ignore name))
     (new-production (rete env) rule))
   (notify env))
 

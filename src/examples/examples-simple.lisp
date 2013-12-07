@@ -30,9 +30,10 @@
   (assert (in ?object ?to)))
 
 (defrule stop
-  (goal push ?object ?from ?to)
+  ?goal <- (goal push ?object ?from ?to)
   (in ?object ?to)
   =>
+  (retract ?goal)
   (halt))
 
 (unwatch all)
@@ -42,5 +43,9 @@
 (reset)
 
 (run)
+
+#|
+(step)
+|#
 
 (complete-reset)

@@ -82,7 +82,7 @@
           ))
 
 (dolist (file *files*)
-  (load (merge-pathnames file *path*) :verbose t))
+  (load (compile-file (merge-pathnames file *path*))))
 
 (exil:defenv default)
 (exil:setenv default)

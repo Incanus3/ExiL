@@ -63,7 +63,7 @@
         (print-unreadable-object (rule stream :type t)
           (format stream "~A" (name rule)))
         (format stream "(RULE ~A~{~%  ~A~}~%  =>~{~%  ~A~})"
-                name (conditions rule) (activations rule))))
+                name conditions activations)))
   rule)
 
 (defun external% (condition)

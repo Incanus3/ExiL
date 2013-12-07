@@ -31,9 +31,8 @@
 ;; will still return nil, if these functions aren't same instances
 ;; it also uses rete-copy-p, which is too strict too
 (defmethod env-copy-p ((env1 environment) (env2 environment))
-  (with-slots (watchers templates facts fact-groups strategies
-			current-strategy-name rules rete agenda
-			undo-stack redo-stack) env1
+  (with-slots (watchers templates facts fact-groups rules rete agenda undo-stack
+                        strategies current-strategy-name) env1
     (and (equalp         watchers    (watchers env2))
 	 (tmpls-equal-p  templates   (templates env2))
 	 (facts-equal-p  facts       (facts env2))
@@ -51,8 +50,7 @@
 
 (defmethod common-slots-p (env1 env2)
   (with-slots (watchers templates facts fact-groups strategies
-			current-strategy-name rules rete agenda
-			undo-stack redo-stack) env1
+                        rules rete agenda undo-stack redo-stack) env1
     (or (eq watchers   (watchers env2))
 	(eq templates  (templates env2))
 	(eq strategies (strategies env2))
