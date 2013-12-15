@@ -24,6 +24,11 @@ TODO:
 - integration tests should no more access environment directly
   - all they need to assert success should be now available
 
+- does singleton variable (?) work in rule conditions?
+
+- sublis could be used in substitute-variables
+  - it substitutes values from alist in a tree
+
 FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
 (find-template :tmpl) should be (deftemplatef)-able (after deconsing)
 (find-fact-group :grp) should be (deffactsf)-able (after deconsing)
@@ -31,3 +36,36 @@ FUNCTIONAL INSERTORS SHOULD USE THE SAME EXTERNAL REPRESENTATION:
 
 - examples cause 50% stack depletion in LW, but that's probably not
   a problem I need to solve
+
+- consider General Problem Solver issues from chap. 4 in Paradigms of
+  artificial intelligence programming
+  - 4.7 - this should probably work as rules are applied sequentially
+  - 4.8 - backward chaining output is actually reversed w.r.t. GPS
+    - applied rules are printed in the order of matching, not the
+      real order in which the actions need to be applied to achieve
+      the goals
+    - this can lead to the (jump-off-cliff land-safely) problem where
+      jump-off-cliff is applied before checking for existence of
+      land-safely
+    - "the problem arises because planning and execution are
+      interleaved" - p. 121
+    - this makes sense, since the inference can be run in steps and
+      alternative answers can be found, but it should be documented
+    - so this should be only considered as planning phase, not to be
+      immediately applied
+    - still, when run by (run) and answer is found, the sequence
+      of rules to be applied should probably be printed
+      - maybe these could be also printed when final answer found
+        by (step)
+    - does (step) really make sense for backward chaining?
+      - document pros and cons of taken approach w.r.t. GPS
+      - some of the mentioned problems can't be solved (easily) with
+        my approach
+      - is GPS approach applicable when variables are allowed?
+  - 4.9 - most probably cycles on recursive subgoals
+  - either test they're solved or document they're not
+- test backward (and possibly forward) chaining on examples from chap. 4
+  - 4.14 - the block world domain - consider how exil behaves w.r.t.
+    clobering the sibling subgoal and efficiency of solution
+    - match selection strategies could help to find more efficient solution
+    - document the sussman anomaly
