@@ -6,15 +6,8 @@
 ;; (defun defenvf (name &key redefine))
 ;; (defmacro setenv (name))
 ;; (defun setenvf (name))
+;; (defun environments ())
 ;; (defun current-environment ())
-
-;;; watchers:
-;; (defmacro watch (watcher))
-;; (defun watchf (watcher))
-;; (defmacro unwatch (watcher))
-;; (defun unwatchf (watcher))
-;; (defmacro watchedp (watcher))
-;; (defun watchedpf (watcher))
 
 ;;; templates:
 ;; (defmacro deftemplate (name &body slots))
@@ -22,20 +15,38 @@
 ;; (defmacro undeftemplate (name))
 ;; (defun undeftemplatef (name))
 ;; (defmacro ppdeftemplate (name))
-;; (defun find-template (name)) => external template representation
-;; (defun templates ())         => list of names
+;; (defun find-template (name))           ;; => external template representation
+;; (defun templates ())                   ;; => list of names
 
 ;;; facts:
 ;; (defun facts (&optional start-index end-index at-most))
 ;; (defmacro assert (&rest fact-specs))
+;; (defun assertf (&rest fact-specs))
 ;; (defmacro retract (&rest fact-specs))
+;; (defun retractf (&rest fact-specs))
 ;; (defun retract-all ())
 ;; (defmacro modify (fact-spec &rest mod-list))
+;; (defun modifyf (fact-spec mod-list))
 
 ;;; fact groups:
-;; (defmacro deffacts (name &body descriptions))
+;; (defmacro deffacts (name &body fact-specs))
+;; (defun deffactsf (name fact-specs))
 ;; (defmacro undeffacts (name))
-;; TODO: implement ppdeffacts
+;; (defun undeffactsf (name))
+;; (defun fact-groups ())
+;; (defun find-fact-group (name))
+;; TODO: (defmacro ppdeffacts (name))
+
+;;; rules:
+;; (defmacro defrule (name &body rule))
+;; (defun defrulef (name body))
+;; (defmacro undefrule (name))
+;; (defun undefrulef (name))
+;; (defun rules ())
+;; (defun find-rule (name))
+;; (defmacro ppdefrule (name))
+;; (defun ppdefrulef (name))
+;; (defun agenda ())
 
 ;;; strategies:
 ;; (defmacro defstrategy (name function))
@@ -48,10 +59,13 @@
 ;; (defun strategies ())
 ;; (defun find-strategy (name))
 
-;;; rules:
-;; (defmacro defrule (name &body rule))
-;; (defmacro undefrule (name))
-;; (defmacro ppdefrule (name))
+;;; watchers:
+;; (defmacro watch (watcher))
+;; (defun watchf (watcher))
+;; (defmacro unwatch (watcher))
+;; (defun unwatchf (watcher))
+;; (defmacro watchedp (watcher))
+;; (defun watchedpf (watcher))
 
 ;;; forward chaning inference execution:
 ;; (defun reset ())
@@ -61,6 +75,9 @@
 
 ;;; backward chaining inference execution:
 ;; (defmacro defgoal (goal-spec))
+;; (defun defgoalf (goal-spec))
+;; TODO: (defmacro undefgoal (goal-spec))
+;; TODO: (defun undefgoalf (goal-spec))
 ;; (defun goals ())
 ;; (defun back-step ())
 ;; (defun back-run ())
@@ -68,6 +85,12 @@
 ;;; environment cleanup:
 ;; (defun clear ())
 ;; (defun complete-reset ())
+
+;;; undo/redo:
+;; (defun undo ())
+;; (defun redo ())
+;; (defun undo-stack ())
+;; (defun redo-stack ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; support for multiple environments

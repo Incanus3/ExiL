@@ -1,4 +1,4 @@
 #!/bin/bash
-find . -iname '*.fasl' -exec rm {} \;
+find . -iname '*.*fasl' -exec rm {} \;
 find . -iname '*~' -exec rm {} \;
 rm -rf ~/.cache/common-lisp/**/Diplomka # requires bash globstar option

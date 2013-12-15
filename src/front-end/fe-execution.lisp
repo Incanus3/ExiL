@@ -38,7 +38,7 @@
 
 ; public
 (defun back-step ()
-  (eenv:back-step *current-environment*))2
+  (eenv:back-step *current-environment*))
 
 ; public
 (defun back-run ()
