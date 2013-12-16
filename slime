@@ -1,30 +1,30 @@
 slime-cheat-sheet
-help-for-help				C-h ?, C-h C-h	shows various help options
-slime-describe-symbol			C-c C-d d
+help-for-help                                C-h ?, C-h h  shows various help options
+slime-describe-symbol                        C-c C-d d
 slime-compile-and-load-file
 slime-compile-defun
 slime-compile-file
-slime-eval-buffer			C-c e
-slime-eval-defun			C-M-x		eval this top-level form
+slime-eval-buffer                            C-c e
+slime-eval-defun                             C-M-x         eval this top-level form
 slime-eval-region
-slime-eval-last-expression		C-x C-e		eval the form preceding the cursor, shows the result in status bar
-slime-edit-definition			M-.		jumps to the definition of the function (macro, ...) the cursor is on
-slime-pop-find-definition-stack		M-,		jumps back
-slime-expand-1-inplace			C-c RET		calls macroexpand-1, shows the result in new buffer
+slime-eval-last-expression                   C-x C-e       eval the form preceding the cursor, shows the result in status bar
+slime-edit-definition                        M-.           jumps to the definition of the function (macro, ...) the cursor is on
+slime-pop-find-definition-stack              M-,           jumps back
+slime-expand-1-inplace                       C-c RET       calls macroexpand-1, shows the result in new buffer
 slime-highlight-notes/slime-remove-notes
-slime-inspect				C-c I		evaluates expression and inspects its result
-slime-inspect-presentation-at-point	C-c C-v i	inspects result the cursor is on (in the repl)
-slime-next-note/slime-previous-note	M-n/M-p		the error is written in the status bar
-slime-reindent-defun			C-c M-q		reindents the top-level form
-slime-repl-clear-buffer			C-c M-o
-slime-switch-to-output-buffer		C-c C-z		switches to repl
-slime-toggle-trace-fdefinition		C-c C-t		toggles tracing of the function whose definition the cursor is on
-slime-list-callers			C-c <		lists function callers, hit space on the caller - jump to definition
-slime-list-callees			C-c >
-backward-sexp				C-M-b		jump one s-exp back
-forward-sexp				C-M-f		jump one s-exp forward
-kill-sexp				C-M-k		delete the s-exp
-indent-sexp				C-M-q		indent the s-exp correctly
+slime-inspect                                C-c I         evaluates expression and inspects its result
+slime-inspect-presentation-at-point          C-c C-v i     inspects result the cursor is on (in the repl)
+slime-next-note/slime-previous-note          M-n/M-p       the error is written in the status bar
+slime-reindent-defun                         C-c M-q       reindents the top-level form
+slime-repl-clear-buffer                      C-c M-o
+slime-switch-to-output-buffer                C-c C-z       switches to repl
+slime-toggle-trace-fdefinition               C-c C-t       toggles tracing of the function whose definition the cursor is on
+slime-list-callers                           C-c <         lists function callers, hit space on the caller - jump to definition
+slime-list-callees                           C-c >
+backward-sexp                                C-M-b         jump one s-exp back
+forward-sexp                                 C-M-f         jump one s-exp forward
+kill-sexp                                    C-M-k         delete the s-exp
+indent-sexp                                  C-M-q         indent the s-exp correctly
 hyperspec-lookup
 *slime-compilation* buffer (R/O) - lists errors and warnings, when I hit return, shows the code with colored underlines
 
@@ -35,8 +35,8 @@ a - abort
 i - evaluate expression in current environment
 RET - inspects current object
 
-F3 editace F4 - define-kdb-macro
+F3 edit F4 - define-kdb-macro
 start-kbd-macro -> end-kbd-macro -> call-last-kbd-macro
 
-zapnuti optimalizace pro debug:
+optimization for debug:
 (declaim (optimize (speed 0) (safety 3) (debug 3)))

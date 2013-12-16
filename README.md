@@ -28,7 +28,7 @@ so just use `load-manual.lisp`, which compiles and loads each file in turn, avoi
 <br />  expert system building tool
 
 - ASDF (Another System Definition Facility) - http://common-lisp.net/project/asdf/
-<br />  project definition and loading facility (alternative to LW defsystem)
+<br />  project definition and loading facility (alternative to LispWorks defsystem)
 
 - quicklisp - http://www.quicklisp.org/beta/
 <br />  library manager for CL
