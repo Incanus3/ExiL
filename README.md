@@ -45,6 +45,9 @@ so just use `load-manual.lisp`, which compiles and loads each file in turn, avoi
 - LispWorks&trade; - http://www.lispworks.com/<br />
   integrated cross-platform development tool for ANSI Common Lisp
 
+- git - http://git-scm.com/<br />
+  open source distributed version control system
+
 ## What is implemented
 - basic fact manipulation - `(assert)`, `(retract)`
   - retract accepts integers (as CLIPS) or fact specifiers, can be even mixed

@@ -1,6 +1,6 @@
-## Information sources + covered topics
+## References and information sources + covered topics
 
-* Introduction to Expert Systems [Peter Jackson]
+1. Introduction to Expert Systems [Peter Jackson]
   * What are expert systems?
     * nature of knowledge and expertise, aim of ES, typical tasks solved by ES
     * characteristics of ES, differences from other AI
@@ -66,7 +66,7 @@
     * forward X backward chaining, solution generations X recognition
     * meta-rules - advanced reasoning control
 
-* Paradigms of Artificial Intelligence Programming: Case Studies in Common Lisp [Peter Norvig]
+2. Paradigms of Artificial Intelligence Programming: Case Studies in Common Lisp [Peter Norvig]
   * 1,3 - CL introduction and overview
   * 4 - GPS: implmentation of STRIPS-like backward chaining ES,
     examples, common problems, solutions
