@@ -1,0 +1,80 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{upstyles}[2001/06/22 UP Style Documentation]
+
+\usepackage{a4}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{czech}
+\usepackage{epsfig}
+\usepackage{makeidx}
+\usepackage{mflogo}
+
+\newcounter{texsrc}
+
+\def\ve#1{\mbox{\texttt{#1}}}
+\def\vel#1{\makebox[17.62482pt][r]{%
+    \scriptsize\refstepcounter{texsrc}\thetexsrc\hskip1ex}%
+  \mbox{\texttt{#1}}}
+\let\ex=\vel
+\def\ven#1{\hskip17.62482pt\mbox{\texttt{#1}}}
+\def\arg#1{$\triangleleft\,\!${\it #1}$\,\triangleright$}
+
+\def\ssty#1{\textsf{#1}}
+\def\sty#1{\emphref{\textsf{#1}}{stylnk#1}}
+\def\stylabel#1{\IN{styl!{\sf #1}}\hyplabel{stylnk#1}}
+
+\def\opt#1{\emphref{\texttt{#1}}{optlnk#1}}
+\def\optlabel#1{\IN{přepínač!{\tt #1}}\hyplabel{optlnk#1}}
+
+\def\pdfTeX{{\sc pdf}\kern-.6pt\TeX}
+
+\def\makroskip{\smallskip}
+
+\newenvironment{makro}[2]
+{\IN{makro!{\tt \char92#1}}\hyplabel{maklnk#1}%
+  \noindent\addtolength{\leftskip}{2.5em}%
+  \parindent=0pt\kern-2.5em\ve{#2}\\[2pt]}
+{\par}
+
+\newenvironment{abstrakt}
+{\centerline{\textbf{Abstrakt}}
+  \small\sl
+  \begin{quote}
+    \addtolength{\leftskip}{-1em}
+    \addtolength{\rightskip}{-1em}}
+{\end{quote}}
+
+\def\env#1{\emphref{\texttt{#1}}{envlnk#1}}
+\def\envlabel#1{\IN{prostředí!{\tt #1}}\hyplabel{envlnk#1}}
+
+\def\mak#1{\emphref{\texttt{\char92#1}}{maklnk#1}}
+\def\maklabel#1{\IN{makro!{\tt \char92#1}}\hyplabel{maklnk#1}}
+
+\def\mp#1{\emphref{\texttt{#1}}{mpmaklnk#1}}
+\def\mplabel#1{\IN{makro!{\tt #1}}\hyplabel{mpmaklnk#1}}
+
+\def\LaTeXE{\mbox{\LaTeXe}}
+
+\newenvironment{example}{\makroskip}{}
+
+\def\point#1{\mbox{$\left[#1\right]$}}
+
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+  {-3.5ex \@plus -1ex \@minus -.2ex}%
+  {2.3ex \@plus.2ex}%
+  {\normalfont\large\bfseries}}
+
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\large\bfseries}}
+
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\normalsize\bfseries}}
+
+\addtolength{\oddsidemargin}{2mm}
+\addtolength{\topmargin}{-5mm}
+
+\endinput

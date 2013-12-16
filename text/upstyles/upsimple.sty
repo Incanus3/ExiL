@@ -1,0 +1,239 @@
+%%%  UP Simple Style
+%%%  Copyright (C) 2001 Vil\'em Vychodil, <vilem.vychodil@upol.cz>
+%%% 
+%%%  This style is free software; you can redistribute it and/or modify
+%%%  it under the terms of the GNU General Public License as published by
+%%%  the Free Software Foundation; either version 2 of the License, or
+%%%  (at your option) any later version.
+%%% 
+%%%  This style is distributed in the hope that it will be useful,
+%%%  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%%%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%%%  GNU General Public License for more details.
+%%% 
+%%%  You should have received a copy of the GNU General Public License
+%%%  along with this file; if not, write to the Free Software
+%%%  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{upsimple}[2001/06/22 UP Simple Style]
+
+%% style options
+\def\@inspdf#1{#1}
+\def\@insidx#1{}
+\def\@insout#1{}
+\def\@inscz#1{}
+\DeclareOption{nopdf}{\gdef\@inspdf#1{}}
+\DeclareOption{index}{\gdef\@insidx#1{#1}\gdef\@@insidx{I}}
+\DeclareOption{outlines}{\gdef\@insout#1{#1}}
+\DeclareOption{czech}{\gdef\@inscz#1{#1}\gdef\@@inscz{I}}
+\ProcessOptions
+
+%% insert packages
+\@insidx{\usepackage{multicol}}
+
+%% labels, references (must precede the style inclusion)
+\let\@oldlabel=\label
+\let\@oldref=\ref
+\let\@oldpageref=\pageref
+\let\@oldcite=\cite
+\let\@oldbiblabel=\@biblabel
+\let\@oldlbibitem=\@lbibitem
+\let\@oldbibitem=\@bibitem
+
+\def\label#1{\@pdfdest{lnk#1}\@oldlabel{#1}}
+\def\ref#1{\@pdflink{\@oldref{#1}}{lnk#1}}
+\def\pageref#1{\@pdflink{\@oldpageref{#1}}{lnk#1}}
+\def\cite#1{\@pdflink{\@oldcite{#1}}{bib#1}}
+
+\def\@lbibitem[#1]#2{\@pdfdest{bib#2}\@oldlbibitem[#1]{#2}}
+\def\@bibitem#1{\@pdfdest{bib#1}\@oldbibitem{#1}}
+
+%% references, bibliography
+\renewenvironment{thebibliography}[1]
+{\@insout{\insertoutline{1}{\refname}}%
+  \section*{\refname
+    \@mkboth{\MakeUppercase\refname}{\MakeUppercase\refname}}%
+  \addcontentsline{toc}{section}{\refname}
+  \list{\@biblabel{\@arabic\c@enumiv}}%
+  {\settowidth\labelwidth{\@biblabel{#1}}%
+    \leftmargin\labelwidth
+    \advance\leftmargin\labelsep
+    \@openbib@code
+    \usecounter{enumiv}%
+    \let\p@enumiv\@empty
+    \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+  \sloppy
+  \clubpenalty4000
+  \@clubpenalty \clubpenalty
+  \widowpenalty4000%
+  \sfcode`\.\@m}
+{\def\@noitemerr
+  {\@latex@warning{Empty `thebibliography' environment}}%
+  \endlist}
+
+%% section counters
+\@inscz{\renewcommand\thepart{\@Roman\c@part.}}
+\@inscz{\renewcommand\thesection{\@arabic\c@section.}}
+\@inscz{\renewcommand\thesubsection{\thesection\@arabic\c@subsection.}}
+\@inscz{\renewcommand\thesubsubsection%
+  {\thesubsection\@arabic\c@subsubsection.}}
+\@inscz{\renewcommand\theparagraph{\thesubsubsection\@arabic\c@paragraph.}}
+\@inscz{\renewcommand\thesubparagraph{\theparagraph\@arabic\c@subparagraph.}}
+
+%% appendix counters
+\ifx\@@inscz\undefined\else
+\renewcommand\appendix{\par
+  \setcounter{section}{0}%
+  \setcounter{subsection}{0}%
+  \gdef\thesection{\@@appendix@Alph\c@section}}
+\fi
+
+\@inscz{\gdef\@@appendix@Alph#1{%
+    \ifcase#1\or A\or B\or C\or D\or E\or F\or G\or H\or I\or J\or
+    K\or L\or M\or N\or O\or P\or Q\or R\or S\or T\or U\or V\or W\or X\or
+    Y\or Z\else\@ctrerr\fi.}}
+
+%% table / figure counters
+\@inscz{\renewcommand\thetable{\@arabic\c@table.}}
+\@inscz{\renewcommand\thefigure{\@arabic\c@figure.}}
+
+%% czech caption style
+\ifx\@@inscz\undefined\else
+\long\gdef\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{#1~#2}%
+  \ifdim \wd\@tempboxa >\hsize
+  #1~#2\par
+  \else
+  \global \@minipagefalse
+  \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\fi
+
+%% indent all paragraphs (czech typographical convention}
+\@inscz{\gdef\@afterheading{}}
+
+%% colors, hyper links
+\def\@pdfsetcolor#1#2{\@inspdf{\special{pdf:bc #1}}%
+  #2\@inspdf{\special{pdf:ec}}}
+
+\def\setcolor#1#2#3{\gdef\@@pdflinkcolor{[#1 #2 #3]}}
+\def\defaultcolor{\gdef\@@pdflinkcolor{[0.2 0.3 0.6]}}
+
+\defaultcolor
+
+\def\bhilight#1#2#3{\@inspdf{\special{pdf:bc [#1 #2 #3]}}}
+\def\ehilight{\@inspdf{\special{pdf:ec}}}
+
+\def\@pdflink#1#2{\leavevmode%
+  \@inspdf{%
+    \special{pdf:bann << /Type /Annot /Subtype /Link /Border [ 0 0 0 ] /A
+      << /S /GoTo /D (#2) >> >>}}%
+  {\@pdfsetcolor{\@@pdflinkcolor}{#1}}\@inspdf{\special{pdf: eann}}\relax}
+
+\def\@pdfuri#1#2{\leavevmode%
+  \@inspdf{%
+    \special{pdf:bann << /Type /Annot /Subtype /Link /Border [ 0 0 0 ] /A
+      << /S /URI /URI (#2) >> >>}}%
+  {\@pdfsetcolor{\@@pdflinkcolor}{#1}}\@inspdf{\special{pdf: eann}\relax}}
+
+\def\@pdfdest#1{\@inspdf{\special{pdf:dest (#1) [ @thispage /FitH @ypos ]}}}
+
+%% indices
+\@insidx{%
+  \gdef\IN#1{\index{#1|hidxrm}%
+    \@inspdf{\special{pdf:dest (INDEX\thepage) [ @thispage /Fit ]}}}
+  \gdef\INEM#1{\index{#1|hidxem}%
+    \@inspdf{\special{pdf:dest (INDEX\thepage) [ @thispage /Fit ]}}}
+  \gdef\hidxrm#1{\leavevmode%
+    \@inspdf{%
+      \special{pdf:bann << /Type /Annot /Subtype /Link /Border [ 0 0 0 ] /A
+        << /S /GoTo /D (INDEX#1) >> >>}}%
+    {\@pdfsetcolor{\@@pdflinkcolor}{#1}}\@inspdf{\special{pdf: eann}\relax}}
+  \gdef\hidxem#1{\leavevmode%
+    \@inspdf{%
+      \special{pdf:bann << /Type /Annot /Subtype /Link /Border [ 0 0 0 ] /A
+        << /S /GoTo /D (INDEX#1) >> >>}}%
+    {\@pdfsetcolor{\@@pdflinkcolor}{\indexemph{#1}}}%
+    \@inspdf{\special{pdf: eann}\relax}}
+  \gdef\indexcolumns{2}
+  \gdef\indexemph#1{{\itshape #1}}
+}
+
+%% index environment
+\ifx\undefined\@@insidx\else
+\renewenvironment{theindex}{%
+  \newpage
+  \bgroup%
+  \@insout{\insertoutline{1}{\indexname}}%
+  \section*{\indexname%
+    \@mkboth{\indexname}{\indexname}}%
+  \addcontentsline{toc}{section}{\indexname}%
+  \def\item{\par}%
+  \def\subitem{\par---\kern1ex}%
+  \def\subsubitem{\par---\kern1ex---\kern1ex}%
+  \def\indexspace{\smallskip}%
+  \setlength{\parindent}{-2em}%
+  \setlength{\leftskip}{2em}%
+  \begin{multicols*}{\indexcolumns}
+    }{%
+  \end{multicols*}
+  \egroup
+}\fi
+
+%% external hyperlinks
+\def\@@ignorewhs#1{%
+  \bgroup \catcode`\ =9 \catcode`\~=12 \catcode`\_=12 \catcode`\@=12
+  #1}
+
+\def\mail{\@@ignorewhs{\s@mail}}
+\def\s@mail#1{\@pdfuri{\lowercase{\tt\char60#1\char62}}{mailto:#1}\egroup}
+
+\def\url{\@@ignorewhs{\s@url}}
+\def\s@url#1{\@pdfuri{\lowercase{\tt#1}}{#1}\egroup}
+
+\def\link#1{\gdef\@linktxt{#1}\@@ignorewhs{\s@link}}
+\def\s@link#1{\@pdfuri{\@linktxt}{#1}\egroup}
+
+%% internal hyperlinks
+\def\emphref#1{\gdef\@emphreftxt{#1}\@@ignorewhs{\s@emphref}}
+\def\s@emphref#1{\@pdflink{\@emphreftxt}{lnk#1}\egroup}
+
+\def\hyplabel#1{\@pdfdest{lnk#1}}
+
+\def\emphref#1{\gdef\@emphreftxt{#1}\@@ignorewhs{\s@emphref}}
+\def\s@emphref#1{\@pdflink{\@emphreftxt}{lnk#1}\egroup}
+
+%% initialize outlines
+\def\insertoutline#1#2{%
+  \@inspdf{\special{pdf:outline #1 
+      << /Title (#2) /Dest [ @thispage /FitH @ypos ] >>}}}
+
+\def\nextoutline#1{\gdef\@@nextoutlinelabel{#1}}
+\let\@oldsect=\@sect
+\def\@sect#1#2#3#4#5#6[#7]#8{%
+  \ifx\@@nextoutlinelabel\undefined\@insout{\insertoutline{#2}{#7}}%
+  \else\@insout{\insertoutline{#2}{\@@nextoutlinelabel}}%
+  \let\@@nextoutlinelabel=\undefined\fi%
+  \@oldsect{#1}{#2}{#3}{#4}{#5}{#6}[#7]{#8}}
+
+%% insert outlines manually
+\def\outline{\insertoutline{1}}
+\def\suboutline{\insertoutline{2}}
+\def\subsuboutline{\insertoutline{3}}
+\def\subsubsuboutline{\insertoutline{4}}
+
+%% document initialization
+\def\displayoutlines{%
+  \special{\@inspdf{pdf:docview <</PageMode /UseOutlines >>}}}
+
+%% document info
+\def\docinfo#1#2{\@inspdf{%
+    \special{ pdf: docinfo << /Author (#1) /Creator (#1) /Title (#2) >> }}}
+
+%% adjust page size
+\sloppy
+
+\endinput

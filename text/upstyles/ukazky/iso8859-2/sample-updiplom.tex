@@ -1,0 +1,234 @@
+%%%  Vzor pro pou¾ití makra pro diplomovou práci
+%%%  (c) Milo¹ Kudìlka, David Skoupil, bøezen 1998
+%%%  Vzorový soubor revidován a doplnìn v záøí 2001
+%%%  (c) 2001 Vilém Vychodil, <vilem.vychodil@upol.cz>
+%%%  Vzorový soubor upraven v kvìtnu 2009
+%%%  (c) 2009 Jan Outrata, <jan.outrata@upol.cz>
+%%%
+%%%  Po pøelo¾ení programem CSLaTeX (tøikrát) je potøeba pou¾ít
+%%%  program DVIPS a takto získaný PostScriptový soubor vytisknout
+%%%  na PostScriptové tiskárnì nebo pomocí programu GhostScript.
+%%%
+%%%  Rovnì¾ je mo¾né pou¾ít program DVIPDFM a vytvoøit z dokumentu
+%%%  soubor ve formátu PDF vèetnì hypertextových odkazù.
+
+
+%%% Deklarace hlavièky dokumentu, pou¾ijte písmo velikosti 12 bodù.
+\documentclass[12pt]{article}
+
+%%% Pøipojení dodateèného stylu pro diplomové práce. V pøípadì
+%%% (magisterské) diplomové práce pou¾ijte nepovinný argument
+%%% `master', který zajistí vysázení správného oznaèení práce
+%%% ``DIPLOMOVÁ PRÁCE'' na titulní stranì (výchozí je ``BAKALÁØSKÁ
+%%% PRÁCE'').
+%%%
+%%% Nepovinné argumenty `tables' a `figures' pou¾ijte pouze v pøípadì,
+%%% ¾e vá¹ dokument obsahuje tabulky a obrázky a chcete vytvoøit
+%%% jejich seznamy za obsahem.
+%%%
+%%% Argument `joinlists' zpùsobí zøetìzení obsahu a seznamù tabulek a obrázkù.
+%%% Není-li pou¾ít, v¹echny seznamy jsou uvedeny na samostatných stránkách.
+%%%
+%%% Pokud chcete vytváøet pouze dokument ve formátu PostScript, mù¾ete uvést
+%%% dodateèný argument `nopdf'. Tím se potlaèí chybová hlá¹ení pøi pou¾ití
+%%% programu `dvips'.
+\usepackage[tables,figures]{updiplom}
+
+%%% Dodateèné standardní styly.
+
+%%% Parametry pro vytvoøení úvodních stránek. Makrem \subtitle je mo¾né
+%%% vytvoøit druhý øádek v názvu diplomové práce.
+\title{Název diplomové práce}
+%\subtitle{Druhý øádek názvu diplomové práce}
+\author{Jan Novák}
+\year{2009}
+\date{21. kvìten 2009}
+
+%%% Pomocí \docinfo je mo¾né vytvoøit název pro PDF dokument, zpravidla je
+%%% dobré pou¾ít pøedcházející název, ale bez diakritiky. Mo¾né je v¹ak zvolit
+%%% úpolnì jiný výsti¾ný název. Pøi tvorbì PostScriptu bude pøíkaz ignorován.
+\docinfo{Jan Novak}{Nazev diplomove prace}
+
+%%% Vytvoøení anotace. Pouze jeden odstavec!
+\annotation{%
+Anotace struènì popisuje zpracovanou práci a nemìla by
+ pøesáhnout zhruba 10~øádkù. V~¾ádném pøípadì by nemìla být rozdìlena
+do více odstavcù.}
+
+%%% Nepovinný text podìkování. Pouze jeden odstavec!
+\thanks{%
+Podìkování vedoucímu práce, rodinì apod. (nepovinné)}
+
+\begin{document}
+
+%%% Vytvoøení úvodních stránek, obsahu a seznamu tabulek a obrázkù.
+\maketitle
+\newpage
+
+
+%%% Text diplomové práce.
+\section{První kapitola}
+Toto je první kapitola.
+
+\medskip
+\suboutline{Vlo¾ená zálo¾ka}
+Na toto místo smìøuje zálo¾ka vytvoøená pomocí makra \verb|\suboutline|.
+
+\subsection{První podkapitola}
+Toto je první podkapitola.
+Zde jsem vycházel z~prací docenta Novotného. Lze jej kontaktovat
+na adrese \mail{martin.novotny@diff.rov.cz}.
+
+
+\subsection{Druhá podkapitola}
+\hyplabel{dotextu}
+Toto je druhá podkapitola. Sem povede odkaz z~textu.
+
+
+\newpage
+\section{Druhá kapitola}
+Toto je druhá kapitola a budu se zde zabývat tím, jak vypadá
+program podle~\cite{smith}.
+
+\subsection{První podkapitola}\label{kapX}
+Toto je text podkapitoly èíslo~\ref{kapX}
+\begin{table}[ht]
+  \begin{center}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{||l|rr||}
+      \hline
+      & \multicolumn{2}{|c||}{\bf \hbox{Informace}} \\
+      \cline{2-3}
+      \bf Sloupec 1 & \bf Sloupec 2 & \bf Sloupec 3 \\
+      \hline
+      Buòka 1 & Buòka 2 & Buòka 3 \\
+      Buòka 4 & Buòka 5 & Buòka 6 \\
+      Buòka 7 & Buòka 8 & Buòka 9 \\
+      \hline
+    \end{tabular}
+    \caption{Toto je tabulka.} \label{tab}
+  \end{center}
+\end{table}
+
+\nextoutline{Jiné jméno}
+\subsection{Dal¹í podkapitola}
+Toto je dal¹í podkapitola. Tato podkapitola bude dále èlenìna.
+Tato podkapitola se bude v~zálo¾kách jmenovat jinak.
+
+\subsubsection{Podkapitola}\label{podkapX}
+Tato podkapitola má èíslo~\ref{podkapX}
+Zde budu øe¹it programování podle knihy~\cite{kovar}.
+V~této èásti je i~obrázek, viz~\ref{obr}
+
+\begin{figure}[ht]
+  \centerline{\epsfbox{uplogo.eps}}
+  \caption{Toto je obrázek.} \label{obr}
+\end{figure}
+
+\subsubsection{Podkapitola}\label{podkapY}
+Tato èást má èíslo~\ref{podkapY} a~je umístìna na stránce \pageref{podkapY}.
+Na stránce uvedu i~odkaz na URL, tøeba \url{http://www.inf.upol.cz}.
+Dále lze vytváøet i~odkazy na kapitoly \emphref{v~rámci dokumentu}{kapX}.
+Stejnì tak lze vytváøet i~odkazy \emphref{pøímo do textu}{dotextu},
+pro vytvoøení návìstí je potøeba pou¾ít makro \verb|\hyplabel|.
+
+\medskip
+Zde budu øe¹it programování podle knihy~\cite{kovar}.
+
+
+%%% Závìr práce v~èe¹tinì
+\begin{conclusions-cz}
+  Závìr práce v èe¹tinì.
+\end{conclusions-cz}
+
+
+%%% Závìr práce v~angliètinì
+\begin{conclusions-en}
+  Conclusion in english.
+\end{conclusions-en}
+
+
+%%% Vytvoøení seznamu literatury.
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{smith} Smith, John. \emph{User and program.}
+                Publisher, City, 1990.
+\bibitem{kovar} Kováø, Jan. \emph{Jak programovat.}
+                Nakladatelství, Mìsto, 1990.
+\bibitem{slozi} Novotný, Martin.
+                \link{\emph{Pøekladaè s~nakladaèem.}}{http://www.inf.upol.cz}
+                Elektronická publikace, 2001.
+
+\end{thebibliography}
+
+
+%%% Pøílohy.
+\newpage
+\appendix
+
+\section{První pøíloha} \label{PrvniPriloha}
+Závìreèné poznámky, k~programování.
+
+\newpage
+\section{Obsah pøilo¾eného CD} \label{ObsahCD}
+V~samotném závìru práce je uveden struèný popis obsahu pøilo¾eného
+CD/DVD, tj. závazné adresáøové struktury, dùle¾itých souborù apod.
+
+\begin{description}
+
+\item[\texttt{bin/}] \hfill \\
+Instalátor \textsc{Instalator} programu a dal¹í program
+\textsc{Program} spustitelné pøímo z CD/DVD. / Kompletní adresáøová
+struktura webové aplikace \textsc{Webovka} (v ZIP archivu) pro
+zkopírování na webový server. Adresáø obsahuje i v¹echny potøebné
+knihovny a dal¹í soubory pro bezproblémové spu¹tìní programu / pro
+bezproblémový provoz na webovém serveru.
+
+\item[\texttt{doc/}] \hfill \\
+Dokumentace práce ve formátu PDF, vytvoøená dle závazného stylu KI PøF
+pro diplomové práce, vèetnì v¹ech pøíloh, a v¹echny soubory nutné pro
+bezproblémové vygenerování PDF souboru dokumentace (v ZIP archivu),
+tj. zdrojový text dokumentace, vlo¾ené obrázky, apod.
+
+\item[\texttt{src/}] \hfill \\
+Kompletní zdrojové texty programu \textsc{Program} / webové aplikace
+\textsc{Webovka} se v¹emi potøebnými (pøevzatými) zdrojovými texty,
+knihovnami a dal¹ími soubory pro bezproblémové vytvoøení spustitelných
+verzí programu / adresáøové struktury pro zkopírování na webový server
+(v ZIP archivu).
+
+\item[\texttt{readme.txt}] \hfill \\
+Instrukce pro instalaci a spu¹tìní programu \textsc{Program}, vèetnì
+po¾adavkù pro jeho provoz. / Instrukce pro nasazení webové aplikace
+\textsc{Webovka} na webový server, vèetnì po¾adavkù pro její provoz, a
+webová adresa, na které je aplikace nasazena pro testovací úèely a pro
+úèel obhajoby práce.
+
+\end{description}
+
+Navíc CD/DVD obsahuje:
+
+\begin{description}
+
+\item[\texttt{data/}] \hfill \\
+Ukázková a testovací data pou¾itá v práci a pro potøeby obhajoby
+práce.
+
+\item[\texttt{install/}] \hfill \\
+Instalátory aplikací, knihoven a jiných souborù nutných pro provoz
+programu / webové aplikace, které nejsou standardní souèástí operaèního
+systému.
+
+\item[\texttt{literature/}] \hfill \\
+Nìkteré polo¾ky literatury odkazované z dokumentace práce.
+
+\end{description}
+
+U ve¹kerých odjinud pøevzatých materiálù obsa¾ených na CD/DVD jejich
+zahrnutí dovolují podmínky pro jejich ¹íøení nebo pøilo¾ený souhlas
+dr¾itele copyrightu. Pro materiály, u kterých toto není splnìno, je
+uveden jejich zdroj (webová adresa) v textu dokumentace práce nebo v
+souboru \texttt{readme.txt}.
+
+\end{document}

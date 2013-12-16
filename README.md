@@ -24,26 +24,26 @@ so just use `load-manual.lisp`, which compiles and loads each file in turn, avoi
 - templated facts using CLIPS syntax - https://github.com/Incanus3/ExiL/blob/master/src/examples/examples-clips.lisp
 
 ## Used tools
-- CLIPS - http://clipsrules.sourceforge.net/
-<br />  expert system building tool
+- CLIPS - http://clipsrules.sourceforge.net/<br />
+  expert system building tool
 
-- ASDF (Another System Definition Facility) - http://common-lisp.net/project/asdf/
-<br />  project definition and loading facility (alternative to LispWorks defsystem)
+- ASDF (Another System Definition Facility) - http://common-lisp.net/project/asdf/<br />
+  project definition and loading facility (alternative to LispWorks defsystem)
 
-- quicklisp - http://www.quicklisp.org/beta/
-<br />  library manager for CL
+- quicklisp - http://www.quicklisp.org/beta/<br />
+  library manager for CL
 
-- iterate - http://common-lisp.net/project/iterate/
-<br />  extensible loop alternative with more lispy syntax
+- iterate - http://common-lisp.net/project/iterate/<br />
+  extensible loop alternative with more lispy syntax
 
-- xlunit - http://quickdocs.org/xlunit/
-<br />  CLOS based unit testing framework for CL
+- xlunit - http://quickdocs.org/xlunit/<br />
+  CLOS based unit testing framework for CL
 
-- sbcl - http://www.sbcl.org/
-<br />  open source high performance Common Lisp compiler
+- sbcl - http://www.sbcl.org/<br />
+  open source high performance Common Lisp compiler
 
-- LispWorks&trade; - http://www.lispworks.com/
-<br />  integrated cross-platform development tool for ANSI Common Lisp
+- LispWorks&trade; - http://www.lispworks.com/<br />
+  integrated cross-platform development tool for ANSI Common Lisp
 
 ## What is implemented
 - basic fact manipulation - `(assert)`, `(retract)`

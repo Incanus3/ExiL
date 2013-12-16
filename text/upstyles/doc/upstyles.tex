@@ -1,0 +1,1925 @@
+%% Poznamky
+%% kveten 2009, Jan Outrata (JO)
+
+\documentclass[12pt]{article}
+
+\usepackage[index,outlines,czech]{upsimple}
+\usepackage{upstyles}
+\usepackage[utf8]{inputenc}
+
+\makeindex
+\displayoutlines
+
+\begin{document}
+
+\title{Styly pro dokumentaci na KI}
+\author{Vilém Vychodil}
+
+\docinfo{Vilem Vychodil}{Styly pro dokumentaci na KI}
+
+\maketitle
+
+\begin{abstrakt}
+  Následující text by měl sloužit jako dokumentace k~interním dodatečným stylům
+  pro formát \LaTeXE{} používaných k~vytváření dokumentace na 
+  KI, PřF UP Olomouc. Text je určen jednak pro studenty, kteří chtějí vytvářet
+  dokumentace ke svým ročníkovým a~diplomovým pracím, dále je určen všem lidem
+  využívajícím vytvořené hypertextové styly.
+  Dokument po uživateli vyžaduje základní znalosti systému \TeX{} 
+  a~formátu \LaTeXE. První část textu je věnována použitým datovým formátům,
+  při čtení může být bez újmy vynechána. Rovněž závěrečnou část dokumentu 
+  věnující se některým aspektům implementace může čtenář vynechat.
+  Autor může být kontaktován prostřednictvím elektronické pošty na
+  adrese\/ \mail{vilem.vychodil@upol.cz}.
+\end{abstrakt}
+
+\section{Používané datové formáty}
+Společnost \emph{Adobe Systems Incorporated} se zasloužila
+o~vznik několika standardů
+v~oblasti elektronického publikování. Jedná se zejména o~jazyk
+PostScript\IN{jazyk!PostScript} 
+a~přenositelný formát dokumentů -- PDF\IN{jazyk!PDF}\IN{formát!PDF}.
+V~80.~letech byl společností Adobe navržen originální 
+obrazový model\IN{obrazový model},
+na jeho základech byl navržen jazyk PostScript. Jazyk PostScript se rychle
+rozšířil do grafických aplikací a~systémů pro elektronické publikování.
+V~současnosti tvoří de~facto standard pro popis stránky.
+Na~počátku 90.~let započala společnost Adobe vyvíjet datový formát PDF.
+Tento formát se PostScriptu v~mnohém podobá, ale v~mnohém se i~liší.
+Jazyk PostScript a~formát PDF jsou pro elektronickou publikaci velmi
+významné, proto je jim věnován detailnější popis v~úvodní kapitole textu.
+Pokud čtenáře tato problematika nezajímá, může bez újmy přejít 
+na kapitolu \ref{dokumentace}
+
+\medskip
+Jazyk \emph{PostScript} je bohatý zásobníkový jazyk vycházející
+z~jazyka~FORTH. Samotný jazyk je syntakticky dost jednoduchý,
+je však vybaven mnoha funkcemi pro zpracovávání grafických dat.
+Hlavním účelem PostScriptu je popisovat vzhled stránky -- obdélníkové
+oblasti, v~níž může být obsažen text, vzory složené z~grafických
+primitiv a~dokonce i~digitálně vzorkovaná data.
+PostScript se snaží popisovat
+stránku nezávisle na výstupním zařízení.
+Jazyk je plně přizpůsoben na snadné vytváření složitějších obrazců,
+disponuje funkcemi pro vykreslování grafických primitiv,
+operátory měnícími styl
+vykreslování primitiv a~ořezáváním. Jazyk definuje obecný systém
+souřadnic a~disponuje funkcemi pro pohodlné afinní transformace
+částí stránky. Součástí jazyka PostScript je například i~komprese
+používající Lempel-Ziw-Welchův algoritmus.
+
+\medskip
+PostScript je interpretován programy označovanými zkratkou
+RIP -- \emph{\mbox{Raster} \mbox{Image} \mbox{Processor}}.
+RIP musí být součástí všech zařízení a~software,
+které chtějí pracovat se~stránkami popsanými jazykem PostScript.
+RIP je například součástí každé tiskárny využívající PostScript
+jako svůj nativní jazyk, stejně tak jej musejí obsahovat i~všechny prohlížeče
+PostScriptu, například program \mbox{GhostScript}.
+RIP během interpretace příkazů jazyka PostScript vytváří 
+rastrovou \emph{předlohu stránky. }
+Rastrová předloha stránky -- obdélníková síť bodů udržovaná v~paměti je 
+na začátku zpracování vstupního souboru prázdná. 
+Podle interpretovaných příkazů tuto předlohu zaplňuje,
+respektuje při tom zvolené rozlišení výstupního zařízení.
+Pokud dojde RIP na příkaz ukončení stránky, dá povel ke zobrazení rastrové
+předlohy na výstupním zařízení, typicky na tiskárně.
+Předloha je vyprázdněna a~RIP pokračuje další stránkou.
+
+\medskip
+PostScript je jazyk výborně se hodící pro popis statických stránek,
+například předloh pro tištěné knihy. V~praxi bývá PostScript často vytvářen
+výstupním ovladačem \texttt{dvips} typografického systému \TeX.
+Mezi hlavní nedostatky PostScriptu patří z~pohledu archivace a~použitelnosti
+v~heterogenním síťovém prostředí absence hypertextových odkazů.
+I~když je PostScript v~podstatě kompletní programovací jazyk --
+o~tom svědčí například fakt, že existuje i~WWW server naprogramovaný 
+v~PostScriptu -- neumožňuje vytvářet \emph{interaktivní dokumenty.}
+Navíc interprety jazyka PostScript, ať už hardwarové, či softwarové,
+nejsou mezi laickou veřejností příliš rozšířeny.
+
+\medskip
+Přenositelný datový formát PDF -- \emph{Portable Document Format} začal být
+vyvíjen kolem roku 1993. Mnohem víc reflektuje moderní potřeby elektronické
+publikace, než jazyk PostScript. Předurčení datového formátu PDF je totiž
+od počátku jiné, než v~případě jazyka PostScript. Obě dvě technologie ale
+nejsou \uv{konkurenční}, jejich uplatnění se doplňuje.
+PDF záměrně neoznačuji jako jazyk, 
+ale pouze jako \emph{datový formát.}\IN{formát!datový}
+Toto označení není bezúčelné. Zjednodušeně řečeno, cílem PDF je umožnit
+uživateli snadno prohlížet elektronické dokumenty
+nezávislé na výstupním zařízení a~jeho zobrazovacím rozlišení.
+PDF dokonce používá týž obrazový model jako jazyk PostScript.
+Jedná se ale o~výrazně jednodušší jazyk než je PostScript -- tím je
+usnadněna jeho interpretace. V~následujícím výpisu jsou stručně shrnuty
+hlavní rozdíly proti PostScriptu.
+
+\begin{itemize}
+\item
+  PDF má \emph{pevně definovánu strukturu,}\IN{struktura}
+  striktní definice struktury dokumentu umožňuje přistupovat
+  k~různým částem dokumentu přímo.
+  V~PostScriptu je možný v~zásadě jen sekvenční přístup.
+\item
+  PDF není plnohodnotný programovací jazyk. Neobsahuje základní prvky většiny
+  imperativních programovacích 
+  jazyků -- například \emph{proměnné,}\IN{proměnná}
+  \emph{pojmenované procedury}\IN{procedura} 
+  nebo \emph{podmíněné výrazy.}\IN{výraz!podmíněný}
+  Absence těchto prvků zjednodušuje interpretaci~PDF.
+\item
+  PDF definuje sadu \emph{objektů,}\IN{objekty}
+  které přímo nesouvisejí s~obrazovým
+  modelem, ale mají význam při navigaci v~dokumentu.
+  Sem patří například objekty umožňující vytvářet \emph{návěstí}\IN{návěstí}
+  a~\emph{odkazy.}\IN{odkaz} Rovněž sem patří například i~objekty definující
+  \emph{logickou strukturu dokumentu.}\IN{strukturovanost}
+\item
+  Soubor ve formátu~PDF může být přeložen do jazyka PostScript.
+  Pro úspěšný překlad v~podstatě stačí nahradit zjednodušené sekvence
+  vykreslovacích příkazů formátu PDF příkazy jazyka PostScript.
+  Rovněž je nutné provést do výsledného PostScriptu
+  zařazení patřičných fontů, které jsou popsány ve vstupním PDF souboru.
+\end{itemize}
+
+Formát PDF má řadu výhod. Mezi jeho přednosti patří
+\emph{nezávislost na výstupním zařízení.}
+Tento požadavek je velmi podstatný například při sazbě matematických textů
+nebo textů obsahujících složitější symboliku, která by mohla být
+v~případě jiného formátu prohlížečem deformována nebo zkreslena.
+PDF disponuje kromě komprese i~šifrovacími metodami. Hlavní výhodou PDF
+proti PostScriptu je sada speciálních objektů, které mimo jiné umožňují
+navigaci v~dokumentu na úrovni kapitol, stránek i~řádků textu.
+
+\medskip
+Společnost Adobe spolu s~formátem PDF vyvíjí rodinu nástrojů \emph{Acrobat.}
+Nejdůležitějším z~této rodiny je program
+\link{{\it Acrobat Reader}}{http://www.adobe.com/products/acrobat} -- volně
+dostupný prohlížeč souborů ve formátu PDF disponující i~možnostmi tisku.
+Program Acrobat Reader je masivně rozšířen, v~současnosti prakticky všechny
+firmy zabývající se vývojem hardware a~software používají pro vytváření
+dokumentací a~manuálů ke svým produktům právě formát PDF. I~z~tohoto důvodu
+je nasazení PDF při vytváření elektronické dokumentace výhodné.
+
+\subsubsection*{Zpracování dokumentu systémem \TeX}
+\TeX{} je typografický systém vyvinutý kolektivem
+odborníků soustředěných kolem Donalda E.~Knutha. Knuth měl záměr vytvořit
+vysoce přesný, přenositelný a~nezávislý typografický systém. 
+Pro vývoj \TeX u byl navržen vlastní programovací jazyk Web. 
+Typografický systém \TeX{} je navržen opravdu velmi ambiciosně. Například při
+implementaci vnitřní aritmetiky \TeX u bylo přísně dbáno na to, 
+aby byly veškeré odchylky ve výpočtech menší než je vlnová délka světla. 
+Tím je dosaženo absolutní nezávislosti na výstupním zařízení. Lze jen
+stěží očekávat, že se nějakému výstupnímu zařízení podaří této rozlišovací
+schopnosti dosáhnout. \TeX{} je rovněž unikátní v~práci s~fonty -- umožňuje
+používat v~podstatě libovolný standard fontů díky oddělení metrik fontů 
+od popisu tvaru jednotlivých znaků fontu.
+
+\medskip
+\TeX{} pracuje jako \emph{formátovač.}\IN{formátovač}
+Zpracovává vstupní soubor skládající se z~textu, dodatečných maker
+a~primitiv. Jádrem \TeX u je program \ve{virtex}.
+Název programu \ve{virtex} -- \emph{Virgin \TeX} plně charakterisuje jeho 
+základní povahu. Program \ve{virtex} interpretuje asi jen 300 základních
+primitiv. V~této podobě téměř nikdo \TeX{} nevyužívá. 
+Sazba jen pomocí základních primitiv by byla velmi náročná. Při zpracování
+vstupního dokumentu formátovačem se zpravidla využívá 
+jistý \emph{formát}\IN{formát}. Formát sestává z~definic nových maker
+usnadňujících práci se systémem. Během své činnosti \ve{virtex} expanduje tato
+makra na primitivy a~potom je interpretuje. Mezi nejznámější formáty patří
+plain\kern-2pt\TeX{} a~\LaTeX. Aby byly formáty rychle dostupné, jsou
+uchovávány v~částečně zpracovaném stavu v~souborech s~příponou~\ve{.fmt}.
+
+\medskip
+Jednotlivé formáty jsou zpravidla vybaveny \emph{styly}\IN{styl} -- 
+dodatečnými soubory definic, které upravují chování formátu při potřebě sázet
+odlišné typy dokumentů, třeba články, knihy, dopisy a~podobně. Ke stylům
+mohou být dodávány i~\emph{dodatečné styly.}\IN{styl!dodatečný}
+Úkolem dodatečných stylů je většinou rozšířit možnosti stylů.
+Například formát \LaTeX{} obsahuje styly
+\textsf{article,} \textsf{book,} \textsf{letter,} a~další. Dodatečné styly 
+v~\LaTeX u například upravují standardní velikost stránky, nebo přidávají
+nová makra podporující sazbu speciálních objektů, třeba tabulek. 
+Styly a~dodatečné styly jsou ukládány v~samostatných zdrojových souborech.
+
+\medskip
+Během formátování dokumentu potřebuje \ve{virtex} kromě vstupního dokumentu,
+formátu a~stylů rovněž informace o~fontech. Samotné formátování v~podstatě
+spočívá v~rozvržení jednotlivých znaků na stránku podle patřičných nastavení
+velikosti zrcadla a~podle nastavení řádkového a~stránkového zlomu. V~této
+fázi překladu není nutné manipulovat s~fonty 
+na úrovni \uv{vykreslování znaků}, 
+\ve{virtex} používá pouze \emph{metriky fontů.}\IN{metrika fontu}
+Metriky fontů obsahují pro každý znak, nebo skupiny znaků z~fontu informace
+o~jejích velikosti. Skupiny znaků tvoří zpravidla slitky -- ligatury.
+Metriky dále obsahují tabulky pro podřezávání dvojic znaků -- kerningové 
+tabulky. Rozdělení fontů na metriky a~vlastní popis tvarů umožňuje 
+\TeX u pracovat s~libovolnými fonty. 
+Celou situaci vystihuje obrázek \ref{tex_fig}
+
+\begin{figure}
+  \centerline{\epsfbox{upstyles.1}}
+  \caption{Činnost \TeX u.}
+  \label{tex_fig}
+\end{figure}
+
+\medskip
+Výstupem formátovače je soubor \emph{nezávislý na výstupním zařízení.} Soubory
+mají příponu \ve{.dvi} -- \emph{Device Independent.} Datový formát~DVI
+je velmi jednoduchý a~slouží k~popisu stránky. DVI~má jen několik základních 
+instrukcí, je zcela oproštěn například od příkazů sloku, nebo od podmíněných
+výrazů. Zjednodušeně řečeno, v~DVI souborech jsou uloženy v~podstatě jen
+polohy obdélníkových rámců. 
+Každý rámec zastupuje polohu jednoho znaku ve výsledném dokumentu. 
+
+\medskip
+Soubor ve formátu DVI je dále konvertován 
+\emph{výstupním ovladačem}\IN{výstupní ovladač}
+do některého z~používaných formátů elektronických dokumentů, 
+případně do datového formátu vhodného pro tisk.
+Typicky je používán program \ve{dvips} pro konversi do jazyka PostScript.
+Výstupní ovladače ke své činnosti potřebují mít informace o~tvarech znaků
+jednotlivých fontů. Jelikož je ale výstupní ovladač oddělen od samotného 
+formátovače, může používat libovolné druhy fontů, od bitmapových fontů
+generovaných programem \MF{} až po PostScriptové Type~1 fonty a~jiné.
+Během formátování se mohou do DVI souboru přidávat i~informace specifické
+pro výstupní ovladač. Způsob naložení s~těmito informacemí je již plně
+v~kompetenci výstupního ovladače.
+Typickým případem použití dodatečných informací je třeba vkládání obrázků 
+do dokumentu.
+
+\medskip
+V~následujícím textu jsou podrobněji porovnány způsoby generování PDF výstupů
+pomocí systému \TeX. Vytvořené dodatečné styly umožňují vytvářet PDF soubory 
+v~součinnosti s~výstupním ovladačem \texttt{dvipdfm}. Toto řešení je
+technicky nejjednodušší a~jeho návrh je v~souladu se samotnou
+filosofií typografického systému \TeX. Vytvořené styly lze samozřejmě použít
+i~k~vytvoření PostScriptu výstupním ovladačem \texttt{dvips}.
+
+\subsubsection*{Systém \TeX{} a datový formát PDF}
+Současnosti existují dva projekty umožňující využít 
+\TeX{} k~vytváření PDF dokumentů. Prvním z~nich je systém \pdfTeX,
+jehož autorem je 
+H\`an The\kern-5.5pt\lower.75pt\hbox{\^{}}%
+\kern-6pt\lower-2pt\hbox{\'{}} Th\`anh.
+Tento projekt jde směrem rozšíření současných možností samotného formátovače.
+Jelikož \pdfTeX{} rozšiřuje formátovač,
+musí být nejprve přeložen jako samostatný program.
+Ve většině distribucí \TeX u je již \pdfTeX{} ve své binární podobě,
+větším problémem ale je, že musí mít vytvořeny vlastní formáty. 
+Hlavní úskalí použití \pdfTeX u je právě v~udržování formátů. Zkušenější čtenář
+již jistě někdy narazil na distribuci \TeX u, ve které se týž zdrojový
+dokument odlišně zalomil při použití klasického \TeX u a~\pdfTeX u. 
+Rovněž udržování dvou různých stylových souborů není příliš šťastné.
+
+\medskip
+Další možností vytváření PDF souborů pomocí typografického systému \TeX{}
+je výstupní ovladač \ve{dvipdfm}.
+Autorem programu je Mark~A.~Wicks. Jedná se o~výstupní ovladač, 
+který z~přeloženého DVI souboru generuje PDF. Program navíc umožňuje 
+interpretovat speciální příkazy v~DVI a~vkládat podle nich do vytvářeného
+PDF souboru speciální objekty a~příkazy. \TeX{} disponuje primitivem
+\ve{\char92special}. Jediným úkolem \ve{\char92special} je vložit během
+formátování do výstupního DVI souboru dodatečné informace. Dodatečné
+informace umožňují výstupnímu ovladači \ve{dvipdfm} určovat logickou
+strukturu dokumentu, vytvářet odkazy a~podobně.
+
+\medskip
+Výsledný DVI soubor lze samozřejmě zpracovat
+i~jiným výstupním ovladačem, například \ve{dvips}. Tento ovladač všechny
+neznámé dodatečné informace -- třeba informace pro \ve{dvipdfm} jednoduše
+ignoruje. V~tomto případě je tedy možné vytvořit pouze jeden styl 
+a~využít jej při tvorbě jak PostScriptu, tak PDF. Navíc je zaručeno, 
+že oba dva dokumenty budou vypadat identicky. Jelikož výroba PDF probíhá
+až na úrovní výstupního ovladače, stačí do systému nainstalovat v~podstatě
+jen jeden program a~není třeba generovat další formáty.
+Program \ve{dvipdfm} je navíc šířen pod licencí GNU GPL zaručující jeho
+dostupnost.
+
+\medskip
+Třetím způsobem výroby PDF souborů ze zdrojů v~\TeX u je využití programu
+\link{\emph{Adobe Distiller}}{http://www.adobe.com/products/acrdis/main.html}.
+Když přehlédneme že jde o~komerční platformově
+závislý produkt, proti jeho použití hovoří sama filosofie PDF. 
+Program Distiller vytváří PDF z~dokumentů v~jazyku PostScript. Při použití
+s~\TeX em tedy musí být nejprve vytvořen PostScriptový soubor. V~souboru
+musejí být navíc speciálními makry vytvořeny dodatečné informace například
+o~odkazech. PostScript je ale dost komplikovaný jazyk,
+výrazně složitější než PDF.
+Naproti tomu DVI je svou strukturou formátu PDF velmi příbuzné. Jedná se rovněž
+o~velmi jednoduchý datový formát. 
+Z~tohoto důvodu je generování PDF souborů přímo z~DVI mnohem přímočařejší.
+
+\subsubsection*{Využití \TeX u a PDF při vytváření textů}
+Tato kapitola stručně popisuje možnosti PDF objektů, které lze využít
+pomocí programu \ve{dvipdfm}. Pro stručnost jsou uvedeny pouze třídy
+PDF objektů uplatnitelné při výrobě hypertextové dokumentace.
+Pro detailní popis možností datového formátu PDF odkazuji čtenáře na jeho
+specifikaci \cite{pdfrm}.
+
+\medskip
+K~navigaci \emph{na úrovni dokumentu}\IN{navigace} lze v~PDF
+použít \emph{záložky}\IN{záložky}. Záložky tvoří stromovou strukturu, každé
+jméno v~záložce může být asociováno s~cílovým místem v~dokumentu. Pokud PDF
+dokument obsahuje záložky, jsou prohlížečem zobrazeny na levé straně textu.
+Záložky se v~dokumentu používají obvykle místo obsahu nebo jako jeho
+doplněk. Jelikož jsou záložky neustále viditelné, může uživatel plynule
+přecházet mezi kapitolami bez nutnosti přejít k~obsahu, 
+který je umístěn zpravidla na začátku dokumentu.
+Záložky lze během práce skrývat -- není nutné mít
+zobrazeny všechny položky najednou.
+Záložky nemusejí být použity jen pro vymezení kapitol. Ve vytvořených makrech
+lze vytvářet záložky i~explicitně. Při definici cílového místa záložky lze
+v~PDF určit stranu v~dokumentu, polohu cílového místa i~zvětšení 
+zobrazeného výřezu.
+
+\medskip
+Z~pohledu vytváření odkazů patří mezi nejdůležitější PDF objekty 
+anotace. \emph{Anotace}\IN{anotace} umožňují sdružit PDF objekty, 
+například poznámky, zvuky, video, odkazy a~jiné s~akcemi.
+\emph{Akce}\IN{akce} jsou pomocí anotací navázány na své aktivační
+objekty. Jednou z~anotací je i~\emph{link} -- odkaz. Na odkaz bývá zpravidla
+navázána akce \emph{goto} -- přesun do jiné části dokumentu. Část dokumentu
+může být definována buďto absolutně, nebo relativně. Části dokumentu je možné
+i~pojmenovat a~odkazovat se na ně jejich jmény. Na odkaz může být také navázána
+akce spouštějící externí program nebo odkazující se na externí dokument 
+pomocí URL. Všechny typy těchto akcí jsou v~implementaci stylů využity.
+
+\medskip
+Formát PDF disponuje i~\emph{informačními objekty.}\IN{objekty!informační}
+Tyto objekty slouží k~specifikaci informací o~souboru, jeho autorovi a~původu.
+Pro každý dokument lze rovněž definovat sadu charakteristických klíčových slov.
+Ačkoliv nejsou tyto elementy z~pohledu vytváření hypertextových dokumentů
+životně důležité, nalézají uplatnění například při archivaci většího množství
+dokumentů a~zejména při jejich rychlém prohledávání.
+
+\medskip
+Mezi základní anotace, které nejsou v~implementaci obsaženy, patří 
+\emph{textová anotace.}\IN{anotace!textová} Jedná se o~poznámku, která je na
+straně umístěna v~podobě ikony. Tuto ikonu lze rozvinout do podoby poznámky.
+Hlavní nevýhodou je nejednoznačnost kódové stránky použité v~poznámce. 
+Ve specifikaci PDF je uvedeno, že obsah poznámky je zobrazen fontem 
+a~kódováním určeným prohlížečem. Toto omezení prakticky znemožňuje presentovat
+v~poznámkách české texty, prohlížeče standardně používají kódovou 
+stránku \mbox{ISO\,8859\,1},\IN{kódování} která neobsahuje českou diakritiku.
+Textové anotace rovněž nelze tisknout.
+Mezi další nepodporované objekty patří \emph{formuláře.}\IN{formulář}
+Jedná se o~podobné formuláře jako jsou v~jazycích HTML a~XHTML. Na formuláře
+je možné navázat akci v~podobě URL, na nějž se odešlou data z~formuláře.
+Rovněž je možné zpracovávat data z~formulářů obslužným JavaScriptem.
+
+\section{Dokumentace ke stylům}\label{dokumentace}
+Při vytváření hypertextových stylů byly v~první řadě aktualisovány již
+existující styly vytvořené na katedře informatiky
+pro formát \LaTeX. Jedná se o~styly pro psaní dokumentací 
+k~\emph{ročníkovým pracím, diplomové práci} 
+a~styl pro vytváření \emph{reportů.} K~těmto stylům byly připojeny další 
+dva -- styl pro psaní \emph{skript} a~dodatečný \emph{matematický styl.} 
+
+\medskip
+U~všech již existujících stylů bylo dbáno na dodržení jejich dosavadní
+visuální podoby, rozměru zrcadla a~struktury dokumentu. 
+Mírně se však změnila syntaxe jejich maker. 
+Pro všechny styly je k~disposici sada okomentovaných ukázkových příkladů
+demonstrujících jejich použití. Bez újmy je lze použít jako kostru 
+při vytváření nových dokumentů. Dosavadní styly byly při úpravě rovněž
+aktualisovány. Staré styly byly vyrobeny pro dnes již zastaralý
+\mbox{\LaTeX\kern.15em2.09.} Nové styly jsou určeny pro \LaTeXE.
+V~neposlední řadě nové styly upravují nevhodné typografické konvence
+používané standardními styly formátu \LaTeX.
+
+\subsubsection*{Základní požadavky na styly}
+Při implementaci stylů bylo respektováno několik požadavků zaručujících
+maxi\-mál\-ní
+využitelnost stylů při zachování typografické úrovně a~přístupnosti
+široké veřejnosti uživatelů. V~následujícím soupisu jsou uvedeny 
+stěžejní z~nich.
+
+\begin{enumerate}
+\item
+  Vytvořené styly jsou \emph{dodatečné styly}\IN{styl!dodatečný}
+  ke stylu \ssty{article} formátu \LaTeX.
+  Formát \LaTeX{} neklade narozdíl od formátu plain\TeX{} 
+  tak velké nároky na uživatelovu znalost samotného systému \TeX.
+  Makra formátu \LaTeX{} se v~podstatě snaží skrýt před uživatelem samotnou
+  úpravu dokumentu, v~\LaTeX u je prioritní definice struktury dokumentu. 
+  V~neposlední řadě se jedná asi o~nejpoužívanější formát \TeX u vůbec.
+\item
+  Styly jsou dostatečně \emph{konservativní} -- uživatel by jejich
+  použití na své práci neměl poznat. Samozřejmě, že styly obsahují i~nová
+  makra, ale pokud je uživatel nepoužije, pracuje v~podstatě jako 
+  s~klasickým \LaTeX em. Například odkazy mezi kapitolami pomocí maker
+  \ve{\char92label} a~\ve{\char92ref} fungují jako doposud, navíc však
+  do dokumentu vkládají i~hypertextové odkazy.
+\item
+  Styly přidávají do DVI souboru instrukce, kterými jsou pomocí \ve{dvipdfm}
+  vytvářeny speciální PDF objekty. Vkládané instrukce nijak neomezují
+  činnost jiných výstupních ovladačů, například \ve{dvips}. Z~jednoho zdroje
+  lze tedy vytvářet přímo PostScriptový výstup i~PDF výstup.
+\item
+  Všechny styly umožňují uživatelům používat \emph{obecnou sadu maker}
+  pro vytváření hypertextových odkazů mezi částmi dokumentu i~vně dokumentu. 
+  Pomocí speciálních maker lze definovat návěstí na úrovni jednotlivých řádků
+  dokumentu. Na tato návěstí se lze odkazovat. 
+  \hyplabel{nejaky_radek} Tyto odkazy mají v~dokumentu tvar
+  \emphref{vysvíceného textu}{nejaky_radek}.
+  Při tisku dokumentu nebo při vytvoření
+  PostScriptového výstupu jsou vidět jako klasický text.
+\item
+  Chování stylů lze korigovat pomocí přepínačů\IN{přepínač}
+  předávaných při jejich inicialisaci. 
+  Přepínače lze například ovlivňovat zobrazování některých
+  částí z~úvodu dokumentu. Jiné argumenty slouží k~ovlivňování velikost 
+  nadpisů a~podobně.
+\item
+  Styly rovněž opravují nestandardní typografické konvence vyskytující se
+  implicitně v~české formě \LaTeX u. Jde zejména o~nevhodné nastavení nulové
+  odstavcové zarážky v~prvním odstavci kapitoly. V~\LaTeX u je z~pohledu
+  českých dokumentů rovněž nevhodné nastavení číslování kapitol. Oba dva
+  problémy jsou ve všech stylech odstraněny.
+\item
+  Styly umožňují vkládat do dokumentů obrázky. Formáty PostScript a~PDF
+  ale podporují rozdílné datové formáty. Pokud chce uživatel použít jeden
+  vstupní soubor pro vytváření PostScriptu i~PDF, musí používat jen jisté
+  metody jejich výroby. Jednou z~možností je použít 
+  velmi jednoduché \mbox{PostScript}ové obrázky, nebo obrázky vytvářené 
+  v~jazyku \mbox{\MP}.\IN{jazyk!Metapost}
+  Další možností je konverse bitmapových obrázků do
+  \mbox{\MF u}.\IN{jazyk!Metafont}
+\end{enumerate}
+
+V~dalších kapitolách je popsáno základní použití stylů včetně popisu
+dodatečných maker. Některá makra a~prostředí\IN{prostředí}
+je možné používat jen v~některých stylech,
+jiná jsou k~disposici v~každém stylu.
+Popis obou dvou tříd maker je rozdělen do samostatných kapitol.
+
+\subsection{Používání stylů}
+Nyní je k~disposici šest dodatečných stylů. Čtyři z~nich jsou určeny pro
+přímé použití. Jeden je určen pro vytváření obecných dokumentů. Poslední styl
+je \emph{matematický styl} a~měl by být používán spolu s~některým z~ostatních 
+stylů. Matematický styl je specifický, nedefinuje
+žádná záhlaví stránek a~podobně, ale obsahuje pouze definice maker na
+jednodušší odkazování na číslované vztahy a~definice prostředí pro sazbu
+definice, vět a~podobně. Všechny základní styly se liší svým nasazením, to se
+promítá do jejich vzhledu i~vnitřní struktury. V~následujícím seznamu jsou
+shrnuty základní markanty všech stylů.
+
+\begin{description}
+
+\item[{\sf uproject}]\stylabel{uproject}
+  Styl určený pro dokumentaci k~\emph{ročníkovým projektům.} Mezi hlavní rysy
+  stylu patří jeho jednostranný charakter. Styl nelze používat s~přepínačem
+  \texttt{twoside}. Úvodní strany stylu obsahují informace o~autorovi, 
+  ročníku, datu a~názvu ročníkové práce. Další strana je vyhrazena pro
+  abstrakt. Dále následuje obsah a~vlastní text. 
+  Při použití stylu \sty{uproject} by neměly být vytvářeny dodatky, rovněž
+  není možné vytvářet rejstřík pojmů. Na závěr textu by měly být uvedeny
+  reference na použitý materiál.
+
+\item[{\sf updiplom}]\stylabel{updiplom}
+  Styl určený pro psaní \emph{diplomové práce.} Možnosti stylu jsou již 
+  bohatší než v~případě stylu \sty{uproject}. Samostatná strana je věnována
+  místopřísežnému prohlášení. Dále následuje anotace práce a~poděkování.
+  Za~nimi je umístěn obsah a~vlastní text.
+  Za~koncem textu následuje závěr v~češtině a~závěr v~angličtině, dále pak
+  reference na použitý materiál.
+  V~další části mohou být dodatky a~nakonec rejstřík.
+
+\item[{\sf upreport}]\stylabel{upreport}
+  Styl určený pro vytváření \emph{reportů} a~krátkých dokumentů.
+  Od~předchozích dvou stylů se \sty{upreport} liší především tím, že je určen
+  o~pro oboustranný tisk. Stránky dokumentu nejsou číslovány pouze číslicí
+  na spotu stránky, ale každá strana textu má záhlaví s~číslem strany 
+  a~aktuální kapitolou. Za~úvodní stranou může být abstrakt spolu 
+  s~dodatečnými informacemi a~kontaktem na autora. Za~vlastním textem
+  může být seznam literatury, dodatky a~rejstřík.
+  
+\item[{\sf upbook}]\stylabel{upbook}
+  Styl určený pro vytváření \emph{skript} a~delších textů. Svou strukturou je
+  velmi podobný stylu \sty{upreport}. V~úvodní straně je nadpis implicitně
+  sázen versálkami. Záhlaví stránek je podtrženo čarou. Matematické výrazy
+  jsou číslovány v~rámci kapitol, nikoliv v~rámci celého dokumentu. Některé
+  z~těchto vlastností lze upravit vhodnými přepínači, viz další text.
+
+\item[{\sf upsimple}]\stylabel{upsimple}
+  Všestranný styl určený pro vytváření jakékoliv hypertextové dokumentace.
+  Styl nemá definovánu žádnou pevnou strukturu, uživatel pomocí něj může 
+  vytvářet libovolně strukturované dokumenty. Některé prvky běžné v~ostatních
+  stylech, například automatické generování záložek, je potřeba ve stylu
+  \sty{upsimple} nejprve povolit speciálními přepínači.
+  
+\item[{\sf upmath}]\stylabel{upmath}
+  Matematický styl určený pro použití s~předcházejícími styly. Styl definuje
+  makra pro odkazování na číslované vztahy. Dále definuje několik 
+  standardních prostředí pro sazbu číslovaných definic, vět, lemmat, důkazů,
+  důsledků, algoritmů a~podobně.
+  
+\end{description}
+
+Dodatečné styly jsou určeny pro \LaTeXE{} a~měly by být 
+použity se standardním stylem \ssty{article}. V~případě jejich použití s~jiným
+stylem, například \ssty{report}, není zaručena jejich úplná funkčnost. 
+S~největší pravděpodobností by přestalo fungovat generování záložek. 
+Pokud by se uživateli zdálo používání stylu \ssty{article} jako příliš 
+omezující, může si podle dokumentace z~kapitoly \ref{styimpl} patřičně styly
+upravit.
+
+\medskip
+Při použití stylů je nutné inicialisovat formát makry ve tvaru
+\begin{flushleft}
+  \vel{\char92documentclass\char123article\char125} \\
+  \vel{\char92usepackage\char91\arg{seznam přepínačů}\char93%
+    \char123\arg{název stylu}\char125}
+\end{flushleft}
+kde \arg{název stylu} je jeden z~názvů dodatečných stylů, 
+například \sty{upbook}. Argument \arg{seznam přepínačů} je i~s~hranatými 
+závorkami nepovinný. Pokud je uveden, musí obsahovat názvy přepínačů oddělené
+čárkami. Přepínače slouží k~počátečnímu nastavení dodatečného stylu. Kromě
+zvoleného dodatečného stylu většinou již není nutné vkládat žádný další styl. 
+Dodatečný styl sám importuje makra z~jiných stylů.
+Mezi stěžejní z~nich patří například styly \ssty{czech}, \ssty{epsf}
+a~styly pro využití maker \AmS-\LaTeX u. 
+Výjimku tvoří pouze styl \sty{upsimple}, 
+který z~pochopitelných důvodů neimportuje žádné dodatečné styly.
+
+\medskip
+Pomocí přepínačů může uživatel stylu částečně ovlivňovat jeho chování. Styly
+jsou vybaveny sadou přepínačů, některé z~nich jsou použitelné ve všech stylech,
+jiné se vážou na konkrétní styl.
+Použití přepínačů pro jednotlivé styly je přehledně zobrazeno v~tabulce
+\ref{prepinace}
+Následující popis uvádí jména všech přepínačů a~jejich význam.
+
+\begin{table}
+  \caption{Možnost použití přepínačů ve stylech.}
+  \label{prepinace}
+  \def\m{$\times$}
+  \begin{center}
+    \begin{tabular}{lccccc}
+      \toprule
+      přepínače & \multicolumn{5}{c}{vytvořené styly} \\
+      & \sty{uproject} & \sty{updiplom} 
+      & \sty{upreport} & \sty{upbook} & \sty{upsimple} \\
+      \midrule
+      \opt{czech} & & & & & \m \\
+%%      \opt{female} & & \m \\
+      \opt{figures} & \m & \m & \m & \m \\
+      \opt{index} & & & & & \m \\
+      \opt{joinlists} & \m & \m & \m & \m \\
+      \opt{master} & & \m \\
+      \opt{nopdf} & \m & \m & \m & \m \\
+      \opt{noseceqn} & & & & \m \\
+      \opt{outlines} & & & & & \m \\
+      \opt{seceqn} & & & \m \\
+      \opt{smalltitle} & & & & \m \\
+      \opt{tables} & \m & \m & \m & \m \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{description}
+
+\item[{\tt czech}]\optlabel{czech}
+  Přepínačem \opt{czech} se zapínají ve stylu \sty{upsimple} české 
+  typografické konvence. Standardně jsou použity konvence formátu \LaTeXE.
+  Pokud je přepínač uveden, dojde ke změně stylu číslování kapitol a~všechny
+  úvodní odstavce kapitol budou mít nastavenu odstavcovou zarážku.
+  V~ostatních stylech jsou tuto konvence nastaveny automaticky.
+
+%% JO: prepinac zrusen spolu s mistopriseznym prohlasenim
+%% \item[{\tt female}]\optlabel{female}
+%%   Přepínač je určen pro styl \sty{updiplom} a~vymezuje pohlaví autora
+%%   práce. Implicitně je předpokládáno, že autorem je muž. Tento předpoklad
+%%   není projevem sexistických předsudků, nýbrž holého faktu, že na KI
+%%   studuje výrazně víc mužů než žen. Je-li argument uveden, dojde k~přechýlení
+%%   koncovek u~místopřísežného prohlášení v~úvodu práce.
+
+\item[{\tt figures}]\optlabel{figures}
+  Pokud je přepínač uveden, je za obsahem dokumentu vytištěný i~seznam
+  obrázků. Kromě seznamu obrázků může dokument obsahovat i~seznam tabulek,
+  viz přepínač \opt{tables}.
+
+\item[{\tt index}]\optlabel{index}
+  Přepínač je určen pro aktivaci rejstříku ve stylu \sty{upsimple}. 
+  Pokud není přepínač uveden, uživatel může používat
+  klasický rejstřík ze systému \LaTeXE, který ovšem není hypertextový. Pokud
+  uživatel nechce rejstřík využívat vůbec, nemusí přepínač uvádět.
+  V~ostatních stylech pracujících s~rejstříkem nemá tento přepínač smysl.
+
+\item[{\tt joinlists}]\optlabel{joinlists}
+  Je-li přepínač uveden, bude seznam obrázků a~tabulek uveden na jedné 
+  straně. Implicitně jsou oba seznamy odděleny stránkovým zlomem. 
+  Přepínač se uplatňuje pouze v~případě, jsou-li současně uvedeny 
+  přepínače \opt{figures} a~\opt{tables}.
+
+%% JO: novy prepinac
+\item[{\tt master}]\optlabel{master}
+  Přepínač je určen pro styl \sty{updiplom} a~zajišťuje vysázení
+  správného označení diplomové práce na titulní straně v~případě
+  magisterské práce. Implicitně je vysázeno označení pro bakalářskou
+  práci.
+
+\item[{\tt nopdf}]\optlabel{nopdf}
+  Přepínač potlačující vkládání speciálních příkazů pro výstupní ovladač
+  \ve{dvipdfm}. Pokud uživatel nechce pomocí stylů vytvářet PDF soubory,
+  může v~případě potíží s~výstupním ovladačem použít tento přepínač.
+
+\item[{\tt noseceqn}]\optlabel{noseceqn}
+  Ve stylu \sty{upbook} jsou standardně číslovány vztahv v~matematickém
+  prostředí ve tvaru dvojice \mbox{$(x.\kern.5pt y)$},
+  kde $x$ je číslo kapitoly a~$y$ je číslo vztahu v~rámci kapitoly.
+  Uvedením přepínače \opt{noseceqn} se zapne jednoduché číslování vztahů
+  v~rámci celého dokumentu.
+
+\item[{\tt outlines}]\optlabel{outlines}
+  Přepínač je určen pro styl \sty{upsimple} a~je-li uveden, jsou v~dokumentu
+  automaticky s~každou kapitolou generovány i~záložky. V~opačném případě nejsou
+  záložky generovány automaticky a~uživatel je musí vytvářet pouze explicitně.
+  Pro zobrazení záložek je ve stylu \sty{upsimple} navíc nutné použít makro
+  \mak{displayoutlines}. V~ostatních stylech nemá
+  přepínač \opt{outlines} význam.
+
+\item[{\tt seceqn}]\optlabel{seceqn}
+  Styl \sty{upreport} je koncipován pro kratší texty než \sty{upbook}, proto
+  jsou v~něm matematické vztahy číslovány v~rámci celého dokumentu.
+  Přepínačem \opt{seceqn} lze zapnout číslování v~rámci kapitol.
+
+\item[{\tt smalltitle}]\optlabel{smalltitle}
+  Ve stylu \sty{upbook} je standardně první řádek nadpisu sázen versálkami.
+  Pokud si tak uživatel nepřeje, může použít tento přepínač. Druhý řádek
+  není sázen versálkami ani v~případě, že \opt{smalltitle} není uveden.
+
+\item[{\tt tables}]\optlabel{tables}
+  Přepínač má podobný význam jako přepínač \opt{figures}. Pokud je uveden, 
+  za obsah a~případný seznam obrázků je vytisknut i~seznam tabulek.
+  Pokud není uveden přepínač \opt{joinlists}, seznam tabulek je uveden
+  na samostatné straně.
+
+\end{description}
+
+Dokumenty využívající předchozích stylů se překládají stejným způsobem, jako
+klasické dokumenty psané v~\LaTeX u. Pokud dokument obsahuje křížové odkazy,
+je někdy nutné přeložit zdrojový soubor víckrát dokud nedojde k~navázání všech
+odkazů. Bezprostředně pro vytvoření DVI souboru je možné vytvořit 
+z~něj PostScript programem \ve{dvips}. Překlad dokumentu může vypadat
+následovně.
+
+\begin{flushleft}
+  \ven{cslatex \arg{název}.tex} \\
+  \ven{dvips -t a4 -o \arg{název}.ps \arg{název}.dvi}
+\end{flushleft}
+
+Argument \arg{název} označuje název \emph{vstupního souboru.} Při volání 
+programu \ve{dvips} byla v~ukázce použita explicitní definice výstupního média
+-- papír formátu~A4. Za argumentem \ve{-o} se uvádí název výstupního souboru.
+Argument \ve{-o} je vhodné uvádět vždy. V~některých operačních systémech 
+by mohlo místo vytvoření výstupního souboru dojít k~tisku dokumentu.
+
+\medskip
+Při vytváření výstupního PDF souboru je nutné po vytvoření DVI souboru ještě
+spustit jeden externí program. Generované záložky na levém okraji dokumentu
+nesmějí obsahovat diakritiku. Ve specifikaci PDF je u~záložek uvedeno, 
+že jejich zobrazení je plně v~režii prohlížeče. Prohlížeč si k~zobrazení
+záložek volí font a~bohužel i~kódovou stránku.
+V~současnosti všechny prohlížeče volí západoevropskou kódovou 
+stránku \mbox{ISO\,8859\,1},\IN{kódování}
+která neumožňuje zobrazovat české znaky.
+Dokud nebude tato patologická situace vyřešena ve specifikaci PDF, je nutné
+nedostatek vyřešit odstraněním diakritiky ze záložek.
+
+\medskip
+Primitivum \ve{\char92special} pracuje 
+na úrovni \emph{expand procesoru}\IN{expand procesor} systému \TeX. 
+Veškeré mě známé mechanismy pro překódování znaků pracují
+v~\TeX u až na úrovni \emph{hlavního procesoru,}\IN{hlavní procesor}
+k~překódování záložek je tedy nelze použít.
+Vytvořil jsem jednoduchý platformově přenositelný
+externí program \ve{outlines} odstraňující diakritiku ze záložek.
+Program funguje pro nejčastěji používané kódové stránky 
+\mbox{ISO\,8859\,2} a~\mbox{CP\,1250}.\IN{kódování}
+Překlad dokumentu do PDF vypadá následovně.
+
+\begin{flushleft}
+  \ven{cslatex \arg{název}.tex} \\
+  \ven{outlines \arg{název}.dvi} \\
+  \ven{dvipdfm -p a4 -o \arg{název}.pdf \arg{název}.dvi}
+\end{flushleft}
+
+Argument \arg{název} má význam jako v~předchozím případě. Je-li program
+\ve{outlines} zavolán s~DVI souborem, najde v~něm všechny speciální příkazy
+definující začátky záložek a~odstraní z~jejich popisů diakritiku. Program
+\ve{outlines} je včetně svých zdrojových kódů součástí distribuce maker.
+
+\subsection{Obecně použitelná makra}\label{obecna}
+Tato kapitola popisuje sadu maker, která jsou dostupná ve všech uvedených
+stylech. Při jejich použití není uživatel nijak omezen. 
+Makra jsou pro přehlednost rozdělena do několika kategorií. Zjednodušeně lze
+makra rozdělit na \emph{výkonná}\IN{makro!výkonné}
+a~\emph{nevýkonná.}\IN{makro!nevýkonné}
+Nevýkonná makra slouží ke vkládání informací o~dokumentu, výkonná makra přímo 
+ovlivňují vytváření interaktivních PDF objektů ve výsledném dokumentu.
+
+\subsubsection*{Informace o~dokumentu}
+
+\begin{makro}{docinfo}
+  {\char92docinfo\char123\arg{autor}\char125\char123\arg{titul}\char125}
+  Toto makro slouží ke vložení dodatečných informací o~dokumentu. 
+  Dodatečné informace nejsou během prohlížení dokumentu přímo zobrazovány,
+  ale jsou součástí popisu PDF souboru. Informace jsou využívány například
+  vyhledávacími službami nebo při archivaci dokumentů. 
+  Ve~stylu \sty{upsimple} může být makro \mak{docinfo} použito v~libovolné
+  části dokumentu. V~ostatních stylech by mělo být použito před výskytem makra
+  \ve{\char92maketitle}, jinak ztrácí svůj efekt.
+
+  \smallskip
+  Argumenty \arg{autor} a~\arg{titul} by měly být použity bez diakritiky.
+
+  \begin{example}
+    \ex{\char92docinfo\char123Jan Novak\char125\char123Moje kniha\char125}
+  \end{example}
+\end{makro}
+
+\subsubsection*{Interní a~externí odkazy}
+Pro odkazování v~rámci dokumentu lze použít i~standardní makra \LaTeX u.
+Dosavadní makra neztrácejí svůj význam.
+Návěstí je definováno makrem \ve{\char92label}. 
+Na návěstí se lze odkazovat makry \ve{\char92ref} a~\ve{\char92pageref}. Makro
+\ve{\char92ref} vypíše odkaz sekce, příkladu, obrázku či jiného objektu
+svázaného s~daným návěstím. Makro \ve{\char92pageref} vypisuje číslo strany
+na níž je objekt vysázen. Odkaz na bibliografii lze provést 
+makrem~\ve{\char92cite}.
+
+\medskip
+U~standardních maker se odkazy vytvářejí transparentně. Například uvedením
+dvojice \ve{\char92label}, \ve{\char92ref} se \emph{stejným návěstím,}
+bude ve výsledném dokumentu vytvořen hypertextový odkaz. 
+Navíc je zachován standardní vzhled odkazu.
+Pro vytváření zvýrazněných odkazů 
+v~rámci dokumentu a~vně slouží následující sada maker.
+
+\medskip
+\begin{makro}{hyplabel}
+  {\char92hyplabel\char123\arg{návěstí}\char125}
+  Makro slouží k~definici hypertextového návěstí na úrovni řádku v~dokumentu.
+  Na hypertextové návěstí se lze odkazovat pouze pomocí makra \mak{emphref},
+  v~žádném případě jej nelze použít při odkazování makry \ve{\char92ref}
+  a~\ve{\char92pageref}.
+
+  \smallskip
+  Argument \arg{návěstí} určuje jméno návěsti a~neměl by kolidovat s~žádným
+  existujícím hypertextovým návěstím, ani návěstím definovaným pomocí
+  \ve{\char92label}.
+  
+  \begin{example}
+    \ex{\char92hyplabel\char123nejaky\char95pojem\char125}
+  \end{example}
+\end{makro}
+
+\medskip
+\begin{makro}{emphref}
+  {\char92emphref\char123\arg{text}\char125\char123\arg{návěstí}\char125}
+  Pomocí makra \mak{emphref} se lze odkazovat na návěstí definovaná buďto
+  makrem \mak{hyplabel}, nebo makrem \ve{\char92label}. Ve srovnání 
+  s~makry \ve{\char92ref} a~\ve{\char92pageref} je při použití \mak{emphref}
+  nutné definovat i~samotný text, jenž je součástí odkazu. Odkazy vytvářené
+  pomocí \mak{emphref} jsou velmi podobné odkazům známým z~jazyka HTML.
+
+  \smallskip
+  Argument \arg{text} určuje zvýrazněný text, který je součástí hypertextového
+  odkazu -- na text je možné kliknout. Argument \arg{návěstí} určuje jméno
+  návěstí definované buďto makrem \mak{hyplabel},
+  nebo makrem \ve{\char92label}.
+
+  \begin{example}
+    \ex{Odkaz \char92%
+      emphref\char123na pojem\char125\char123nejaky\char95pojem\char125.}
+  \end{example}
+\end{makro}
+
+\medskip
+\begin{makro}{link}
+  {\char92link\char123\arg{text}\char125\char123\arg{adresa}\char125}
+  Makro \mak{link} vytváří obecný odkaz vně dokumentu. Jeho argumenty jsou
+  obdobné jako u~makra \mak{emphref}. Druhý argument ale není lokální návěstí,
+  nýbrž URL adresa. Interpretace URL je plně v~režii prohlížeče, 
+  proto je vhodné definovat URL adresy v~co možná nejúplnějším tvaru. 
+  Při definici by rozhodně nemělo chybět označení protokolu a~úplné cesty. 
+
+  \smallskip
+  Argument \arg{text} určuje zvýrazněný text, který je součástí hypertextového
+  odkazu -- na text je možné kliknout. Argument \arg{adresa} určuje cílové URL.
+
+  \begin{example}
+    \ex{Odkaz na \char92%
+      link\char123dokument na síti\char125\char123http://www.gnu.org\char125.}
+  \end{example}
+\end{makro}
+
+\medskip
+\begin{makro}{url}
+  {\char92url\char123\arg{adresa}\char125}
+  Makro \mak{url} zjednodušuje používání makra \mak{link} v~případě, kdy chce
+  autor uvést jen samotné URL bez dalšího komentáře. V~dokumentu je URL
+  vysazeno strojopisem, například \url{http://www.gnu.org}.
+
+  \smallskip
+  Argument \arg{adresa} určuje cílové URL.
+
+  \begin{example}
+    \ex{Například \char92url\char123http://www.gnu.org\char125.}
+  \end{example}
+\end{makro}
+
+\medskip
+\begin{makro}{mail}
+  {\char92mail\char123\arg{adresa}\char125}
+  Pomocí makra \mak{mail} lze zjednodušit vytváření kontaktu pomocí 
+  elektronické pošty. Makro využívá služeb makra \mak{link}. Jediným argumentem
+  je adresa ve tvaru \emph{uživatel\/{\rm \char64}hostitel.} V~dokumentu 
+  je adresa vysazena strojopisem a~ohraničena znaky 
+  \uv{{\tt \char60}} a~\uv{{\tt \char62}}, 
+  například \mail{vilem.vychodil@upol.cz}.
+
+  \smallskip
+  Argument \arg{adresa} je adresa tvaru \emph{uživatel\/{\rm \char64}hostitel.}
+
+  \begin{example}
+    \ex{Moje adresa je \char92mail\char123vilem.vychodil@upol.cz\char125.}
+  \end{example}
+\end{makro}
+
+\subsubsection*{Vytváření záložek}
+Záložky\IN{záložky} jsou v~dokumentu generovány automaticky 
+s~každou \emph{číslovanou kapitolou.} Rovněž některé významné nečíslované části
+dokumenty, například \emph{bibliografie} nebo \emph{rejstřík,} jsou přidávány
+do záložek. Kromě automaticky generovaných záložek může uživatel do dokumentu 
+přidávat i~vlastní. 
+K~vytváření záložek slouží generické makro \mak{insertoutline}.
+
+\medskip
+\begin{makro}{insertoutline}
+  {\char92insertoutline\char123\arg{úroveň}\char125\char123\arg{text}\char125}
+  Makrem \mak{insertoutline} se do dokumentu připojí nová záložka.
+  Jelikož jsou záložky hierarchicky strukturovány, musí být kromě samotného
+  textu záložky uvedena i~její hloubka v~hierarchii záložek. 
+  Makro \mak{insertoutline} je potřeba jen zřídka používat přímo. Je využíváno
+  makry pro zahájení sekcí dokumentu a~makry pro uživatelské záložky
+
+  \smallskip
+  Číselný argument \arg{úroveň} definuje hloubku záložky. Záložky na nejvyšší
+  úrovni mají číslo~1. Záložky vnořené v~záložkách nejvyšší úrovně mají číslo~2
+  a~tak dále. Argument \arg{text} definuje název záložky. Argumentu \arg{text}
+  je před vloženém zpracován pouze expand procesorem \TeX u, proto by neměl
+  obsahovat primitivy pracující na vyšších úrovních \TeX u.
+
+  \begin{example}
+    \ex{\char92insertoutline\char123 1\char125\char123Nadpis záložky\char125}
+  \end{example}
+\end{makro}
+
+\medskip
+Makro \mak{insertoutline} by prakticky nemělo být používáno. 
+Záložky na kapitoly
+jsou vytvářeny automaticky. Jedním z~problémů ale je pouhá expanse argumentu
+\arg{text} před vložením do výstupu. Například pokud by kapitola ve svém
+názvu obsahovala symbol \TeX vytvořený makrem \ve{\char92TeX}, toto makro 
+se expanduje na následující sekvenci.
+\begin{flushleft}
+  \vel{%
+    T\char92kern-.1667em\char92lower.5ex%
+    \char92hbox\char123E\char125\char92kern-.125em\char123X\char125}
+\end{flushleft}
+Tato sekvence již obsahuje pouze primitivy, které nelze dále expandovat. 
+Celá sekvence znaků by byla uložena do jména záložky. Z~tohoto důvodu existuje
+ve stylech speciální makro \mak{nextoutline} umožňující definovat vlastní
+název pro záložku další kapitoly.
+
+\medskip
+\begin{makro}{nextoutline}
+  {\char92nextoutline\char123\arg{text}\char125}
+  Makro \mak{nextoutline} je nevýkonné, pouze definuje název záložky pro další
+  kapitolu. V~praxi se makro používá v~případě, kdy nechceme do záložek vložit
+  týž název jako má kapitola. Makro je nutné použít v~případě, kdy je v~názvu
+  kapitoly použito neexpandovatelné primitivum.
+
+  \smallskip
+  Argument \arg{text} určuje název záložky.
+
+  \begin{example}
+    \ex{\char92nextoutline\char123Něco o číslu pi\char125} \\
+    \ex{%
+      \char92subsection\char123Něco o číslu \char36%
+      \char92boldsymbol\char123\char92pi\char125\char36\char125}
+  \end{example}
+\end{makro}
+
+\medskip
+K~vytváření uživatelských záložek slouží další sada několika maker. 
+Všechna makra mají stejnou syntaxi, proto je uveden jejich společný popis.
+
+\medskip\bgroup
+\noindent%
+\hyplabel{maklnkoutline}\hyplabel{maklnksuboutline}%
+\hyplabel{maklnksubsuboutline}\hyplabel{maklnksubsubsuboutline}%
+\addtolength{\leftskip}{2.5em}\parindent=0pt
+\null \kern-2.5em\ve{\char92outline\char123\arg{text}\char125} \\
+\null \kern-2.5em\ve{\char92suboutline\char123\arg{text}\char125} \\
+\null \kern-2.5em\ve{\char92subsuboutline\char123\arg{text}\char125} \\
+\null \kern-2.5em\ve{\char92subsubsuboutline\char123\arg{text}\char125} \\[2pt]
+Makra \mak{outline}, \mak{suboutline}, \mak{subsuboutline}
+a~\mak{subsubsuboutline} slouží k~definování uživatelských záložek první
+až čtvrté úrovně. Záložka vytvořená makrem \mak{outline} je na úrovni kapitoly,
+záložka vytvořená makrem \mak{suboutline} je na úrovni podkapitoly a~tak dále.
+Záložka směřuje na místo v~dokumentu, kde byla definována. Všechna makra
+jsou vytvořena generickým makrem \mak{insertoutline}.
+
+\smallskip
+Argument \arg{text} určuje název záložky.
+
+\begin{example}
+  \ex{\char92section\char123Kapitola\char125} \\
+  \ex{\char92suboutline\char123Záložka v kapitole\char125}
+\end{example}
+\par\egroup
+
+\subsection{Makra vázaná ke stylům}
+V~této kapitole jsou rozebrána makra definující text zobrazovaný 
+v~\emph{úvodních stránkách stylů.}\IN{úvodní stránky}
+Jelikož se všechny základní styly liší svým nasazením,
+při definici obsahu úvodních stran využívají různá makra.
+Další skupinu maker tvoří makra ovlivňující chování hypertextových částí
+dokumentu, jde vesměs o~makra využívaná stylem \sty{upsimple}.
+V~další části kapitoly nalezne čtenář popis využití
+\emph{rejstříku pojmů.}\IN{rejstřík pojmů}
+S~rejstříkem se pracuje podobně jako v~klasickém \LaTeX u, 
+přibyla ovšem nová makra umožňující měnit jeho vzhled.
+
+\subsubsection*{Struktura úvodních stran}
+Do úvodních stran dokumentů lze vkládat data pomocí následujících maker. 
+Všechna makra mají shodnou syntaxi,
+\ve{\char92makro\char123\arg{text}\char125},
+kde \arg{text} je vkládaná textová informace v~rozsahu maximálně jednoho 
+odstavce. Níže uvedená makra mají nevýkonný charakter -- mohou být uvedena
+v~libovolném pořadí. Všechna makra by ale měla být uvedena před prvním 
+výskytem makra \ve{\char92maketitle}. Makro \ve{\char92maketitle} provede
+vložení úvodních stran do dokumentu.
+
+\medskip
+Součástí úvodních stran je i~universitní logo uložené v~souboru 
+\ve{uplogo.eps}. Jedná se~o~obrázek vytvořený jazykem \MP. Zdrojové kódy loga
+včetně jeho inversního barevného provedení jsou rovněž v~archivu. Zdrojový
+kód v~jazyku \MP{} byl vytvořen reversním inženýrstvím původního 
+loga vytvořeného komerčním balíkem Corel~Draw, 
+původní logo nebylo vhodné pro zpracování programem \ve{dvipdfm},
+viz kapitolu \ref{mpost}
+Následující přehled uvádí jednotlivá makra a jejich význam.
+
+\begin{description}
+
+\item[\ve{\char92about}]\maklabel{about}
+  Makro určené pro styly \sty{upreport} a~\sty{upbook} sloužící ke vložení
+  informací o~autorovi. Vložený text ve vysázen na druhé straně, to jest hned
+  za stranou titulní. Text je umístěn na úpatí strany s~je sázen skloněným
+  písmem. V~této sekci textu se může objevit kontakt na autora v~podobně
+  elektronické pošty, podmínky šíření textu, ale například i~krátké poděkování.
+
+\item[\ve{\char92abstract}]\maklabel{abstract}
+  Abstrakt je součástí všech stylů, kromě styly \sty{updiplom}. Ve stylech
+  \sty{upreport} a~\sty{upbook} je nepovinný, ve stylu \sty{uproject} musí
+  být přítomen. Účelem abstraktu je stručně popisovat rozebíranou 
+  problematiku, svým rozsahem by neměl přesáhnout zhruba 10 řádků. V~žádném
+  případě by abstrakt neměl mít víc jak jeden odstavec. Nepřípustné jsou
+  rovněž i~jiné vertikální mezery. Abstrakt je vysázen na straně následující
+  za titulní stranou, u~stylu \sty{uproject} je vycentrován na celou stranu,
+  u~stylů \sty{upreport} a~\sty{upbook} je vysázen v~záhlaví stránky.
+
+\item[\ve{\char92author}]\maklabel{author}
+  Jméno autora je vždy uvedeno na první straně. Podle typu dokumentu je 
+  zvoleno umístění, řez písma a~jeho stupeň. Jméno by mělo být vždy uváděno
+  celé v~pořadí \emph{jméno, příjmení.}
+
+\item[\ve{\char92annotation}]\maklabel{annotation}
+  Anotace je určena pro styl \sty{updiplom} a~má podobný charakter jako 
+  abstrakt v~ostatních stylech. Autor by se při jejím psaní měl držet stejných
+  pokynů. Narozdíl od abstraktu je obsah anotace sázen kursívou. 
+  Anotace je v~dokumentu obsažena až za místopřísežným prohlášením.
+
+%% JO: makro zruseno spolu s mistopriseznym prohlasenim
+%% \item[\ve{\char92append}]\maklabel{append}
+%%   Text definovaný makrem \mak{append} je připojen nakonec místopřísežného
+%%   prohlášení v~diplomové práci. Makro je určeno pouze pro styl \sty{updiplom}.
+%%   Součástí připojeného textu mohou být například informace o~materiálech
+%%   poskytnutých autorovi práce.
+
+\item[\ve{\char92date}]\maklabel{date}
+  Makro určené pro vkládání data. Není-li makro uvedeno, 
+  je do dokumentu vloženo datum jeho překladu systémem \TeX.
+  Datum by mělo být uváděno buďto ve tvaru \emph{měsíc, rok,} nebo včetně 
+  čísla dne. Datum je součástí titulní strany, v~případě stylu \sty{updiplom}
+  se nachází na straně s~místopřísežným prohlášením. Zde by mělo být datum
+  vždy uvedeno v~plném tvaru.
+
+\item[\ve{\char92group}]\maklabel{group}
+  Ve stylu \sty{uproject} je nutné tímto makrem uvést skupinu. Skupina je
+  vysazena na titulní straně vpravo dole pod jménem autora. Skupina by měla
+  být složena z~názvu oboru následovaného ročníkem označeným římskými 
+  číslicemi. Například \uv{Informatika, II. ročník}.
+
+\item[\ve{\char92report}]\maklabel{report}
+  Pokud je makro \mak{report} uvedeno, způsobí na titulní stránce vysázení
+  čísla technického reportu. Makro je určeno pouze pro styl \sty{upreport}.
+  Pokud jsou v~číslu reportu pomlčky, měly by být důsledně sázeny dvěma znak
+  pro pomlčku, to jest \uv{\ve{\char45\char45}}.
+
+\item[\ve{\char92subtitle}]\maklabel{subtitle}
+  Makro \mak{subtitle} definuje dodatečný nadpis na titulní straně, lze jej
+  použít ve všech stylech. Dodatečný nadpis tvoří druhý řádek nadpisu.
+
+\item[\ve{\char92thanks}]\maklabel{thanks}
+  Speciální makro určené pro styl \sty{updiplom}. Makro slouží pro sazbu 
+  poděkování. Poděkování je v~dokumentu umístěno hned za anotací na samostatné
+  straně, v~rámci strany je umístěno na jejím spodním okraji.
+  Za~poděkováním se nachází obsah.
+
+\item[\ve{\char92title}]\maklabel{title}
+  Makro definuje název dokumentu. Název je vždy součástí úvodní strany, makro
+  \mak{title} by mělo být vždy uvedeno. 
+  Styl sazby názvu, to jest řez písma a~stupeň se
+  v~rámci stylů liší. Ve stylu \sty{upbook} je název sázen versálkami.
+  Tuto vlastnost lze potlačit uvedením přepínače \opt{smalltitle}.
+
+\item[\ve{\char92year}]\maklabel{year}
+  Makro je určeno pro styl \sty{updiplom} a~uživatel jím definuje rok.
+  Rok je uveden na titulní straně vlevo dole.
+
+\end{description}
+
+Tabulka \ref{struktury} přehledně zobrazuje použitelnost maker v~čtyřech
+základních stylech. Styl \sty{upsimple} není v~tabulce uveden, jelikož v~něm
+není definováno žádné z~uvedených maker. Příklady použití maker nalezne
+uživatel v~ukázkových souborech.
+
+\begin{table}
+  \caption{Složení úvodních stran dokumentů.}
+  \label{struktury}
+  \def\m{$\times$}
+  \begin{center}
+    \begin{tabular}{lcccc}
+      \toprule
+      makra & \multicolumn{4}{c}{vytvořené styly} \\
+      & \sty{uproject} & \sty{updiplom} & \sty{upreport} & \sty{upbook} \\
+      \midrule
+      \mak{about} & & & \m & \m \\
+      \mak{abstract} & \m & & \m & \m \\
+      \mak{author} & \m & \m & \m & \m \\
+      \mak{annotation} & & \m \\
+%%      \mak{append} & & \m \\
+      \mak{date} & \m & \m & \m & \m \\
+      \mak{group} & \m \\
+      \mak{report} & & & \m \\
+      \mak{subtitle} & \m & \m & \m & \m \\
+      \mak{thanks} & & \m \\
+      \mak{title} & \m & \m & \m & \m \\
+      \mak{year} & & \m \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\subsubsection*{Nastavení vzhledu dokumentu}
+U~nekterých typů dokumentu má uživatel možnost alespoň částečně měnit jejich
+vzhled. Změna vzhledu není příliš vhodná u~dokumentů s~pevnou strukturou.
+Naopak obecné styly mohou být použity k~různým účelům, je proto nutné mít 
+k~disposici makra ovlivňující jejich vzhled. V~následující kapitole jsou
+popsána základní makra pro nastavení vzhledu dokumentu.
+
+\medskip
+\begin{makro}{setcolor}
+  {\char92setcolor%
+    \char123\arg{červená}\char125%
+    \char123\arg{zelená}\char125%
+    \char123\arg{modrá}\char125}
+  Makro \mak{setcolor} lze využít ve stylech \sty{upreport}, \sty{upbook}
+  a~ve stylu \sty{upsimple}. Pomocí tohoto makra lze jednoduše měnit barvu
+  hypertextových odkazů v~dokumentu. Makro má platnost od místa svého uvedení.
+  Teoreticky je tedy možné barvy v~dokumentu \uv{střídat}, ale není to příliš
+  doporučené. Ve~většině případů je v~dokumentu vhodné nechat implicitní barvu.
+
+  \smallskip
+  Argumenty \arg{červená}, \arg{zelená} a~\arg{modrá} představují hodnoty 
+  jednotlivých aditivně skládaných barevných složek. Hodnoty barevných složek
+  jsou prvky intervalu \mbox{$\left[0,1\right]$}.
+  Následující příklad definuje 
+  \bhilight{0.1}{0.4}{0.3}akvamarínovou\ehilight{} barvu.
+
+  \begin{example}
+    \ex{\char92setcolor\char123 0.1\char125%
+      \char123 0.4\char125%
+      \char123 0.3\char125}
+  \end{example}
+\end{makro}
+
+\medskip
+\begin{makro}{defaultcolor}{\char92defaultcolor}
+  Makrem \mak{defaultcolor} uživatel v~dokumentu nastaví standardní barvu
+  hypertextových odkazů. Makro lze použít pouze ve stylech podporujících
+  změny barev hypertextových odkazů, viz makro \mak{setcolor}.
+\end{makro}
+
+\medskip\bgroup
+\noindent%
+\hyplabel{maklnkbhilight}\hyplabel{maklnkehilight}%
+\addtolength{\leftskip}{2.5em}\parindent=0pt
+\null \kern-2.5em\ve{\char92bhilight%
+  \char123\arg{červená}\char125%
+  \char123\arg{zelená}\char125%
+  \char123\arg{modrá}\char125},
+\ve{\char92ehilight} \\[2pt]
+Dvojice maker \mak{bhilight} a~\mak{ehilight} vymezuje oblast textu, jenž
+je obarvena stanovenou barvou. Dvojice maker mohou být do sebe libovolně
+vnořovány, barvy jsou postupně ukládány na zásobník. Obě makra lze použít
+pouze ve stylech \sty{upreport}, \sty{upbook} a~\sty{upsimple}. Při používání
+barev je vhodné dbát na základní pravidla pracovní hygieny a~dobrého vkusu.
+
+\smallskip
+  Argumenty \arg{červená}, \arg{zelená} a~\arg{modrá} makra \mak{bhilight} 
+  představují hodnoty intensity jednotlivých barev, viz makro \mak{setcolor}.
+  Makro \mak{ehilight} nemá žádné argumenty, pouze zruší poslední aktivovanou
+  barvu.
+  
+\begin{example}
+  \ex{\char92bhilight\char123 0.1\char125%
+    \char123 1\char125%
+    \char123 0.2\char125Barevný text.\char92ehilight}
+\end{example}
+\par\egroup
+
+\medskip
+\begin{makro}{displayoutlines}{\char92displayoutlines}
+  Pokud uživatel používá styl \sty{upsimple}, záložky nejsou implicitně
+  zobrazovány. V~případě uvedení makra \mak{displayoutlines} budou záložky
+  zobrazeny. Makro lze uvést v~dokumentu na libovolném místě.
+\end{makro}
+
+\subsubsection*{Speciální prostředí}
+Ve stylu \sty{updiplom} jsou definována dvě prostředí pro sazbu závěrů
+v~češtině a~v~angličtině. Prostředí se jmenují
+\envlabel{conclusions-cz}\env{conclusions-cz}
+a~\envlabel{conclusions-en}\env{conclusions-en}
+a~používají se jako standardní prostředí v~\LaTeX u.
+To jest, prostředí zahajujeme pomocí
+\ve{\char92begin\char123\arg{název prostředí}\char125}
+a~ukončujeme pomocí
+\ve{\char92end\char123\arg{název prostředí}\char125}.
+V~obou závěrech je potlačena odstavcová zarážka a~jednotlivé odstavce
+jsou od sebe odděleny vertikální mezerou. Každé z~těchto dvou prostředí
+automaticky přidává odkaz do obsahu, vytváří hypertextovou záložku
+a~zajišťuje přechod na novou stránku.
+
+\subsubsection*{Rejstřík pojmů}
+Součástí formátu \LaTeX je i~jednoduchý aparát pro vytváření rejstříku pojmů.
+Rejstřík bývá zpravidla abecedně setříděný, ne jinak je tomu i~v~tomto případě.
+Při vytváření rejstříku je využíván externí program \ve{makeindex}, jenž je
+součástí distribuce \LaTeX u. Pokud chce uživatel vytvářet rejstřík, musí
+při překladu dokumentu spouštět i~program \ve{makeindex}. Úkolem programu
+\ve{makeindex} je zkompletovat seznam odkazů, setřídit jej a~vytvořit podle
+něj nový seznam vhodný pro sazbu.
+
+\medskip
+Standardní prostředí \ve{theindex} zobrazující setříděné fráze bylo v~nových
+stylech reimplementováno. V~původním prostředí \ve{theindex} bylo jen velmi
+těžké měnit počet sloupců rejstříku, rovněž jeho typografická úroveň byla
+nevyhovující. Rejstřík získal rovněž hypertextovou podobu, odkazy na strany
+jsou v~rejstříku hypertextové. Rejstřík je určen pro styly
+\sty{upbook}, \sty{upreport} a~\sty{updiplom}.
+V~následujícím textu je stručně popsáno používání nových maker.
+
+\bigskip
+Pro vytvoření rejstříku je nutné provést následující kroky.
+\begin{itemize}
+\item
+  Před začátkem těla dokumentu je nutné uvést makro \ve{\char92makeindex}.
+  Tímto makrem se vytvoří výstupní soubor ve tvaru \ve{\arg{název}.idx},
+  kde \arg{název} je název překládaného dokumentu.
+\item
+  Po překladu dokumentu je nutné spustit externí program \ve{makeindex} 
+  s~argumentem \ve{\arg{název}.idx} a~provést opětovný překlad. Indexační
+  program vytvoří výstupní soubor \ve{\arg{název}.ind}.
+\item
+  Na místě vložení rejstříku do dokumentu je nutné uvést speciální makro 
+  \ve{\char92printindex}. Rejstřík pojmů by měl být uveden až na poslední
+  straně dokumentu. Upravené makro \ve{\char92printindex} do dokumentu 
+  automaticky vkládá i~nadpis pro rejstřík a~zavádí pro něj i~novou záložku.
+\end{itemize}
+
+Fráze se do rejstříku přidávají pomocí maker \mak{IN} a~\mak{INEM}. Pokud se
+v~textu nachází důležité fráze a~autor ji chce přidat do rejstříku, použije
+k~tomu jedno z~těchto dvou maker. 
+Obě makra se přitom liší \emph{vyznačením stránky.}\IN{vyzanačená stránka}
+Makro \mak{IN} se používá při standardním vyznačení strany, makro \mak{INEM}
+při zvýrazněném vyznačení strany. V~dokumentu je může jeden pojem vyskytovat
+na několika místech a~autor jej může zaindexovat několikrát. V~této situaci
+slouží \emph{zvýrazněné vyznačení strany}\IN{vyzanačená stránka!zvýrazněná}
+k~orientaci uživateli -- mělo by označovat místo v~dokumentu, kde je pojem
+poprvé vysvětlen, nebo definován. Bližší popis obou maker je shrnut dále.
+
+\medskip\bgroup
+\noindent%
+\hyplabel{maklnkIN}\hyplabel{maklnkINEM}%
+\addtolength{\leftskip}{2.5em}\parindent=0pt
+\null \kern-2.5em\ve{\char92IN\char123\arg{fráze}\char125},
+\ve{\char92INEM\char123\arg{fráze}\char125} \\[2pt]
+Makra zavádějí do seznamu frází další položku. Makro \mak{IN} vytváří záznam
+s~normálním značením strany, makro \mak{INEM} vytváří záznam se zvýrazněným
+značením strany. Argument obou maker má stejný význam, určuje frázi.
+
+\smallskip
+Argument \arg{fráze}\IN{fráze}
+určuje frázi zahrnutou do rejstříku pojmů.
+Argument může nabývat několika tvarů. Pokud je uveden jako jednoduché slovo 
+nebo sousloví oddělené mezerami, 
+jedná se o~\emph{hlavní frázi.}\IN{fráze!hlavní} 
+Pokud se v~argumentu vyskytuje více pojmů oddělených znakem vykřičník 
+\uv{\ve{\char33}}, pak se jedná 
+o~\emph{definici podfráze.}\IN{podfráze}\IN{fráze!podfráze} 
+Podfráze jsou sázeny s~počátečními odrážkami.
+Počet odrážek záleží na hloubce vnoření.
+Pokud je fráze příliš dlouhá, ve výsledném výpisu se řádek zalomí, 
+ale nezačíná již odrážkou -- tím se visuálně odlišuje od podfráze.
+Následující příklad ukazuje definici hlavní fráze a~dvou podfrází.
+
+\begin{example}
+  \ex{\char92IN\char123fonty\char125} \\
+  \ex{\char92IN\char123fonty!proporcionální\char125} \\
+  \ex{\char92IN\char123fonty!neproporcionální\char125}
+\end{example}
+\par\egroup
+
+\medskip
+Při zpracování vstupního souboru \TeX em jsou všechny nalezené fráze zapsány
+do pomocného souboru \ve{\arg{název}.idx}. V~tomto souboru se fráze nacházejí
+ve stejném pořadí, v~jakém jsou uvedeny ve zdrojovém dokumentu. Spuštěním
+programu \ve{makeindex} se vytvoří setříděný seznam frází
+\ve{\arg{název}.ind} využívající prostředí \ve{theindex}.
+Po tomto kroku je nutné znovu provést překlad dokumentu. 
+Sekvence příkazů pro překlad musí být například následující.
+
+\begin{flushleft}
+  \ven{cslatex \arg{název}.tex} \\
+  \ven{makeindex \arg{název}.idx} \\
+  \ven{cslatex \arg{název}.tex} \\
+  \ven{outlines \arg{název}.dvi} \\
+  \ven{dvipdfm -p a4 -o \arg{název}.pdf \arg{název}.dvi}
+\end{flushleft}
+
+\maklabel{indexcolumns}
+Vzhled rejstříku je možné částečně měnit. Nová implementace prostředí 
+\ve{theindex} umožňuje nastavit rejstříku \emph{libovolný počet sloupců.}
+Počet lze změnit vhodnou redefinicí makra \mak{indexcolumns}. Implicitně
+je rejstřík zobrazován do dvou sloupců. Bude-li před výskytem makra
+\ve{\char92printindex} uvedena nová definice makra \mak{indexcolumns},
+rejstřík bude sázen jiným počtem sloupců. Viz následující definici.
+\begin{flushleft}
+  \ex{\char92renewcommand\char123\char92indexcolumns\char125\char123%
+    \char51\char125}
+\end{flushleft}
+\maklabel{indexemph}
+V~tomto případě bude rejstřík sázen do tří sloupců. Kromě počtu sloupců lze
+ovlivňovat i~\emph{styl zvýraznění stran}\IN{styl!zvýraznění}
+odpovídajících frázím vloženým makrem \mak{INEM}. 
+Implicitně jsou zvýrazněné strany sázeny italikou. 
+Pokud by uživatel chtěl změnit jejich sazbu, 
+může redefinovat makro \mak{indexemph}.
+\begin{flushleft}
+  \ex{\char92renewcommand\char123\char92indexemph%
+    \char125\char91\char49\char93\char123\char123\char92bfseries \char35%
+    \char49\char125\char125}
+\end{flushleft}
+\maklabel{indexfashion}
+Nová definice musí být uvedena opět před výskytem makra \ve{\char92printindex}.
+Narozdíl od makra \mak{indexcolumns} má makro \mak{indexemph} jeden
+argument -- tím je vždy číslo zvýrazněné strany. Tvar, váhu, stupeň 
+a~\emph{styl písma v~rejstříku} lze ovlivnit vhodnou redefinicí makra
+\mak{indexfashion}. Obsah makra je vložen před první položku v~rejstříku.
+Všechna makra v~něm uvedená mají pouze lokální rozsah platnosti, to jest
+veškerá nastavení tvaru písma neovlivňují zbytek dokumentu. 
+Příkladem použití budiž následující definice.
+\begin{flushleft}
+  \ex{\char92renewcommand\char123\char92indexfashion\char125%
+    \char123\char92footnotesize\char125}
+\end{flushleft}
+V~tomto případě bude obsah rejstříku sázen písmem o~velikosti poznámky
+pod čarou. Mimo rejstřík však zůstane stupeň písma zachován.
+Všechna tři předchozí makra jsou využívána v~rámci prostředí \ve{theindex}
+a~měla by být redefinována vždy \emph{před uvedením} 
+makra \ve{\char92printindex}.
+
+\subsection{Vytváření a vkládání obrázků}\label{mpost}
+Hlavní nevýhodou generování PostScriptu i~PDF z~jednoho DVI souboru je obtížná
+práce s~obrázky. Oba datové formáty umožňují využívat rozdílné datové formáty
+obrázků. Pokud by uživatel používal jen formát obrázků akceptovatelný
+jedním z~obou formátů, nemohl by již využít DVI soubor k~vytvoření druhého
+výstupu. Uživatel by se tím ochudil o~jednu z~hlavních výhod navrhovaného 
+řešení problému. Oba dva výstupní ovladače ale mohou využívat 
+jednoduché PostScriptové obrázky. 
+Ačkoliv je pojem \uv{jednoduchý} v~tomto kontextu dost subjektivní,
+jedná se v~podstatě o~PostScriptové obrázky sestávající ze základních
+vykreslovacích příkazů, transformačních instrukcí a~operátorů měnících
+styl vykreslování. Jednoduché PostScriptové obrázky dokáže produkovat například
+matematický balík Maple.
+
+\medskip
+V~odborné literatuře se nejčastěji vyskytují 
+\emph{pérovky}\IN{pérovka} -- okomentované nákresy a~diagramy skládající
+se z~čar a~jiných jednoduchých geometrických tvarů, zpravidla doplněné textem.
+Již méně se v~odborných textech vyskytují \emph{autotypie}\IN{autotypie}
+-- obrázky vytvořené fotoreprodukční cestou, to jest rozkladem na síť bodů
+o~různé hustotě, barvě a~velikosti. Pro vytváření pérovek je v~\TeX u určeno
+několik specialisovaných prostředí a~balíků maker. Balíky poskytují různou
+škálu grafických primitiv s~různou mírou uživatelského komfortu. Jednou
+z~nejvhodnějších možností je použít k~výrobě pérovek jazyk \MP, jelikož dokáže
+produkovat dostatečně jednoduchý PostScriptový výstup, zpracovatelný jak 
+výstupním ovladačem \ve{dvips}, tak i~ovladačem \ve{dvipdfm}.
+
+\medskip
+Jazyk \MP{} je programovací jazyk odvozený\IN{jazyk!Metapost}
+z~jazyka \MF{} vyvinutého Donaldem Knuthem, viz \cite{mfbook}.
+Oproti jazyku \MF,\IN{jazyk!Metafont}
+který byl primárně vyvinut pro definici fontů 
+a~měl tudíž některé nepříjemné rysy -- například bitmapový výstup 
+a~nemožnost používání barev, je výstupem \MP u soubor v~jazyku PostScript. 
+Veškerá syntaxe však zůstává až na malé výjimky shodná s~jazykem \MF.
+Síla tohoto programovacího jazyka spočívá především, ale nikoli jen,
+v~možnosti řešit efektivně soustavy lineárních rovnic.
+To umožňuje velmi snadno programovat v~\emph{deklarativním stylu.}
+Autorem jazyka \MP{} je J.~Hobby, viz \cite{hobby}.
+
+\subsubsection*{Makra pro vytváření obrázků}
+Jazyk \MP{} je velice komplexní nástroj. Lze pomocí něj především vytvářet
+velmi přesné obrázky. Díky automatickému řešení soustav lineárních rovnic
+a~silnému makrojazyku není problémem vyvíjet rovněž obecné sady maker sloužící
+k~vykreslování konkrétních tříd obrázků, například automatů, UML~diagramů,
+fuzzy množin a~jiných.
+
+\medskip
+Pro zjednodušení kreslení obrázků a~zavedení jednotného stylu jejich zpracování
+byla vytvořena sada maker uložená v~souboru \ve{upfigure.mp}. V~souboru jsou
+definována makra pro vytvoření okénkové transformace scény a~pro vykreslování 
+a~popis os. Pokud bude uživatel používat tato makra, může s~obrázkem provádět
+jednoduše různé typy transformací. Při těchto transformacích nebudou ovlivněny
+velikosti popisků obrázku. Používání maker není nezbytně nutné, uživatelům
+začátečníkům ale mohou usnadnit práci. Pro přehlednost uvádím popis 
+nově definovaných maker.
+
+\medskip\bgroup
+\noindent%
+\hyplabel{mpmaklnk\char95mk\char95transform}%
+\addtolength{\leftskip}{2.5em}\parindent=0pt%
+\null \kern-2.5em\ve{\char95mk\char95transform} \\[2pt]
+Makro \mp{\char95mk\char95transform} načte podle definovaných proměnných
+fyzickou velikost vykreslovacího okna, respektive uvažovaného prvního 
+kvadrantu. Dále načte informace o~logickém souřadném systému a~vrací 
+\emph{okénkovou transformaci} ze souřadnic scény do fyzických souřadnic.
+Pro změnu měřítka obrázku lze změnit jen definici okénkové transformace.
+
+\smallskip
+Makro \mp{\char95mk\char95transform} nemá žádné argumenty. Informace si bere
+z~lokálních proměnných pevných jmen. Proměnné \ve{dx}, \ve{dy} určují fyzickou
+velikost prvního kvadrantu. Proměnné \ve{ax}, \ve{bx} určují měřítko $x$-ové
+osy prvního kvadrantu. To jest bod \point{{\tt ax},0} je okénkovou transformací
+zobrazen na bod \point{0,0} a~bod \point{{\tt bx},0}
+je zobrazen na \point{{\tt dx},0}. Analogicky Proměnné \ve{ay}, \ve{by}
+určují měřítko $y$-ové osy. Makro vrací hodnotu typu transformace.
+
+\begin{example}
+  \ex{dx := 4cm; dy := 3cm;} \\
+  \ex{ax := 0; bx := 10;} \\
+  \ex{ay := 0; by := 1;} \\
+  \ex{transform fuzzy;} \\
+  \ex{fuzzy := \char95mk\char95transform;}
+\end{example}
+\par\egroup
+
+\medskip\bgroup
+\noindent%
+\hyplabel{mpmaklnk\char95draw\char95axis}%
+\hyplabel{mpmaklnk\char95draw\char95arrow\char95axis}%
+\addtolength{\leftskip}{2.5em}\parindent=0pt%
+\null \kern-2.5em\ve{\char95draw\char95axis%
+~(\arg{fx},\,\arg{lx},\,\arg{fy},\,\arg{ly},\,\arg{t})} \\
+\null \kern-2.5em\ve{\char95draw\char95arrow\char95axis%
+~(\arg{fx},\,\arg{lx},\,\arg{fy},\,\arg{ly},\,\arg{t})} \\[2pt]
+Makra \mp{\char95draw\char95axis} a~\mp{\char95draw\char95arrow\char95axis}
+slouží k~vykreslení os. První z~dvojice maker vykresluje osy bez šipek
+na koncích čar. Druhé makro vykresluje osy včetně zakončujících šipek -- šipky
+jsou umístěny v~prvním kvadrantu. 
+Makra by měla být použita těsně za definicí okénkové transformace.
+
+\smallskip
+Argumenty \arg{fx}, \arg{lx} určují rozpětí, ve kterém bude nakreslena 
+$x$-ová osa, jedná se o~logické souřadnice.
+Obdobně argumenty \arg{fy}, \arg{ly} jsou logické souřadnice určující 
+vykreslení $y$-ové osy. Argument \arg{t} je okénková transformace získaná
+makrem \mp{\char95mk\char95transform}. Následující příklad ukazuje vykreslení
+os~prvního a~druhého kvadrantu.
+
+\begin{example}
+  \ex{\char95draw\char95arrow\char95axis (-bx, bx, ay, by, t);}
+\end{example}
+\par\egroup
+
+\medskip\bgroup
+\noindent%
+\hyplabel{mpmaklnk\char95x\char95label}\hyplabel{mpmaklnk\char95y\char95label}%
+\addtolength{\leftskip}{2.5em}\parindent=0pt%
+\null \kern-2.5em\ve{\char95x\char95label%
+~(\arg{text},\,\arg{pos},\,\arg{t})} \\
+\null \kern-2.5em\ve{\char95y\char95label%
+~(\arg{text},\,\arg{pos},\,\arg{t})} \\[2pt]
+Tato makra slouží k~vytváření popisů os. Makro \mp{\char95x\char95label} 
+je určeno k~popisu $x$-ové osy, makro \mp{\char95y\char95label} je určeno
+k~popisu $y$-ové osy. Obě makra mají identické argumenty. Popisy k~$x$-ové ose
+jsou sázeny pod osou, popisy $y$-ové osy jsou sázeny na jejím levém okraji.
+Kromě samotného popisu je na ose vytvořen i~malý dílek.
+
+\smallskip
+Argument \arg{text} je text popisu. Nejčastěji se používá plain\TeX ovský
+výraz uzavřený mezi klausule \mbox{\ve{btex}$\,\cdots\,$\ve{etex}}. Argument
+\arg{pos} je logická souřadnice na ose.
+Posledním argumentem je okénkové transformace.
+
+\begin{example}
+  \ex{\char95y\char95label (btex \char36{1}\char36\ etex, 1, fuzzy);} \\
+  \ex{\char95y\char95label (btex \char36%
+    \char92alpha\char36\ etex, 0.8, fuzzy);} \\
+  \ex{\char95x\char95label (btex \char36x%
+    \char95{6}\char36\ etex, 6, fuzzy);}
+\end{example}
+\par\egroup
+
+\medskip
+Následující příklad může sloužit jako jednoduchý návod pro vytváření
+obrázků pomocí balíku maker \ve{upfigure.mp}. 
+Aby byly nakreslené obrázky co možná nejpoužitelnější, měly by mít svou
+vnitřní logickou strukturu. V~jednom dokumentu by obrázky měly být rovněž 
+kresleny stejným stylem čar, popisy os by měly mít stejný styl a~podobně.
+
+\medskip
+V záhlaví obrázku bývá obvykle definováno měřítko.
+Do skutečných rozměrů je obrázek transformován pomocí jednoduché okénkové
+transformace. Hodnoty \ve{dx}, \ve{dy} udávají skutečnou velikost kvadrantu.
+V následující ukázce jsou nastaveny na \mbox{4\,cm} a~2\,cm.
+Hodnoty \ve{ax}, \ve{bx}, \ve{ay} a~\ve{by} udávají logický souřadný systém
+v~prvním kvadrantu. Tento systém by měl být volen tak, 
+aby bylo nakreslení obrázku co nejjednodušší. Například při použití
+goniometrických funkcí bude vhodné volit rozsah od $0$ po $2\pi$ 
+v~$x$-ové ose a od $0$ po $1$ v~$y$-ové ose.
+Posledním krokem v~záhlaví je inicialisace okénkové transformace podle
+definovaných hodnot.
+
+\begin{flushleft}
+  \ex{beginfig (1)} \\
+  \ex{~~input upfigure.mp;} \\
+  \ex{~~dx := 4cm; dy := 3cm;} \\
+  \ex{~~ax := 0; bx := 2;} \\
+  \ex{~~ay := 0; by := 2;} \\[4pt]
+  \ex{~~transform t;} \\
+  \ex{~~t := \char95mk\char95transform;}
+\end{flushleft}
+
+Makrem \mp{\char95draw\char95axis} se vykreslují osy. Posledním argumentem
+makra je okénková transformace vytvořená předchozím voláním makra 
+\mp{\char95mk\char95transform}. 
+První čtyři argumenty určují rozsah vykreslovaných os.
+V~následující ukázce jsou vykresleny osy prvního
+kvadrantu s~mírným přesahem do čtvrtého kvadrantu.
+Rozsah os je vyjadřován v~logických souřadnicích.
+
+\begin{flushleft}
+  \ex{~~\char95draw\char95axis (ax, bx, -0.2by, by, t);}
+\end{flushleft}
+
+V~dalším bloku obrázku by měl být nakreslen vlastní obsah -- ovšem bez
+komentářů, ty by pro přehlednost měly být umístěny až na konci. Další kód
+ukazuje vytvoření dvou cest representujících protínající se funkce. Pokud
+nejde o~přesně zadané funkce, lze je vytvořit jako jednoduché interpolační
+křivky se zadanými tečnými vektory v~počátku a konci. Pokud se jedná
+o~přesně zadané funkce, měly by být interpolovány přes své funkční hodnoty.
+
+\begin{flushleft}
+  \ex{~~path p, q;} \\
+  \ex{~~p := (0.2, -0.5)\char123dir 70\char125{} ... \char123%
+    dir 20\char125(1.8, 1.8);} \\
+  \ex{~~q := (0.2, 1.8)\char123dir -70\char125{} ... \char123dir -10\char125%
+    (1.8, 0.2);} \\[4pt]
+  \ex{~~draw p transformed t;} \\
+  \ex{~~draw q transformed t;}
+\end{flushleft}
+
+Datový typ \ve{path} má v~jazyku \MP{} význam \emph{cesty.}\IN{cesta}
+Cesta se může skládat z~přímých úseků a~křivek. \MP{} disponuje možností
+vytvářet interpolační i~aproximační křivky. 
+V~další fázi bude tečkovanou čarou vyznačen průsečík obou cest. Úsečka povede
+povede z~průsečíku do bodu na ose~$x$ a~bude rovnoběžná s~osou~$y$.
+Průsečík dvou cest může být nalezen například makrem \ve{intersectionpoint}.
+Hustotu tečkování určuje proměnná \ve{dotted\char95line} deklarovaná rovněž 
+v~balíku maker \ve{upfigure.mp}.
+
+\begin{flushleft}
+  \ex{~~z1 = p intersectionpoint q;} \\
+  \ex{~~draw (z1 --- (x1, 0)) transformed t dashed dotted\char95line;}
+\end{flushleft}
+
+Poslední částí zdrojového kódu obrázku jsou komentáře.
+Pokud jsou komentáře uprostřed obrázku, lze je vytvářet přímo makrem
+\ve{label}. Pokud je potřeba popisovat osy, je dobré využít makra 
+\mp{\char95x\char95label} a~\mp{\char95y\char95label}. 
+Makra berou jako argumenty text, parametr a~okénkovou transformaci.
+S~komentářem se na ose automaticky vytvoří i~značka. 
+Komentování os by mělo být střídmé. Leckdy stačí jen orientační hodnoty --
+komentovány by měly být zejména důležité hodnoty.
+
+\begin{flushleft}
+  \ex{~~pair pl, ql;} \\
+  \ex{~~pl := point length (p) of p;} \\
+  \ex{~~ql := point length (q) of q;} \\
+  \ex{~~label.rt (btex \char36y=f\char95\char49(x)\char36{} etex,
+    pl transformed t);} \\
+  \ex{~~label.rt (btex \char36y=f\char95\char50(x)\char36{} etex,
+    ql transformed t);} \\
+  \ex{~~\char95x\char95label (btex \char36\char92xi\char36{} etex, x1, t);} \\
+  \ex{endfig;}
+\end{flushleft}
+
+\begin{figure}
+  \centerline{\epsfbox{upstyles.2}}
+  \caption{Jednoduchý obrázek v \MP u.}
+  \label{mpost_fig}
+\end{figure}
+
+Schéma funkcí odpovídající předešlému zdrojovému kódu naleznete 
+na obrázku \ref{mpost_fig}
+Při vytváření obrázku je dobré vyvarovat se použití absolutních souřadnic.
+Pokud budou v~dokumentu uvedeny absolutní souřadnice nebo rozměry, 
+jejich použití znemožní další jednoduché úpravy obrázku. Například při změně
+měřítka by mohlo dojit k~úplnému rozpadu obrázku. Vytváření obrázků v~jazyku
+\mbox{\MP{}} s~sebou přináší řadu výhod. 
+Jelikož je jazyk velmi přehledný, obrázky je možné nejen psát ručně,
+ale snadno generovat jinými programy.
+
+\medskip
+Další nespornou výhodou je možnost vytváření generických maker a~maker určených
+pro speciální typy obrázků. Jejich kreslení se potom výrazným způsobem 
+zjednodušuje. Další nespornou výhodou \MP u je spolupráce se samotných \TeX em.
+Komentáře vytvářené k~obrázkům jsou zpracovávány přímo \TeX em, takže 
+nenabourávají celkovou typografickou úroveň dokumentu. Tento problém má řada
+jinak velmi hezky vysazených textů -- obrázky v~nich jsou vyráběny softwarem
+bez vazby na \TeX.
+Obrázky potom používají jiné rodiny a~řezy písma, což působí na čtenáře
+většinou rušivě nebo odpudivě.
+
+\subsubsection*{Vkládání obrázků do dokumentu}
+Zdrojové kódy obrázků se zapisují do samostatného souboru. V~jednom souboru
+může být uvedeno i~několik obrázků. Obrázky jsou vzájemně odděleny klíčovým
+slovem~\ve{beginfig(\arg{číslo})}, kde číslo unikátně označuje obrázek v~rámci
+jednoho zdrojového souboru. Každý zdrojový soubor je zakončen 
+klíčovým slovem~\ve{bye} podobně, jako zdrojový kód pro plain\TeX.
+Má-li být obrázek použit v~dokumentu, musí být nejprve přeložen ze své
+zdrojové podoby a~vložen do cílového dokumentu.
+
+\medskip
+Obrázky jsou ze zdrojové podoby překládány programem \ve{mpost}. Program
+bere jako argument soubor se zdrojovými kódy obrázků. Při úspěšném překladu
+jsou v~aktuálním adresáři vytvořeny jednotlivé obrázky. Jestliže má vstupní
+soubor název ve tvaru \ve{\arg{název}.mp}, potom budou mít výstupní soubory
+jména tvaru \ve{\arg{název}.\arg{číslo}}, kde \arg{číslo} je číslo příkladu
+definované klíčovým slovem \ve{beginfig(\arg{číslo})}. Tyto soubory jsou
+v~podstatě zjednodušené PostScripty, jejich přímé použití však obecně není 
+možné. V~souborech nejsou navázány informace o~fontech.
+
+\medskip
+Z~tohoto důvodu musí po překladu programem \ve{mpost} následovat překlad 
+vlastního dokumentu a~vytvoření výstupu v~jazyku PostScript nebo v~datovém
+formátu PDF. Na úrovni DVI souborů obecně nelze obrázky prohlížet. Proces
+překladu dokumentu se rozšiřuje o~další příkaz, viz následující ukázku.
+
+\begin{flushleft}
+  \ven{mpost \arg{obrázky}.mp} \\
+  \ven{cslatex \arg{název}.tex} \\
+  \ven{outlines \arg{název}.dvi} \\
+  \ven{dvipdfm -p a4 -o \arg{název}.pdf \arg{název}.dvi}
+\end{flushleft}
+
+Jelikož jsou vygenerované obrázky v~jazyku PostScript, lze je do dokumentu
+vkládat jako jiné PostScriptové obrázky, 
+například pomocí makra \ve{\char92epsfbox}
+z~dodatečného stylu \mbox{\textsf{epsf}}. Tento dodatečný styl je automaticky
+zahrnut i~v~nových stylech, není jej tedy třeba vkládat makrem
+\ve{\char92usepackage}. Obrázky je vhodné umístit do plovoucích prostředí
+například následujícím způsobem.
+
+\begin{flushleft}
+  \ex{\char92begin\char123figure\char125} \\
+  \ex{~~\char92centerline\char123\char92epsfbox\char123obrazky.3%
+    \char125\char125} \\
+  \ex{~~\char92caption\char123Činnost \char92TeX u.\char125} \\
+  \ex{~~\char92label\char123tex\char95fig\char125} \\
+  \ex{\char92end\char123figure\char125} \\
+\end{flushleft}
+
+Místo makra \ve{\char92centerline} lze samozřejmě použít jiný způsob 
+vycentrování, například umístění obrázku do prostředí \ve{center}.
+Na závěr ke vkládání obrázků je dobré připomenout, že obrázky by měly mít
+svůj popis vždy na spodní straně. U~tabulek umístěných 
+v~plovoucím prostředí\IN{prostředí!plovoucí}
+již není tento požadavek striktně kladen,
+ale v~rámci celého dokumentu by měly být popisky umístěny vždy buďto nahoře,
+nebo vždy dole.
+
+\section{Popis implementace stylů}\label{styimpl}
+V~této kapitole čtenář nalezne stručný popis implementace stěžejních částí
+vytvořených stylů. 
+Dokumentace není v~žádném případě vyčerpávající. Styly jsou svým obsahem
+velmi podobné, zaměřil jsem se především na popis implementace hypertextových
+odkazů. V~další části se stručně zmíním o~nových typografických konvencích
+a~jejich provedení. Pokročilý uživatel formátu \LaTeX{} by po přečtení této
+sekce by měl být schopen předložené styly podle svých potřeb dále rozšiřovat.
+
+\subsubsection*{Hypertextové odkazy}
+V~první řadě byl vyřešen problém vkládání PDF objektů a~potlačení vkládání
+objektů při uvedení přepínače \opt{nopdf}.
+Hned poté byla vytvořena sada jednoduchých maker umožňujících do dokumentu
+vkládat PDF objekty, konkrétně \emph{anotace}\IN{anotace}
+a~\emph{návěstí.}\IN{návěstí}
+Tyto objekty slouží k~vytváření odkazů v~rámci dokumentu. 
+
+\medskip
+Všechny styly jsou vybaveny přepínačem \opt{nopdf}. 
+Pokud je tento přepínač uveden, do výsledného
+dokumentu nejsou vkládány žádné PDF objekty. V~dokumentu je definováno makro
+\mak{\char64inspdf} následovně.
+\begin{flushleft}\maklabel{\char64inspdf}
+  \ex{\char92def\char92\char64inspdf\char35{1}\char123\char35{1}\char125}
+\end{flushleft}
+Je-li uveden přepínač \opt{nopdf}, makro je definováno ve tvaru 
+\ve{\char92def\char92\char64inspdf\char35{1}\char123\char125}.
+Každý příkaz vkládající PDF objekty je uveden jako argument makra 
+\mak{\char64inspdf}. V~případě uvedení přepínače \opt{nopdf} se tím pádem
+do dokumentu nevloží žádný speciální příkaz. Pokud bude uživatel chtít
+rozšířit možnosti stylu, měl by důsledně psát všechny nové PDF příkazy
+jako argumenty makra \mak{\char64inspdf} a~funkčnost přepínače \opt{nopdf}
+bude zachována.
+
+\medskip
+Do první kategorie PDF maker patří makra pro práci s~barvami. 
+Makro \mak{\char64pdfsetcolor} má dva argumenty, prvním a~nich je \emph{barva,}
+druhým argumentem je sekvence příkazů. Makro slouží k~vysazení text se
+změněnou barvou popředí. Barva se v~PDF definuje jako pole, to jest ve
+hranatých závorkách. PDF akceptuje množství barevných schémat. V~implementaci
+jsem použil RGB, to jest aditivní skládání barev ze tří základních 
+-- červené, zelené a~modré. Pro zvýraznění odkazů je ve stylu předdefinována
+pevná barva, viz makro \mak{\char64\char64pdflinkcolor}. 
+\begin{flushleft}%
+  \maklabel{\char64pdfsetcolor}\maklabel{\char64\char64pdflinkcolor}%
+\ex{\char92def\char92@pdfsetcolor\char35\char49\char35\char50\char123%
+  \char92@inspdf\char123\char92special\char123pdf:bc \char35\char49%
+  \char125\char125\char37} \\
+\ex{~~\char35\char50\char92@inspdf\char123\char92special\char123pdf:ec%
+  \char125\char125\char125} \\
+\ex{\char92def\char92@@pdflinkcolor\char123[\char48.\char50~\char48.%
+  \char51~\char48.\char54]\char125}
+\end{flushleft}
+Speciálními instrukce \ve{pdf:bc}, \ve{pdf:ec} se vymezuje počátek a~konec
+vybarveného bloku. Jedná se o~instrukce pro výstupní ovladač \ve{dvipdfm}.
+Barvy jsou v~PDF skládány na zásobník, instrukce \ve{pdf:bc} přidá barvu na 
+vrchol zásobníku, příkaz \ve{pdf:ec} odebere barvu z~vrcholu zásobníku.
+
+\medskip
+Cílové místo v~dokumentu je definováno makrem \mak{\char64pdfdest}. Makro má
+jediný argument a~to název cílového místa. 
+Uvedením makra je zadané jméno svázáno s~aktuálním místem v~dokumentu.
+Při definici cílového místa je rovněž
+uvedeno i~zvětšení výřezu. V~následujícím kódu jsou k~určení místa
+odkazu použity speciální proměnné \ve{@thispage} a~\ve{@ypos}. 
+Dereference proměnných je prováděna výstupním ovladačem \ve{dvipdfm}.
+\begin{flushleft}\maklabel{\char64pdfdest}
+  \ex{\char92def\char92@pdfdest\char35\char49\char123\char92@inspdf\char123%
+    \char37} \\
+  \ex{~~\char92special\char123pdf:dest~(\char35%
+    \char49)~[~@thispage~/FitH~@ypos~]\char125\char125\char125}
+\end{flushleft}
+To jest při kliknutí na odkaz bude stránka zvětšena -- šířka strany bude
+zabírat celé okno prohlížeče, 
+navíc bude výřez posunut k~aktuálnímu místu odkazu.
+Jelikož jsou v~PDF hodnoty datového typu \emph{řetězec}\IN{řetězec}
+uzavírány do kulatých závorek,
+je~uzavřen i~argument \ve{\char35{1}} makra \mak{\char64pdfdest}.
+K~vytváření obecných odkazů uvnitř dokumentu slouží makro \mak{\char64pdflink}.
+Makro má dva argumenty. Prvním z~nich je sekvence příkazů, druhým je odkaz.
+Sekvence příkazů slouží k~vysazení obsahu odkazu.
+\begin{flushleft}\maklabel{\char64pdflink}
+  \ex{\char92def\char92@pdflink\char35\char49\char35\char50\char123%
+    \char92leavevmode\char92@inspdf\char123\char37} \\
+  \ex{~~\char92special\char123pdf:bann~<<~/Type~/Annot~/Subtype~/Link} \\
+  \ex{~~~~/Border~[~\char48~\char48~\char48~]~/A %
+    <<~/S~/GoTo~/D~(\char35\char50)~>>~>>\char125\char125\char37} \\
+  \ex{~~\char123\char92@pdfsetcolor\char123\char92@@pdflinkcolor\char125%
+    \char123\char35\char49\char125\char125\char37} \\
+  \ex{~~~~\char92@inspdf\char123\char92%
+    special\char123pdf:~eann\char125\char125\char92relax\char125}
+\end{flushleft}
+V~předcházejícím kódu maker je nejprve vložen \emph{začátek anotace.} V~této
+deklaraci je uvedeno o~jakou anotaci se jedná. Anotace má nastavenu barvu
+okraje na barvu pozadí, to~jest kolem odkazů v~dokumentu není vytvářen
+\uv{rámeček}. Do~dokumentu je dále vložen \emph{zvýrazněný text}
+příslušný prvnímu argumentu. 
+Na~posledním místě je v~makru celá \emph{anotace ukončena.}
+Text v~odkazu je zvýrazněn pomocí \mak{\char64pdfsetcolor}.
+
+\medskip
+Pomocí výše popsaných obecných maker již není problém transformovat stávající
+makra \LaTeX u do hypertextové podoby. Pro ukázku vezměme například makra 
+\ve{\char92label} a~\ve{\char92ref}. Nejprve je obsah starých maker, to jest
+\emph{posloupnost tokenů,}\IN{token}
+navázán na nová jména \ve{\char92@oldlabel}, 
+\ve{\char92@oldref}.
+\begin{flushleft}
+  \ex{\char92let\char92@oldlabel=\char92label} \\
+  \ex{\char92let\char92@oldref=\char92ref}
+\end{flushleft}
+Poté jsou na původní jména maker navázána makra nová -- tato makra zajišťují
+vytváření odkazů. Ve svém těle nová makra používají makra původní, jenž byla
+uchována jako sekvence tokenů. Tento přístup má několik výhod. Uživatel maker
+vlastně ani nepozná, že byla makra změněna -- jejich funkčnost se nemění.
+Řešení je navíc obecné. Pokud se změní vnitřní implementace původních maker,
+nové dodatečné styly to nijak neovlivní.
+\begin{flushleft}\maklabel{label}\maklabel{ref}
+  \ex{\char92def\char92label\char35\char49\char123\char92@pdfdest%
+    \char123lnk\char35\char49\char125\char92@oldlabel\char123\char35%
+    \char49\char125\char125} \\
+  \ex{\char92def\char92ref\char35\char49\char123\char92@pdflink\char123%
+    \char92@oldref\char123\char35\char49\char125\char125\char123lnk\char35%
+    \char49\char125\char125}
+\end{flushleft}
+Nové makro \mak{label} definuje nejprve hypertextové návěstí, hned potom 
+definuje i~návěstí v~\LaTeX u -- obě návěstí mají shodné jméno. Při odkazu
+na návěstí je vytvořen hypertextový odkaz, přitom zvýrazněná část odkazu je
+definována původním makrem \mak{ref}. Obdobným způsobem jsou definována 
+i~ostatní makra.
+
+\medskip
+Pro vytváření externích odkazů slouží makro \mak{\char64pdfuri}. Argumenty jsou
+stejné jako v~případě makra \mak{\char64pdflink}. Makro se pouze liší 
+v~definici typu anotace. Anotace URI -- \emph{Uniform Resource Identifier}
+slouží k~zadávání unifikovaných identifikátorů, například URL adresy.
+Viz kód makra.
+\begin{flushleft}\maklabel{\char64pdfuri}
+  \ex{\char92def\char92@pdfuri\char35\char49\char35\char50\char123%
+    \char92leavevmode\char92@inspdf\char123\char37} \\
+  \ex{~~\char92special\char123pdf:bann~<<~/Type~/Annot~/Subtype~/Link} \\
+  \ex{~~~~/Border~[~\char48~\char48~\char48~]~/A %
+    <<~/S~/URI~/URI~(\char35\char50)~>>~>>\char125\char125\char37} \\
+  \ex{~~\char123\char92@pdfsetcolor\char123\char92@@pdflinkcolor\char125%
+    \char123\char35\char49\char125\char125\char37} \\
+  \ex{~~~~\char92@inspdf\char123\char92%
+    special\char123pdf:~eann\char125\char125\char92relax\char125}
+\end{flushleft}
+Díky makru \mak{\char64pdfuri} lze snadno implementovat makra \mak{link}
+a~\mak{mail}. Jejich kód zde uvádět nebudu, najdete jej ve zdrojových souborech
+dodatečných stylů
+
+\medskip
+Poslední kategorií odkazů v~rámci dokumentu jsou záložky. Záložky nepatří pod
+objekty typu anotace, jde o~samostatný PDF objekt. V~kapitole \ref{obecna}
+bylo popsáno generické makro \mak{insertoutline} sloužící k~vytváření záložek.
+Makro je implementováno velmi jednoduše, do dokumentu vkládá speciální 
+instrukci svazující aktuální stránku se záložkou.
+\begin{flushleft}
+  \ex{\char92def\char92insertoutline%
+    \char35\char49\char35\char50\char123\char37} \\
+  \ex{~~\char92@inspdf\char123\char92special%
+    \char123pdf:outline~\char35\char49} \\
+  \ex{~~~~<<~/Title~(\char35\char50)~%
+    /Dest~[~@thispage~/FitH~@ypos~]~>>\char125\char125\char125}
+\end{flushleft}
+Základním požadavkem na záložky bylo jejich automatické vkládání při uvedení
+začátku kapitoly. Ve stylu \textsf{article} jsou veškeré kapitoly vytvářeny
+sadou dost neprůhledných obecných maker, hlavní z~nich je makro 
+\ve{\char92@startsection}. To se mi však pro úpravu nezdálo dostatečně
+přehledné. Místo něj záložky vkládám v~redefinovaném makru 
+\mak{\char64sect}.
+Při vkládání musí být zohledněn také problém názvů záložek. Je-li v~názvu
+kapitoly použito neexpandovatelné primitivum, není vhodné jej v~tomto tvaru
+vkládat do názvu záložky. Nejprve uveďme kód.
+\begin{flushleft}\maklabel{\char64sect}
+  \ex{\char92def\char92nextoutline\char35\char49\char123%
+    \char92gdef\char92@@nextoutlinelabel\char123\char35%
+    \char49\char125\char125} \\
+  \ex{\char92let\char92@oldsect=\char92@sect} \\[4pt]
+  \ex{\char92def\char92@sect\char35\char49\char35\char50\char35\char51%
+    \char35\char52\char35\char53\char35\char54[\char35\char55]\char35%
+    \char56\char123\char37} \\
+  \ex{~~\char92ifx\char92@@nextoutlinelabel\char92undefined%
+    \char92insertoutline\char123\char35\char50\char125\char123\char35%
+    \char55\char125\char37} \\
+  \ex{~~\char92else\char92insertoutline\char123\char35\char50\char125%
+    \char123\char92@@nextoutlinelabel\char125\char37} \\
+  \ex{~~\char92let\char92@@nextoutlinelabel=\char92undefined\char92fi\char37}\\
+  \ex{~~\char92@oldsect\char123\char35\char49\char125\char123\char35%
+    \char50\char125\char123\char35\char51\char125\char123\char35\char52%
+    \char125\char123\char35\char53\char125\char123\char35\char54\char125%
+    [\char35\char55]\char123\char35\char56\char125\char125}
+\end{flushleft}
+Při uvedení \mak{nextoutline} je definováno globální makro. Pokud začne další
+kapitola, je nejprve testován obsah tohoto globálního makra. 
+Pokud bylo definováno, bude v~záložce místo aktuálního názvu kapitoly uveden
+název vložený makrem \mak{nextoutline}. Původní obsah makra \ve{\char92@sect}
+byl uschován podobným způsobem jako u~předcházejících maker.
+Nakonec je název vložený makrem \mak{nextoutline} opět \uv{zapomenut}, 
+aby neovlivnil název další kapitoly. Na závěr je v~každém dodatečném
+stylu vložen jeden speciální řádek.
+\begin{flushleft}
+  \ex{\char92special\char123\char92@inspdf\char123%
+    pdf:docview~<<~/PageMode~/UseOutlines~>>\char125\char125}
+\end{flushleft}
+Účelem tohoto příkazu je zapnout v~dokumentu zobrazování záložek.
+
+\medskip
+Pokud by uživatel chtěl využívat současné dodatečné styly například se stylem 
+\textsf{report}, musel by si adekvátně upravit makro \ve{\char92chapter}.
+V~opačném případě by začátky kapitol nebyly vkládány do záložek.
+
+\subsubsection*{Nové typografické konvence}
+Současnému systému \LaTeXE{} je vytýkáno několik nedostatků. 
+Z~pohledu zvyklostí při české sazbě je to především nevhodné číslování kapitol 
+a~umísťování odstavcových zarážek. Oba dva problémy jsou v~nových dodatečných
+stylech vyřešeny.
+
+\medskip
+Ve standardním \LaTeX u je v~prvním odstavci kapitoly vypuštěna odstavcová
+zarážka, to jest všechny řádky prvního odstavce kapitoly začínají na levém
+okraji. Každý další odstavec začíná zarážkou velikosti 20~monotypových bodů.
+V~českých dokumentech je obvyklé uvádět odstavcovou zarážku bez rozdílu
+u~každého odstavce, nebo ji neuvádět vůbec. Redefinicí makra 
+\mak{\char64afterheading} lze dosáhnout požadovaného efektu.
+\begin{flushleft}\maklabel{\char64afterheading}
+  \ex{\char92def\char92@afterheading\char123\char125}
+\end{flushleft}
+
+V~angloamerické literatuře bývají kapitoly obvykle číslovány bez tečky
+na~konci. V~české sazbě je zvykem tečky na konci čísel kapitol uvádět. Stejně
+tak i~obrázky a~tabulky by měly být číslovány tímto stylem. Změna této notace
+si vyžádala největší zásahy do maker, protože ji nebylo možné jednoduše vyřešit
+pouze na jednom místě. Jednak musela být redefinována makra zobrazující čísla
+kapitol, podkapitol a~podobně, 
+musela být také změněna i~makra pro vytváření popisů
+obrázků a~podobně. Na závěr kapitoly uvedu jen některá z~maker měnící styl
+vypisování kapitol, pro další detaily viz zdrojové kódy maker.
+\begin{flushleft}
+  \ex{\char92renewcommand\char92thepart~~~~~~\char123%
+    \char92@Roman\char92c@part.\char125} \\
+  \ex{\char92renewcommand\char92thesection~~~\char123%
+    \char92@arabic\char92c@section.\char125} \\
+  \ex{\char92renewcommand\char92thesubsection\char123%
+    \char92thesection\char92@arabic\char92c@subsection.\char125}
+\end{flushleft}
+
+Ostatní části maker, jako například úvodní stránky, již nepotřebují další 
+komentář, jsou vytvořeny průhledným způsobem pouze pomocí základních 
+maker \LaTeX u. Zdrojové kódy maker jsou přehledně strukturovány a~komentovány,
+uživateli by jejich další rozšiřování nemělo činit problémy.
+
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{plrm} Adobe Systems Inc.
+  \emph{%
+    \link{PostScript Language Reference}
+    {http://www.adobe.com/products/postscript/pdfs/PLRM.pdf}.} \\
+  ISBN 0--201--37922--8, 3rd Edition, Addison Wesley, 1999.
+
+\bibitem{pdfrm} Adobe Systems Inc.
+  \emph{%
+    \link{Portable Document Format Reference}
+    {http://partners.adobe.com/asn/developer/acrosdk/docs/PDFRef.pdf}.} \\
+  ISBN 0--201--61588--6, 2nd Edition, Addison Wesley, 2000.
+
+\bibitem{hobby} Hobby, J. D. \emph{A User's Manual for \MP.} \\
+  AT\&T Bell Laboratories, Murray Hill, NJ 07974.
+
+\bibitem{texbook} Knuth, D. E. \emph{The \TeX book}.
+  Volumes A, B of \emph{Computers \& Typesetting.} \\
+  Addison Wesley, Reading, Massachusetts 1986.
+
+\bibitem{mfbook} Knuth, D. E. \emph{The \MF book}.
+  Volume C of \emph{Computers \& Typesetting.} \\
+  Addison Wesley, Reading, Massachusetts 1986.
+
+\end{thebibliography}
+
+\renewcommand{\indexcolumns}{3}
+\printindex
+
+\end{document}

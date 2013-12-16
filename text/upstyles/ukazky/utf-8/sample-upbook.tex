@@ -1,0 +1,207 @@
+%%%  Vzor pro použití makra pro skripta
+%%%  (c) 2001 Vilém Vychodil, <vilem.vychodil@upol.cz>
+%%%
+%%%  Po přeložení programem CSLaTeX (třikrát) je potřeba použít
+%%%  program DVIPS a takto získaný PostScriptový soubor vytisknout
+%%%  na PostScriptové tiskárně nebo pomocí programu GhostScript.
+%%%
+%%%  Rovněž je možné použít program DVIPDFM a vytvořit z dokumentu
+%%%  soubor ve formátu PDF včetně hypertextových odkazů.
+
+
+%%% Deklarace hlavičky dokumentu. Pokud není potřeba oboustranný dokument,
+%%% je možné zrušit argument `twoside'. Argument by měl být vypnut pouze
+%%% ve výjimečných situacích.
+\documentclass[twoside]{article}
+
+%%% Připojení dodatečného stylu pro ročníkovou práci. Nepovinné argumenty
+%%% `tables' a `figures' použijte pouze v případě, že váš dokument obsahuje 
+%%% tabulky a obrázky a chcete vytvořit jejich seznamy za obsahem.
+%%% 
+%%% Argument `joinlists' způsobí zřetězení obsahu a seznamů tabulek a obrázků.
+%%% Není-li použít, všechny seznamy jsou uvedeny na samostatných stránkách.
+%%%
+%%% Je-li použit argument `noseceqn', rovnice budou číslovány v rámci celého
+%%% dokumentu. Implicitně jsou rovnice číslovány v rámci kapitol.
+%%%
+%%% Je-li použit argument `smalltitle', název knihy není vypisován versálkami.
+%%%
+%%% Pokud chcete vytvářet pouze dokument ve formátu PostScript, můžete uvést
+%%% dodatečný argument `nopdf'. Tím se potlačí chybová hlášení při použití
+%%% programu `dvips'.
+\usepackage[tables,figures]{upbook}
+
+%%% Dodatečné standardní styly.
+\usepackage[utf8]{inputenc}
+
+%%% Parametry pro vytvoření úvodních stránek. Není-li datum definováno,
+%%% je bráno aktuální datum překladu. Makrem \subtitle je možné vytvořit druhý
+%%% řádek v názvu dokumentu -- ten není nikdy vypisován versálkami.
+\title{Název textu}
+%\subtitle{Druhý řádek názvu}
+\author{Jan Novák}
+\date{Říjen 2001}
+
+%%% Pomocí \docinfo je možné vytvořit název pro PDF dokument, zpravidla je
+%%% dobré použít předcházející název, ale bez diakritiky. Možné je však zvolit
+%%% úpolně jiný výstižný název. Při tvorbě PostScriptu bude příkaz ignorován.
+\docinfo{Jan Novak}{Nazev textu}
+
+%%% Zadání abstraktu díla. Abstrakt může být vynechán.
+\abstract{%
+Tato anotace by měla stručně popisovat obsah textu a neměla by
+přitom přesáhnout zhruba 10 řádků. V~žádném případě by neměla být rozdělena
+do více odstavců.}
+
+%%% Poznámky o autorovi a kontakt na něj.
+\about{%
+  Text vznikl na katedře informatiky, PřF, UP Olomouc.
+  Při výrobě textu byl použit textový editor Emacs, typografický systém
+  \TeX\ a~operační systém
+  \link{Debian GNU/Linux~2.2}{http://www.debian.org}.
+  Autor může být kontaktován elektronickou poštou na adrese\/
+  \mail{jan.novak@upol.cz}. \\
+  \lower\smallskipamount\hbox{{\rm Copyright \copyright\hskip.5em%
+      Jan Novák, 2001}}}
+
+%%% Generování indexových frází. Zahájení dokumentu.
+\makeindex
+\begin{document}
+
+%%% Vytvoření úvodních stránek, obsahu a seznamu tabulek a obrázků.
+\maketitle
+
+
+%%% Obsah textu. Lze jej tradičně dělit do kapitol. Pro zvýraznění větších
+%%% bloků je možné využít i části deklarované pomocí \part{}. Obecně se ale
+%%% Jejich používání příliš nedoporučuje. Mnohem lepší je využít dodatky.
+\section{První kapitola}
+Obsah kapitoly.
+Zde jsem vycházel z~prací kolegy Složitého, viz \cite{slozi}. 
+Lze jej kontaktovat na adrese \mail{tomas.slozity@tezke.problemy.cz}.
+\INEM{problém}
+\IN{problém!zapeklitý}
+\IN{problém!zapeklitý!úplný}
+\INEM{problém!a tady je ukázka dlouhého popisu}
+
+\subsection{První podkapitola}\label{kapX}
+Toto je text mé podkapitoly číslo \ref{kapX}
+Zde jsou uvedeny číslované vztahy,
+\begin{align}
+  f(1) & = 1, \\
+  f(n) & = n \cdot f(n-1).
+\end{align}
+
+\subsection{Druhá podkapitola}
+Obsah druhé podkapitoly.
+\IN{tělo!druhé kapitoly}
+
+\begin{table}[ht]
+  \begin{center}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{||l|rr||}
+      \hline
+      & \multicolumn{2}{|c||}{\bf \hbox{Informace}} \\
+      \cline{2-3}
+      \bf Čaj & \bf Cena & \bf Množství \\
+      \hline
+      Chun Mee & 30\,Kč & 100\,g \\
+      Lung Ching & 86\,Kč & 50\,g \\
+      Show Mee & 147\,Kč & 50\,g \\
+      \hline
+    \end{tabular}
+    \caption{Toto je tabulka.} \label{tab}
+  \end{center}
+\end{table}
+
+\subsection{Další podkapitola}
+Toto je moje další podkapitola. Tato podkapitola bude dále členěna.
+
+\subsubsection{Podkapitola}\label{podkapX}
+Tato podkapitola má číslo \ref{podkapX} Zde budu řešit programování podle
+knihy \cite{kovar}. V této části je i obrázek, viz \ref{obr}
+
+\begin{figure}[ht]
+  \centerline{\epsfbox{uplogo.eps}}
+  \caption{Toto je obrázek.} \label{obr}
+\end{figure}
+
+\cleardoublepage
+\section{Druhá kapitola}\label{podkapY}
+Tato část má číslo \ref{podkapY} a~je umístěna na stránce \pageref{podkapY}.
+Na stránce uvedu i~odkaz na URL, třeba \url{http://www.inf.upol.cz}.
+\IN{problém!silný}
+Dále lze vytvářet i~odkazy na kapitoly \emphref{v~rámci dokumentu}{kapX}.
+Stejně tak lze vytvářet i~odkazy \emphref{přímo do textu}{dotextu},
+pro vytvoření návěstí je potřeba použít makro \verb|\hyplabel|.
+
+\cleardoublepage
+\section{Třetí kapitola}
+Obsah třetí kapitoly.
+\IN{problém}\IN{problém!snesitelný}
+
+\medskip
+\suboutline{Vložená záložka}
+Na toto místo směřuje záložka vytvořená pomocí makra \verb|\suboutline|.
+
+\subsection{Další podkapitola}
+\hyplabel{dotextu}
+A opět podkapitola. Sem povede odkaz z~textu.
+
+\nextoutline{Jiné jméno}
+\subsection{A ještě další podkapitola}
+Zase jedna podkapitola. Tato kapitola se bude v~záložkách jmenovat jinak.
+
+
+%%% Vytvoření seznamu literatury.
+\cleardoublepage
+\begin{thebibliography}{MMM99}
+
+\bibitem[Smi90]{smith}
+  Smith, John. \emph{User and program.}
+  Publisher, City, 1990.
+
+\bibitem[Kov91]{kovar}
+  Kovář, Jan. \emph{Jak programovat.}
+  Nakladatelství, Město, 1991.
+
+\bibitem[Slo01]{slozi} 
+  Složitý, Tomáš.
+  \link{\emph{Překladač s~nakladačem.}}{http://www.inf.upol.cz}
+  Elektronická publikace, 2001.
+
+\end{thebibliography}
+
+
+%%% Dodatky. V některých případech se dodatky sázejí písmem petit (stupeň 8),
+%%% Pokud tak chcete učinit, uzavřete každou sekci do bloku a na jejím začátku
+%%% použijte makro \small.
+\appendix
+\cleardoublepage
+\section{První dodatek}
+Text prvního dodatku.
+
+\subsection{Sekce v prvním dodatku}
+Dodatky lze rovněž členit, i když se to příliš nedoporučuje.
+
+\cleardoublepage
+\section{Druhý dodatek}
+Text druhého dodatku.
+
+
+%%% Rejstřík. Redefinicí makra \indexcolumns lze měnit počet sloupců rejstříku,
+%%% implicitně je rejstřík vytvářen do dvou sloupců. Makrem \printindex je
+%%% rejstřík vložen do dokumentu.
+%%%
+%%% Pokud je potřeba změnit styl zvýraznění podstatných stránek, je možné 
+%%% redefinovat makro \indexemph[1]. Například redefinicí
+%%% \renewcommand{\indexemph}[1]{{\bfseries #1}}
+%%% způsobí ztučnění stránek vkládaných pomocí \INEM{}.
+%%%
+%%% Styl sazby rejstříku lze dále ovlivnit i redefinicí makra \indexfashion,
+%%% například při definici \renewcommand{\indexfashion}{\footnotesize} bude
+%%% rejstřík sázen písmem velikosti poznámky pod čarou.
+\renewcommand{\indexcolumns}{3}
+\printindex
+
+\end{document}

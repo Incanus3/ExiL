@@ -1,0 +1,150 @@
+%%%  Vzor pro pou¾ití základní sady maker `upsimple'
+%%%  (c) 2001 Vilém Vychodil, <vilem.vychodil@upol.cz>
+%%%
+%%%  Po pøelo¾ení programem CSLaTeX (tøikrát) je potøeba pou¾ít
+%%%  program DVIPS a takto získaný PostScriptový soubor vytisknout
+%%%  na PostScriptové tiskárnì nebo pomocí programu GhostScript.
+%%%
+%%%  Rovnì¾ je mo¾né pou¾ít program DVIPDFM a vytvoøit z dokumentu
+%%%  soubor ve formátu PDF vèetnì hypertextových odkazù.
+
+
+%%% Deklarace hlavièky dokumentu, je tøeba pou¾ít styl `article'. Ostatní
+%%% argumenty jsou zcela libovolné. V tomto pøípadì je pou¾ito písmo velikosti
+%%% jedenácti bodù.
+\documentclass[11pt]{article}
+
+%%% Pøipojení dodateèného stylu pro diplomové práce. Nepovinné argumenty
+%%% `index', `outlines' a `czech' lze pou¾ít pro ovlivnìní chování stylu.
+%%%
+%%% Pøepínaè `index' umo¾òuje vytváøet hypertextový rejstøík. Není-li argument
+%%% uveden, bude dokument v pøípadì pou¾ití indexu obsahovat klasicky 
+%%% vypadající neinteraktivní rejstøík.
+%%%
+%%% Pøepínaèem `outlines' se zapíná automatické vytváøení zálo¾ek s ka¾dou 
+%%% novou kapitolou. Není-li pøepínaè uveden, v¹echny zálo¾ky musejí být 
+%%% vytváøeny explicitnì.
+%%%
+%%% Pøepínaè `czech' inicialisuje èeské typografické konvence.
+%%%
+%%% Pokud chcete vytváøet pouze dokument ve formátu PostScript, mù¾ete uvést
+%%% dodateèný argument `nopdf'. Tím se potlaèí chybová hlá¹ení pøi pou¾ití
+%%% programu `dvips'.
+\usepackage[outlines,czech]{upsimple}
+
+%%% Dodateèné standardní styly.
+\usepackage{czech}
+\usepackage{epsf}
+\usepackage{a4wide}
+
+%%% Parametry pro vytvoøení úvodních stránek. Jejich pou¾ítí èi nepou¾ití je
+%%% na libovùli u¾ivatele stylu.
+\title{Název dokumentu}
+\author{Jan Novák}
+
+%%% Pomocí \docinfo je mo¾né vytvoøit název pro PDF dokument, zpravidla je
+%%% dobré pou¾ít pøedcházející název, ale bez diakritiky. Mo¾né je v¹ak zvolit
+%%% úpolnì jiný výsti¾ný název. Pøi tvorbì PostScriptu bude pøíkaz ignorován.
+\docinfo{Jan Novak}{Nazev dokumentu}
+
+%%% Makrem \displayoutlines se provede zobrazení zálo¾ek.
+%%% Není-li makro uvedeno, zálo¾ky jsou v dokumentu skryty.
+\displayoutlines
+
+\begin{document}
+
+\maketitle
+\tableofcontents{}
+
+%%% Text diplomové práce.
+\section{První kapitola}
+Toto je první kapitola.
+
+\medskip
+\suboutline{Vlo¾ená zálo¾ka}
+Na toto místo smìøuje zálo¾ka vytvoøená pomocí makra \verb|\suboutline|.
+
+\subsection{První podkapitola}
+Toto je moje první podkapitola.
+Zde jsem vycházel z~prací kolegy Slo¾itého. Lze jej kontaktovat 
+na adrese \mail{tomas.slozity@diff.rov.cz}.
+
+
+\subsection{Druhá podkapitola}
+\hyplabel{dotextu}
+Toto je moje druhá podkapitola. Sem povede odkaz z~textu.
+
+
+\section{Druhá kapitola}
+Toto je druhá kapitola a budu se zde zabývat tím, jak vypadá
+program podle~\cite{smith}.
+
+\subsection{První podkapitola}\label{kapX}
+Toto je text mé podkapitoly èíslo~\ref{kapX}
+\begin{table}[ht]
+  \begin{center}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{||l|rr||}
+      \hline
+      & \multicolumn{2}{|c||}{\bf \hbox{Informace}} \\
+      \cline{2-3}
+      \bf Èaj & \bf Cena & \bf Mno¾ství \\
+      \hline
+      Chun Mee & 30\,Kè & 100\,g \\
+      Lung Ching & 86\,Kè & 50\,g \\
+      Show Mee & 147\,Kè & 50\,g \\
+      \hline
+    \end{tabular}
+    \caption{Toto je tabulka.} \label{tab}
+  \end{center}
+\end{table}
+
+\nextoutline{Jiné jméno}
+\subsection{Dal¹í podkapitola}
+Toto je moje dal¹í podkapitola. Tato podkapitola bude dále èlenìna.
+Tato podkapitola se bude v~zálo¾kách jmenovat jinak.
+
+\subsubsection{Podkapitola}\label{podkapX}
+Tato podkapitola má èíslo~\ref{podkapX}
+Zde budu øe¹it programování podle knihy~\cite{kovar}.
+V~této èásti je i~obrázek, viz~\ref{obr}
+
+\begin{figure}[ht]
+  \centerline{\epsfbox{uplogo.eps}}
+  \caption{Toto je obrázek.} \label{obr}
+\end{figure}
+
+\subsubsection{Podkapitola}\label{podkapY}
+Tato èást má èíslo~\ref{podkapY} a~je umístìna na stránce \pageref{podkapY}.
+Na stránce uvedu i~odkaz na URL, tøeba \url{http://www.inf.upol.cz}.
+Dále lze vytváøet i~odkazy na kapitoly \emphref{v~rámci dokumentu}{kapX}.
+Stejnì tak lze vytváøet i~odkazy \emphref{pøímo do textu}{dotextu},
+pro vytvoøení návìstí je potøeba pou¾ít makro \verb|\hyplabel|.
+
+\medskip
+Zde budu øe¹it programování podle knihy~\cite{kovar}.
+
+
+%%% Vytvoøení seznamu literatury.
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{smith} Smith, John. \emph{User and program.}
+                Publisher, City, 1990.
+\bibitem{kovar} Kováø, Jan. \emph{Jak programovat.}
+                Nakladatelství, Mìsto, 1990.
+\bibitem{slozi} Slo¾itý, Tomá¹. 
+                \link{\emph{Pøekladaè s~nakladaèem.}}{http://www.inf.upol.cz}
+                Elektronická publikace, 2001.
+
+\end{thebibliography}
+
+
+%%% Pøílohy.
+\newpage
+\appendix
+
+\section{První pøíloha} \label{PrvniPriloha}
+A tady u¾ budou jen závìreèné poznámky k~mému programování.
+
+\end{document}

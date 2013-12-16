@@ -1,0 +1,134 @@
+%%%  UP Math Style
+%%%  Copyright (C) 2001 Vil\'em Vychodil, <vilem.vychodil@upol.cz>
+%%% 
+%%%  This style is free software; you can redistribute it and/or modify
+%%%  it under the terms of the GNU General Public License as published by
+%%%  the Free Software Foundation; either version 2 of the License, or
+%%%  (at your option) any later version.
+%%% 
+%%%  This style is distributed in the hope that it will be useful,
+%%%  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%%%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%%%  GNU General Public License for more details.
+%%% 
+%%%  You should have received a copy of the GNU General Public License
+%%%  along with this file; if not, write to the Free Software
+%%%  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{upmath}[2001/06/22 UP Math Style]
+
+%% AMS Styles
+\def\@thmcountersep{}   % disable dot before the counter
+
+%% Theorem Indent
+\def\thparindent{\null \hskip \parindent}
+
+%% Plain Theorem Style
+\def\th@plain{%
+  \let\thm@indent\thparindent%
+  \itshape}
+
+%% Definition Style
+\def\th@definition{%
+  \let\thm@indent\thparindent%
+  \thm@headfont{\bf}%
+  \normalfont}
+
+%% Remark Style
+\def\th@remark{%
+  \let\thm@indent\thparindent%
+  \thm@headfont{\sc}%
+  \normalfont}
+
+%% Begin New Theorem
+\def\@begintheorem#1#2[#3]{%
+  \item[\normalfont%
+  \hskip\labelsep
+  \the\thm@headfont
+  \thm@indent
+  \@ifempty{#1}{\let\thmname\@gobble}{\let\thmname\@iden}%
+  \@ifempty{#2}{\let\thmnumber\@gobble}{\let\thmnumber\@iden}%
+  \@ifempty{#3}{\let\thmnote\@gobble}{\let\thmnote\@iden}%
+  \thm@swap\swappedhead\thmhead{#1}{#2}{#3}]%
+  \@restorelabelsep
+  \thmheadnl%
+  \ignorespaces}
+
+%% Theorem Counter
+\def\@xthm#1#2[#3]{%
+  \ifx\relax#3\relax
+    \newcounter{#1}%
+    \@xp\xdef\csname the#1\endcsname{%
+      \@thmcountersep\@thmcounter{#1}.}%
+  \else
+    \newcounter{#1}[#3]%
+    \@xp\xdef\csname the#1\endcsname{\@xp\@nx\csname the#3\endcsname
+      \@thmcountersep\@thmcounter{#1}.}%
+  \fi
+  \toks@{#2}%
+  \@xp\xdef\csname#1\endcsname{%
+    \@nx\@thm{%
+      \let\@nx\thm@swap
+        \if S\thm@swap\@nx\@firstoftwo\else\@nx\@gobble\fi
+      \@xp\@nx\csname th@\the\thm@style\endcsname}%
+      {#1}{\the\toks@}}%
+}
+
+%% Definitions, Theorems
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{theorem}{V\v eta}[section]
+\newtheorem{consequence}{D\r usledek}[section]
+\newtheorem{algorithm}{Algoritmus}[section]
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definice}[section]
+\newtheorem{denotation}{Ozna\v cen\'i}[section]
+\newtheorem{requisition}{Po\v zadavek}[section]
+
+\theoremstyle{remark}
+\newtheorem*{notice}{Pozn\'amka.}
+\newtheorem*{reasoning}{\'Uvaha.}
+
+%% Theorem Proof
+\renewcommand{\proofname}{{\sc D\r ukaz}}
+
+%% Example Environment
+\@definecounter{examplec}
+\@newctr{examplec}[section]
+
+\def\theexample{\thesection\theexamplec.}
+
+\newenvironment{example}[1][\examplename]{\par
+  \let\@@puvodnictr=\@currentlabel%
+  \stepcounter{examplec}%
+  \protected@edef\@currentlabel{\thesection\theexamplec.}%
+  \normalfont
+  \topsep6\p@\@plus6\p@ \trivlist
+  \item[\hskip\labelsep\itshape
+    #1\@addpunct{.}]\ignorespaces
+}{%
+  \let\@currentlabel=\@@puvodnictr%
+  \qed\endtrivlist
+}
+
+\newcommand{\examplename}{%
+  \thparindent $\triangleright$ {\sc P\v r\' iklad} {\rm \theexample}}
+
+%% Expression References (arabic, roman)
+\def\eref#1{\@pdflink{(\expandafter\@setref\csname r@#1\endcsname%
+  \@firstoftwo{#1})}{lnk#1}}
+\def\rref#1{\@pdflink{(\expandafter\@romansetref\csname r@#1\endcsname%
+  \@firstoftwo{#1})}{lnk#1}}
+\def\@romansetref#1#2#3{%
+  \ifx#1\relax
+   \protect\G@refundefinedtrue
+   \nfss@text{\reset@font\bfseries ??}%
+   \@latex@warning{Reference `#3' on page \thepage \space
+             undefined}%
+  \else
+   \expandafter\romannumeral\expandafter#2#1\null
+  \fi}
+
+\endinput

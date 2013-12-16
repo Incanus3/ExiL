@@ -1,0 +1,161 @@
+%%%  Vzor pro použití makra pro roèníkovou práci, soubor byl revidován 
+%%%  a doplnìn v záøí 2001
+%%%  (c) 2001 Vilém Vychodil, <vilem.vychodil@upol.cz>
+%%%  Vzorový soubor upraven v kvìtnu 2009
+%%%  (c) 2009 Jan Outrata, <jan.outrata@upol.cz>
+%%%
+%%%  Po pøeložení programem CSLaTeX (tøikrát) je potøeba použít
+%%%  program DVIPS a takto získaný PostScriptový soubor vytisknout
+%%%  na PostScriptové tiskárnì nebo pomocí programu GhostScript.
+%%%
+%%%  Rovnìž je možné použít program DVIPDFM a vytvoøit z dokumentu
+%%%  soubor ve formátu PDF vèetnì hypertextových odkazù.
+
+
+%%% Deklarace hlavièky dokumentu.
+\documentclass{article}
+
+%%% Pøipojení dodateèného stylu pro roèníkovou práci. Nepovinné
+%%% argumenty `tables' a `figures' použijte pouze v pøípadì, že váš
+%%% dokument obsahuje tabulky a obrázky a chcete vytvoøit jejich
+%%% seznamy za obsahem.
+%%%
+%%% Argument `joinlists' zpùsobí zøetìzení obsahu a seznamù tabulek a obrázkù.
+%%% Není-li použít, všechny seznamy jsou uvedeny na samostatných stránkách.
+%%%
+%%% Pokud chcete vytváøet pouze dokument ve formátu PostScript, mùžete uvést
+%%% dodateèný argument `nopdf'. Tím se potlaèí chybová hlášení pøi použití
+%%% programu `dvips'.
+\usepackage[tables,figures]{uproject}
+
+%%% Dodateèné standardní styly.
+
+%%% Parametry pro vytvoøení úvodních stránek. Makrem \subtitle je možné
+%%%  vytvoøit druhý øádek v názvu projektu.
+\title{Název projektu}
+%\subtitle{Druhý øádek názvu}
+\author{Jan Novák}
+\group{Aplikovaná informatika, II. roèník}
+\date{Kvìten 2009}
+
+%%% Pomocí \docinfo je možné vytvoøit název pro PDF dokument, zpravidla je
+%%% dobré použít pøedcházející název, ale bez diakritiky. Možné je však zvolit
+%%% úpolnì jiný výstižný název. Pøi tvorbì PostScriptu bude pøíkaz ignorován.
+\docinfo{Jan Novak}{Nazev projektu}
+
+%%% Zadání abstraktu. Pouze jeden odstavec!
+\abstract{%
+Tento projekt øeší úkoly, které byly urèeny zadáním projektu.
+Tato anotace by mìla struènì popisovat zpracovaný projekt a nemìla by
+pøitom pøesáhnout zhruba 10 øádkù. V~žádném pøípadì by nemìla být rozdìlena
+do více odstavcù.}
+
+\begin{document}
+
+%%% Vytvoøení úvodních stránek, obsahu a seznamu tabulek a obrázkù.
+\maketitle
+
+
+%%% Popis a analýza.
+\newpage
+\section{Popis a analýza}
+Toto je první èást dokumentace a provedu zde rozbor zadání.
+
+\subsection{První podkapitola}
+Toto je moje první podkapitola.
+Zde jsem vycházel z~prací kolegy Složitého. Lze jej kontaktovat 
+na adrese \mail{tomas.slozity@tezke.projekty.cz}.
+
+\subsection{Druhá podkapitola}
+\hyplabel{dotextu}
+Toto je moje druhá podkapitola. Sem povede odkaz z~textu.
+
+
+%%% Uživatelská èást.
+\newpage
+\section{Uživatelská èást}
+Toto je druhá èást dokumentace a budu se zde zabývat tím, 
+jak vypadá uživatelská èást programu podle \cite{smith}.
+
+\subsection{První podkapitola}\label{kapX}
+Toto je text mé podkapitoly èíslo \ref{kapX}
+
+\begin{table}[ht]
+  \begin{center}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{||l|rr||}
+      \hline
+      & \multicolumn{2}{|c||}{\bf \hbox{Informace}} \\
+      \cline{2-3}
+      \bf Èaj & \bf Cena & \bf Množství \\
+      \hline
+      Chun Mee & 30\,Kè & 100\,g \\
+      Lung Ching & 86\,Kè & 50\,g \\
+      Show Mee & 147\,Kè & 50\,g \\
+      \hline
+    \end{tabular}
+    \caption{Toto je tabulka.} \label{tab}
+  \end{center}
+\end{table}
+
+\subsection{Další podkapitola}
+Toto je moje další podkapitola. Tato podkapitola bude dále èlenìna.
+
+\subsubsection{Podkapitola}\label{podkapX}
+Tato podkapitola má èíslo \ref{podkapX} Zde budu øešit programování podle
+knihy \cite{kovar}. V~této èásti je i~obrázek, viz \ref{obr}
+
+\begin{figure}[ht]
+  \centerline{\epsfbox{uplogo.eps}}
+  \caption{Toto je obrázek.} \label{obr}
+\end{figure}
+
+
+%%% Programátorská èást.
+\newpage
+\section{Programátorská èást}
+Toto je tøetí èást dokumentace a budu se zde zabývat tím, 
+jak správnì programovat podle knihy \cite{smith}.
+
+\medskip
+\suboutline{Vložená záložka}
+Na toto místo smìøuje záložka vytvoøená pomocí makra \verb|\suboutline|.
+
+\nextoutline{Jiné jméno}
+\subsection{První podkapitola}\label{kapY}
+Toto je text mé podkapitoly èíslo \ref{kapY}
+Tato kapitola se bude v~záložkách jmenovat jinak.
+
+\subsection{Další podkapitola}
+Toto je moje další podkapitola. Tato podkapitola bude dále èlenìna.
+
+\subsubsection{Podkapitola}\label{podkapY}
+Tato èást má èíslo~\ref{podkapY} a~je umístìna na stránce \pageref{podkapY}.
+Na stránce uvedu i~odkaz na URL, tøeba \url{http://www.inf.upol.cz}.
+Dále lze vytváøet i~odkazy na kapitoly \emphref{v~rámci dokumentu}{kapX}.
+Stejnì tak lze vytváøet i~odkazy \emphref{pøímo do textu}{dotextu},
+pro vytvoøení návìstí je potøeba použít makro \verb|\hyplabel|.
+
+\medskip
+Zde budu øešit programování podle knihy~\cite{kovar}.
+
+
+\subsection{Poslední podkapitola}
+A tady už budou jen závìreèné poznámky k~mému programování.
+
+
+%%% Vytvoøení seznamu literatury.
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{smith} Smith, John. \emph{User and program.}
+                Publisher, City, 1990.
+\bibitem{kovar} Kováø, Jan. \emph{Jak programovat.}
+                Nakladatelství, Mìsto, 1990.
+\bibitem{slozi} Složitý, Tomáš.
+                \link{\emph{Pøekladaè s~nakladaèem.}}{http://www.inf.upol.cz}
+                Elektronická publikace, 2001.
+
+\end{thebibliography}
+
+\end{document}
