@@ -43,6 +43,8 @@
 ### praktická část
 #### dokumentace ExiLu (5-10) + příklady
 * uživatelská příručka
+  - organizační poznámka - proč začínám praktickou částí
+  - instalace, získání kódu, git
   - začít příkladem, ideálně templated fakta
   - popsat jednotlivé sekce kódu, jejich význam (korespondence s fázemi návrhu ES,
     formulace problému, formát dat, vstupní znalosti, odvozovací krok, řízení odvozování, ladění)

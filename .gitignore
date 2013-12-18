@@ -3,6 +3,7 @@
 .#*
 \#*
 *.swp
+*.swo
 message
 src/dependencies/cache*
 src/dependencies/cache/

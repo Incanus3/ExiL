@@ -1,5 +1,4 @@
 ## References and information sources + covered topics
-
 1. Introduction to Expert Systems [Peter Jackson]
   * What are expert systems?
     * nature of knowledge and expertise, aim of ES, typical tasks solved by ES
@@ -61,7 +60,8 @@
     * CLIPS
       * program structure
       * inference execution
-      * controlling inference - agenda, termination, conflict resolution strategies (nondeterminism)
+      * controlling inference
+        - agenda, termination, conflict resolution strategies (nondeterminism)
       * search space
     * forward X backward chaining, solution generations X recognition
     * meta-rules - advanced reasoning control

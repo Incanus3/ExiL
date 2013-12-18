@@ -1,0 +1,78 @@
+\documentclass[a4paper,12pt]{article}
+% tables - list of tables, joinlists - join list of tables and figures
+\usepackage[master,figures]{updiplom}
+\usepackage[utf8]{inputenc}
+% \usepackage{czech}
+% \usepackage{epsfig}
+\usepackage{url}
+\usepackage{hyperref}
+\hypersetup{backref,
+linktocpage,
+colorlinks=true,
+linkcolor=blue}
+
+% \usepackage{listings}
+\usepackage{minted}
+\usemintedstyle{autumn}
+% \usepackage{natbib}
+\DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+
+\newcommand{\registered}{\textsuperscript{\textregistered}}
+
+\title{Implementace expertního systému v jazyce Common Lisp}
+\author{Jakub Kaláb}
+\year{2013}
+%\date{\today}
+\date{31.12.2013}
+\annotation{
+Expertní systémy mají v~praxi bohaté využití. Jejich smyslem je
+asistovat expertovi na danou problematiku, či jej plně nahradit. V~příloze
+bakalářské práce implementuji prázdný expertní systém s~dopředným řetězením
+inspirovaný systémem CLIPS jako knihovnu v~programovacím jazyku Common
+Lisp tak, aby jej bylo možno plně integrovat do dalších programů.
+}
+\thanks{Děkuji Mgr. Martinu Dostálovi, Ph.D. za vedení této diplomové práce.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+\renewcommand\listoflistingscaption{Seznam ukázek kódu}
+\renewcommand\listingscaption{Ukázka kódu}
+\listoflistings
+\newminted{cl}{linenos,frame=lines}
+
+\newpage
+\nocite{introduction}
+\nocite{paradigms}
+\nocite{doorenbos}
+\nocite{practical}
+\nocite{clips}
+\nocite{clhs}
+\nocite{asdf}
+\nocite{quicklisp}
+\nocite{xlunit}
+\nocite{iterate}
+\nocite{git}
+\nocite{expert-system}
+\nocite{rete}
+
+\newpage
+\include{prirucka}
+
+% \include{1-teorie}
+% \newpage
+% \include{2-prirucka}
+% \newpage
+% \include{3-algoritmy}
+% \newpage
+% \include{4-implementace}
+% \newpage
+% \include{5-zaver}
+% \newpage
+
+\newpage
+\bibliographystyle{czechiso}
+% \bibliographystyle{plainnat}
+\bibliography{diplomka}
+\end{document}
