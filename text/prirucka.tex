@@ -1,4 +1,36 @@
-\section{Uživatelská příručka}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Uživatelská příručka}
+\subsubsection{Instalace}
+- instalace - slime, sbcl, quicklisp, asdf, lispworks, získání kódu, git
+
+Zdrojový kód knihovny je přiložen k~této diplomové práci a~lze jej také získat
+zklonováním gitového\footnotemark{} repozitáře na adrese
+\verb|git@github.com:Incanus3/ExiL.git| (v *nixových systémech např. zadáním
+příkazu \verb|git clone git@github.com:Incanus3/ExiL.git|).
+\footnotetext{http://git-scm.com/}
+
+\subsubsection{Common Lisp}
+- úvod do lispu - odkaz na practical common lisp, clhs
+
+\subsubsection{Struktura programu}
+popsat jednotlivé sekce kódu, jejich význam (korespondence s fázemi návrhu ES,
+formulace problému, formát dat, vstupní znalosti, odvozovací krok, řízení
+odvozování, ladění)
+\begin{itemize}
+  \item definice prostředí
+  \item definice šablon - formát dat
+  \item definice znalostní báze - vstupní znalost - deffacts, defrules
+  \item (nastavení sledování průběhu inference - watchers)
+  \item (úprava průběhu inference - strategie)
+  \item spuštění / krokování inference - reset, run, step
+  \item dotazy nad working memory - facts, agenda
+  \item úprava working memory - assert, retract, modify
+  \item dotazy nad znalostní bází - fact-groups, rules
+  \item cleanup - volatile vs durable sloty prostředí
+  \item undo/redo
+  \item zpětné řetězení
+  \item GUI
+\end{itemize}
 
 \begin{listing}[H] % position specifier as for figures
 \caption{ExiL code example}

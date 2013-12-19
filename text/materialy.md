@@ -39,6 +39,9 @@
         - domain specific
         - uncertainty, rule weighting
         - static and dynamic parts of knowledge base
+          - knowledge base - static
+          - patient database - dynamic
+          - working memory - conclusions about patient - doesn't modify knowledge base
         - separation of consultation and knowledge acquisition components
         - more flexible rules - disjunctions in conditions, consequences can be instructions
         - more diferentiated knowledge representation
@@ -54,7 +57,13 @@
   * Rule-based systems
     * intelligent behavior based on domain-relevant rules
     * syntax of rules, encoding and manipulation of state, conditions, activations
-    * production systems - production memory, rule interpreter, working memory
+    * production systems
+      - production memory (rules)
+      - rule interpreter (inference engine)
+      - working memory
+      - working memory - data in form of object-attr vecotrs, used to activate rules
+        -> initialized from knowledge base
+        - doesn't say, what about dynamic rules
     * object-attribute-value triplets, structured facts (object-attribute-value vectors)
     * variables in rules, bindings, consistency, singleton variable
     * CLIPS

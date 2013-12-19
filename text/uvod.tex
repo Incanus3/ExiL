@@ -1,0 +1,42 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Úvod}
+Ve své bakalářské práci jsem implementoval základní knihovnu pro tvorbu
+expertních systémů (tzv. prázdný expertní systém) s~dopředným řetězením v~jazyce
+Common Lisp. Cílem této diplomové práce je tuto knihovnu rozšířit o následující:
+\begin{itemize}
+  \item syntaktický režim pro zajištění přiměřené kompatibility se systémem
+    CLIPS,
+  \item možnost vrácení provedených změn včetně odvozovacích kroků,
+  \item podpora pro ladění s jednoduchým grafickým uživatelským rozhraním pro
+    prostředí LispWorks\texttrademark,
+  \item rozšíření odvozovacího aparátu o základní zpětné řetězení.
+\end{itemize}
+
+Pojem expertního systému spadá do oblasti umělé inteligence. Jde o počítačový
+systém, který simuluje rozhodování experta nad zvolenou problémovou doménou.
+Expertní systém může experta zcela nahradit, nebo mu při rozhodování asistovat.
+
+Jazyk Common Lisp\footnotemark[1] (případně jiné dialekty Lispu) je častou volbou
+pro implementaci umělé inteligence díky svým schopnostem v oblasti symbolických
+výpočtů (manipulace symbolických výrazů), na nichž řešení těchto problémů často
+staví. Navíc jde o~velmi vysokoúrovňový, dynamicky typovaný jazyk, díky čemuž je
+programový kód stručný, snadno pochopitelný a tudíž jednoduše rozšiřitelný.
+
+Synax systému CLIPS\footnotemark[2] byla zvolena proto, že jde o reálně používaný
+systém\footnotemark[3], jehož syntax je Lispu velmi blízká, takže není těžké ji
+v~Lispu napodobit.
+
+Přestože běžnou praxí je začínat diplomovou práci teoretickou částí, definovat
+jednotlivé pojmy a principy a ty poté v praktické části uplatnit, rozhodl jsem
+se postupovat opačně, tedy začít práci praktickou částí. Domnívám se totiž (také
+na základě zkušeností nabytých při vypracování bakalářské práce), že je podstatně
+snazší (minimálně v řešené problematice) pochopit příklady bez detailní znalosti
+teorie, než snažit se pochopit teorii bez příkladů, na nichž si lze popisované
+pojmy a principy představit. V praktické části tedy uvedu jen minimální množtví
+teorie nutné pro pochopení aktuálního problému, načež se k ní v teoretické části
+textu vrátím, pojmy zadefinuji přesně a rozšířím o souvislosti.
+
+\footnotetext[1]{\url{http://en.wikipedia.org/wiki/Common_Lisp}}
+\footnotetext[2]{\url{http://clipsrules.sourceforge.net}}
+\footnotetext[3]{\url{http://clipsrules.sourceforge.net/FAQ.html\#Q6}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

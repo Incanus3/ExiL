@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[12pt]{article}
 % tables - list of tables, joinlists - join list of tables and figures
 \usepackage[master,figures]{updiplom}
 \usepackage[utf8]{inputenc}
@@ -9,13 +9,15 @@
 \hypersetup{backref,
 linktocpage,
 colorlinks=true,
-linkcolor=blue}
+linkcolor=blue,
+citecolor=blue,
+urlcolor=blue}
 
 % \usepackage{listings}
 \usepackage{minted}
 \usemintedstyle{autumn}
 % \usepackage{natbib}
-\DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+% \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
 
 \newcommand{\registered}{\textsuperscript{\textregistered}}
 
@@ -42,36 +44,36 @@ Lisp tak, aby jej bylo možno plně integrovat do dalších programů.
 \listoflistings
 \newminted{cl}{linenos,frame=lines}
 
-\newpage
 \nocite{introduction}
 \nocite{paradigms}
 \nocite{doorenbos}
 \nocite{practical}
 \nocite{clips}
 \nocite{clhs}
-\nocite{asdf}
-\nocite{quicklisp}
-\nocite{xlunit}
-\nocite{iterate}
-\nocite{git}
 \nocite{expert-system}
 \nocite{rete}
 
-\newpage
-\include{prirucka}
+\clearpage
+\include{uvod}
 
-% \include{1-teorie}
-% \newpage
-% \include{2-prirucka}
-% \newpage
-% \include{3-algoritmy}
-% \newpage
-% \include{4-implementace}
-% \newpage
-% \include{5-zaver}
-% \newpage
+\clearpage
+\section{Praktická část}
+Tato sekce popisuje knihovnu ExiL\footnotemark, která je výsledkem této
+diplomové práce. Nejprve v uživatelské příručce popíšu její instalaci,
+základní možnosti a typickou strukturu programu, který ji využívá. Poté
+v~referenční příručce projdu všechny možnosti, které knihovna poskytuje.
+Načež v části věnované implementaci popíšu architekturu jejího zdrojového
+kódu a zmíním zajímavé části kódu implementující jednotlivá rozšíření.
+Nakonec uvedu několik větších příkladů použití knihovny a~rozeberu několik
+dalších možných rozšíření a co by obnášela z pohledu implementace.
+\footnotetext{TODO: původ názvu}
+\input{prirucka}
 
-\newpage
+\clearpage
+\section{Teoretická část}
+\input{expertni-system}
+
+\clearpage
 \bibliographystyle{czechiso}
 % \bibliographystyle{plainnat}
 \bibliography{diplomka}
