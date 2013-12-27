@@ -1,10 +1,11 @@
 \documentclass[12pt]{article}
-% tables - list of tables, joinlists - join list of tables and figures
 \usepackage[master,figures]{updiplom}
 \usepackage[utf8]{inputenc}
-% \usepackage{czech}
 % \usepackage{epsfig}
 \usepackage{url}
+% \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+\usepackage{enumitem}
+
 \usepackage{hyperref}
 \hypersetup{backref,
 linktocpage,
@@ -13,18 +14,14 @@ linkcolor=blue,
 citecolor=blue,
 urlcolor=blue}
 
-% \usepackage{listings}
 \usepackage{minted}
 \usemintedstyle{autumn}
-% \usepackage{natbib}
-% \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
 
 \newcommand{\registered}{\textsuperscript{\textregistered}}
 
 \title{Implementace expertního systému v jazyce Common Lisp}
 \author{Jakub Kaláb}
 \year{2013}
-%\date{\today}
 \date{31.12.2013}
 \annotation{
 Expertní systémy mají v~praxi bohaté využití. Jejich smyslem je
@@ -39,10 +36,11 @@ Lisp tak, aby jej bylo možno plně integrovat do dalších programů.
 \begin{document}
 
 \maketitle
-\renewcommand\listoflistingscaption{Seznam ukázek kódu}
-\renewcommand\listingscaption{Ukázka kódu}
+\renewcommand\listoflistingscaption{Seznam příkladů}
+\renewcommand\listingscaption{Příklad}
 \listoflistings
 \newminted{cl}{linenos,frame=lines}
+\newmint{cl}{}
 
 \nocite{introduction}
 \nocite{paradigms}
@@ -59,15 +57,23 @@ Lisp tak, aby jej bylo možno plně integrovat do dalších programů.
 \clearpage
 \section{Praktická část}
 Tato sekce popisuje knihovnu ExiL\footnotemark, která je výsledkem této
-diplomové práce. Nejprve v uživatelské příručce popíšu její instalaci,
-základní možnosti a typickou strukturu programu, který ji využívá. Poté
-v~referenční příručce projdu všechny možnosti, které knihovna poskytuje.
+diplomové práce. Nejprve popíšu její instalaci, pak v uživatelské příručce
+nastíním základní možnosti a typickou strukturu programu, který ji využívá.
+Poté v~referenční příručce projdu všechny možnosti, které knihovna poskytuje.
 Načež v části věnované implementaci popíšu architekturu jejího zdrojového
 kódu a zmíním zajímavé části kódu implementující jednotlivá rozšíření.
 Nakonec uvedu několik větších příkladů použití knihovny a~rozeberu několik
 dalších možných rozšíření a co by obnášela z pohledu implementace.
 \footnotetext{TODO: původ názvu}
-\input{prirucka}
+
+\input{install}
+\include{lisp}
+\clearpage
+\include{guide}
+\clearpage
+\include{reference}
+\clearpage
+\include{implementation}
 
 \clearpage
 \section{Teoretická část}

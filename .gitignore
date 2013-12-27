@@ -11,3 +11,11 @@ src/dependencies/dists/
 src/dependencies/local-projects/
 src/dependencies/tmp/
 *pokus*
+*fasl
+*~
+*.lo[fgtl]
+*.aux
+*.out
+*.toc
+*.bbl
+*.blg
