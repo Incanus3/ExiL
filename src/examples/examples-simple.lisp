@@ -8,10 +8,10 @@
 (deffacts world
   (in robot A)
   (in box B)
-  (goal push box B A))
+  (goal move box B A))
 
-(defrule move
-  (goal push ?object ?from ?to)
+(defrule move-robot
+  (goal move ?object ?from ?to)
   (in ?object ?from)
   (- in robot ?from)
   (in robot ?z)
@@ -19,8 +19,8 @@
   (retract (in robot ?z))
   (assert (in robot ?from)))
 
-(defrule push
-  (goal push ?object ?from ?to)
+(defrule move-object
+  (goal move ?object ?from ?to)
   (in ?object ?from)
   (in robot ?from)
   =>
@@ -30,7 +30,7 @@
   (assert (in ?object ?to)))
 
 (defrule stop
-  ?goal <- (goal push ?object ?from ?to)
+  ?goal <- (goal move ?object ?from ?to)
   (in ?object ?to)
   =>
   (retract ?goal)

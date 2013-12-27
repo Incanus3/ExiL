@@ -1,33 +1,160 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Uživatelská příručka}
 \subsubsection{Základní pojmy}
+\begin{framed}
+  \begin{itemize}
+    \item TODO: v teoretické části uvést pojmy znovu s citacemi
+    \item TODO: production memory v exilu splývá s pravidly znalostní báze - na
+      příhodném místě uvést, že v teorii a některých systémech se rozlišuje
+    \item TODO: ke každému pojmu později jasně uvést příklad
+    \item systém ve skutečnosti pracuje s \emph{reprezentací} znalostí, ale to
+      nás zatím nezajímá
+    \item dodetečné pojmy by mohly být definovány průběžně v boxech s odkazem do
+      teoretické části
+  \end{itemize}
+\end{framed}
+
 Nyní stručně zadefinuji základní pojmy, nutné pro pochopení fungování knihovny
-ExiL a práci s ní. K těmto pojmům se posléze v teoretické části textu vrátím
-a jejich popis rozšířím o další souvislosti.
-\begin{description}[leftmargin=5cm,style=sameline]
-  \item[problémová doména] množina pojmů relevantních pro řešení určité skupiny
-    problémů
+ExiL a práci s ní. Význam pojmů bude jasnější, jakmile si je ukážeme na
+příkladech. K těmto pojmům se posléze vrátím i~v~teoretické části textu
+a~jejich popis rozšířím o další souvislosti.
+
+První dva pojmy staví na pojmu znalost, který chápeme intuitivně a nebudu se jej
+ani snažit definovat, nikoli na následujícím pojmu znalosti, jak ji chápeme
+v~ExiLu (v takovém případě by byla definice cyklická).
+
+Pojem expertního systému zatím chápejme tak, jak jsem jej představil v úvodu
+práce. Pojem pochopitelně v praktické části rozeberu v potřebné šíři.
+\begin{description}[leftmargin=6cm,style=sameline,align=right,labelsep=0.5cm]
+  % \item[problémová doména] množina pojmů relevantních pro řešení určité skupiny
+  %   problémů
   \item[fakt] elementární statická znalost - tvrzení
   \item[(odvozovací) pravidlo] elementární odvozovací znalost - pokud víme, že
     (ne)platí nějaká tvrzení, můžeme odvodit, že platí i~nějaká další
   \item[znalost (v ExiLu)] množina faktů a pravidel
-  \item[znalostní baze] výchozí znalost
-  \item[working memory] aktuální množina faktů
-  \item[production memory] aktuální množina pravidel
+  \item[znalostní báze] výchozí znalost expertního systému
+  \item[pracovní paměť] aktuální množina faktů
+  % \item[production memory] aktuální množina pravidel
   \item[inference] odvozování - postupná aplikace odvozovacích pravidel
-    (s případnými zásahy uživatele)
-    (+ výpočet splněných pravidel, jejich výběr)
 \end{description}
-Pojmy working memory a production memory lze samozřejmě doslova přeložit, ale
-žádný z překladů mi nepřijde příliš názorný (zvlášť vzhledem k tomu, že ve
-skutečnosti nejde o paměť, nýbrž aktuální obsah pomyslné paměti), budu tedy
-používat anglická spojení užívaná v literatuře. Představa pojmů bude jasnější,
-jakmile si je ukážeme na příkladech.
+Pojem \emph{pracovní paměť} není příliš intuitivní. Jde o doslovný překlad
+v~literatuře užívaného pojmu \emph{working memory}, kterým je označována množina
+faktů (tvrzení), které expertní systém v danou chvíli považuje za platné. Nejde
+tedy ve skutečnosti o paměť, nýbrž o obsah pomyslné paměti. Pojem pracovní
+množina faktů by byl jistě výstižnější, bohužel ale také značně těžkopádný.
 
-TODO: dořešit, zda citovat zde, nebo až v teorii
+% Pojmy working memory a production memory lze samozřejmě doslova přeložit, ale
+% žádný z překladů mi nepřijde příliš názorný (zvlášť vzhledem k tomu, že ve
+% skutečnosti nejde o paměť, nýbrž aktuální obsah pomyslné paměti), budu tedy
+% používat anglická spojení užívaná v literatuře. Představa pojmů bude jasnější,
+% jakmile si je ukážeme na příkladech.
 
-(systém ve skutečnosti pracuje s \emph{reprezentací} znalostí, ale to nás zatím
-nezajímá)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Struktura programu}
+
+\begin{framed}
+  \begin{itemize}
+    \item základní fáze vysokoúrovňově
+    \begin{itemize}
+      \item definice znalostní báze - fakta, pravidla - podmínky (patterny,
+        proměnné), důsledky
+      \item inicializace pracovní paměti ze znalostní báze
+      \item inference - jen nastínit cyklus - vyhodnocení podmínek, výběr pravidla,
+        aktivace
+    \end{itemize}
+    \item ke každému ze základních pojmů uvést příklad z programu.
+    \item TODO: uvést výstup programu
+  \end{itemize}
+\end{framed}
+
+\begin{listing}[h]
+\caption{Základní struktura exilového programu}
+\label{typical structure}
+\begin{clcode}
+;;; definition of knowledge base
+;; facts
+(deffacts world
+  (in robot A)
+  (in box B)
+  (goal move box B A))
+
+;; inference rules
+(defrule move-robot
+  (goal move ?object ?from ?to)
+  (in ?object ?from)
+  (- in robot ?from)
+  (in robot ?z)
+  =>
+  (retract (in robot ?z))
+  (assert (in robot ?from)))
+
+(defrule move-object
+  (goal move ?object ?from ?to)
+  (in ?object ?from)
+  (in robot ?from)
+  =>
+  (retract (in robot ?from))
+  (assert (in robot ?to))
+  (retract (in ?object ?from))
+  (assert (in ?object ?to)))
+
+(defrule stop
+  ?goal <- (goal move ?object ?from ?to)
+  (in ?object ?to)
+  =>
+  (retract ?goal)
+  (halt))
+
+;;; initialization of working memory
+(reset)
+
+;;; inference execution
+(run)
+\end{clcode}
+\end{listing}
+
+Příklad \ref{typical structure} (na straně \pageref{typical structure}) ukazuje
+typickou strukturu programu nad knihovnou ExiL (dále exilový program). Tento
+program používá strukturovaných faktů, začíná tudíž definicemi šablon, tedy
+formátu těchto faktů. Následuje definice skupiny faktů (jméno \verb|world| této
+skupiny je pouze informativní). Tyto fakty jsou přidány do znalostní báze, ze
+které je po volání \verb|(reset)| inicializována pracovní paměť.
+
+Pracovní paměť může být dále v průběhu inference modifikována třemi makry:
+\begin{itemize}
+  \item \verb|assert| přidává fakt(a) do pracovní paměti,
+  \item \verb|retract| fakt(a) z pracovní paměti odebírá a
+  \item \verb|modify| přímo modifikuje existující fakta.
+\end{itemize}
+
+Poté následuje definice tří odvozovacích pravidel - \verb|move|, \verb|push|
+a~\verb|stop|. Definice každého pravidla sestává z množiny podmíněk, tedy
+předpokladů pro jeho splnění (a následnou aktivaci), a množiny důsledků, tedy
+libovolných lispových výrazů, které jsou při aktivaci pravidla vyhodnoceny.
+Tyto dvě množiny jsou od sebe odděleny symbolem \verb|=>|. Podmínky pravidel
+jsou ve formě vzorů (\emph{pattern}). Ty jsou velmi podobné faktům, ale mohou se
+v nich vyskytovat proměnné (atomy začínající symbolem otazníku).
+TODO: splnění podmínky pravidla
+Krom toho mohou
+být podmínky negovány, tedy podmínka je splněna tehdy, pokud neexistuje žádný
+fakt, který by jí odpovídal.
+
+\FloatBarrier
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Definice znalostní báze}
+\begin{framed}
+  \begin{itemize}
+    \item simple/templated fakta $\rightarrow$ templaty
+    \item skupiny faktů
+    \item pravidla
+      \begin{itemize}
+        \item podmínky podrobně - patterny, konjunkce, negace
+        \item důsledky - typicky manipulace pracovní paměti
+      \end{itemize}
+    \item queries - fact-groups, rules + finders
+  \end{itemize}
+\end{framed}
 
 ExiL, stejně jako CLIPS, rozlišuje dva typy faktů - jednoduché (\emph{simple,
 ordered}) a strukturované (\emph{templated}). Stuktura jednoduchého faktu je udána
@@ -44,118 +171,73 @@ jednoznačnější sémantiky exilového programu, zláště např. v případě
 jedné množině: \cl|(father john george).|
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Struktura programu}
+\subsubsection{Manipulace pracovní paměti}
+\begin{framed}
+  \begin{itemize}
+    \item inicializace ze znalostní báze
+    \item ruční manipulace - assert, retract, modify
+    \item queries - facts
+  \end{itemize}
+\end{framed}
 
-% Popsat jednotlivé sekce kódu, jejich význam (korespondence s fázemi návrhu ES,
-% formulace problému, formát dat, vstupní znalosti, odvozovací krok, řízení
-% odvozování, ladění)
-% \begin{itemize}
-%   \item definice prostředí
-%   \item definice šablon - formát dat (simple, template)
-%   \item definice znalostní báze - vstupní znalost - deffacts, defrules
-%   \item (nastavení sledování průběhu inference - watchers)
-%   \item (úprava průběhu inference - strategie)
-%   \item spuštění / krokování inference - reset, run, step
-%   \item dotazy nad working memory - facts, agenda
-%   \item úprava working memory - assert, retract, modify
-%   \item dotazy nad znalostní bází - fact-groups, rules
-%   \item cleanup - volatile vs durable sloty prostředí
-%   \item undo/redo
-%   \item zpětné řetězení
-%   \item GUI
-% \end{itemize}
-
-% Ke každému ze základních pojmů uvést příklad z programu.
-
-Příklad \ref{typical structure} (na straně \pageref{typical structure}) ukazuje
-typickou strukturu programu nad knihovnou ExiL (dále exilový program). Tento
-program používá strukturovaných faktů, začíná tudíž definicemi šablon, tedy
-formátu těchto faktů. Následuje definice skupiny faktů (jméno \verb|world| této
-skupiny je pouze informativní). Tyto fakty jsou přidány do znalostní baze, ze
-které je po volání \verb|(reset)| inicializována \emph{working memory}.
-
-\begin{listing}[H]
-\caption{Základní struktura exilového programu}
-\label{typical structure}
-\begin{clcode}
-;; knowledge structure
-(deftemplate goal action object from to)
-(deftemplate in object location)
-
-;; initial knowledge
-(deffacts world
-  (in :object robot :location A)
-  (in :object box :location B)
-  (goal :action push :object box :from B :to A))
-
-;; inference rules
-(defrule move
-  (goal :action push :object ?obj :from ?from)
-  (in :object ?obj :location ?from)
-  (- in :object robot :location ?from)
-  ?robot <- (in :object robot :location ?)
-  =>
-  (modify ?robot :location ?from))
-
-(defrule push
-  (goal :action push :object ?obj :from ?from :to ?to)
-  ?object <- (in :object ?obj :location ?from)
-  ?robot <- (in :object robot :location ?from)
-  =>
-  (modify ?robot :location ?to)
-  (modify ?object :location ?to))
-
-(defrule stop
-  ?goal <- (goal :action push :object ?obj :to ?to)
-  (in :object ?obj :location ?to)
-  =>
-  (retract ?goal)
-  (halt))
-
-;; initiation
-(reset)
-
-;; inference execution
-; (step)
-(run)
-\end{clcode}
-\end{listing}
-
-Working memory může být dále v průběhu inference modifikována třemi makry:
-\begin{itemize}
-  \item \verb|assert| přidává fakt(a) do working memory,
-  \item \verb|retract| fakt(a) z working memory odebírá a
-  \item \verb|modify| přímo modifikuje existující fakta.
-\end{itemize}
-
-Poté následuje definice tří odvozovacích pravidel - \verb|move|, \verb|push|
-a~\verb|stop|. Definice každého pravidla sestává z množiny podmíněk, tedy
-předpokladů pro jeho splnění (a následnou aktivaci), a množiny důsledků, tedy
-libovolných lispových výrazů, které jsou při aktivaci pravidla vyhodnoceny.
-Tyto dvě množiny jsou od sebe odděleny symbolem \verb|=>|. Podmínky pravidel
-jsou ve formě vzorů (\emph{pattern}). Ty jsou velmi podobné faktům, ale mohou se
-v nich vyskytovat proměnné (atomy začínající symbolem otazníku).
-TODO: splnění podmínky pravidla
-Krom toho mohou
-být podmínky negovány, tedy podmínka je splněna tehdy, pokud neexistuje žádný
-fakt, který by jí odpovídal.
-
-\subsubsection{Definice znalostní báze}
-
-\subsubsection{Manipulace working memory}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Inference}
+\begin{framed}
+  \begin{itemize}
+    \item fáze podrobně
+    \begin{itemize}
+      \item vyhodnocení podmínek - vazby (speciální - singleton, navázání faktu),
+        konzistence
+      \item výběr pravidla - strategie
+      \item aktivace - vyhodnocení důsledků (typicky manipulace pracovní paměti)
+        navázání proměnných, eval
+    \end{itemize}
+    \item spuštění inference, krokování (může se prolínat s ručnímanipulací w.m.)
+    \item queries - agenda, strategies
+  \end{itemize}
+\end{framed}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Reset prostředí}
+\begin{framed}
+  \begin{itemize}
+    \item durable/volatile slots
+    \item clean, reset, complete reset (neměl by se jmenovat complete clean?)
+  \end{itemize}
+\end{framed}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Sledování průběhu inference}
+\begin{framed}
+  \begin{itemize}
+    \item watchery
+  \end{itemize}
+\end{framed}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Undo/redo}
+\begin{framed}
+  \begin{itemize}
+    \item lze použít na všechny funkce/makra s vedlejším efektem
+    \item pokud funkce nemá vedlejší efekt (fakt neexistuje, apod.), nezapíše se
+      undo step
+    \item queries - undo-stack, redo-stack
+  \end{itemize}
+\end{framed}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Zpětné řetězení}
+\begin{framed}
+  \begin{itemize}
+    \item cíle jako patterny
+    \item základní inference - nejdřív fakta, pak pravidla, v jakém pořadí
+      vybírá
+    \item alternativní odpovědi - backtracking
+  \end{itemize}
+\end{framed}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Práce s více prostředími}
 
-
-
-
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Grafické uživatelské rozhraní}
