@@ -203,8 +203,11 @@
   "print template"
   `(print-template *current-environment* ',name))
 
-(defun find-template (name)
+(defun find-templatef (name)
   (external (exil-env:find-template *current-environment* name)))
+
+(defmacro find-template (name)
+  `(find-templatef ',name))
 
 (defun templates ()
   (template-names *current-environment*))

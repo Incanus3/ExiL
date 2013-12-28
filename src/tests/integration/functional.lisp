@@ -55,22 +55,22 @@
 
 (def-test-method test-templates ((tests functional-integration-tests) :run nil)
   (deftemplatef 'in '(object (location :default hall)))
-  (assert-equal (find-template 'in) '(:in ((:object) (:location :default hall))))
+  (assert-equal (find-templatef 'in) '(:in ((:object) (:location :default hall))))
   (assert-equal (templates) '(:in))
 
   (undeftemplatef 'in)
   (print (templates))
-  (assert-false (find-template 'in))
+  (assert-false (find-templatef 'in))
   (assert-false (templates)))
 
 (def-test-method test-templates-keywords
     ((tests functional-integration-tests) :run nil)
   (deftemplatef :in '(object location))
-  (assert-equal (find-template :in) '(:in ((:object) (:location))))
+  (assert-equal (find-templatef :in) '(:in ((:object) (:location))))
   (assert-equal (templates) '(:in))
 
   (undeftemplatef :in)
-  (assert-false (find-template :in))
+  (assert-false (find-templatef :in))
   (assert-false (templates)))
 
 

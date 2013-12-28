@@ -19,7 +19,7 @@ ani snažit definovat, nikoli na následujícím pojmu znalosti, jak ji chápeme
 v~ExiLu (v takovém případě by byla definice cyklická).
 
 Pojem expertního systému zatím chápejme tak, jak jsem jej představil v úvodu
-práce. Pojem pochopitelně v praktické části rozeberu v potřebné šíři.
+práce. V praktické části rozeberu pojem v potřebné šíři.
 \begin{description}[leftmargin=6cm,style=sameline,align=right,labelsep=0.5cm]
   % \item[problémová doména] množina pojmů relevantních pro řešení určité skupiny
   %   problémů
@@ -104,12 +104,12 @@ Následuje definice odvozovacích pravidel. Definice každého pravidla sestáv�
 z~množiny podmínek, tedy předpokladů pro jeho splnění (a následnou aktivaci),
 a~množiny důsledků, tedy libovolných lispových lispových výrazů, které jsou při
 aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
-symbolem~\verb|=>|.
+\emph{symbolem}~\verb|=>|.
 
 Podmínky odvozovacích pravidel jsou ve formě vzorů (\emph{pattern}). Struktura
 vzorů je stejná jako struktura faktů (viz sekce \ref{knowledge base
-definition}), ale narozdíl od nich mohou obsahovat proměnné (atomy začínající
-symbolem otazníku).  Při vyhodnocování podmínek pravidla je zajišťěna
+definition}), ale narozdíl od nich mohou obsahovat proměnné (symboly začínající
+otazníkem).  Při vyhodnocování podmínek pravidla je zajišťěna
 konzistence vazeb těchto proměnných a výskyty všech proměnných v~důsledcích
 pravidla jsou při jeho aktivaci nahrazeny jejich vazbami. Detaily viz sekce
 \ref{inference}
@@ -148,7 +148,7 @@ původních faktů) přidá do pracovní paměti fakta ve všech definovaných s
 Poslední nutnou fází exilového programu je spuštění inference. To můžeme udělat
 nejjednodušeji voláním \verb|(run)|. Inferenční mechanismus poté postupně
 vyhodnocuje, která odvozovací pravidla mají splněné všechny podmínky, v každém
-kroku z nich jedno vybere a aktivuje jej. Detaily viz \ref{inference}.
+kroku z nich jedno vybere a aktivuje jej. Detaily viz sekce \ref{inference}
 
 Výstup programu je následující:
 \begin{minted}{cl}
@@ -159,8 +159,8 @@ Firing MOVE-ROBOT
 <== (IN ROBOT B)
 ==> (IN ROBOT A)
 Firing MOVE-OBJECT
-<== (IN BOX A)
 <== (IN ROBOT A)
+<== (IN BOX A)
 ==> (IN ROBOT B)
 ==> (IN BOX B)
 Firing STOP
@@ -171,9 +171,9 @@ Halting
 pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz sekce
 \ref{inference tracing}). První tři fakty přibydou do pracovní paměti při
 vyhodnocení volání \verb|(reset)|, další pak spolu s postupnou aplikací
-odvozovacích pravidel. Dotážeme-li po skončení inference na seznam faktů v
+odvozovacích pravidel. Dotážeme-li se po skončení inference na seznam faktů v
 pracovní paměti voláním \verb|(facts)|, obdržíme výstup
-\cl|((GOAL MOVE BOX A B) (IN ROBOT B) (IN BOX B))|
+\cl|((GOAL MOVE BOX A B) (IN ROBOT B) (IN BOX B)).|
 Robot i krabice jsou tedy na cílové pozici.
 
 Kód exilového programu má deklarativní charakter. Nikde jsme nemuseli
@@ -190,7 +190,6 @@ způsobeny nezamýšlenou interferencí podmínek pravidel s důsledky jiných.
 \label{knowledge base definition}
 \begin{framed}
   \begin{itemize}
-    \item simple/templated fakta $\rightarrow$ templaty
     \item skupiny faktů
     \item pravidla
       \begin{itemize}
@@ -198,26 +197,61 @@ způsobeny nezamýšlenou interferencí podmínek pravidel s důsledky jiných.
         \item důsledky - typicky modifikace pracovní paměti
       \end{itemize}
     \item queries - fact-groups, rules + finders
+    \item přesunout přílišné podrobnosti do referenční příručky
   \end{itemize}
 \end{framed}
 
 ExiL, stejně jako CLIPS, rozlišuje dva typy faktů - jednoduché (\emph{simple,
 ordered}) a strukturované (\emph{templated}). Stuktura jednoduchého faktu je udána
-pouze pořadím atomů, typickou volbou je např. \verb|objekt-attribut-hodnota|:
+pouze pořadím \emph{atomů}, typickou volbou je např. \verb|objekt-attribut-hodnota|:
 \cl|(box color red),| či \verb|relace-<zůčastněné objekty>|: \cl|(in box hall).|
-Strukturované fakty mají naproti tomu explicitně pojmenované položky (sloty),
-typicky tedy popisují objekt s množinou atributů: \cl|(box :color red :size small),|
+
+Strukturované fakty mají naproti tomu explicitně pojmenované složky (sloty).
+Typicky popisují objekt s množinou atributů: \cl|(box :color red :size small),|
 či relaci s jasně danými aktory: \cl|(in :object box :location hall),| kde
-\verb|box| a \verb|in| jsou šablony, které je třeba definovat předem, jak záhy
-uvidíme. Na pořadí specifikace slotů u strukturovaných faktů pochopitelně
-nezáleží. Vyjadřovací síla obou skupin faktů je samozřejmě stejná, použitím
-explicitnějších strukturovaných faktů, ale docílíme lepší čitelnosti a
-jednoznačnější sémantiky exilového programu, zláště např. v případě relací na
-jedné množině: \cl|(father john george).|
+\verb|box| a \verb|in| jsou šablony (\emph{template}), které je třeba definovat
+předem. Na pořadí specifikace slotů u strukturovaných faktů
+nezáleží.  Vyjadřovací síla obou typů faktů je stejná, použitím explicitnějších
+strukturovaných faktů ale docílíme lepší čitelnosti a jednoznačnější sémantiky
+exilového programu, zláště třeba v případě relací na jedné množině objektů:
+\cl|(father john george).|
+
+Šablonu definujeme voláním \emph{makra} \verb|deftemplate|, např:
+\cl|(deftemplate in object (location :default here)).| Prvním parametrem je
+název šablony, za ním následuje libovolný počet specifikací slotů. Specifikací
+slotu je buď symbol - jméno slotu, nebo \emph{seznam}, jehož hlavou
+(\emph{car}) je jméno slotu a~tělem (\emph{cdr}) je \emph{property list (plist)}
+s dalšími parametry. Aktuálně systém umožňuje pouze specifikaci výchozí hodnoty
+slotu \emph{klíčem} \verb|:default|. Ta je použita, není-li při specifikaci
+faktu, používajícího tuto šablonu, uvedena hodnota pro daný slot.
+
+Je-li už šablona požadovaného názvu definována, ale neexistují v pracovní
+paměti fakty, které ji používají, je její stávající definice nahrazena. Pokud
+ale v pracovní paměti existují takové fakty, skončí volání \verb|deftemplate|
+výjimkou.
+
+Seznam názvů všech definovaných šablon můžeme získat voláním \emph{funkce}
+\verb|templates| (bez parametrů). Specifikaci šablony pak získáme voláním makra
+\verb|find-template|, např. \verb|(find-template in).|
+
+Fakta, ze kterých expertní systém vychází zavádíme pomocí skupin faktů. Ty
+definujeme makrem \verb|deffacts|, např.:
+\begin{minted}{cl}
+(deffacts initial
+  (goal move box A B)
+  (in :object box :location A))
+\end{minted}
+Prvním parametrem je název skupiny, pak následuje libovolný počet specifikací
+faktů. Specifikace faktu je vždy tvořena seznamem. Pokud jde o jednoduchý fakt,
+specifikací je prostě seznam atomů. Jde-li o fakt strukturovaný, je prvním
+prvkem specifikace název šablony, za ním následuje plist určující hodnoty slotů
+faktu.
+
+Pravidla - podmínky, důsledky, queries
 
 Podmínky pravidel jsou ve formě vzorů (\emph{pattern}). Struktura vzorů je
 stejná jako struktura faktů, ale narozdíl od nich mohou obsahovat proměnné
-(atomy začínající symbolem otazníku).  Krom toho mohou být podmínky negovány.
+(atomy začínající symbolem otazníku). Krom toho mohou být podmínky negovány.
 Taková podmínka je splněna tehdy, pokud neexistuje žádný fakt, který by jí
 odpovídal.
 

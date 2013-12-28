@@ -98,7 +98,7 @@
   (:export :defenv :defenvf :setenv :setenvf :environments :current-environment
            :getenv ; used by gui
            :deftemplate :deftemplatef :undeftemplate :undeftemplatef
-           :ppdeftemplate :templates :find-template
+           :ppdeftemplate :templates :find-template :find-templatef
 	   :assert :assertf :retract :retractf :retract-all :modify :modifyf
 	   :agenda :facts
            :deffacts :deffactsf :undeffacts :undeffactsf

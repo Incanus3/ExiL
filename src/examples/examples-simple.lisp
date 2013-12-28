@@ -24,8 +24,8 @@
   ?obj-pos <- (in ?object ?from)
   ?rob-pos <- (in robot ?from)
   =>
-  (retract ?obj-pos)
   (retract ?rob-pos)
+  (retract ?obj-pos)
   (assert (in robot ?to))
   (assert (in ?object ?to)))
 
