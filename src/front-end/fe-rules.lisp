@@ -72,8 +72,11 @@
 (defun rules ()
   (rule-names *current-environment*))
 
-(defun find-rule (name)
+(defun find-rulef (name)
   (external (exil-env:find-rule *current-environment* name)))
+
+(defmacro find-rule (name)
+  `(find-rulef ',name))
 
 (defun ppdefrulef (name)
   (fresh-princ (exil-env:find-rule *current-environment* name)))

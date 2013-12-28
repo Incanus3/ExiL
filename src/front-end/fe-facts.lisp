@@ -120,7 +120,10 @@
 ;; creating fact-group's external representation
 ;; fact-group should probably be an object (even though only a simple wrapper)
 ;; so that we can define methods for it
-(defun find-fact-group (name)
+(defun find-fact-groupf (name)
   (let ((facts (eenv:find-fact-group *current-environment* name)))
     (when facts
       (cons (to-keyword name) (mapcar #'external facts)))))
+
+(defmacro find-fact-group (name)
+  `(find-fact-groupf ',name))

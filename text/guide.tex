@@ -189,29 +189,22 @@ způsobeny nezamýšlenou interferencí podmínek pravidel s důsledky jiných.
 \subsubsection{Definice znalostní báze}
 \label{knowledge base definition}
 \begin{framed}
-  \begin{itemize}
-    \item skupiny faktů
-    \item pravidla
-      \begin{itemize}
-        \item podmínky podrobně - patterny, konjunkce, negace
-        \item důsledky - typicky modifikace pracovní paměti
-      \end{itemize}
-    \item queries - fact-groups, rules + finders
-    \item přesunout přílišné podrobnosti do referenční příručky
-  \end{itemize}
+Přesunout přílišné podrobnosti do referenční příručky
 \end{framed}
 
 ExiL, stejně jako CLIPS, rozlišuje dva typy faktů - jednoduché (\emph{simple,
 ordered}) a strukturované (\emph{templated}). Stuktura jednoduchého faktu je udána
 pouze pořadím \emph{atomů}, typickou volbou je např. \verb|objekt-attribut-hodnota|:
-\cl|(box color red),| či \verb|relace-<zůčastněné objekty>|: \cl|(in box hall).|
+\cl|(box color red),| či \verb|relace-objekty|: \cl|(in box hall).|
 
 Strukturované fakty mají naproti tomu explicitně pojmenované složky (sloty).
-Typicky popisují objekt s množinou atributů: \cl|(box :color red :size small),|
-či relaci s jasně danými aktory: \cl|(in :object box :location hall),| kde
+Typicky popisují objekt s množinou pojmenovaných atributů: \cl|(box :color red :size small),|
+či relaci s pojmenovanými aktory: \cl|(in :object box :location hall),| kde
 \verb|box| a \verb|in| jsou šablony (\emph{template}), které je třeba definovat
 předem. Na pořadí specifikace slotů u strukturovaných faktů
-nezáleží.  Vyjadřovací síla obou typů faktů je stejná, použitím explicitnějších
+nezáleží.
+
+Vyjadřovací síla obou typů faktů je stejná, použitím explicitnějších
 strukturovaných faktů ale docílíme lepší čitelnosti a jednoznačnější sémantiky
 exilového programu, zláště třeba v případě relací na jedné množině objektů:
 \cl|(father john george).|
@@ -232,9 +225,11 @@ výjimkou.
 
 Seznam názvů všech definovaných šablon můžeme získat voláním \emph{funkce}
 \verb|templates| (bez parametrů). Specifikaci šablony pak získáme voláním makra
-\verb|find-template|, např. \verb|(find-template in).|
+\verb|find-template|, např. \verb|(find-template in).| Definici šablony zrušíme
+voláním makra \verb|undeftemplate|, např. \verb|(undeftemplate goal)|. To opět
+skončí výjimkou, existují-li v pracovní paměti fakty, které šablonu využívají.
 
-Fakta, ze kterých expertní systém vychází zavádíme pomocí skupin faktů. Ty
+Fakta, ze kterých expertní systém vychází, zavádíme pomocí skupin faktů. Ty
 definujeme makrem \verb|deffacts|, např.:
 \begin{minted}{cl}
 (deffacts initial
@@ -242,18 +237,46 @@ definujeme makrem \verb|deffacts|, např.:
   (in :object box :location A))
 \end{minted}
 Prvním parametrem je název skupiny, pak následuje libovolný počet specifikací
-faktů. Specifikace faktu je vždy tvořena seznamem. Pokud jde o jednoduchý fakt,
+faktů. Opakovaným voláním makra \verb|deffacts| je skupina faktů
+redefinována.
+
+Specifikace faktu je vždy tvořena seznamem. Pokud jde o jednoduchý fakt,
 specifikací je prostě seznam atomů. Jde-li o fakt strukturovaný, je prvním
 prvkem specifikace název šablony, za ním následuje plist určující hodnoty slotů
-faktu.
+faktu. Pokud není hodnota některého slotu uvedena, je buď použita
+výchozí hodnota, pokud byla v šabloně specifikována, nebo hodnota \verb|nil| v
+opačném případě.
 
-Pravidla - podmínky, důsledky, queries
+Seznam názvů všech definovaných skupin faktů získáme voláním funkce
+\verb|fact-groups| (bez parametrů). Specifikaci skupiny pak voláním makra
+\verb|find-fact-group|, např.: \verb|(find-fact-group initial)|. Ke zrušení
+definice skupiny slouží makro \verb|undeffacts| (voláme s názvem skupiny).
 
-Podmínky pravidel jsou ve formě vzorů (\emph{pattern}). Struktura vzorů je
-stejná jako struktura faktů, ale narozdíl od nich mohou obsahovat proměnné
-(atomy začínající symbolem otazníku). Krom toho mohou být podmínky negovány.
-Taková podmínka je splněna tehdy, pokud neexistuje žádný fakt, který by jí
-odpovídal.
+Pravidla, pomocí nichž expertní systém během inference odvozuje nové fakty,
+definujeme makrem
+\verb|defrule|, např.:
+\begin{minted}{cl}
+(defrule move-robot
+  (goal :action move :object ?obj :from ?from)
+  (in :object ?obj :location ?from)
+  (- in :object robot :location ?from)
+  ?robot <- (in :object robot :location ?)
+  =>
+  (modify ?robot :location ?from)).
+\end{minted}
+Podmínková část pravidla (před symbolem \verb|=>|) je tvořena vzory. Ty mohou
+být, stejně jako fakty, jednoduché, nebo strukturované. Kromě toho umožňuje
+definice pravidla několik speciálních konstruktů (negace podmínky, navázání
+proměnné na celou podmínku). Ty popíšu podrobně v sekci \ref{inference} spolu~s
+tím, jak jsou podmínky pravidla při inferenci vyhodnocovány.
+
+Důsledkovou část pravidla (za symbolem \verb|=>|) tvoří libovolný počet
+lispových výrazů. Jak se tyto vyhodnocují popíšu opět v sekci \ref{inference}.
+
+Opakovaným voláním makra \verb|defrule| odvozovací pravidlo redefinujeme.
+K~získání seznamu názvů definovaných pravidel a jejich specifikací slouží funkce
+\verb|rules| a makro \verb|find-rule|, podobně jako u šablon a skupin faktů.
+Ke zrušení definice pravidla slouží makro \verb|undefrule|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Modifikace pracovní paměti}
@@ -290,6 +313,11 @@ Pracovní paměť může být dále v průběhu inference modifikována třemi m
     \item queries - agenda, strategies
   \end{itemize}
 \end{framed}
+
+Podmínky jsou spojeny logickou konjunkcí, pravidlo je tedy možné aktivovat,
+jsou-li splněny všechny jeho podmínky. Kromě toho mohou být některé podmínky
+negovány. Taková opdmínka je splněna tehdy, neexistuje-li v pracovní paměti
+žádný fakt, který by jí odpovídal.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Reset prostředí}

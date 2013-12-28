@@ -102,8 +102,9 @@
 	   :assert :assertf :retract :retractf :retract-all :modify :modifyf
 	   :agenda :facts
            :deffacts :deffactsf :undeffacts :undeffactsf
-           :fact-groups :find-fact-group
-	   :defrule :defrulef :undefrule :undefrulef :ppdefrule :rules :find-rule
+           :fact-groups :find-fact-group :find-fact-groupf
+	   :defrule :defrulef :undefrule :undefrulef :ppdefrule :rules
+           :find-rule :find-rulef
 	   :defgoal :defgoalf :undefgoal :undefgoalf :goals
 	   :defstrategy :defstrategyf :undefstrategy :undefstrategyf
            :setstrategy :setstrategyf
