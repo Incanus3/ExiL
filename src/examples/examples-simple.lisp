@@ -6,34 +6,33 @@
 (complete-reset)
 
 (deffacts world
-  (in robot A)
-  (in box B)
-  (goal move box B A))
+  (in robot B)
+  (in box A)
+  (goal move box A B))
 
 (defrule move-robot
   (goal move ?object ?from ?to)
   (in ?object ?from)
   (- in robot ?from)
-  (in robot ?z)
+  ?original <- (in robot ?z)
   =>
-  (retract (in robot ?z))
+  (retract ?original)
   (assert (in robot ?from)))
 
 (defrule move-object
   (goal move ?object ?from ?to)
-  (in ?object ?from)
-  (in robot ?from)
+  ?obj-pos <- (in ?object ?from)
+  ?rob-pos <- (in robot ?from)
   =>
-  (retract (in robot ?from))
+  (retract ?obj-pos)
+  (retract ?rob-pos)
   (assert (in robot ?to))
-  (retract (in ?object ?from))
   (assert (in ?object ?to)))
 
 (defrule stop
-  ?goal <- (goal move ?object ?from ?to)
+  (goal move ?object ?from ?to)
   (in ?object ?to)
   =>
-  (retract ?goal)
   (halt))
 
 (unwatch all)
@@ -48,4 +47,4 @@
 (step)
 |#
 
-(complete-reset)
+;(complete-reset)

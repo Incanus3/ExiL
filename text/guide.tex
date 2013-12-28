@@ -6,11 +6,6 @@
     \item TODO: v teoretické části uvést pojmy znovu s citacemi
     \item TODO: production memory v exilu splývá s pravidly znalostní báze - na
       příhodném místě uvést, že v teorii a některých systémech se rozlišuje
-    \item TODO: ke každému pojmu později jasně uvést příklad
-    \item systém ve skutečnosti pracuje s \emph{reprezentací} znalostí, ale to
-      nás zatím nezajímá
-    \item dodetečné pojmy by mohly být definovány průběžně v boxech s odkazem do
-      teoretické části
   \end{itemize}
 \end{framed}
 
@@ -43,29 +38,8 @@ faktů (tvrzení), které expertní systém v danou chvíli považuje za platné
 tedy ve skutečnosti o paměť, nýbrž o obsah pomyslné paměti. Pojem pracovní
 množina faktů by byl jistě výstižnější, bohužel ale také značně těžkopádný.
 
-% Pojmy working memory a production memory lze samozřejmě doslova přeložit, ale
-% žádný z překladů mi nepřijde příliš názorný (zvlášť vzhledem k tomu, že ve
-% skutečnosti nejde o paměť, nýbrž aktuální obsah pomyslné paměti), budu tedy
-% používat anglická spojení užívaná v literatuře. Představa pojmů bude jasnější,
-% jakmile si je ukážeme na příkladech.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Struktura programu}
-
-\begin{framed}
-  \begin{itemize}
-    \item základní fáze vysokoúrovňově
-    \begin{itemize}
-      \item definice znalostní báze - fakta, pravidla - podmínky (patterny,
-        proměnné), důsledky
-      \item inicializace pracovní paměti ze znalostní báze
-      \item inference - jen nastínit cyklus - vyhodnocení podmínek, výběr pravidla,
-        aktivace
-    \end{itemize}
-    \item ke každému ze základních pojmů uvést příklad z programu.
-    \item TODO: uvést výstup programu
-  \end{itemize}
-\end{framed}
 
 \begin{listing}[h]
 \caption{Základní struktura exilového programu}
@@ -74,9 +48,9 @@ množina faktů by byl jistě výstižnější, bohužel ale také značně tě�
 ;;; definition of knowledge base
 ;; facts
 (deffacts world
-  (in robot A)
-  (in box B)
-  (goal move box B A))
+  (in box A)
+  (in robot B)
+  (goal move box A B))
 
 ;; inference rules
 (defrule move-robot
@@ -90,19 +64,18 @@ množina faktů by byl jistě výstižnější, bohužel ale také značně tě�
 
 (defrule move-object
   (goal move ?object ?from ?to)
-  (in ?object ?from)
-  (in robot ?from)
+  ?rob-pos <- (in robot ?from)
+  ?obj-pos <- (in ?object ?from)
   =>
-  (retract (in robot ?from))
+  (retract ?rob-pos)
+  (retract ?obj-pos)
   (assert (in robot ?to))
-  (retract (in ?object ?from))
   (assert (in ?object ?to)))
 
 (defrule stop
-  ?goal <- (goal move ?object ?from ?to)
+  (goal move ?object ?from ?to)
   (in ?object ?to)
   =>
-  (retract ?goal)
   (halt))
 
 ;;; initialization of working memory
@@ -113,36 +86,108 @@ množina faktů by byl jistě výstižnější, bohužel ale také značně tě�
 \end{clcode}
 \end{listing}
 
-Příklad \ref{typical structure} (na straně \pageref{typical structure}) ukazuje
-typickou strukturu programu nad knihovnou ExiL (dále exilový program). Tento
-program používá strukturovaných faktů, začíná tudíž definicemi šablon, tedy
-formátu těchto faktů. Následuje definice skupiny faktů (jméno \verb|world| této
-skupiny je pouze informativní). Tyto fakty jsou přidány do znalostní báze, ze
-které je po volání \verb|(reset)| inicializována pracovní paměť.
+Příklad \ref{typical structure} na straně \pageref{typical structure} ukazuje
+minimální strukturu programu nad knihovnou ExiL (dále exilový program). První
+část programu tvoří definice znalostní báze. Ta sestává z definic faktů, ze
+kterých expertní systém vychází a definic odvozovacích pravidel, jež jsou
+následně aplikována při inferenci.
 
-Pracovní paměť může být dále v průběhu inference modifikována třemi makry:
-\begin{itemize}
-  \item \verb|assert| přidává fakt(a) do pracovní paměti,
-  \item \verb|retract| fakt(a) z pracovní paměti odebírá a
-  \item \verb|modify| přímo modifikuje existující fakta.
-\end{itemize}
+Definice faktů jsou uspořádány do skupin označených názvem (v tomto případě
+\verb|world|). V ukázkovém programu si snadno vystačíme s jednou skupinou faktů,
+v reálných programech bude ale těchto skupin většinou více. Tato organizace
+umožňuje snadnou redefinici, případně odebrání, jen některých skupin faktů v
+případě potřeby.  Definice skupiny faktů \verb|world| v příkladu přidává do
+znalostní báze informaci o~počáteční pozici robota, krabice a~o~našem záměru
+přesunout krabici z~pozice \verb|A| na pozici \verb|B|.
 
-Poté následuje definice tří odvozovacích pravidel - \verb|move|, \verb|push|
-a~\verb|stop|. Definice každého pravidla sestává z množiny podmíněk, tedy
-předpokladů pro jeho splnění (a následnou aktivaci), a množiny důsledků, tedy
-libovolných lispových výrazů, které jsou při aktivaci pravidla vyhodnoceny.
-Tyto dvě množiny jsou od sebe odděleny symbolem \verb|=>|. Podmínky pravidel
-jsou ve formě vzorů (\emph{pattern}). Ty jsou velmi podobné faktům, ale mohou se
-v nich vyskytovat proměnné (atomy začínající symbolem otazníku).
-TODO: splnění podmínky pravidla
-Krom toho mohou
-být podmínky negovány, tedy podmínka je splněna tehdy, pokud neexistuje žádný
-fakt, který by jí odpovídal.
+Následuje definice odvozovacích pravidel. Definice každého pravidla sestává
+z~množiny podmínek, tedy předpokladů pro jeho splnění (a následnou aktivaci),
+a~množiny důsledků, tedy libovolných lispových lispových výrazů, které jsou při
+aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
+symbolem~\verb|=>|.
+
+Podmínky odvozovacích pravidel jsou ve formě vzorů (\emph{pattern}). Struktura
+vzorů je stejná jako struktura faktů (viz sekce \ref{knowledge base
+definition}), ale narozdíl od nich mohou obsahovat proměnné (atomy začínající
+symbolem otazníku).  Při vyhodnocování podmínek pravidla je zajišťěna
+konzistence vazeb těchto proměnných a výskyty všech proměnných v~důsledcích
+pravidla jsou při jeho aktivaci nahrazeny jejich vazbami. Detaily viz sekce
+\ref{inference}
+
+Důsledky pravidel typicky obsahují příkazy pro modifikaci pracovní paměti (viz
+sekce \ref{modifikace}), tedy přidání (\verb|assert|), odebrání (\verb|retract|),
+či úpravů (\verb|modify|) faktů v ní. Nemůsí
+tomu tak ale být vždycky - důsledkem aktivace pravidla může být např. vypsání
+výstupu, logování, zápis souboru, ale také např. ovládání externího systému.
+
+Náš ukázkový příklad definuje tři odvozovací pravidla. Pravidlo
+\verb|move-robot| je aktivováno, pokud chceme přesunout nějaký objekt z pozice
+\verb|?from| na pozici \verb|?to|, objekt se nachází v pozici \verb|?from|
+a~robot nikoli (třetí podmínka je negovaná, viz sekce \ref{knowledge base
+definition}). Poslední podmínka slouží pouze k navázání původní pozice robota.
+Při aktivaci pravidla je v pracovní paměti nahrazena informace o~původní pozici
+robota pozicí \verb|?from|. Robot se tedy nyní nachází na stejné pozici, jako
+kýžený objekt.
+
+Podmínky pravidla \verb|move-object| vyžadují, aby byl jak robot, tak objekt
+určený k přesunu, na pozici \verb|?from|. Při jeho aktivaci je robot i s objektem
+přesunut na pozici \verb|?to| nahrazením faktů o původních pozicích novými,
+podobně jako v prvním pravidle. Definice pravidla obsahuje speciální notaci (s
+použitím operátoru \verb|<-|), jejímž účelem je navázání celého faktu na
+proměnnou. Ten pak můžeme v důsledcích snadno ostranit z pracovní paměti.
+
+Poslední pravidlo slouží k zastavení inference, pokud se již objekt nachází na
+zamýšlené pozici. Inference je zde zastavena explicitním voláním \verb|(halt)|.
+Druhou možností by bylo odstranit z pracovní paměti fakt definující cíl, neboť v
+takovou chvíli nemůže být žádné další pravidlo splňeno.
+
+Jakmile je znalostní báze nadefinována, můžeme z ní inicializovat pracovní
+paměť. To provedeme voláním \verb|(reset)|, které (po případném vyčištění
+původních faktů) přidá do pracovní paměti fakta ve všech definovaných skupinách.
+
+Poslední nutnou fází exilového programu je spuštění inference. To můžeme udělat
+nejjednodušeji voláním \verb|(run)|. Inferenční mechanismus poté postupně
+vyhodnocuje, která odvozovací pravidla mají splněné všechny podmínky, v každém
+kroku z nich jedno vybere a aktivuje jej. Detaily viz \ref{inference}.
+
+Výstup programu je následující:
+\begin{minted}{cl}
+==> (IN ROBOT B)
+==> (IN BOX A)
+==> (GOAL MOVE BOX A B)
+Firing MOVE-ROBOT
+<== (IN ROBOT B)
+==> (IN ROBOT A)
+Firing MOVE-OBJECT
+<== (IN BOX A)
+<== (IN ROBOT A)
+==> (IN ROBOT B)
+==> (IN BOX B)
+Firing STOP
+Halting
+\end{minted}
+Řádky začínající symbolem \verb|==>| označují fakty přibyvší do pracovní paměti,
+řádky začínající \verb|<==| fakty z paměti odstraněné. Tento výstup obdržíme
+pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz sekce
+\ref{inference tracing}). První tři fakty přibydou do pracovní paměti při
+vyhodnocení volání \verb|(reset)|, další pak spolu s postupnou aplikací
+odvozovacích pravidel. Dotážeme-li po skončení inference na seznam faktů v
+pracovní paměti voláním \verb|(facts)|, obdržíme výstup
+\cl|((GOAL MOVE BOX A B) (IN ROBOT B) (IN BOX B))|
+Robot i krabice jsou tedy na cílové pozici.
+
+Kód exilového programu má deklarativní charakter. Nikde jsme nemuseli
+specifikovat, jakou posloupností akcí má systém k výsledku dospět. To nás ovšem
+nezbavuje nutnosti chápat fungování inferenčního mechanismu ExiLu. Nebudeme-li
+při konstrukci programu opatrní, může výpočet snadno dospět k neočekávaným
+výsledkům, dostat se do slepé větve, či se zacyklit. Tyto problémy jsou často
+způsobeny nezamýšlenou interferencí podmínek pravidel s důsledky jiných.
 
 \FloatBarrier
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Definice znalostní báze}
+\label{knowledge base definition}
 \begin{framed}
   \begin{itemize}
     \item simple/templated fakta $\rightarrow$ templaty
@@ -150,7 +195,7 @@ fakt, který by jí odpovídal.
     \item pravidla
       \begin{itemize}
         \item podmínky podrobně - patterny, konjunkce, negace
-        \item důsledky - typicky manipulace pracovní paměti
+        \item důsledky - typicky modifikace pracovní paměti
       \end{itemize}
     \item queries - fact-groups, rules + finders
   \end{itemize}
@@ -170,29 +215,44 @@ explicitnějších strukturovaných faktů, ale docílíme lepší čitelnosti a
 jednoznačnější sémantiky exilového programu, zláště např. v případě relací na
 jedné množině: \cl|(father john george).|
 
+Podmínky pravidel jsou ve formě vzorů (\emph{pattern}). Struktura vzorů je
+stejná jako struktura faktů, ale narozdíl od nich mohou obsahovat proměnné
+(atomy začínající symbolem otazníku).  Krom toho mohou být podmínky negovány.
+Taková podmínka je splněna tehdy, pokud neexistuje žádný fakt, který by jí
+odpovídal.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Manipulace pracovní paměti}
+\subsubsection{Modifikace pracovní paměti}
+\label{modifikace}
 \begin{framed}
   \begin{itemize}
     \item inicializace ze znalostní báze
-    \item ruční manipulace - assert, retract, modify
+    \item ruční modifikace - assert, retract, modify
     \item queries - facts
   \end{itemize}
 \end{framed}
 
+Pracovní paměť může být dále v průběhu inference modifikována třemi makry:
+\begin{itemize}
+  \item \verb|assert| přidává fakt(a) do pracovní paměti,
+  \item \verb|retract| fakt(a) z pracovní paměti odebírá a
+  \item \verb|modify| přímo modifikuje existující fakta.
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Inference}
+\label{inference}
 \begin{framed}
   \begin{itemize}
     \item fáze podrobně
     \begin{itemize}
-      \item vyhodnocení podmínek - vazby (speciální - singleton, navázání faktu),
-        konzistence
+      \item vyhodnocení podmínek - statické testy, vazby proměnných (speciální -
+        singleton, navázání faktu), konzistence
       \item výběr pravidla - strategie
-      \item aktivace - vyhodnocení důsledků (typicky manipulace pracovní paměti)
+      \item aktivace - vyhodnocení důsledků (typicky modifikace pracovní paměti)
         navázání proměnných, eval
     \end{itemize}
-    \item spuštění inference, krokování (může se prolínat s ručnímanipulací w.m.)
+    \item spuštění inference, krokování (může se prolínat s ručnímodifikací w.m.)
     \item queries - agenda, strategies
   \end{itemize}
 \end{framed}
@@ -208,6 +268,7 @@ jedné množině: \cl|(father john george).|
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Sledování průběhu inference}
+\label{inference tracing}
 \begin{framed}
   \begin{itemize}
     \item watchery
