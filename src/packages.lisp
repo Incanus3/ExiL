@@ -114,7 +114,7 @@
 	   :undo :redo :undo-stack :redo-stack
 	   :back-step :back-run
            :complete-reset) ;; DEBUG
-  (:shadow :assert :step :templates :facts :agenda :rules
+  (:shadow :reset :assert :step :templates :facts :agenda :rules
            :undo :redo :watched-p :back-step :back-run
            :find-template :find-fact-group :find-strategy :find-rule
            :goals))

@@ -46,7 +46,7 @@
 ;; public
 (defmethod rem-template ((env environment) (name symbol)
                          &optional (undo-label "(del-template)"))
-  (ensure-tmpl-not-used env name "undefine")
+  (ensure-tmpl-not-used env (to-keyword name) "undefine")
   (del-template% env name undo-label)
   (notify env))
 

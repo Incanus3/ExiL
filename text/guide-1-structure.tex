@@ -1,0 +1,146 @@
+\subsubsection{Struktura programu}
+
+\begin{listing}[h]
+\caption{Základní struktura exilového programu}
+\label{typical structure}
+\begin{clcode}
+;;; definition of knowledge base
+;; facts
+(deffacts world
+  (in box A)
+  (in robot B)
+  (goal move box A B))
+
+;; inference rules
+(defrule move-robot
+  (goal move ?object ?from ?to)
+  (in ?object ?from)
+  (- in robot ?from)
+  (in robot ?z)
+  =>
+  (retract (in robot ?z))
+  (assert (in robot ?from)))
+
+(defrule move-object
+  (goal move ?object ?from ?to)
+  ?rob-pos <- (in robot ?from)
+  ?obj-pos <- (in ?object ?from)
+  =>
+  (retract ?rob-pos)
+  (retract ?obj-pos)
+  (assert (in robot ?to))
+  (assert (in ?object ?to)))
+
+(defrule stop
+  (goal move ?object ?from ?to)
+  (in ?object ?to)
+  =>
+  (halt))
+
+;;; initialization of working memory
+(reset)
+
+;;; inference execution
+(run)
+\end{clcode}
+\end{listing}
+
+Příklad \ref{typical structure} na straně \pageref{typical structure} ukazuje
+minimální strukturu programu nad knihovnou ExiL (dále exilový program). První
+část programu tvoří definice znalostní báze. Ta sestává z definic faktů, ze
+kterých expertní systém vychází a definic odvozovacích pravidel, jež jsou
+následně aplikována při inferenci.
+
+Definice faktů jsou uspořádány do skupin označených názvem (v tomto případě
+\verb|world|). V ukázkovém programu si snadno vystačíme s jednou skupinou faktů,
+v reálných programech bude ale těchto skupin většinou více. Tato organizace
+umožňuje snadnou redefinici, případně odebrání, jen některých skupin faktů v
+případě potřeby.  Definice skupiny faktů \verb|world| v příkladu přidává do
+znalostní báze informaci o~počáteční pozici robota, krabice a~o~našem záměru
+přesunout krabici z~pozice \verb|A| na pozici \verb|B|.
+
+Následuje definice odvozovacích pravidel. Definice každého pravidla sestává
+z~množiny podmínek, tedy předpokladů pro jeho splnění (a následnou aktivaci),
+a~množiny důsledků, tedy libovolných lispových lispových výrazů, které jsou při
+aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
+\emph{symbolem}~\verb|=>|.
+
+Podmínky odvozovacích pravidel jsou ve formě vzorů (\emph{pattern}). Struktura
+vzorů je stejná jako struktura faktů (viz sekce \ref{knowledge base
+definition}), ale narozdíl od nich mohou obsahovat proměnné (symboly začínající
+otazníkem).  Při vyhodnocování podmínek pravidla je zajišťěna
+konzistence vazeb těchto proměnných a výskyty všech proměnných v~důsledcích
+pravidla jsou při jeho aktivaci nahrazeny jejich vazbami. Detaily viz sekce
+\ref{inference}
+
+Důsledky pravidel typicky obsahují příkazy pro modifikaci pracovní paměti (viz
+sekce \ref{modifikace}), tedy přidání (\verb|assert|), odebrání (\verb|retract|),
+či úpravů (\verb|modify|) faktů v ní. Nemůsí
+tomu tak ale být vždycky - důsledkem aktivace pravidla může být např. vypsání
+výstupu, logování, zápis souboru, ale také např. ovládání externího systému.
+
+Ukázkový příklad definuje tři odvozovací pravidla. Pravidlo
+\verb|move-robot| je aktivováno, pokud chceme přesunout nějaký objekt z pozice
+\verb|?from| na pozici \verb|?to|, objekt se nachází v pozici \verb|?from|
+a~robot nikoli (třetí podmínka je negovaná, viz sekce \ref{inference}).
+Poslední podmínka slouží pouze k navázání původní pozice robota.  Při aktivaci
+pravidla je v pracovní paměti nahrazena informace o~původní pozici robota
+pozicí \verb|?from|. Robot se tedy nyní nachází na stejné pozici, jako kýžený
+objekt.
+
+Podmínky pravidla \verb|move-object| vyžadují, aby byl jak robot, tak objekt
+určený k přesunu, na pozici \verb|?from|. Při jeho aktivaci je robot i s objektem
+přesunut na pozici \verb|?to| nahrazením faktů o původních pozicích novými,
+podobně jako v prvním pravidle. Definice pravidla obsahuje speciální notaci (s
+použitím operátoru \verb|<-|), jejímž účelem je navázání celého faktu na
+proměnnou. Ten pak můžeme v důsledcích snadno ostranit z pracovní paměti.
+Detaily opět viz sekce \ref{inference}
+
+Poslední pravidlo slouží k zastavení inference, pokud se již objekt nachází na
+cílové pozici. Inference je zde zastavena explicitním voláním \verb|(halt)|.
+Druhou možností by bylo odstranit z pracovní paměti fakt definující cíl, neboť v
+takovou chvíli nemůže být žádné další pravidlo splňeno.
+
+Jakmile je znalostní báze nadefinována, můžeme z ní inicializovat pracovní
+paměť. To provedeme voláním \verb|(reset)|, které (po případném vyčištění
+původních faktů) přidá do pracovní paměti fakty ve všech definovaných skupinách.
+
+Poslední nutnou fází exilového programu je spuštění inference. To můžeme udělat
+nejjednodušeji voláním \verb|(run)|. Inferenční mechanismus poté postupně
+vyhodnocuje, která odvozovací pravidla mají splněné všechny podmínky, v každém
+kroku z nich jedno vybere a aktivuje jej. Detaily viz sekce \ref{inference}
+
+Výstup programu je následující:
+\begin{minted}{cl}
+==> (IN ROBOT B)
+==> (IN BOX A)
+==> (GOAL MOVE BOX A B)
+Firing MOVE-ROBOT
+<== (IN ROBOT B)
+==> (IN ROBOT A)
+Firing MOVE-OBJECT
+<== (IN ROBOT A)
+<== (IN BOX A)
+==> (IN ROBOT B)
+==> (IN BOX B)
+Firing STOP
+Halting
+\end{minted}
+Řádky začínající symbolem \verb|==>| označují fakty přibyvší do pracovní paměti,
+řádky začínající \verb|<==| fakty z paměti odstraněné. Tento výstup obdržíme
+pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz sekce
+\ref{inference tracing}). První tři fakty přibydou do pracovní paměti při
+vyhodnocení volání \verb|(reset)|, další pak spolu s postupnou aplikací
+odvozovacích pravidel. Dotážeme-li se po skončení inference na seznam faktů v
+pracovní paměti voláním \verb|(facts)|, obdržíme výstup
+\cl|((GOAL MOVE BOX A B) (IN ROBOT B) (IN BOX B)).|
+Robot i krabice jsou tedy na cílové pozici.
+
+Kód exilového programu má deklarativní charakter. Nikde jsme nemuseli
+specifikovat, jakou posloupností akcí má systém k výsledku dospět. To nás ovšem
+nezbavuje nutnosti chápat fungování inferenčního mechanismu ExiLu. Nebudeme-li
+při konstrukci programu opatrní, může výpočet snadno dospět k neočekávaným
+výsledkům, dostat se do slepé větve, či se zacyklit. Tyto problémy jsou často
+způsobeny nezamýšlenou interferencí podmínek pravidel s důsledky jiných.
+
+\FloatBarrier

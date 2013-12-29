@@ -58,10 +58,24 @@ V prostředí SLIME načteme knihovnu načtením souboru \verb|load.lisp| z koř
 adresáře knihovny, tedy zadáním \cl|(load "cesta/k/projektu/src/load.lisp")|
 v~REPLu). Tento soubor nejprve načte knihovnu \verb|quicklisp|, je-li potřeba,
 a s její pomocí poté načte celý projekt ExiL včetně závislostí. Nakonec soubor
-definuje výchozí prostředí, viz dále.
+definuje výchozí prostředí, viz sekce \ref{multiple environments}
 
 V prostředí LispWorks načítání pomocí knihovny \verb|quicklisp| nefunguje správně,
 knihovnu je proto třeba načítat načtením souboru \verb|load-manual.lisp| (opět
 z kořenového adresáře projektu). Načíst můžeme opět voláním \verb|load| v REPLu,
 nebo vybráním položky \verb|Load...| v nabídce \verb|File| menu libovolného okna
 prostředí.
+
+Všechna makra a funkce, které knihovna definuje pro přímé volání uživatelem jsou
+\emph{exportována} z \emph{package} \verb|exil|. Před interakcí s knihovnou je
+tedy třeba vstoupit do package \verb|exil-user|, který symboly z package
+\verb|exil| \emph{importuje}. Symboly z package je také možno importovat do
+existujícího package takto:
+\begin{minted}{cl}
+  (defpackage :my-package
+    (:documentation "user-defined package")
+    (:use :common-lisp :exil)
+    (:shadowing-import-from :exil :assert :step))
+\end{minted}
+Package \verb|exil| exportuje několik symbolů, které již v package
+\verb|common-lisp| existují. Ty je třeba \emph{zastínit}, jak je vidět z ukázky.
