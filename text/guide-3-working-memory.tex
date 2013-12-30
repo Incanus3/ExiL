@@ -1,0 +1,35 @@
+\subsubsection{Modifikace pracovní paměti}
+\label{modifikace}
+
+Pracovní paměť je množina faktů, které systém v danou chvíli považuje za platné.
+Její obsah můžeme vypsat voláním funkce \verb|facts|. Funkcí \verb|reset|
+inicializujeme pracovní paměť ze znalostní báze. Jejím voláním jsou do pracovní
+paměti zavedeny fakty všech definovaných skupin faktů (viz sekce
+\ref{knowledge base definition}).
+
+Obsah pracovní paměťi může být dále modifikován třemi makry:
+\begin{itemize}
+  \item \verb|assert| přidává fakt(y) do pracovní paměti,
+  \item \verb|retract| fakt(y) z pracovní paměti odebírá a
+  \item \verb|modify| přímo modifikuje existující fakty.
+\end{itemize}
+Ta lze volat buď před započetím inference (ale po volání \verb|reset|, neboť to
+dodatečné úpravy vymaže), nebo v jejím průběhu, pokud inferenci krokujeme (viz
+sekce \ref{inference}). Makra také typicky voláme v důsledcích pravidel.
+
+Makra \verb|assert| a \verb|retract| berou jako parametry libovolný počet
+specifikací faktů ve stejném formátu, jako u makra \verb|deffacts| (ale bez
+názvu skupiny). Makro \verb|modify| lze použít jen u strukturovaných faktů. Toto
+makro bere jako první parametr specifikaci faktu, zbytek parametrů tvoří plist
+určující hodnoty slotů ke změně. Např.
+\begin{minted}{cl}
+(modify (in :object box :location A) :location B)
+\end{minted}
+nahradí v pracovní paměti fakt \verb|(in :object box :location A)| faktem
+\verb|(in :object box :location B)|.
+Toto makro je obzvláště užitečné, navážeme-li v podmínkách pravidla celý fakt na
+proměnnou (viz sekce \ref{inference}).
+
+Všechny fakty můžeme z pracovní paměti odebrat voláním funkce \verb|retract-all|
+(bez parametrů). To je ale zřídka užitečné, typicky použijeme spíše funkci
+\verb|reset| pro navrácení pracovní paměti do výchozího stavu.

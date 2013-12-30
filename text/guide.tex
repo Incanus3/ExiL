@@ -41,47 +41,8 @@ množina faktů by byl jistě výstižnější, bohužel ale také značně tě�
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{guide-1-structure}
 \input{guide-2-knowledge-base}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Modifikace pracovní paměti}
-\label{modifikace}
-\begin{framed}
-  \begin{itemize}
-    \item inicializace ze znalostní báze
-    \item ruční modifikace - assert, retract, modify
-    \item queries - facts
-  \end{itemize}
-\end{framed}
-
-Pracovní paměť může být dále v průběhu inference modifikována třemi makry:
-\begin{itemize}
-  \item \verb|assert| přidává fakt(a) do pracovní paměti,
-  \item \verb|retract| fakt(a) z pracovní paměti odebírá a
-  \item \verb|modify| přímo modifikuje existující fakty.
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Inference}
-\label{inference}
-\begin{framed}
-  \begin{itemize}
-    \item fáze podrobně
-    \begin{itemize}
-      \item vyhodnocení podmínek - statické testy, vazby proměnných (speciální -
-        singleton, navázání faktu), konzistence
-      \item výběr pravidla - strategie
-      \item aktivace - vyhodnocení důsledků (typicky modifikace pracovní paměti)
-        navázání proměnných, eval
-    \end{itemize}
-    \item spuštění inference, krokování (může se prolínat s ručnímodifikací w.m.)
-    \item queries - agenda, strategies
-  \end{itemize}
-\end{framed}
-
-Podmínky jsou spojeny logickou konjunkcí, pravidlo je tedy možné aktivovat,
-jsou-li splněny všechny jeho podmínky. Kromě toho mohou být některé podmínky
-negovány. Taková opdmínka je splněna tehdy, neexistuje-li v pracovní paměti
-žádný fakt, který by jí odpovídal.
+\input{guide-3-working-memory}
+\input{guide-4-inference}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Reset prostředí}
