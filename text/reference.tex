@@ -1,1 +1,31 @@
 \subsection{Referenční příručka}
+\begin{framed}
+  \begin{itemize}
+    \item reprezentace objektů vracené findery + názvy vracené makry jako rules či current
+strategy - proč klíčky - různé package
+    \item kombinace s funkčními alternativami.
+    \item clipsová syntax
+  \end{itemize}
+\end{framed}
+
+ExiL umožňuje definici vlastní strategie makrem \verb|defstrategy|. Makro bere
+jako parametry název strategie a výběrovou funkci. Výběrové funkci je předána
+agenda (množina shod), z nichž funkce musí jednu vrátít. Definice vlastní
+strategie ovšem není v praxi příliš použitelná, neboť pro její implementaci je
+třeba znát vnitřní implementaci shody. Definice mohou vypadat například takto:
+\begin{minted}[samepage]{cl}
+(defmethod newer-than-p ((match1 match) (match2 match))
+  (> (timestamp match1) (timestamp match2)))
+
+(defmethod simpler-than-p ((rule1 rule) (rule2 rule))
+  (< (length (conditions rule1))
+     (length (conditions rule2))))
+(defmethod simpler-than-p ((match1 match) (match2 match))
+  (simpler-than-p (match-rule match1) (match-rule match2)))
+
+(defstrategy breadth-stragegy #'newer-than-p)
+(defstrategy simplicity-strategy #'simpler-than-p)
+\end{minted}
+Symboly názvů metod \verb|timestamp|, \verb|conditions| a \verb|match-rule| jsou
+navíc interní v jiném package, než běžně uživatel pracuje, bylo by tedy třeba je
+plně kvalifikovat.

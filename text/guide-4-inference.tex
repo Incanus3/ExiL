@@ -3,25 +3,25 @@
 
 Inference (odvozování nových faktů z aktuálních) probíhá v krocích. V každém
 kroku jsou vyhodnoceny podmínky všech pravidel, načež je ze splněných pravidel
-vybráno jedno, které je posléze aktivováno. Inferenční kroky
-můžeme buď spouštět jednotlivě voláním funkce \verb|step| (bez parametrů), nebo
-voláním funkce \verb|run| spustit cyklus, který provádí inferenční kroky, dokud
-je to možné. Cyklus je buď přerušen ve chvíli, kdy není splněno žádné
-další pravidlo, nebo voláním funkce \verb|halt| (bez parametrů) v důsledcích
-právě aktivovaného pravidla.
+vybráno jedno, které je posléze aktivováno. Inferenční kroky můžeme buď spouštět
+jednotlivě voláním funkce \verb|step|, nebo voláním funkce \verb|run| spustit
+cyklus, který provádí inferenční kroky, dokud je to možné. Cyklus je buď
+přerušen ve chvíli, kdy není splněno žádné další pravidlo, nebo voláním funkce
+\verb|halt| (bez parametrů) v důsledcích právě aktivovaného pravidla.
 
 Podmínky pravidel jsou ve tvaru vzorů a jsou spojeny logickou konjunkcí,
 pravidlo je tedy splněno, jsou-li splněny všechny jeho podmínky. Kromě
 toho mohou být některé podmínky negovány. Taková podmínka je splněna tehdy,
-neexistuje-li v pracovní paměti žádný fakt, který by se shodoval s jejím vzorem.
-Negovanou podmínku značí znak \verb|-| (minus) na prvním místě specifikace vzoru.
+neexistuje-li v pracovní paměti žádný fakt, který by se shodoval s jejím vzorem
+(při zachování konzistence vazeb proměnných). Negovanou podmínku značí znak
+\verb|-| (minus) na prvním místě specifikace vzoru.
 
-Vyhodnocování podmínek pravidel probíhá ve dvou fázích. V první fází
-srovnáváme vzory jednotlivých podmínek se všemi fakty v pracovní paměti a~to
-pouze strukturálně, tedy bez ohledu na vazby proměnných. Prvním požadavkem shody
-je u jednoduchých faktů stejná délka faktu (počet atomů), u strukturovaných
-faktů stejná šablona. Jednoduchý fakt se nikdy nemůže shodovat se strukturovaným
-vzorem a naopak.
+Vyhodnocování podmínek pravidel probíhá ve dvou fázích. V první fází srovnáváme
+vzory jednotlivých podmínek se všemi fakty v pracovní paměti a~to pouze
+strukturálně, tedy bez ohledu na vazby proměnných. Prvním požadavkem shody je u
+jednoduchých faktů stejná délka (počet atomů), u strukturovaných faktů stejná
+šablona. Jednoduchý fakt se nikdy nemůže shodovat se strukturovaným vzorem a
+naopak.
 
 Dále jsou pak porovnávány jednotlivé atomy (u jednoduchých) či
 sloty (u složených) faktu vůči odpovídajícímu atomu (slotu) vzoru. Není-li atom
@@ -92,11 +92,11 @@ Konzistence vazby této proměnné není při vyhodnocování testována, takže
 vyskytuje-li se tato proměnná na více místech, chová se tak, jako kdyby byl
 každý výskyt označen unikátním názvem (podobně jako proměnná \verb|_| v
 Prologu). Použitím této proměnné dáváme najevo, že nás konkrétní hodnota daného
-atomu nazajímá. Ve strukturovaných podmínkách není třeba tyto sloty uvádět,
+atomu nazajímá. Ve strukturovaných vzorech podmínek není třeba tyto sloty uvádět,
 neboť \verb|?| je výchozí hodnotou slotu vzoru.
 
-Posledním speciálním konstruktem je navázání celého faktu na proměnnou. Např.
-pravidlo
+Posledním speciálním konstruktem je navázání celého faktu na proměnnou.
+Například pravidlo
 \begin{minted}{cl}
 (defrule move
   ?fact <- (in :object ? :location A)
@@ -109,16 +109,43 @@ Můžeme ovšem volat \verb|(retract ?fact)|, neboť proměnná \verb|?fact| je 
 aktivaci pravidla nahrazena specifikací faktu, který byl s vzorem podmínky
 spárován.
 
-\begin{framed}
-  Pravidlo může být splněno několika posloupnostmi faktů - pojem matche
-\end{framed}
+Podmínky některých pravidel mohou být při vyhodnocování splněny několika různými
+posloupnostmi faktů. Výsledkem vyhodnocování pravidel tedy není pouze množina
+pravidel, nýbrž množina shod (\emph{match}). Každá shoda je tvořena pravidlem a
+\emph{subsitucí} proměnných navázaných při vyhodnocování jeho podmínek.
+Subsituci chápejme jako zobrazení z množiny všech proměnných, vyskytujících se v
+podmínkách pravidla, na konkrétní hodnoty atomů (slotů). Aplikací této
+substituce na vzory podmínek pravidla získáme opět posloupnost faktů, kterými
+byly podmínky v dané shodě splněny. Tato substituce je následně použita při
+aktivaci pravidla k náhradě proměnných v jeho důsledích.
 
-Je-li při vyhodnocování podmínek nalezeno více splněných pravidel, je třeba z
-nich jedno vybrat k aktivaci. Výběr pravidla záleží na zvolené strategii.
-ExiL poskytuje následující strategie výběru pravidla:
-\begin{description}[leftmargin=6cm,style=sameline,align=right,labelsep=0.5cm]
-  \item[depth-strategy]
+ExiL uchovává aktuální množinu shod. Ta ve skutečnosti není přepočítána v~první
+fázi inferenčního kroku, jak jsem dosud pro jednoduchost tvrdil, nýbrž
+automaticky po každé změně pracovní paměti či množiny pravidel (detaily viz
+RETE).  Aktuální množinu shod nazývám, po vzoru CLIPSu, \emph{agenda} a lze ji
+vypsat voláním stejnojmenné funkce (bez parametrů). Každá shoda v agendě je
+opatřena časovým razítkem, shody je tedy možné uspořádat podle toho, kdy do
+agendy přibyly.
+
+Je-li na začátku inferenčního kroku v agendě více shod, je třeba z nich jednu
+vybrat k aktivaci. Výběr shody záleží na zvolené strategii. ExiL poskytuje
+následující strategie výběru shody:
+\begin{description}[leftmargin=5cm,style=sameline,align=right,labelsep=0.5cm]
+  \item[depth-strategy] vybírá shodu, která do agendy přibyla nejpozději
+  \item[breadth-strategy] vybírá shodu, která do agendy přibyla jako první
+  \item[simplicity-strategy] vybere shodu, jejíž pravidlo má nejméně podmínek
+  \item[complexity-strategy] volí shodu, jejíž pravidlo má nejvíce podmínek.
 \end{description}
+Názvy prvních dvou strategií vychází z toho, že jde o prohledávání prostoru
+stavů systému do hloubky, či do šířky, jak blíže popíšu v teoretické části
+textu, stejně jako motivace pro využití jednotlivých typů strategií a další typy
+strategií, které se v expertních systémech používají.
+
+Výchozí strategií je \verb|depth-strategy|. Strategii, která bude v inferenci
+použita, můžeme zvolit voláním makra \verb|setstrategy| s názvem strategie,
+např. \verb|(setstrategy breadth-strategy)|. Seznam názvů strategií můžeme
+vypsat voláním \verb|(strategies)|, název aktuálně zvolené strategie pak voláním
+\verb|(current-strategy)|.
 
 \begin{framed}
   \begin{itemize}

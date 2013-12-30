@@ -48,7 +48,7 @@
 Příklad \ref{typical structure} na straně \pageref{typical structure} ukazuje
 minimální strukturu programu nad knihovnou ExiL (dále exilový program). První
 část programu tvoří definice znalostní báze. Ta sestává z definic faktů, ze
-kterých expertní systém vychází a definic odvozovacích pravidel, jež jsou
+kterých expertní systém vychází, a definic odvozovacích pravidel, jež jsou
 následně aplikována při inferenci.
 
 Definice faktů jsou uspořádány do skupin označených názvem (v tomto případě
@@ -67,17 +67,17 @@ aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
 
 Podmínky odvozovacích pravidel jsou ve formě vzorů (\emph{pattern}). Struktura
 vzorů je stejná jako struktura faktů (viz sekce \ref{knowledge base
-definition}), ale narozdíl od nich mohou obsahovat proměnné (symboly začínající
+definition}), ale na rozdíl od nich mohou obsahovat proměnné (symboly začínající
 otazníkem).  Při vyhodnocování podmínek pravidla je zajišťěna
 konzistence vazeb těchto proměnných a výskyty všech proměnných v~důsledcích
 pravidla jsou při jeho aktivaci nahrazeny jejich vazbami. Detaily viz sekce
 \ref{inference}
 
 Důsledky pravidel typicky obsahují příkazy pro modifikaci pracovní paměti (viz
-sekce \ref{modifikace}), tedy přidání (\verb|assert|), odebrání (\verb|retract|),
-či úpravů (\verb|modify|) faktů v ní. Nemůsí
-tomu tak ale být vždycky - důsledkem aktivace pravidla může být např. vypsání
-výstupu, logování, zápis souboru, ale také např. ovládání externího systému.
+sekce \ref{modifikace}), tedy přidání (\verb|assert|), odebrání
+(\verb|retract|), či úpravu (\verb|modify|) faktů v ní. Nemusí tomu tak ale být
+vždycky - důsledkem aktivace pravidla může být např. vypsání výstupu, logování,
+zápis souboru, ale také např. ovládání externího systému.
 
 Ukázkový příklad definuje tři odvozovací pravidla. Pravidlo
 \verb|move-robot| je aktivováno, pokud chceme přesunout nějaký objekt z pozice
