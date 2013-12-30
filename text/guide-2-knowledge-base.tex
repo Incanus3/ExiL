@@ -29,11 +29,11 @@ faktu, používajícího tuto šablonu, uvedena hodnota pro daný slot.
 
 Je-li už šablona požadovaného názvu definována, ale neexistují v pracovní
 paměti fakty, které ji používají, je její stávající definice nahrazena. Pokud
-ale v pracovní paměti existují takové fakty, skončí volání \verb|deftemplate|
+ale v~pracovní paměti existují takové fakty, skončí volání \verb|deftemplate|
 výjimkou.
 
-Seznam názvů všech definovaných šablon můžeme získat voláním \emph{funkce}
-\verb|templates| (bez parametrů). Specifikaci šablony pak získáme voláním makra
+Seznam názvů všech definovaných šablon můžeme získat voláním \verb|(templates)|.
+Specifikaci šablony pak získáme voláním makra
 \verb|find-template|, např. \verb|(find-template in).| Definici šablony zrušíme
 voláním makra \verb|undeftemplate|, např. \verb|(undeftemplate goal)|. To opět
 skončí výjimkou, existují-li v pracovní paměti fakty, které šablonu využívají.
@@ -56,9 +56,9 @@ faktu. Pokud není hodnota některého slotu uvedena, je buď použita
 výchozí hodnota, pokud byla v šabloně specifikována, nebo hodnota \verb|nil| v
 opačném případě.
 
-Seznam názvů všech definovaných skupin faktů získáme voláním funkce
-\verb|fact-groups| (bez parametrů). Specifikaci skupiny pak voláním makra
-\verb|find-fact-group|, např.: \verb|(find-fact-group initial)|. Ke zrušení
+Seznam názvů všech definovaných skupin faktů získáme voláním
+\verb|(fact-groups)|. Specifikaci skupiny pak voláním makra
+\verb|find-fact-group|, např. \verb|(find-fact-group initial)|. Ke zrušení
 definice skupiny slouží makro \verb|undeffacts| (voláme s názvem skupiny).
 
 Pravidla, pomocí nichž expertní systém během inference odvozuje nové fakty,
@@ -83,6 +83,6 @@ Důsledkovou část pravidla (za symbolem \verb|=>|) tvoří libovolný počet
 lispových výrazů. Jak se tyto vyhodnocují popíšu opět v sekci \ref{inference}.
 
 Opakovaným voláním makra \verb|defrule| odvozovací pravidlo redefinujeme.
-K~získání seznamu názvů definovaných pravidel a jejich specifikací slouží funkce
-\verb|rules| a makro \verb|find-rule|, podobně jako u šablon a skupin faktů.
-Ke zrušení definice pravidla slouží makro \verb|undefrule|.
+K~získání seznamu názvů definovaných pravidel a jejich specifikací slouží
+\emph{funkce} \verb|rules| a makro \verb|find-rule|, podobně jako u šablon a
+skupin faktů.  Ke zrušení definice pravidla slouží makro \verb|undefrule|.

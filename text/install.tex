@@ -30,7 +30,7 @@ mohu vřele doporučit. V operačním systému Debian GNU Linux, který jsem pro
 použil, lze Emacs, SLIME i SBCL nainstalovat z výchozího repozitáře a aktivovat
 úpravou inicializačního souboru Emacsu, viz
 \url{http://www.common-lisp.net/projects/slime/doc/html/Installation.html}.
-Prostředí poté můžeme v Emacsu spustit voláním příkazu \verb|slime|
+Prostředí poté můžeme v~Emacsu spustit voláním příkazu \verb|slime|
 (\verb|M-x slime<enter>|). Při prvním spuštění se kód prostředí kompiluje, což
 může chvíli trvat, pak už se v editoru otevře buffer\footnote{emacs buffer}
 s~lispovým REPLem.
@@ -62,14 +62,14 @@ definuje výchozí prostředí, viz sekce \ref{multiple environments}
 
 V prostředí LispWorks načítání pomocí knihovny \verb|quicklisp| nefunguje správně,
 knihovnu je proto třeba načítat načtením souboru \verb|load-manual.lisp| (opět
-z kořenového adresáře projektu). Načíst můžeme opět voláním \verb|load| v REPLu,
+z kořenového adresáře projektu). Načíst můžeme opět voláním \verb|load| v~REPLu,
 nebo vybráním položky \verb|Load...| v nabídce \verb|File| menu libovolného okna
 prostředí.
 
 Všechna makra a funkce, které knihovna definuje pro přímé volání uživatelem jsou
 \emph{exportována} z \emph{package} \verb|exil|. Před interakcí s knihovnou je
-tedy třeba vstoupit do package \verb|exil-user|, který symboly z package
-\verb|exil| \emph{importuje}. Symboly z package je také možno importovat do
+tedy třeba vstoupit do package \verb|exil-user|, který symboly z~package
+\verb|exil| \emph{importuje}. Symboly z~package je také možno importovat do
 existujícího package takto:
 \begin{minted}{cl}
   (defpackage :my-package

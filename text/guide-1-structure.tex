@@ -91,9 +91,9 @@ objekt.
 Podmínky pravidla \verb|move-object| vyžadují, aby byl jak robot, tak objekt
 určený k přesunu, na pozici \verb|?from|. Při jeho aktivaci je robot i s objektem
 přesunut na pozici \verb|?to| nahrazením faktů o původních pozicích novými,
-podobně jako v prvním pravidle. Definice pravidla obsahuje speciální notaci (s
+podobně jako v~prvním pravidle. Definice pravidla obsahuje speciální notaci (s
 použitím operátoru \verb|<-|), jejímž účelem je navázání celého faktu na
-proměnnou. Ten pak můžeme v důsledcích snadno ostranit z pracovní paměti.
+proměnnou. Ten pak můžeme v~důsledcích snadno ostranit z pracovní paměti.
 Detaily opět viz sekce \ref{inference}
 
 Poslední pravidlo slouží k zastavení inference, pokud se již objekt nachází na
@@ -130,7 +130,7 @@ Halting
 řádky začínající \verb|<==| fakty z paměti odstraněné. Tento výstup obdržíme
 pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz sekce
 \ref{inference tracing}). První tři fakty přibydou do pracovní paměti při
-vyhodnocení volání \verb|(reset)|, další pak spolu s postupnou aplikací
+vyhodnocení volání \verb|(reset)|, další pak spolu s~postupnou aplikací
 odvozovacích pravidel. Dotážeme-li se po skončení inference na seznam faktů v
 pracovní paměti voláním \verb|(facts)|, obdržíme výstup
 \cl|((GOAL MOVE BOX A B) (IN ROBOT B) (IN BOX B)).|

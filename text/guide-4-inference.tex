@@ -4,10 +4,10 @@
 Inference (odvozování nových faktů z aktuálních) probíhá v krocích. V každém
 kroku jsou vyhodnoceny podmínky všech pravidel, načež je ze splněných pravidel
 vybráno jedno, které je posléze aktivováno. Inferenční kroky můžeme buď spouštět
-jednotlivě voláním funkce \verb|step|, nebo voláním funkce \verb|run| spustit
+jednotlivě voláním \verb|(step)|, nebo voláním \verb|(run)| spustit
 cyklus, který provádí inferenční kroky, dokud je to možné. Cyklus je buď
-přerušen ve chvíli, kdy není splněno žádné další pravidlo, nebo voláním funkce
-\verb|halt| (bez parametrů) v důsledcích právě aktivovaného pravidla.
+přerušen ve chvíli, kdy není splněno žádné další pravidlo, nebo voláním
+\verb|(halt)| v důsledcích právě aktivovaného pravidla.
 
 Podmínky pravidel jsou ve tvaru vzorů a jsou spojeny logickou konjunkcí,
 pravidlo je tedy splněno, jsou-li splněny všechny jeho podmínky. Kromě
@@ -24,9 +24,9 @@ jednoduchých faktů stejná délka (počet atomů), u strukturovaných faktů s
 naopak.
 
 Dále jsou pak porovnávány jednotlivé atomy (u jednoduchých) či
-sloty (u složených) faktu vůči odpovídajícímu atomu (slotu) vzoru. Není-li atom
+sloty (u~složených) faktu vůči odpovídajícímu atomu (slotu) vzoru. Není-li atom
 (slot) vzoru proměnná, je jednoduše porovnán s atomem faktu. Je-li atomem
-proměnná, považujeme jej v této fázi automaticky za shodu. Např. vzor
+proměnná, považujeme jej v této fázi automaticky za shodu. Například vzor
 \cl|(in :object robot :location ?loc)|
 se shoduje s faktem
 \cl|(in :object robot :location A)|
@@ -44,8 +44,8 @@ Ve druhé fázi vyhodnocování hledáme z předvybraných faktů takovou poslou
 (délka odpovídá počtu podmínek pravidla), kde po spárování s odpovídajícími
 vzory podmínek obdržíme konzistentní vazby proměnných. To znamená, že
 vyskytuje-li se v podmínkách pravila některá proměnná vícekrát, musí mít
-odpovídající fakty na daných pozicích stejný atom.  Mějme např. pravidlo s
-podmínkami
+odpovídající fakty na daných pozicích stejný atom.  Mějme například pravidlo
+s~podmínkami
 \begin{minted}{cl}
 (goal move ?obj ?from ?to)
 (in :object ?obj  :location ?from)
@@ -60,7 +60,7 @@ faktů
 (in :object robot :location A)
 \end{minted}
 neprojde druhou fází výběru, neboť vazby proměnných nejsou konzistentní.
-Proměnná \verb|?from| je např. v první podmínce navázána na symbol \verb|A|, v
+Proměnná \verb|?from| je například v první podmínce navázána na symbol \verb|A|, v
 druhé ale na \verb|B|. Kdyby si ovšem krabice s robotem vyměnily pozice, budou
 vazby proměnných konzistentní a podmínky pravidla budou splněny. Proměnná
 \verb|?from| by pak nabyla hodnoty \verb|A|, proměnná \verb|?to| hodnoty
@@ -68,8 +68,8 @@ vazby proměnných konzistentní a podmínky pravidla budou splněny. Proměnná
 
 Vyhodnocení negovaných podmínek si můžeme představit tak, že nejprve vyhodnotíme
 a navážeme proměnné všech ostatních podmínek. Pokud poté neexistuje fakt, který
-by se s vzorem negované podmínky shodoval a měl konzistentní vazby se zbytkem navázaných
-proměnných, je tato podmínka splněna. Mějme například pravidlo s podmínkami
+by se se vzorem negované podmínky shodoval a měl konzistentní vazby se zbytkem navázaných
+proměnných, je tato podmínka splněna. Mějme například pravidlo s~podmínkami
 \begin{minted}{cl}
 (goal move box ?from ?to)
 (in box ?from)
@@ -82,8 +82,8 @@ Máme-li v pracovní paměti pouze fakty
 (in robot B),
 \end{minted}
 budou podmínky pravidla splněny, neboť po spárování vzorů prvních dvou podmínek
-s prvními dvěma fakty bude proměnná \verb|?from| navázána na hodnotu \verb|A| a
-neexistuje fakt, který by se shodoval s vzorem \verb|(in robot A)|. Přesuneme-li
+s prvními dvěma fakty bude proměnná \verb|?from| navázána na hodnotu \verb|A|
+a~neexistuje fakt, který by se shodoval se vzorem \verb|(in robot A)|. Přesuneme-li
 ale robota na pozici \verb|A|, podmínka již splněna nebude a pravidlo nelze
 aktivovat.
 
@@ -104,28 +104,27 @@ Například pravidlo
   (modify ?fact :location B))
 \end{minted}
 přesune každý objekt z pozice \verb|A| na pozici \verb|B|. Na proměnnou
-můžeme navázat i jednoduchý fakt, pak ale nemůžeme použít makra \verb|modify|.
+můžeme navázat i~jednoduchý fakt, pak ale nemůžeme použít makra \verb|modify|.
 Můžeme ovšem volat \verb|(retract ?fact)|, neboť proměnná \verb|?fact| je při
-aktivaci pravidla nahrazena specifikací faktu, který byl s vzorem podmínky
+aktivaci pravidla nahrazena specifikací faktu, který byl se vzorem podmínky
 spárován.
 
 Podmínky některých pravidel mohou být při vyhodnocování splněny několika různými
 posloupnostmi faktů. Výsledkem vyhodnocování pravidel tedy není pouze množina
-pravidel, nýbrž množina shod (\emph{match}). Každá shoda je tvořena pravidlem a
-\emph{subsitucí} proměnných navázaných při vyhodnocování jeho podmínek.
-Subsituci chápejme jako zobrazení z množiny všech proměnných, vyskytujících se v
-podmínkách pravidla, na konkrétní hodnoty atomů (slotů). Aplikací této
-substituce na vzory podmínek pravidla získáme opět posloupnost faktů, kterými
-byly podmínky v dané shodě splněny. Tato substituce je následně použita při
-aktivaci pravidla k náhradě proměnných v jeho důsledích.
+splněných pravidel, nýbrž množina shod (\emph{match}). Každá shoda je tvořena
+pravidlem a \emph{subsitucí} proměnných navázaných při vyhodnocování jeho
+podmínek.  Subsituci chápejme jako zobrazení z množiny všech proměnných,
+vyskytujících se v podmínkách pravidla, na konkrétní hodnoty atomů (slotů).
+Aplikací této substituce na vzory podmínek pravidla získáme opět posloupnost
+faktů, kterými byly podmínky v dané shodě splněny. Tato substituce je následně
+použita při aktivaci pravidla k náhradě proměnných v jeho důsledích.
 
 ExiL uchovává aktuální množinu shod. Ta ve skutečnosti není přepočítána v~první
 fázi inferenčního kroku, jak jsem dosud pro jednoduchost tvrdil, nýbrž
 automaticky po každé změně pracovní paměti či množiny pravidel (detaily viz
 RETE).  Aktuální množinu shod nazývám, po vzoru CLIPSu, \emph{agenda} a lze ji
-vypsat voláním stejnojmenné funkce (bez parametrů). Každá shoda v agendě je
-opatřena časovým razítkem, shody je tedy možné uspořádat podle toho, kdy do
-agendy přibyly.
+vypsat voláním stejnojmenné funkce. Každá shoda v agendě je opatřena časovým
+razítkem, shody je tedy možné uspořádat podle toho, kdy do agendy přibyly.
 
 Je-li na začátku inferenčního kroku v agendě více shod, je třeba z nich jednu
 vybrat k aktivaci. Výběr shody záleží na zvolené strategii. ExiL poskytuje
@@ -138,7 +137,7 @@ následující strategie výběru shody:
 \end{description}
 Názvy prvních dvou strategií vychází z toho, že jde o prohledávání prostoru
 stavů systému do hloubky, či do šířky, jak blíže popíšu v teoretické části
-textu, stejně jako motivace pro využití jednotlivých typů strategií a další typy
+textu, spolu s~motivacemi pro využití jednotlivých typů strategií a dalšími typy
 strategií, které se v expertních systémech používají.
 
 Výchozí strategií je \verb|depth-strategy|. Strategii, která bude v inferenci
@@ -156,6 +155,7 @@ vypsat voláním \verb|(strategies)|, název aktuálně zvolené strategie pak v
         navázání proměnných, eval
     \end{itemize}
     \item spuštění inference, krokování (může se prolínat s ručnímodifikací w.m.)
+    \item volání (step) a (run), když už nelze dále krokovat
     \item queries - agenda, strategies
   \end{itemize}
 \end{framed}
