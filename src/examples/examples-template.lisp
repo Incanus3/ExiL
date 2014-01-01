@@ -39,8 +39,9 @@
   (halt))
 
 (unwatch all)
-(watch facts)
-;(watch activations)
+;(watch facts)
+;(watch rules)
+(watch activations)
 
 (reset)
 

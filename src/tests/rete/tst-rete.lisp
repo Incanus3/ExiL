@@ -6,7 +6,6 @@
 
 (defclass env-mock ()
   ((matches :accessor matches :initform ())))
-(defgeneric has-match (env-mock production token))
 
 (defmethod exil-env:add-match ((env env-mock) production token)
   (pushnew (exil-env::make-match production token)
@@ -16,6 +15,7 @@
   (setf (matches env) (delete (exil-env::make-match production token)
                               (matches env) :test #'exil-env::match-equal-p)))
 
+(defgeneric has-match (env-mock production token))
 (defmethod has-match ((env env-mock) production token)
   (find (exil-env::make-match production token)
         (matches env) :test #'exil-env::match-equal-p))
@@ -23,31 +23,29 @@
 ;; need to move object-makers to core first
 (defclass rete-simple-tests (test-case)
   ((env :accessor env)
-   (rete :accessor rete)
-   (rule :reader move
-         :initform
-         (make-rule :move
-                    (list (make-simple-pattern '(goal ?action ?object ?from ?to))
-                          (make-simple-pattern '(in ?object ?from))
-                          (make-simple-pattern '(in robot ?from) :negated t))
-                    ()))
-   (wme1 :reader wme1 :initform (make-simple-fact '(in robot A)))
-   (wme2 :reader wme2 :initform (make-simple-fact '(in box B)))
-   (wme3 :reader wme3 :initform (make-simple-fact '(goal push box B A)))
-   (wme4 :reader wme4 :initform (make-simple-fact '(in robot B)))))
+   (rete :accessor rete)))
 
 (defmethod set-up ((tests rete-simple-tests))
-  (with-slots (env rete) tests
+  (with-slots (env rete rule) tests
     (setf env (make-instance 'env-mock))
     (setf rete (make-rete env))))
 
 ;; rete has four entry-points:
 ;; add-wme, rem-wme, add-production, remove-production
 
-(def-test-method test-rete ((tests rete-simple-tests) :run nil)
-  (with-slots (env rete rule wme1 wme2 wme3 wme4) tests
-    (let* ((token1 (erete::make-token wme3))
-           (token2 (erete::make-token wme2 token1)))
+(def-test-method test-rete ((tests rete-simple-tests) :run t)
+  (with-slots (env rete) tests
+    (let* ((wme1 (make-simple-fact '(in robot A)))
+           (wme2 (make-simple-fact '(in box B)))
+           (wme3 (make-simple-fact '(goal push box B A)))
+           (wme4 (make-simple-fact '(in robot B)))
+           (token1 (erete::make-token wme3))
+           (token2 (erete::make-token wme2 token1))
+           (rule (make-rule :move
+                            (list (make-simple-pattern '(goal ?action ?object ?from ?to))
+                                  (make-simple-pattern '(in ?object ?from))
+                                  (make-simple-pattern '(in robot ?from) :negated t))
+                            ())))
       (new-production rete rule)
       (add-wme rete wme1)
       (add-wme rete wme2)
@@ -60,6 +58,17 @@
       (assert-true (has-match env rule token2))
       (add-wme rete wme4)
       (assert-false (has-match env rule token2)))))
+
+(def-test-method test-rete-fact-with-different-length-than-condition
+    ((tests rete-simple-tests) :run t)
+  (with-slots (env rete) tests
+    (let* ((wme1 (make-simple-fact '(palindrome a b a)))
+           (rule (make-rule :surround
+                            (list (make-simple-pattern '(palindrome ?p)))
+                            ())))
+      (new-production rete rule)
+      (add-wme rete wme1)
+      (assert-false (matches env)))))
 
 ;; need to move object-makers to core first
 (defclass rete-template-tests (test-case)

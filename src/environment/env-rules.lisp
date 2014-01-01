@@ -7,7 +7,7 @@
   (add-rule% env rule)
   (new-production (rete env) rule)
   (when (watched-p env :rules)
-    (format t "==> ~A" rule))
+    (fresh-format t "==> ~A" rule))
   (dolist (fact (facts env))
     (add-wme (rete env) fact))
   (notify env))

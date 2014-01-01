@@ -28,6 +28,14 @@
 ;; returns list of variable bindings, which may contain the symbol :mismatch
 (defgeneric match-against-pattern% (object pattern atom-matcher))
 
+(defmethod match-against-pattern% ((object simple-object) (pattern template-pattern)
+                                   matcher)
+  (list :mismatch))
+
+(defmethod match-against-pattern% ((object template-object) (pattern simple-pattern)
+                                   matcher)
+  (list :mismatch))
+
 (defmethod match-against-pattern% ((object simple-object) (pattern simple-pattern)
 				     (atom-matcher function))
   (if (= (length (specifier object)) (length (pattern pattern)))

@@ -6,17 +6,17 @@
 (complete-reset)
 
 (deffacts world
-  (in robot B)
   (in box A)
+  (in robot B)
   (goal move box A B))
 
 (defrule move-robot
   (goal move ?object ?from ?to)
   (in ?object ?from)
   (- in robot ?from)
-  ?original <- (in robot ?z)
+  (in robot ?z)
   =>
-  (retract ?original)
+  (retract (in robot ?z))
   (assert (in robot ?from)))
 
 (defrule move-object
@@ -35,8 +35,9 @@
   =>
   (halt))
 
-(unwatch all)
-(watch facts)
+;(unwatch all)
+;(watch facts)
+;(watch rules)
 ;(watch activations)
 
 (reset)
