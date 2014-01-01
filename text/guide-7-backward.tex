@@ -1,0 +1,124 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Zpětné řetězení}
+\begin{framed}
+  \begin{itemize}
+    \item cíle jako patterny
+    \item základní inference - nejdřív fakty, pak pravidla, v jakém pořadí
+      vybírá
+    \item alternativní odpovědi - backtracking
+  \end{itemize}
+\end{framed}
+
+Dalším z implementovaných rozšíření je možnost zpětné inference. Inference
+popsaná v sekci \ref{inference} je dopředná. V každém kroku jsou nalezeny
+všechny možnosti dalšího postupu odvozování, načež je zvolena jedna, kterou se
+program dále ubírá. To činí průběh inference značně nedeterministickým. Možnosti
+postupu, které nebyly vybrány, mohou být navíc dalším postupem ztraceny, pokud
+aplikace některého pravidla zneplatní podmínky jiného.
+Míru nedeterminismu můžeme snížit tím, že budeme navrhovat odvozovací pravidla
+tak, aby se výpočet neubíral nechtěnými cestami. To ale není vždy jednoduché,
+nebo dokonce možné.
+
+Zpětná inference naproti tomu umožňuje definovat cíle, kterých chceme dosáhnout.
+K tomu slouží makro \verb|defgoal|, kterému předáme vzor ve stejném formátu,
+jako u podmínek pravidel. Definice cíle ovšem nepodporuje negaci ani navázání
+faktu na proměnnou (k tomu ani není důvod).
+
+Ke spuštění zpětné inference pak slouží funkce \verb|back-step| a
+\verb|back-run|, podobně jako u inference dopředné.
+
+Mějme následující znalostní bázi:
+\begin{minted}{cl}
+(deffacts world
+  (have-money))
+
+(defrule buy-car
+  (have-money)
+  =>
+  (retract (have-money))
+  (assert (have-car)))
+
+(defrule pay-rent
+  (have-money)
+  =>
+  (retract (have-money))
+  (assert (rent-payed))).
+\end{minted}
+Spustíme-li dopřednou inferenci, systém nám vesele doporučí nákup auta.
+Mít nové auto je sice pěkné, hrozí-li nám ale vyhození z pronajatého bytu,
+není nákup auta pravděpodobně cestou, kterou bychom se chtěli ubírat.
+Systém by nám v tuto chvíli mohl stejně dobře doporučit správnou cestu. Že bylo
+vybráno zrovna první pravidlo je výsledkem toho, jak funguje síť RETE, která
+pravidla vyhodnocuje. Za daných okolností ale nechceme špatnou variantu ani
+připouštět.
+
+V tomto případě bychom mohli upravit definici programu tak, že do znalostní báze
+přidáme informaci o cíli, kterou budou pravidla zohledňovat, podobně jako
+v~příkladu \ref{typical structure} na straně \pageref{typical structure}. Muset
+ale programovat zohlednění cíle v každém pravidle je přinejmenším otravné. U
+větších programů to navíc může být velmi náročné, neboť cíl bude třeba
+programově modifikovat v průběhu výpočtu.
+
+S použitím zpětné inference je problém podstatně jednodušší. Zavoláme-li
+\begin{minted}{cl}
+(reset)
+(defgoal (rent-payed))
+(back-run),
+\end{minted}
+bude výsledkem výstup
+\begin{minted}[samepage]{cl}
+All goals have been satisfied
+(RENT-PAYED) satisfied by (RULE PAY-RENT
+  (HAVE-MONEY)
+  =>
+  (RETRACT (HAVE-MONEY))
+  (ASSERT (RENT-PAYED)))
+(HAVE-MONEY) satisfied by (HAVE-MONEY).
+\end{minted}
+Zde vidíme, že po spuštění zpětné inference nezačal systém bezhlavě provádět
+akce, ke kterým měl dostatečné prostředky. Místo toho systém uvážil zadaný cíl a
+jal se hledat akce, které k jeho splnění směřují.
+
+Uvažme nyní složitější příklad:
+\begin{minted}[samepage]{cl}
+(deffacts world
+  (female jane)
+  (male john)
+  (parent :parent jane :child george)
+  (parent :parent john :child george))
+
+(defrule father-is-male-parent
+  (male ?father)
+  (parent :parent ?father :child ?child)
+  =>
+  (assert (father :father ?father :child ?child)))
+
+(defrule mother-is-female-parent
+  (female ?mother)
+  (parent :parent ?mother :child ?child)
+  =>
+  (assert (mother :mother ?mother :child ?child)))
+\end{minted}
+Zajímá-li nás, kdo je matkou George, můžeme zkusit spustit dopřednou inferenci.
+Po jejím skončení bude v pracovní paměti jak informace o Georgově matce, tak o
+jeho otci. Systém se tedy v tomto případě dobral správného výsledku, vypočítal
+ale i další fakty, které nás nezajímaly. Dokážeme si snadno představit, že ve
+větším programu může být výpočet všech odvoditelných závěrů velmi výpočetně
+náročný.
+
+Spustíme-li naopak zpětnou inferenci, je výsledkem
+\begin{minted}[samepage]{cl}
+All goals have been satisfied
+(MOTHER (MOTHER . ?MOTHER-OF-GEORGE) (CHILD . GEORGE)) satisfied by (RULE
+MOTHER-IS-FEMALE-PARENT
+  (FEMALE ?MOTHER)
+  (PARENT (PARENT . ?MOTHER) (CHILD . ?CHILD))
+  =>
+  (ASSERT (MOTHER MOTHER ?MOTHER CHILD ?CHILD)))
+(FEMALE ?MOTHER) satisfied by (FEMALE JANE)
+(PARENT (PARENT . JANE) (CHILD . GEORGE)) satisfied by (PARENT
+                                                        (PARENT . JANE)
+                                                        (CHILD . GEORGE))
+These variable bindings have been used:
+((?MOTHER-OF-GEORGE . JANE))
+\end{minted}

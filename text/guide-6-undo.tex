@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Undo/redo}
+
+Jedním z implementovaných rozšíření původního programu je schopnost vrácení
+provedených změn. K tomu slouží makra \verb|undo| a \verb|redo|. Ta lze použít k
+vrácení jakékoli akce s vedlejším efektem, včetně kroků inference. K vypsání
+zásobníků s~akcemi, které je možné vrátit, jsou k dispozici makra
+\verb|undo-stack| a \verb|redo-stack|.
+
+Pokud například vyhodnotíme prvních 32 řádků programu \ref{typical structure} na
+straně \pageref{typical structure} a~zavoláme dvakrát \verb|undo|, bude výpis
+zásobníků následující (přeformátováno):
+\begin{minted}[samepage]{cl}
+EXIL-USER> (undo-stack)
+  1: (defrule MOVE-ROBOT
+       ((GOAL MOVE ?OBJECT ?FROM ?TO)
+        (IN ?OBJECT ?FROM)
+        (- IN ROBOT ?FROM) (IN ROBOT ?Z)
+        =>
+        (RETRACT (IN ROBOT ?Z))
+        (ASSERT (IN ROBOT ?FROM))))
+  2: (deffacts WORLD
+       ((IN BOX A) (IN ROBOT B) (GOAL MOVE BOX A B)))
+\end{minted}
+\begin{minted}[samepage]{cl}
+EXIL-USER> (redo-stack)
+  1: (defrule MOVE-OBJECT
+       ((GOAL MOVE ?OBJECT ?FROM ?TO)
+        ?OBJ-POS <- (IN ?OBJECT ?FROM)
+        ?ROB-POS <- (IN ROBOT ?FROM)
+        =>
+        (RETRACT ?ROB-POS)
+        (RETRACT ?OBJ-POS)
+        (ASSERT (IN ROBOT ?TO))
+        (ASSERT (IN ?OBJECT ?TO))))
+  2: (defrule STOP
+       ((GOAL MOVE ?OBJECT ?FROM ?TO)
+        (IN ?OBJECT ?TO)
+        =>
+        (HALT)))
+\end{minted}
+Vidíme tedy, že jsme vrátili zpět definice pravidel \verb|move-object| a
+\verb|stop| (ty bychom mohli opět provést voláním \verb|(redo)|). Dalším voláním
+\verb|(undo)| by pak byla vrácena definice pravidla \verb|move-robot| a poté
+definice skupiny faktů \verb|world|.
+
+Nemá-li akce žádný vedlejší efekt - např. volání \verb|assert| s faktem, který
+už v~pracovní paměti je, či volání \verb|run| ve chvíli, kdy už není co
+odvozovat - prázdná akce se na zásobník neuloží.
+
+\begin{framed}
+popsat chování undo v kombinaci s reset
+\end{framed}

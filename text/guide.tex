@@ -36,6 +36,19 @@ množina faktů by byl jistě výstižnější, bohužel ale také značně tě�
 \input{guide-2-knowledge-base}
 \input{guide-3-working-memory}
 \input{guide-4-inference}
+\input{guide-5-watchers}
+\input{guide-6-undo}
+\input{guide-7-backward}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{CLIPSová syntax}
+\begin{framed}
+  \begin{itemize}
+    \item deftemplate, fact specifiery
+    \item volání facts s číslem
+    \item projít příručku clipsu a vzpomenout si, co v ExiLu ještě nebylo
+  \end{itemize}
+\end{framed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Reset prostředí}
@@ -43,37 +56,6 @@ množina faktů by byl jistě výstižnější, bohužel ale také značně tě�
   \begin{itemize}
     \item durable/volatile slots
     \item clean, reset, complete reset (neměl by se jmenovat complete clean?)
-  \end{itemize}
-\end{framed}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Sledování průběhu inference}
-\label{inference tracing}
-\begin{framed}
-  \begin{itemize}
-    \item watchery
-  \end{itemize}
-\end{framed}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Undo/redo}
-\begin{framed}
-  \begin{itemize}
-    \item lze použít na všechny funkce/makra s vedlejším efektem
-    \item pokud funkce nemá vedlejší efekt (fakt neexistuje, apod.), nezapíše se
-      undo step
-    \item queries - undo-stack, redo-stack
-  \end{itemize}
-\end{framed}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Zpětné řetězení}
-\begin{framed}
-  \begin{itemize}
-    \item cíle jako patterny
-    \item základní inference - nejdřív fakty, pak pravidla, v jakém pořadí
-      vybírá
-    \item alternativní odpovědi - backtracking
   \end{itemize}
 \end{framed}
 

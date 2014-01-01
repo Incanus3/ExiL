@@ -1,8 +1,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Úvod}
+
+Pojem expertního systému spadá do oblasti umělé inteligence. Jde o počítačový
+systém, který simuluje rozhodování experta nad zvolenou problémovou doménou.
+Expertní systém může experta zcela nahradit, nebo mu při rozhodování asistovat.
+
 Ve své bakalářské práci jsem implementoval základní knihovnu pro tvorbu
 expertních systémů (tzv. prázdný expertní systém) s~dopředným řetězením v~jazyce
-Common Lisp. Cílem této diplomové práce je tuto knihovnu rozšířit o následující:
+Common Lisp. Cílem této práce je knihovnu rozšířit o následující:
 \begin{itemize}
   \item syntaktický režim pro zajištění přiměřené kompatibility se systémem
     CLIPS,
@@ -12,15 +17,11 @@ Common Lisp. Cílem této diplomové práce je tuto knihovnu rozšířit o násl
   \item rozšíření odvozovacího aparátu o základní zpětné řetězení.
 \end{itemize}
 
-Pojem expertního systému spadá do oblasti umělé inteligence. Jde o počítačový
-systém, který simuluje rozhodování experta nad zvolenou problémovou doménou.
-Expertní systém může experta zcela nahradit, nebo mu při rozhodování asistovat.
-
 Jazyk Common Lisp\footnotemark[1] (případně jiné dialekty Lispu) je častou volbou
 pro implementaci umělé inteligence díky svým schopnostem v oblasti symbolických
 výpočtů (manipulace symbolických výrazů), na nichž řešení těchto problémů často
 staví. Navíc jde o~velmi vysokoúrovňový, dynamicky typovaný jazyk, díky čemuž je
-programový kód stručný, snadno pochopitelný a tudíž jednoduše rozšiřitelný.
+programový kód expresivní, snadno pochopitelný a tudíž jednoduše rozšiřitelný.
 
 Synax systému CLIPS\footnotemark[2] byla zvolena proto, že jde o reálně používaný
 systém\footnotemark[3], jehož syntax je Lispu velmi blízká, takže není těžké ji
@@ -30,11 +31,22 @@ Přestože běžnou praxí je začínat diplomovou práci teoretickou částí, 
 jednotlivé pojmy a principy a ty poté v praktické části uplatnit, rozhodl jsem
 se postupovat opačně, tedy začít práci praktickou částí. Domnívám se totiž (také
 na základě zkušeností nabytých při vypracování bakalářské práce), že je podstatně
-snazší (minimálně v řešené problematice) pochopit příklady bez detailní znalosti
+snazší, minimálně v řešené problematice, pochopit příklady bez detailní znalosti
 teorie, než snažit se pochopit teorii bez příkladů, na nichž si lze popisované
 pojmy a principy představit. V praktické části tedy uvedu jen minimální množtví
-teorie nutné pro pochopení aktuálního problému, načež se k ní v teoretické části
-textu vrátím, pojmy zadefinuji přesně a rozšířím o souvislosti.
+teorie nutné pro pochopení práce s knihovnou, načež se k ní v teoretické části
+textu vrátím, pojmy zadefinuji přesně a rozšířím o souvislosti. V tuto chvíli už
+si bude čtenář schopen představit, jaké problémy lze pomocí expertního systému
+řešit a jak takový expertní systém v praxi vypadá.
+
+\begin{framed}
+  Pro popsaní některé teorie (symbolické výpočty, ...) je navíc užitečná (ne-li
+  potřebná) představa, jak expertní systém funguje uvnitř.
+\end{framed}
+
+\begin{framed}
+  Kdo už to dělal, čím se tohle liší
+\end{framed}
 
 \footnotetext[1]{\url{http://en.wikipedia.org/wiki/Common_Lisp}}
 \footnotetext[2]{\url{http://clipsrules.sourceforge.net}}

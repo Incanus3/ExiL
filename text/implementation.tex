@@ -7,3 +7,24 @@ join algoritmu. Zvážit problémy implementace všech podobných rozšíření 
 and, negace celé konjunkce či disjunkce, exists, forall, viz
 \url{http://www.csie.ntu.edu.tw/~sylee/courses/clips/bpg/node5.4.html}
 \end{framed}
+
+\begin{framed}
+  \begin{itemize}
+    \item architektura programu (objektový návrh, nedostatky Lispu, je
+      environment jako god class důsledkem těchto problémů?)
+    \item síť RETE, její vytváření $\rightarrow$ výhody - sdílení uzlů
+    \item implementovaná rozšíření
+    \begin{itemize}
+      \item undo/redo - kopie sítě rete, testování ekvivalence
+      \item zpětné řetězení - zásobníky, backtracking, obchází rete
+      \item kompozitní podmínky (not, and, or, forall) - neimplementováno -
+        popsat, jak výrazné změny rete by vyžadovalo a jak by se projevilo na
+        efektivitě (hlavní výhodou rete je sdílení uzlů, které by zde bylo dost
+        problematické)
+      \item syntaktický mód - parser, implementace složených podmínek pro atom
+        (\~{}asdf\&asf) by vyžadovalá podobné změny jako implementace kompozitních
+        podmínek
+      \item gui - capi, propojení s environmentem - notify
+    \end{itemize}
+  \end{itemize}
+\end{framed}

@@ -146,16 +146,17 @@ např. \verb|(setstrategy breadth-strategy)|. Seznam názvů strategií můžeme
 vypsat voláním \verb|(strategies)|, název aktuálně zvolené strategie pak voláním
 \verb|(current-strategy)|.
 
-\begin{framed}
-  \begin{itemize}
-    \item fáze podrobně
-    \begin{itemize}
-      \item výběr pravidla - strategie
-      \item aktivace - vyhodnocení důsledků (typicky modifikace pracovní paměti)
-        navázání proměnných, eval
-    \end{itemize}
-    \item spuštění inference, krokování (může se prolínat s ručnímodifikací w.m.)
-    \item volání (step) a (run), když už nelze dále krokovat
-    \item queries - agenda, strategies
-  \end{itemize}
-\end{framed}
+Po výběru shody k aktivaci je její pravidlo aktivováno. Nejprve jsou v
+důsledcích pravidla nahrazeny všechny proměnné pomocí substituce shody. Výrazy
+v~důsledcích jsou poté vyhodnoceny lispovým makrem \verb|eval|. Tento způsob
+vyhodnocení vede ke značným omezením. Výrazy totiž nejsou vyhodnoceny v
+\emph{lexikálním prostředí} definice pravidla, nýbrž ve výchozím (\emph{top-level})
+prostředí Lispu. Díky tomu nemůžeme v důsledcích pravidla volat lokální funkce
+(definované např. makrem \verb|labels|), či přistupovat k lokálním proměnným
+(navázaným například v \verb|let|u či pomoci \emph{destrukturujících maker}).
+
+V důsledcích každého pravidla chceme typicky alespoň jednou volat některé
+z~maker modifikujících pracovní paměť, abychom zneplatnili podmínky pravidla,
+jinak se inference zacyklí. Druhou možností je přerušit inferenci voláním
+\verb|(halt)|. Volání \verb|(step)| nebo \verb|(run)| ve chvíli, kdy již nelze
+dále odvozovat (žádné z pravidel nemá splněné podmínky), nemá žádný efekt.
