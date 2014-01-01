@@ -7,24 +7,24 @@
 (watch facts)
 
 (deffacts world
-  (palindrome a)
-  (palindrome b)
-  (palindrome c))
+  (palindrome "a")
+  (palindrome "b")
+  (palindrome "c"))
 
 (defrule surround-by-as
   (palindrome ?p)
   =>
-  (assert (palindrome a ?p a)))
+  (assertf `(palindrome ,(concatenate 'string "a" ?p "a"))))
 
-(defrule surround-by-bs
+(defrule surround-by-as
   (palindrome ?p)
   =>
-  (assert (palindrome b ?p b)))
+  (assertf `(palindrome ,(concatenate 'string "a" ?p "a"))))
 
-(defrule surround-by-cs
+(defrule surround-by-as
   (palindrome ?p)
   =>
-  (assert (palindrome c ?p c)))
+  (assertf `(palindrome ,(concatenate 'string "a" ?p "a"))))
 
 (reset)
 (defgoal (rent-payed))
@@ -38,7 +38,9 @@
 (step)
 (step)
 
-
+;; lisp doesn't provide backquote as macro, otherwise assert and retract could
+;; backquote the specifiers instead of just quoting them, allowing for comma
+;; interpolation
 
 ;; (defvar env exil::*current-environment*)
 
