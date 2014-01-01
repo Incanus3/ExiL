@@ -28,6 +28,13 @@
 
 (defgeneric template-object-p (object))
 
+;; public
+;; should be false if one object is simple and the other is template
+;; for simple ones should test same specifier length
+;; for template ones should test same template
+(defgeneric congruent (object1 object2)
+  (:documentation "sanity check of object congruency"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; virtual, simple-fact and simple-pattern subclass this
@@ -56,6 +63,12 @@
 
 (defmethod atom-position ((object simple-object) atom)
   (position atom (specifier object)))
+
+(defmethod spec-length ((object simple-object))
+  (length (specifier object)))
+
+(defmethod congruent ((object1 simple-object) (object2 simple-object))
+  (= (spec-length object1) (spec-length object2)))
 
 (defmethod description ((object simple-object))
   (specifier object))
@@ -114,6 +127,9 @@
   "get the atom position in template-object slots"
   (assoc-key atom (slots object)))
 
+(defmethod congruent ((object1 template-object) (object2 template-object))
+  (equalp (template object1) (template object2)))
+
 (defmethod description ((object template-object))
   (cons (name (template object))
         (iter (for (slot . val) :in (slots object))
@@ -121,6 +137,12 @@
 
 (defmethod external ((object template-object))
   (description object))
+
+
+(defmethod congruent ((object1 simple-object) (object2 template-object))
+  nil)
+(defmethod congruent ((object1 template-object) (object2 simple-object))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

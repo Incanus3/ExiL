@@ -52,8 +52,10 @@
   ((pattern :accessor pattern :initarg :pattern)))
 
 (defmethod activate ((node alpha-memory-node) (wme fact))
-  (add-item node wme)
-  (activate-children node wme))
+  ;; this ensures that e.g. (palindrome ?p) doesn't match (palindrome a b a)
+  (when (congruent (pattern node) wme)
+    (add-item node wme)
+    (activate-children node wme)))
 
 (defmethod inactivate :before ((node alpha-memory-node) (wme fact))
   (delete-item node wme))

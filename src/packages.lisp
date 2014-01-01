@@ -25,7 +25,7 @@
            :has-slot-p :make-template :fact :simple-fact
            :atom-position :template-fact
            :exil-equal-p :external
-           :slot-default :doslots :object-slot
+           :slot-default :doslots :object-slot :congruent
            :make-simple-fact :match-var :atom-equal-p
            :constant-test :pattern :make-simple-pattern
            :make-template-fact :alter-fact :make-template-pattern

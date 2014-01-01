@@ -33,7 +33,7 @@
 ;; rete has four entry-points:
 ;; add-wme, rem-wme, add-production, remove-production
 
-(def-test-method test-rete ((tests rete-simple-tests) :run t)
+(def-test-method test-rete ((tests rete-simple-tests) :run nil)
   (with-slots (env rete) tests
     (let* ((wme1 (make-simple-fact '(in robot A)))
            (wme2 (make-simple-fact '(in box B)))
@@ -59,12 +59,23 @@
       (add-wme rete wme4)
       (assert-false (has-match env rule token2)))))
 
-(def-test-method test-rete-fact-with-different-length-than-condition
-    ((tests rete-simple-tests) :run t)
+(def-test-method test-rete-fact-longer-than-condition
+    ((tests rete-simple-tests) :run nil)
   (with-slots (env rete) tests
     (let* ((wme1 (make-simple-fact '(palindrome a b a)))
            (rule (make-rule :surround
                             (list (make-simple-pattern '(palindrome ?p)))
+                            ())))
+      (new-production rete rule)
+      (add-wme rete wme1)
+      (assert-false (matches env)))))
+
+(def-test-method test-rete-fact-shorter-than-condition
+    ((tests rete-simple-tests) :run nil)
+  (with-slots (env rete) tests
+    (let* ((wme1 (make-simple-fact '(palindrome a)))
+           (rule (make-rule :surround
+                            (list (make-simple-pattern '(palindrome ?a ?b ?c)))
                             ())))
       (new-production rete rule)
       (add-wme rete wme1)
