@@ -30,10 +30,15 @@
 
 (reset)
 
-(defgoal (mother :mother ?mother-of-george :child george))
+;; (defgoal (mother :mother ?mother-of-george :child george))
 
-(format t "~%~%BACKWARD:")
+;; (format t "~%~%BACKWARD:")
+;; (back-run)
+
+;; (format t "~%~%FORWARD:")
+;; (run)
+
+(defgoal (parent :parent ?parent :child george))
 (back-run)
-
-(format t "~%~%FORWARD:")
-(run)
+(back-run)
+(back-run)

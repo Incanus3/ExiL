@@ -1,8 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Zpětné řetězení}
+\subsubsection{Zpětná inference}
 \begin{framed}
   \begin{itemize}
-    \item cíle jako patterny
+    \item cíle jako patterny, vypsání
     \item základní inference - nejdřív fakty, pak pravidla, v jakém pořadí
       vybírá
     \item alternativní odpovědi - backtracking
@@ -14,7 +14,7 @@ popsaná v sekci \ref{inference} je dopředná. V každém kroku jsou nalezeny
 všechny možnosti dalšího postupu odvozování, načež je zvolena jedna, kterou se
 program dále ubírá. To činí průběh inference značně nedeterministickým. Možnosti
 postupu, které nebyly vybrány, mohou být navíc dalším postupem ztraceny, pokud
-aplikace některého pravidla zneplatní podmínky jiného.
+aktivace některého pravidla zneplatní podmínky jiného.
 Míru nedeterminismu můžeme snížit tím, že budeme navrhovat odvozovací pravidla
 tak, aby se výpočet neubíral nechtěnými cestami. To ale není vždy jednoduché,
 nebo dokonce možné.
@@ -79,7 +79,7 @@ Zde vidíme, že po spuštění zpětné inference nezačal systém bezhlavě pr
 akce, ke kterým měl dostatečné prostředky. Místo toho systém uvážil zadaný cíl a
 jal se hledat akce, které k jeho splnění směřují.
 
-Uvažme nyní složitější příklad:
+Uvažme nyní složitější příklad (definice šablon vynechána):
 \begin{minted}[samepage]{cl}
 (deffacts world
   (female jane)
@@ -104,21 +104,62 @@ Po jejím skončení bude v pracovní paměti jak informace o Georgově matce, t
 jeho otci. Systém se tedy v tomto případě dobral správného výsledku, vypočítal
 ale i další fakty, které nás nezajímaly. Dokážeme si snadno představit, že ve
 větším programu může být výpočet všech odvoditelných závěrů velmi výpočetně
-náročný.
+a tudíž i časově náročný.
 
-Spustíme-li naopak zpětnou inferenci, je výsledkem
+Spustíme-li naopak zpětnou inferenci voláním
+\begin{minted}[samepage]{cl}
+(reset)
+(defgoal (mother :mother ?mother-of-george :child george))
+(back-run),
+\end{minted}
+je výsledkem
 \begin{minted}[samepage]{cl}
 All goals have been satisfied
-(MOTHER (MOTHER . ?MOTHER-OF-GEORGE) (CHILD . GEORGE)) satisfied by (RULE
-MOTHER-IS-FEMALE-PARENT
-  (FEMALE ?MOTHER)
-  (PARENT (PARENT . ?MOTHER) (CHILD . ?CHILD))
-  =>
-  (ASSERT (MOTHER MOTHER ?MOTHER CHILD ?CHILD)))
+(MOTHER (MOTHER . ?MOTHER-OF-GEORGE) (CHILD . GEORGE)) satisfied by
+  (RULE MOTHER-IS-FEMALE-PARENT
+    (FEMALE ?MOTHER)
+    (PARENT (PARENT . ?MOTHER) (CHILD . ?CHILD))
+    =>
+    (ASSERT (MOTHER MOTHER ?MOTHER CHILD ?CHILD)))
 (FEMALE ?MOTHER) satisfied by (FEMALE JANE)
-(PARENT (PARENT . JANE) (CHILD . GEORGE)) satisfied by (PARENT
-                                                        (PARENT . JANE)
-                                                        (CHILD . GEORGE))
+(PARENT (PARENT . JANE) (CHILD . GEORGE)) satisfied by
+  (PARENT (PARENT . JANE) (CHILD . GEORGE))
 These variable bindings have been used:
 ((?MOTHER-OF-GEORGE . JANE))
 \end{minted}
+Systém tedy vyvodil pouze závěr, který nás zajímal.
+
+Zpětná inference umožnuje také výpočet alternativních odpovědí, tedy dalších
+cest výpočtu (a vazeb proměnných), které vedou ke splnění všech cílů. Na další
+alternativní odpověď se dotážeme jednoduše opětovným voláním \verb|(back-run)|.
+
+Zajímají-li nás například oba rodiče George, můžeme zadat cíl
+\cl|(defgoal (parent :parent ?parent :child george)).|
+Pokud poté třikrát zavoláme \verb|(back-run)|, obdržíme výstup
+\begin{minted}[samepage]{cl}
+All goals have been satisfied
+(PARENT (PARENT . ?PARENT) (CHILD . GEORGE)) satisfied by
+  (PARENT (PARENT . JANE) (CHILD . GEORGE))
+These variable bindings have been used:
+((?PARENT . JANE))
+
+All goals have been satisfied
+(PARENT (PARENT . ?PARENT) (CHILD . GEORGE)) satisfied by
+  (PARENT (PARENT . JOHN) (CHILD . GEORGE))
+These variable bindings have been used:
+((?PARENT . JOHN))
+
+No feasible answer found.
+\end{minted}
+Systém tedy najde obě možné odpovědi (vazby proměnných), vedoucí ke splnění
+cíle, načež oznámí, že další odpověď už neexistuje.
+
+\begin{framed}
+  \begin{itemize}
+    \item zpětná inference nemodifikuje pracovní paměť, nýbrž pouze množinu cílů
+    \item alternativní odpovědi
+    \item pouze assert v důsledcích
+    \item zpětná inference nemusí nutně snížit míru nedeterminismu, pokud
+    existuje hodně pravidel, která splní daný subcíl
+  \end{itemize}
+\end{framed}
