@@ -1,0 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Reset prostředí}
+Entitu, která uchovává aktuální stav systému, nazývám v ExiLu prostředím.
+Hodnoty tvořící aktuální stav prostředí rozděluji do dvou skupin. První skupinu
+tvoří hodnoty trvalé. Sem spadají definice šablon, znalostní báze (skupiny
+faktů, pravidla), definice strategií pro volbu shod a aktuálně zvolená
+strategie.
+
+Druhou skupinou jsou hodnoty dočasné. Sem patří aktuální stav pracovní paměti,
+aktuální cíle, stav sítě RETE spolu s agendou udržující aktuální shody (splněná
+pravidla spolu s vazbami proměnných), hodnoty zásobníků sloužících k vrácení
+provedených akcí a jejich opětovné provedení (undo/redo) a~hodnota zásobníku
+udržujícího aktuální stav zpětné inference (aby bylo možné ji krokovat nebo se
+dotázat na alternativní odpovědi).
+
+Dočasné hodnoty lze uvést do výchozího stavu voláním \verb|(clear)|. Tím systém
+uvedeme do stavu, kdy zná pouze definované šablony, skupiny faktů a odvozovací
+pravidla. Volání \verb|(reset)| provede \verb|(clear)| následovaný zavedením
+všech skupin faktů do pracovní paměti. Všechny hodnoty prostředí, tedy včetně
+trvalých, lze pak uvést do výchozího stavu voláním \verb|(complete-reset)|.
+
+Chování \verb|reset| a \verb|clear| vzhledem k zásobníkům pro vracení akcí
+může být poněkud překvapivé. Makro \verb|reset| totiž vymaže obsah tohoto
+zásobníku, poté na něj však uloží akci k vrácení jeho volání. Z výpisu
+\verb|(undo-stack)| tak po volání \verb|reset| zmizí předchozí akce, uvidíme zde
+jen akci \verb|(reset)|. Po volání \verb|(undo)| se na zásobníku předchozí akce
+opět objeví. Totéž platí pro volání \verb|(clear)|.

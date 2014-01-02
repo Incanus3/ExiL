@@ -79,7 +79,6 @@ so just use `load-manual.lisp`, which compiles and loads each file in turn, avoi
 - function calls in (assert), (retract) aren't evaluated, not even in rule's activations
   - but this can be done using assertf, retractf, ...
 - advanced rule syntax:
-  - singleton variable?
   - wildcards - $?
   - field constraints - ~, |, &
   - test predicate in rule conditions
