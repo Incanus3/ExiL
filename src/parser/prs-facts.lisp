@@ -20,8 +20,9 @@
 (defun tmpl-object-spec-p (env specification)
   "is this a valid template-object specification?"
   (and (listp specification)
-       (find-template env (first specification))
-       (tmpl-slots-spec-p (rest specification))))
+       (tmpl-slots-spec-p (rest specification))
+       (symbolp (first specification))
+       (find-template env (first specification))))
 
 (defun extract-tmpl-name (specification)
   "extract template neme from template-object specification"
