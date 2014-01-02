@@ -4,7 +4,6 @@
 
 (complete-reset)
 (unwatch all)
-(watch facts)
 
 (deftemplate parent parent child)
 (deftemplate father father child)
@@ -30,7 +29,17 @@
 
 (reset)
 
-;; (defgoal (mother :mother ?mother-of-george :child george))
+(defgoal (mother :mother ?mother-of-george :child george))
+
+(format t "~%~%GOALS: ~S" (goals))
+(back-step)
+(format t "~%~%GOALS: ~S" (goals))
+(back-step)
+(format t "~%~%GOALS: ~S" (goals))
+(back-step)
+(format t "~%~%GOALS: ~S" (goals))
+(back-step)
+(back-step)
 
 ;; (format t "~%~%BACKWARD:")
 ;; (back-run)
@@ -38,7 +47,7 @@
 ;; (format t "~%~%FORWARD:")
 ;; (run)
 
-(defgoal (parent :parent ?parent :child george))
-(back-run)
-(back-run)
-(back-run)
+;; (defgoal (parent :parent ?parent :child george))
+;; (back-run)
+;; (back-run)
+;; (back-run)

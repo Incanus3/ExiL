@@ -154,10 +154,49 @@ No feasible answer found.
 Systém tedy najde obě možné odpovědi (vazby proměnných), vedoucí ke splnění
 cíle, načež oznámí, že další odpověď už neexistuje.
 
+Zpětná inference nemodifikuje obsah pracovní paměti. To ani není možné vzhledem
+k tomu, že ve chvíli, kdy inference zvolí pravidlo, jehož důsledky vedou ke
+splnění aktuálního cíle, nejsou jeho podmínky často ještě splněny. Místo toho
+pracuje zpětná inference pouze s množinou cílů. Jednotlivé cíle jsou postupně
+vybírány a hledají se cesty k jejich splnění. Inference nejprve zkoumá fakty
+v~pracovní paměti. Není-li aktuální cíl splněn žádným z platných faktů, uvažuje
+dále jednotlivá pravidla. Najde-li pravidlo, které by po aktivaci vedlo ke
+splnění aktuálního cíle, naváže proměnné použité v jeho aktivacích na jeho
+podmínky (tedy opačně než u inference dopředné) a ty pak přidá do množiny cílů.
+Použité vazby proměnných se navíc aplikují i na zbytek cílů.
+
+Zkusme nyní krokovat (použitím \verb|(back-step)|) předchozí příklad s dotazem na
+matku George s průběžným výpisem cílů pomocí \verb|(goals)|.
+\begin{minted}[samepage]{cl}
+GOALS: ((MOTHER :MOTHER ?MOTHER-OF-GEORGE :CHILD GEORGE))
+(MOTHER (MOTHER . ?MOTHER-OF-GEORGE) (CHILD . GEORGE)) satisfied by
+  (RULE MOTHER-IS-FEMALE-PARENT
+    (FEMALE ?MOTHER)
+    (PARENT (PARENT . ?MOTHER) (CHILD . ?CHILD))
+    =>
+    (ASSERT (MOTHER MOTHER ?MOTHER CHILD ?CHILD)))
+
+GOALS: ((FEMALE ?MOTHER) (PARENT :PARENT ?MOTHER :CHILD GEORGE))
+(FEMALE ?MOTHER) satisfied by (FEMALE JANE)
+
+GOALS: ((PARENT :PARENT JANE :CHILD GEORGE))
+(PARENT (PARENT . JANE) (CHILD . GEORGE)) satisfied by
+  (PARENT (PARENT . JANE) (CHILD . GEORGE))
+\end{minted}
+V prvním kroku je proměnná \verb|?mother-of-george|, použitá v definici cíle,
+nahrazena proměnnou \verb|?mother|, použitou v důslecích pravidla
+\verb|mother-if-female-parent|. Proměnná \verb|?child| v důsledcích je navázána
+na \verb|george| a touto vazbou jsou nahrazeny výskyty proměnné v podmínkách
+pravidla. Podmínky jsou poté přidány do množiny cílů.
+
+V druhém kroku je nový cíl \verb|(female ?mother)| porovnán s faktem
+\verb|(female jane)| v pracovní paměti, je jím splněn a v posledním cíli je
+proměnná \verb|?mother| navázána na \verb|jane|. Tento cíl je pak
+v posledním kroku triviálně splněn identickým faktem.
+
+
 \begin{framed}
   \begin{itemize}
-    \item zpětná inference nemodifikuje pracovní paměť, nýbrž pouze množinu cílů
-    \item alternativní odpovědi
     \item pouze assert v důsledcích
     \item zpětná inference nemusí nutně snížit míru nedeterminismu, pokud
     existuje hodně pravidel, která splní daný subcíl
