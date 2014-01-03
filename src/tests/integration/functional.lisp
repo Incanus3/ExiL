@@ -13,29 +13,31 @@
   (defenvf 'test)
   (setenvf 'test)
   "current-environment always returns keyword"
-  (assert-equal (current-environment) :test))
+  (assert-equal (current-environment) :test)
+  (undefenvf 'test))
 
 (def-test-method test-environments-keywords
     ((tests functional-integration-tests) :run nil)
   "env modifiers take keywords"
   (defenvf :test)
   (setenvf :test)
-  (assert-equal (current-environment) :test))
+  (assert-equal (current-environment) :test)
+  (undefenvf :test))
 
 (def-test-method test-environments-mixed
     ((tests functional-integration-tests) :run nil)
   "keywords and symbols are interchangeable"
   (defenvf 'test)
   (setenvf :test)
-  (assert-equal (current-environment) :test))
+  (assert-equal (current-environment) :test)
+  (undefenvf :test))
 
 (def-test-method test-environments-not-defined
     ((tests functional-integration-tests) :run nil)
-  "nothing happends when environment not defined"
+  "error is raised when environment not defined"
   ;; TODO: show warning
-  (setenvf :test)
-  (assert-equal (current-environment) :test))
-
+  (assert-condition 'error (setenvf :test))
+  (assert-equal (current-environment) :int-test))
 
 (def-test-method test-watchers ((tests functional-integration-tests) :run nil)
   (watchf 'facts)

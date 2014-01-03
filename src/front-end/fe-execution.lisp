@@ -6,7 +6,7 @@
 ; public
 (defun clear ()
   "delete all facts"
-  (clear-env *current-environment*))
+  (clear-env *current-environment* "(clear)"))
 
 ;; DEBUG:
 (defun complete-reset ()

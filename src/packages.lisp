@@ -95,7 +95,8 @@
   (:documentation "the main package, used by exil-user")
   (:use :common-lisp :exil-parser :exil-env :iterate)
   (:import-from :exil-utils :to-keyword :fresh-princ :hash-keys)
-  (:export :defenv :defenvf :setenv :setenvf :environments :current-environment
+  (:export :defenv :defenvf :undefenv :undefenvf :setenv :setenvf
+           :environments :current-environment
            :getenv ; used by gui
            :deftemplate :deftemplatef :undeftemplate :undeftemplatef
            :ppdeftemplate :templates :find-template :find-templatef

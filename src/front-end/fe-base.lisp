@@ -4,6 +4,8 @@
 ;;; multiple environments:
 ;; (defmacro defenv (name &key redefine))
 ;; (defun defenvf (name &key redefine))
+;; (defmacro undefenv (name))
+;; (defun undefenvf (name))
 ;; (defmacro setenv (name))
 ;; (defun setenvf (name))
 ;; (defun environments ())
@@ -15,7 +17,8 @@
 ;; (defmacro undeftemplate (name))
 ;; (defun undeftemplatef (name))
 ;; (defmacro ppdeftemplate (name))
-;; (defun find-template (name))           ;; => external template representation
+;; (defun find-templatef (name))          ;; => external template representation
+;; (defmacro find-template (name))
 ;; (defun templates ())                   ;; => list of names
 
 ;;; facts:
@@ -34,7 +37,8 @@
 ;; (defmacro undeffacts (name))
 ;; (defun undeffactsf (name))
 ;; (defun fact-groups ())
-;; (defun find-fact-group (name))
+;; (defmacro find-fact-group (name))
+;; (defun find-fact-groupf (name))
 ;; TODO: (defmacro ppdeffacts (name))
 
 ;;; rules:
@@ -43,7 +47,8 @@
 ;; (defmacro undefrule (name))
 ;; (defun undefrulef (name))
 ;; (defun rules ())
-;; (defun find-rule (name))
+;; (defmacro find-rule (name))
+;; (defun find-rulef (name))
 ;; (defmacro ppdefrule (name))
 ;; (defun ppdefrulef (name))
 ;; (defun agenda ())
@@ -110,29 +115,14 @@
 ;; public
 (defun defenvf (name &key redefine)
   (let ((env-name (to-keyword name)))
-    (when (or (not (gethash env-name *environments*))
-              redefine)
+    (if (or (not (gethash env-name *environments*))
+            redefine)
       (let ((environment (make-environment)))
         (setf (gethash env-name *environments*)
               environment)
-        #+lispworks(set-gui environment (exil-gui:make-gui environment)))))
+        #+lispworks(set-gui environment (exil-gui:make-gui environment)))
+      (error "environment ~A is already defined" name)))
   nil)
-
-;; public
-(defun setenvf (name)
-  (let* ((env-name (to-keyword name))
-         (env (gethash env-name *environments*)))
-    (when env
-      (setf *current-environment* env)
-      (set-env-name env-name))))
-
-;; public
-(defun environments ()
-  (hash-keys *environments*))
-
-;; public
-(defun current-environment ()
-  *current-env-name*)
 
 ;; public
 (defmacro defenv (name &key redefine)
@@ -141,9 +131,36 @@
   `(defenvf ',name :redefine ,redefine))
 
 ;; public
+(defun undefenvf (name)
+  (let ((env-name (to-keyword name)))
+    (remhash env-name *environments*)))
+
+;; public
+(defmacro undefenv (name)
+  `(undefenvf ',name))
+
+;; public
+(defun setenvf (name)
+  (let* ((env-name (to-keyword name))
+         (env (gethash env-name *environments*)))
+    (if env
+        (progn
+          (setf *current-environment* env)
+          (set-env-name env-name))
+        (error "environment ~A isn't defined" name))))
+
+;; public
 (defmacro setenv (name)
   "set current environment to one previously defined with name"
   `(setenvf ',name))
+
+;; public
+(defun environments ()
+  (hash-keys *environments*))
+
+;; public
+(defun current-environment ()
+  *current-env-name*)
 
 ;; used by gui
 (defun getenv (name)

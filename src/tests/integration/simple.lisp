@@ -5,10 +5,12 @@
   ((env :accessor env)))
 
 (defmethod set-up ((tests integration-tests))
-  (defenv test :redefine t)
-  (setenv test)
-  (setf (env tests) (getenv :test)))
+  (defenv int-test)
+  (setenv int-test)
+  (setf (env tests) (getenv :int-test)))
 
+(defmethod tear-down ((tests integration-tests))
+  (undefenv int-test))
 
 (defclass simple-integration-tests (integration-tests) ())
 
