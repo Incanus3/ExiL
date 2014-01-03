@@ -4,5 +4,14 @@
 Při práci s ExiLem se nemusíme omezovat pouze na jedno prostředí (byť si s ním
 často vystačíme). Nové prostředí lze definovat voláním \verb|defenv| s~názvem
 prostředí, např. \verb|(defenv test)|. Prostředí pak lze přepnout voláním
-\verb|(setenv test)|. Každé prostředí má oddělený stav, tedy trvalé i dočasné
-hodnoty (viz předchozí sekce). Název výchozího prostředí je \verb|default|.
+\verb|(setenv test)|, případně smazat voláním \verb|(undefenv test)|.
+
+Každé prostředí má oddělený stav, tedy trvalé i dočasné hodnoty (viz předchozí
+sekce). Na název aktuálního prostředí se lze dotázat voláním
+\verb|(current-environment)|. Název výchozího prostředí je \verb|default|.
+Seznam všech prostředí získáme voláním \verb|(environments)|.
+
+Máme-li už definované prostředí, např. \verb|test|, opětovné volání
+\verb|(defenv test)| skončí výjimkou. Tím je zajištěno, že si omylem nevymažeme
+celé prostředí.  Chceme-li jej opravdu vymazat, musíme volat
+\verb|(defenv test :redefine t)|.

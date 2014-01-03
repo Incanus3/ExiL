@@ -1,0 +1,52 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Volání ExiLu z jiného kódu}
+\begin{framed}
+  \begin{itemize}
+    \item funkční alternativy - nequotují, některé parametry rozložené
+    \begin{itemize}
+      \item složitější konstrukty v důsledcích - např. boxes
+      \item generování specifikací faktů kódem - např. palindromy
+    \end{itemize}
+    \item queries nevypisují na výstup, nýbrž vrací ext. repr., kterou lze
+      manipulovat
+    \item proměnné nahrazeny v celém seznamu důsledků (nejen v assert, apod.),
+      třeba quotovat!
+  \end{itemize}
+\end{framed}
+
+Doposud jsem v ukázkách práce s ExiLem pracoval většinou s makry. Byla to
+následující:
+\begin{description}[leftmargin=6.4cm,style=sameline,align=right,labelsep=0.5cm]
+  \item[definice šablon] \verb|deftemplate undeftemplate| \verb|find-template|
+  \item[definice skupin faktů] \verb|deffacts undeffacts find-fact-group|
+  \item[definice pravidel] \verb|defrule undefrule find-rule|
+  \item[manipulace pracovní paměti] \verb|assert retract modify|
+  \item[definice cílů] \verb|defgoal|
+  \item[sledování průběhu inference] \verb|watch unwatch watchedp|
+  \item[strategie výběru shody] \verb|defstrategy setstrategy|
+  \item[definice prostředí] \verb|defenv setenv|
+\end{description}
+Tato makra berou jako parametry symboly a seznamy a tyto automaticky
+\emph{quotují}. To je pohodlné, pracujeme-li s knihovnou přimo. Představme si
+ale, že chceme knihovnu volat z jiného kódu a například specifikace faktů, které
+předáváme makru \verb|assert| generovat nějakou funkcí.
+
+Protože makro \verb|assert| seznamy se specifikacemi faktů quotuje, místo aby je
+vyhodnotilo, nelze ho v tomto případě použít. Výsledkem volání
+\cl|(assert (generate-fact))| totiž bude přidání faktu \verb|(generate-fact)| do
+pracovní paměti. K tomuto účelu poskytuje ExiL ke všem uvedeným makrům funkční
+alternativy. Tyto jsou označeny suffixem \verb|f|, například \verb|assertf|.
+Tímto suffixem sice v Lispu typicky označujeme destruktivní makra, která mění
+svůj argument, v případě exilových maker ale záměna nehrozí.
+
+Funkce \verb|assertf| umožňuje například definici pravidla
+\begin{minted}{cl}
+(defrule surround-by-as
+  (palindrome ?p)
+  =>
+  (assertf `(palindrome ,(concatenate 'string "a" ?p "a")))).
+\end{minted}
+
+\begin{framed}
+Projít všechny definice a zdokumentovat případné rozdíly v parametrech
+\end{framed}
