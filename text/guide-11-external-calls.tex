@@ -7,10 +7,8 @@
       \item složitější konstrukty v důsledcích - např. boxes
       \item generování specifikací faktů kódem - např. palindromy
     \end{itemize}
-    \item queries nevypisují na výstup, nýbrž vrací ext. repr., kterou lze
-      manipulovat
-    \item proměnné nahrazeny v celém seznamu důsledků (nejen v assert, apod.),
-      třeba quotovat!
+    \item zkontrolovat, že jsem všechna uvedená makra zmínil v předchozím textu
+      (undefgoal, undefenv)
   \end{itemize}
 \end{framed}
 
@@ -21,13 +19,13 @@ následující:
   \item[definice skupin faktů] \verb|deffacts undeffacts find-fact-group|
   \item[definice pravidel] \verb|defrule undefrule find-rule|
   \item[manipulace pracovní paměti] \verb|assert retract modify|
-  \item[definice cílů] \verb|defgoal|
+  \item[definice cílů] \verb|defgoal undefgoal|
   \item[sledování průběhu inference] \verb|watch unwatch watchedp|
   \item[strategie výběru shody] \verb|defstrategy setstrategy|
-  \item[definice prostředí] \verb|defenv setenv|
+  \item[definice prostředí] \verb|defenv undefenv setenv|
 \end{description}
-Tato makra berou jako parametry symboly a seznamy a tyto automaticky
-\emph{quotují}. To je pohodlné, pracujeme-li s knihovnou přimo. Představme si
+Tato makra berou jako parametry symboly a/nebo seznamy a tyto automaticky
+\emph{quotují}. To je pohodlné, pracujeme-li s knihovnou přímo. Představme si
 ale, že chceme knihovnu volat z jiného kódu a například specifikace faktů, které
 předáváme makru \verb|assert| generovat nějakou funkcí.
 
@@ -39,13 +37,46 @@ alternativy. Tyto jsou označeny suffixem \verb|f|, například \verb|assertf|.
 Tímto suffixem sice v Lispu typicky označujeme destruktivní makra, která mění
 svůj argument, v případě exilových maker ale záměna nehrozí.
 
-Funkce \verb|assertf| umožňuje například definici pravidla
+Dotazovací funkce a makra jako \verb|facts|, \verb|goals|,
+\verb|find-fact-group|, apod. navíc nevypisují hodnoty na výstup, nýbrž vrací
+externí reprezentaci objektů, se kterou je možné dále manipulovat a pak ji třeba
+systému předat zpátky. To umožnuje například následující (nepříliš užitečné)
+volání:
+\begin{minted}{cl}
+(dolist (fact (facts))
+  (retractf fact)
+  (assertf (cons 'my-fact fact))).
+\end{minted}
+
+Funkční alternativy jako \verb|assertf| také umožnuji použití složitějších
+konstruktů v důsledcích pravidla, například
 \begin{minted}{cl}
 (defrule surround-by-as
   (palindrome ?p)
   =>
   (assertf `(palindrome ,(concatenate 'string "a" ?p "a")))).
 \end{minted}
+Tyto konstrukty bohužel nelze použít se zpětnou inferencí, neboť ta nemá šanci
+předvídat, jaký fakt bude nakonec do pracovní paměti přidán.
+
+V důsledcích pravidla bychom také mohli chtít například upozornit část našeho
+kódu na událost, ke které došlo. Protože ExiL nahrazuje výskyty
+proměnných v celé důsledkové části pravidla, lze toho snadno dosáhnout. Je ale
+třeba dát pozor na quotování hodnot proměnných. Uvažme pravidlo
+\begin{minted}{cl}
+(defrule move-robot
+  (goal move robot ?from ?to)
+  (in robot ?from)
+  =>
+  (retract (in robot ?from))
+  (assert (in robot ?to))
+  (notify 'moving-robot '?from '?to))
+\end{minted}
+a fakt \verb|(goal move robot A B)| v pracovní paměti. Kdybychom ve volání
+\verb|notify| proměnné \verb|?from| a \verb|?to| nequotovali, volání by se při
+aktivaci pravidla vyhodnotilo jako \verb|(notify 'moving-robot A B)|. To by
+pravděpodobně skončilo chybovou hláškou sdělující, že proměnné \verb|A| a
+\verb|B| nejsou definovány.
 
 \begin{framed}
 Projít všechny definice a zdokumentovat případné rozdíly v parametrech
