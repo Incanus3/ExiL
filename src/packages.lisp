@@ -72,7 +72,7 @@
 	   :undo :redo :print-undo-stack :print-redo-stack
 	   :step-env :halt-env :run-env
 	   ;; backward chaining
-	   :add-goal :find-goal :print-goals :goals
+	   :add-goal :rem-goal :find-goal :print-goals :goals
 	   :back-step :back-run
            :gui :set-gui ; gui
            ;; called by rete

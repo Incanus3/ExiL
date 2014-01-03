@@ -272,7 +272,7 @@
 
 ; returns true, if fact was added = wasn't already there
 (defun add-goal% (env goal)
-  (push-end goal (goals env)))
+  (pushnew-end goal (goals env) :test #'exil-equal-p))
 
 (defun del-goal (env goal)
   (setf (goals env) (delete goal (goals env) :test #'exil-equal-p)))

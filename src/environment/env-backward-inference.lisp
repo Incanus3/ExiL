@@ -14,7 +14,7 @@
 (defun add-rule-conditions-to-goals (env goal-match-object)
   (when (rulep goal-match-object)
     (dolist (condition (conditions goal-match-object))
-      (add-goal env condition))))
+      (add-goal% env condition))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

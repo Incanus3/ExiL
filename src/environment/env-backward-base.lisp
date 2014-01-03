@@ -43,14 +43,22 @@
 ;; GOALS
 
 ;; public
-;; TODO: this should be undoable
 (defmethod add-goal ((env environment) (goal pattern)
 		     &optional (undo-label "(add-goal)"))
-  (declare (ignore undo-label))
   (unless (find-goal env goal)
-    (add-goal% env goal)))
+    (with-saved-slots env (goals back-stack) undo-label
+      (add-goal% env goal)
+      (reset-slots env (back-stack)))))
 
-                                        ; public
+;; public
+(defmethod rem-goal ((env environment) (goal pattern)
+                     &optional (undo-label "(rem-goal)"))
+  (when (find-goal env goal)
+    (with-saved-slots env (goals back-stack) undo-label
+      (del-goal env goal)
+      (reset-slots env (back-stack)))))
+
+;; public
 (defmethod print-goals ((env environment))
   (fresh-princ (goals env)))
 
