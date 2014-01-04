@@ -1,14 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{CLIPSová syntax}
-\begin{framed}
-  \begin{itemize}
-    \item deftemplate, fact specifiery
-    \item volání facts s číslem
-    \item projít příručku clipsu a vzpomenout si, co v ExiLu ještě nebylo
-    \item typy
-    \item multisloty
-  \end{itemize}
-\end{framed}
 
 Dalším z požadavků zadání práce bylo přiblížit syntax exilových volání systému
 CLIPS, aby bylo možné programy v něm napsané snáze převést na programy exilové.
@@ -19,8 +10,8 @@ faktů a požadovaných změn při volání \verb|modify|. Tuto syntax nyní Exi
 také. Příklad \ref{clips syntax} na straně \pageref{clips syntax} ukazuje
 definici znalostní báze ekvivalentní příkladu \ref{structured facts} s použitím
 CLIPSové syntaxe. Syntax je dostatečně odlišná na to, aby ji ExiL rozpoznal,
-není tedy třeba syntaktický mód nijak přepínat. Díky tomu dokonce můžeme obě
-syntaxe kombinovat.
+není tedy třeba syntaktický mód nijak přepínat. Díky tomu dokonce můžeme oba
+typy syntaxe kombinovat.
 
 ExiL také po vzoru CLIPSu umožňuje omezit seznam vrácený voláním \verb|(facts)|
 volitelnými číselnými parametry. První volitelný parametr udává index prvního
@@ -32,6 +23,28 @@ více faktů najednou. Makru \verb|retract| lze navíc místo specifikací fakt�
 odstranění předat jejich číselné indexy v seznamu faktů. Obě možnosti lze
 dokonce kombinovat.
 
+V podmínkách pravidel lze nyní také použít speciální proměnnou \verb|?| a
+navázání celého faktu na proměnnou pomocí operátoru \verb|<-|, jak jsem již
+popsal v sekci \ref{inference}
+
+CLIPS dále umožňuje specifikovat u slotu šablony datový typ. To považuji v
+dynamickém jazyce, jakým je Common Lisp, za zbytečné. CLIPS také nabízí několik
+vlastních funkcí a možnost definice nových, které pak lze používat v~důsledcích
+pravidel. To nemá v ExiLu smysl, neboť můžeme použít vestavěné nebo uživatelsky
+definované funkce Lispu.
+
+CLIPS navíc poskytuje možnost definovat některé sloty šablony jako
+\emph{multislot}. Ve vzorech podmínek pravidel pak můžeme používat proměnnou
+\verb|$?|, která se naváže na jeden nebo více atomů multislotu, případně
+jednoduchého faktu. Dále je v podmínkách CLIPSu možné používat libovolně vnořené
+agregační funkce \verb|and|, \verb|or|, \verb|not| a podobně. Ve vzorech
+podmínek CLIPSových pravidel lze také používat speciální proměnné, které se
+shodují jen s některými atomy, např. proměnná \verb|?color&~red&~yellow| se
+shoduje se všemi atomy, kromě \verb|red| a \verb|yellow|.
+
+Tyto možnosti ExiL neposkytuje, neboť jejich implementace by vyžadovala přepsat
+velkou část algoritmu RETE, který podmínky pravidel vyhodnocuje, jak popíšu v
+sekci, zabývající se implementací.
 
 \begin{listing}[t]
 \caption{Definice znalostní báze s použitím CLIPSové syntaxe}
