@@ -98,8 +98,9 @@ Detaily opět viz sekce \ref{inference}
 
 Poslední pravidlo slouží k zastavení inference, pokud se již objekt nachází na
 cílové pozici. Inference je zde zastavena explicitním voláním \verb|(halt)|.
-Druhou možností by bylo odstranit z pracovní paměti fakt definující cíl, neboť v
-takovou chvíli nemůže být žádné další pravidlo splňeno.
+Druhou možností by bylo odstranit z pracovní paměti fakt definující cíl (jak
+vidíme v~příkladu \ref{structured facts}), neboť v takovou chvíli nemůže být
+žádné další pravidlo splňeno.
 
 Jakmile je znalostní báze nadefinována, můžeme z ní inicializovat pracovní
 paměť. To provedeme voláním \verb|(reset)|, které (po případném vyčištění

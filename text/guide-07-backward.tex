@@ -1,13 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Zpětná inference}
 
-\begin{framed}
-  \begin{itemize}
-    \item \verb|undefgoal|
-    \item \verb|defgoal| a \verb|undefgoal| resetují \verb|back-stack|
-  \end{itemize}
-\end{framed}
-
 Dalším z implementovaných rozšíření je možnost zpětné inference. Inference
 popsaná v sekci \ref{inference} je dopředná. V každém kroku jsou nalezeny
 všechny možnosti dalšího postupu odvozování, načež je zvolena jedna, kterou se
@@ -22,8 +15,7 @@ Zpětná inference naproti tomu umožňuje definovat cíle, kterých chceme dos�
 K tomu slouží makro \verb|defgoal|, kterému předáme vzor ve stejném formátu,
 jako u podmínek pravidel. Definice cíle ovšem nepodporuje negaci ani navázání
 faktu na proměnnou (k tomu ani není důvod). Cíle je pak možné vypsat voláním
-\verb|(goals)|.
-
+\verb|(goals)|. Cíl můžeme také odebrat makrem \verb|undefgoal|.
 Ke spuštění zpětné inference slouží funkce \verb|back-step| a
 \verb|back-run|, podobně jako u inference dopředné.
 
@@ -100,8 +92,8 @@ Uvažme nyní složitější příklad (definice šablon vynechána):
   (assert (mother :mother ?mother :child ?child)))
 \end{minted}
 Zajímá-li nás, kdo je matkou George, můžeme zkusit spustit dopřednou inferenci.
-Po jejím skončení bude v pracovní paměti jak informace o Georgově matce, tak o
-jeho otci. Systém se tedy v tomto případě dobral správného výsledku, vypočítal
+Po jejím skončení bude v pracovní paměti jak informace o Georgově matce, tak
+o~jeho otci. Systém se tedy v tomto případě dobral správného výsledku, vypočítal
 ale i další fakty, které nás nezajímaly. Dokážeme si snadno představit, že ve
 větším programu může být výpočet všech odvoditelných závěrů velmi výpočetně
 a tudíž i časově náročný.
@@ -154,17 +146,18 @@ No feasible answer found.
 Systém tedy najde obě možné odpovědi (vazby proměnných), vedoucí ke splnění
 cíle, načež oznámí, že další odpověď už neexistuje.
 
-Zpětná inference nemodifikuje obsah pracovní paměti. To ani není možné vzhledem
+Zpětná inference nemění obsah pracovní paměti. To ani není možné vzhledem
 k tomu, že ve chvíli, kdy inference zvolí pravidlo, jehož důsledky vedou ke
 splnění aktuálního cíle, nejsou jeho podmínky často ještě splněny. Místo toho
-pracuje zpětná inference pouze s množinou cílů. Jednotlivé cíle jsou postupně
-vybírány a hledají se cesty k jejich splnění. Inference nejprve zkoumá fakty
-v~pracovní paměti. Není-li aktuální cíl splněn žádným z platných faktů, uvažuje
-dále jednotlivá pravidla. Najde-li pravidlo, které by po aktivaci vedlo ke
-splnění aktuálního cíle, naváže proměnné, použité v jeho důsledcích, podle vzoru
-cíle. Tyto vazby poté aplikuje na jeho podmínky (tedy opačně než u inference
-dopředné) a ty pak přidá do množiny cílů. Použité vazby proměnných se navíc
-aplikují i na zbytek cílů.
+pracuje zpětná inference pouze s množinou cílů.
+
+Jednotlivé cíle jsou postupně vybírány a~hledají se cesty k jejich splnění.
+Inference nejprve zkoumá fakty v~pracovní paměti. Není-li aktuální cíl splněn
+žádným z platných faktů, uvažuje dále jednotlivá pravidla. Najde-li pravidlo,
+které by po aktivaci vedlo ke splnění aktuálního cíle, naváže proměnné, použité
+v jeho důsledcích, podle vzoru cíle. Tyto vazby poté aplikuje na jeho podmínky
+(tedy opačně než u inference dopředné) a ty pak přidá do množiny cílů. Použité
+vazby proměnných se navíc aplikují i na zbytek cílů.
 
 Zkusme nyní krokovat (použitím \verb|(back-step)|) předchozí příklad s dotazem na
 matku George s průběžným výpisem cílů pomocí \verb|(goals)|.
@@ -188,13 +181,17 @@ V prvním kroku je proměnná \verb|?mother-of-george|, použitá v definici cí
 nahrazena proměnnou \verb|?mother|, použitou v důslecích pravidla
 \verb|mother-if-female-parent|. Proměnná \verb|?child| v důsledcích je navázána
 na \verb|george| a touto vazbou jsou nahrazeny výskyty proměnné v podmínkách
-pravidla. Podmínky jsou poté přidány do množiny cílů. Původní cíl je poté z
-množiny odstraněn.
+pravidla. Podmínky jsou poté přidány do množiny cílů. Původní cíl je poté
+z~množiny odstraněn.
 
 V druhém kroku je nový cíl \verb|(female ?mother)| porovnán s faktem
 \verb|(female jane)| v pracovní paměti, je jím splněn a v posledním cíli je
 proměnná \verb|?mother| navázána na \verb|jane|. Tento cíl je pak
 v posledním kroku triviálně splněn identickým faktem.
+
+Aktuální stav výpočtu pomocí zpětné inference je ztracen, zavoláme-li během
+krokování \verb|defgoal| nebo \verb|undefgoal|. Kdyby tomu tak nebylo, mohli
+bychom systém uvést do nekonzistentního stavu.
 
 Implementace zpětné inference v ExiLu je velmi omezená. V důsledích pravidel
 zohledňuje pouze specifikace faktů ve voláních \verb|assert|. Nelze ji tedy

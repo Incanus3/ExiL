@@ -1,0 +1,79 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{CLIPSová syntax}
+\begin{framed}
+  \begin{itemize}
+    \item deftemplate, fact specifiery
+    \item volání facts s číslem
+    \item projít příručku clipsu a vzpomenout si, co v ExiLu ještě nebylo
+    \item typy
+    \item multisloty
+  \end{itemize}
+\end{framed}
+
+Dalším z požadavků zadání práce bylo přiblížit syntax exilových volání systému
+CLIPS, aby bylo možné programy v něm napsané snáze převést na programy exilové.
+Toho se mi podařilo dosáhnout jen částečně.
+
+Systém CLIPS použivá jiný formát specifikací slotů šablony, strukturovaných
+faktů a požadovaných změn při volání \verb|modify|. Tuto syntax nyní ExiL podporuje
+také. Příklad \ref{clips syntax} na straně \pageref{clips syntax} ukazuje
+definici znalostní báze ekvivalentní příkladu \ref{structured facts} s použitím
+CLIPSové syntaxe. Syntax je dostatečně odlišná na to, aby ji ExiL rozpoznal,
+není tedy třeba syntaktický mód nijak přepínat. Díky tomu dokonce můžeme obě
+syntaxe kombinovat.
+
+ExiL také po vzoru CLIPSu umožňuje omezit seznam vrácený voláním \verb|(facts)|
+volitelnými číselnými parametry. První volitelný parametr udává index prvního
+faktu v seznamu (číslováno od 1). Druhý parametr udává index posledního faktu.
+Třetí parametr pak maximální počet vrácených faktů.
+
+Makra \verb|assert| a \verb|retract| také nyní umožňují přidání či odebrání
+více faktů najednou. Makru \verb|retract| lze navíc místo specifikací faktů k
+odstranění předat jejich číselné indexy v seznamu faktů. Obě možnosti lze
+dokonce kombinovat.
+
+
+\begin{listing}[t]
+\caption{Definice znalostní báze s použitím CLIPSové syntaxe}
+\label{clips syntax}
+\begin{clcode}
+(deftemplate goal
+  (slot action (default move))
+  (slot object)
+  (slot from)
+  (slot to))
+
+(deftemplate in
+  (slot object)
+  (slot location))
+
+(deffacts world
+  (in (object robot) (location A))
+  (in (object box) (location B))
+  (goal (object box) (from B) (to A))).
+
+(defrule move-robot
+  (goal (action move) (object ?obj) (from ?from))
+  (in (object ?obj) (location ?from))
+  (- in (object robot) (location ?from))
+  ?robot <- (in (object robot) (location ?z))
+  =>
+  (modify ?robot (location ?from)))
+
+(defrule move-object
+  (goal (action move) (object ?obj) (from ?from) (to ?to))
+  ?object <- (in (object ?obj) (location ?from))
+  ?robot <- (in (object robot) (location ?from))
+  =>
+  (modify ?robot (location ?to))
+  (modify ?object (location ?to)))
+
+(defrule stop
+  ?goal <- (goal (action move) (object ?obj) (to ?to))
+  (in (object ?obj) (location ?to))
+  =>
+  (halt))
+\end{clcode}
+\end{listing}
+
+\FloatBarrier

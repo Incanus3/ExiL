@@ -25,7 +25,46 @@ slotu je buď symbol - jméno slotu, nebo \emph{seznam}, jehož hlavou
 (\emph{car}) je jméno slotu a~tělem (\emph{cdr}) je \emph{property list (plist)}
 s dalšími parametry. Aktuálně systém umožňuje pouze specifikaci výchozí hodnoty
 slotu \emph{klíčem} \verb|:default|. Ta je použita, není-li při specifikaci
-faktu, používajícího tuto šablonu, uvedena hodnota pro daný slot.
+faktu, používajícího tuto šablonu, uvedena hodnota pro daný slot. Příklad
+\ref{structured facts} na straně \pageref{structured facts} ukazuje definici
+znalostní báze ekvivalentní příkladu \ref{typical structure} s použitím
+strukturovaných faktů.
+
+\begin{listing}[h]
+\caption{Definice znalostní báze s použitím strukturovaných faktů}
+\label{structured facts}
+\begin{clcode}
+(deftemplate goal (action :default move) object from to)
+(deftemplate in object location)
+
+(deffacts world
+  (in :object robot :location A)
+  (in :object box :location B)
+  (goal :object box :from B :to A))
+
+(defrule move-robot
+  (goal :object ?obj :from ?from)
+  (in :object ?obj :location ?from)
+  (- in :object robot :location ?from)
+  ?robot <- (in :object robot :location ?)
+  =>
+  (modify ?robot :location ?from))
+
+(defrule move-object
+  (goal :object ?obj :from ?from :to ?to)
+  ?object <- (in :object ?obj :location ?from)
+  ?robot <- (in :object robot :location ?from)
+  =>
+  (modify ?robot :location ?to)
+  (modify ?object :location ?to))
+
+(defrule stop
+  ?goal <- (goal :object ?obj :to ?to)
+  (in :object ?obj :location ?to)
+  =>
+  (retract ?goal))
+\end{clcode}
+\end{listing}
 
 Je-li už šablona požadovaného názvu definována, ale neexistují v pracovní
 paměti fakty, které ji používají, je její stávající definice nahrazena. Pokud
@@ -86,3 +125,5 @@ Opakovaným voláním makra \verb|defrule| odvozovací pravidlo redefinujeme.
 K~získání seznamu názvů definovaných pravidel a jejich specifikací slouží
 \emph{funkce} \verb|rules| a makro \verb|find-rule|, podobně jako u šablon a
 skupin faktů.  Ke zrušení definice pravidla slouží makro \verb|undefrule|.
+
+\FloatBarrier

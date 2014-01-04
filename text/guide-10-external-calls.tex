@@ -1,24 +1,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Volání ExiLu z jiného kódu}
-\begin{framed}
-  \begin{itemize}
-    \item funkční alternativy - nequotují, některé parametry rozložené
-    \begin{itemize}
-      \item složitější konstrukty v důsledcích - např. boxes
-      \item generování specifikací faktů kódem - např. palindromy
-    \end{itemize}
-    \item zkontrolovat, že jsem všechna uvedená makra zmínil v předchozím textu
-      (undefgoal, undefenv)
-  \end{itemize}
-\end{framed}
+\subsubsection{Volání ExiLu z jiného kódu a naopak}
 
 Doposud jsem v ukázkách práce s ExiLem pracoval většinou s makry. Byla to
 následující:
-\begin{description}[leftmargin=6.4cm,style=sameline,align=right,labelsep=0.5cm]
+\begin{description}[leftmargin=6.7cm,style=sameline,align=right,labelsep=0.5cm]
   \item[definice šablon] \verb|deftemplate undeftemplate| \verb|find-template|
   \item[definice skupin faktů] \verb|deffacts undeffacts find-fact-group|
   \item[definice pravidel] \verb|defrule undefrule find-rule|
-  \item[manipulace pracovní paměti] \verb|assert retract modify|
+  \item[modifikace pracovní paměti] \verb|assert retract modify|
   \item[definice cílů] \verb|defgoal undefgoal|
   \item[sledování průběhu inference] \verb|watch unwatch watchedp|
   \item[strategie výběru shody] \verb|defstrategy setstrategy|
@@ -33,9 +22,10 @@ Protože makro \verb|assert| seznamy se specifikacemi faktů quotuje, místo aby
 vyhodnotilo, nelze ho v tomto případě použít. Výsledkem volání
 \cl|(assert (generate-fact))| totiž bude přidání faktu \verb|(generate-fact)| do
 pracovní paměti. K tomuto účelu poskytuje ExiL ke všem uvedeným makrům funkční
-alternativy. Tyto jsou označeny suffixem \verb|f|, například \verb|assertf|.
-Tímto suffixem sice v Lispu typicky označujeme destruktivní makra, která mění
-svůj argument, v případě exilových maker ale záměna nehrozí.
+alternativy, které parametry vyhodnocují. Tyto jsou označeny suffixem \verb|f|,
+například \verb|assertf|. Tímto suffixem sice v Lispu typicky označujeme
+destruktivní makra, která mění svůj argument, v případě exilových maker ale
+záměna nehrozí.
 
 Dotazovací funkce a makra jako \verb|facts|, \verb|goals|,
 \verb|find-fact-group|, apod. navíc nevypisují hodnoty na výstup, nýbrž vrací
@@ -48,19 +38,21 @@ volání:
   (assertf (cons 'my-fact fact))).
 \end{minted}
 
-Funkční alternativy jako \verb|assertf| také umožnuji použití složitějších
-konstruktů v důsledcích pravidla, například
+Funkční alternativy jako \verb|assertf| také umožnují použití složitějších
+konstruktů v důsledcích pravidla. Bude-li například podmínka pravidla
 \begin{minted}{cl}
 (defrule surround-by-as
   (palindrome ?p)
   =>
-  (assertf `(palindrome ,(concatenate 'string "a" ?p "a")))).
+  (assertf `(palindrome ,(concatenate 'string "a" ?p "a"))))
 \end{minted}
-Tyto konstrukty bohužel nelze použít se zpětnou inferencí, neboť ta nemá šanci
-předvídat, jaký fakt bude nakonec do pracovní paměti přidán.
+splněna faktem \verb|(palindrome "b")| přibyde po jeho aktivaci do pracovní
+paměti fakt \verb|(palindrome "aba")|. Funkci \verb|assertf| bohužel nelze
+použít se zpětnou inferencí, neboť ta nemá šanci předvídat, jaký fakt bude
+jejím voláním do pracovní paměti přidán.
 
-V důsledcích pravidla bychom také mohli chtít například upozornit část našeho
-kódu na událost, ke které došlo. Protože ExiL nahrazuje výskyty
+V důsledcích pravidla bychom také mohli chtít například upozornit jinou část
+programu na událost, ke které došlo. Protože ExiL nahrazuje výskyty
 proměnných v celé důsledkové části pravidla, lze toho snadno dosáhnout. Je ale
 třeba dát pozor na quotování hodnot proměnných. Uvažme pravidlo
 \begin{minted}{cl}
@@ -78,6 +70,10 @@ aktivaci pravidla vyhodnotilo jako \verb|(notify 'moving-robot A B)|. To by
 pravděpodobně skončilo chybovou hláškou sdělující, že proměnné \verb|A| a
 \verb|B| nejsou definovány.
 
-\begin{framed}
-Projít všechny definice a zdokumentovat případné rozdíly v parametrech
-\end{framed}
+Makra \verb|deftemplate|, \verb|deffacts|, \verb|defrule| a \verb|modify| berou
+specifikace slotů šablony, faktů, těla pravidla a změn k provedení (v tomto
+pořadí) jako další parametry. Díky tomu nemusíme tyto parametry obalovat do
+dalšího seznamu. Jejich funkční alternativy naproti tomu očekávají tyto
+parametry v jednom seznamu, například
+\cl|(deffactsf 'world (list '(in box A) '(in robot B))).|
+To umožňuje snazší generování těchto specifikací funkcemi.

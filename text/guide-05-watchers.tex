@@ -43,11 +43,15 @@ Po zapnutí sledování agendy (voláním \verb|(watch activations)|, název je 
 kompatibilitě se systémem CLIPS) budeme navíc informováni o shodách, které do
 agendy přibyly, nebo z ní byly odstraněny. Výstup programu pak bude následující:
 \begin{minted}[samepage]{cl}
-==> (MATCH MOVE-ROBOT ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT B)))
+==> (MATCH MOVE-ROBOT
+      ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT B)))
 Firing MOVE-ROBOT
-==> (MATCH MOVE-OBJECT ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
-==> (MATCH MOVE-ROBOT ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
-<== (MATCH MOVE-ROBOT ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
+==> (MATCH MOVE-OBJECT
+      ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
+==> (MATCH MOVE-ROBOT
+      ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
+<== (MATCH MOVE-ROBOT
+      ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
 Firing MOVE-OBJECT
 ==> (MATCH STOP ((GOAL MOVE BOX A B) (IN BOX B)))
 Firing STOP

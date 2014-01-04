@@ -82,10 +82,10 @@ Máme-li v pracovní paměti pouze fakty
 (in robot B),
 \end{minted}
 budou podmínky pravidla splněny, neboť po spárování vzorů prvních dvou podmínek
-s prvními dvěma fakty bude proměnná \verb|?from| navázána na hodnotu \verb|A|
-a~neexistuje fakt, který by se shodoval se vzorem \verb|(in robot A)|. Přesuneme-li
-ale robota na pozici \verb|A|, podmínka již splněna nebude a pravidlo nelze
-aktivovat.
+s prvními dvěma fakty bude proměnná \verb|?from| navázána na hodnotu
+\verb|A|~a~neexistuje fakt, který by se shodoval se vzorem \verb|(in robot A)|.
+Přesuneme-li ale robota na pozici \verb|A|, podmínka již splněna nebude a
+pravidlo nelze aktivovat.
 
 Ve vzorech podmínek pravidla můžeme využít speciální proměnné \verb|?|.
 Konzistence vazby této proměnné není při vyhodnocování testována, takže
@@ -153,7 +153,7 @@ vyhodnocení vede ke značným omezením. Výrazy totiž nejsou vyhodnoceny v
 \emph{lexikálním prostředí} definice pravidla, nýbrž ve výchozím (\emph{top-level})
 prostředí Lispu. Díky tomu nemůžeme v důsledcích pravidla volat lokální funkce
 (definované např. makrem \verb|labels|), či přistupovat k lokálním proměnným
-(navázaným například v \verb|let|u či pomoci \emph{destrukturujících maker}).
+(navázaným například v~\verb|let|u či pomoci \emph{destrukturujících maker}).
 
 V důsledcích každého pravidla chceme typicky alespoň jednou volat některé
 z~maker modifikujících pracovní paměť, abychom zneplatnili podmínky pravidla,
