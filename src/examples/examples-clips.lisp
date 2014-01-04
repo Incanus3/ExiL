@@ -5,7 +5,7 @@
 (complete-reset)
 
 (deftemplate goal
-  (slot action)
+  (slot action (default move))
   (slot object)
   (slot from)
   (slot to))
@@ -17,18 +17,18 @@
 (deffacts world
   (in (object robot) (location A))
   (in (object box) (location B))
-  (goal (action push) (object box) (from B) (to A)))
+  (goal (object box) (from B) (to A)))
 
-(defrule move
-  (goal (action push) (object ?obj) (from ?from))
+(defrule move-robot
+  (goal (action move) (object ?obj) (from ?from))
   (in (object ?obj) (location ?from))
   (- in (object robot) (location ?from))
   ?robot <- (in (object robot) (location ?z))
   =>
   (modify ?robot (location ?from)))
 
-(defrule push
-  (goal (action push) (object ?obj) (from ?from) (to ?to))
+(defrule move-object
+  (goal (action move) (object ?obj) (from ?from) (to ?to))
   ?object <- (in (object ?obj) (location ?from))
   ?robot <- (in (object robot) (location ?from))
   =>
@@ -36,7 +36,7 @@
   (modify ?object (location ?to)))
 
 (defrule stop
-  ?goal <- (goal (action push) (object ?obj) (to ?to))
+  ?goal <- (goal (action move) (object ?obj) (to ?to))
   (in (object ?obj) (location ?to))
   =>
   (retract ?goal)
