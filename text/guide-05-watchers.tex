@@ -1,5 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Sledování průběhu inference}
+\label{inference tracing}
 ExiL umožnuje sledovat několik typů událostí, ke kterým dochází během inference.
 K nastavení sledovaných událostí slouží makra \verb|watch| a \verb|unwatch|. K
 zjištění stavu sledování pak makro \verb|watchedp|.
@@ -29,7 +30,7 @@ Firing STOP
 Halting.
 \end{minted}
 
-Sledování pravidel (\verb|(watch rules)|), přidává informace o pravidel
+Sledování pravidel (\verb|(watch rules)|), přidává informace o pravidlech
 přidaných do (odebraných ze) znalostní báze, např.
 \begin{minted}{cl}
 ==> (RULE STOP

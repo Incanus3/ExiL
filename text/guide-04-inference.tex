@@ -44,12 +44,12 @@ Ve druhé fázi vyhodnocování hledáme z předvybraných faktů takovou poslou
 (délka odpovídá počtu podmínek pravidla), kde po spárování s odpovídajícími
 vzory podmínek obdržíme konzistentní vazby proměnných. To znamená, že
 vyskytuje-li se v podmínkách pravila některá proměnná vícekrát, musí mít
-odpovídající fakty na daných pozicích stejný atom.  Mějme například pravidlo
+odpovídající fakty na daných pozicích stejný atom. Mějme například pravidlo
 s~podmínkami
 \begin{minted}{cl}
 (goal move ?obj ?from ?to)
 (in :object ?obj  :location ?from)
-(in :object robot :location ?to)
+(in :object robot :location ?to).
 \end{minted}
 Vzor první podmínky je jednoduchý, zatímco další dva jsou strukturované. To ale
 ničemu nevadí, je třeba pouze najít fakty odpovídající struktury. Posloupnost
@@ -112,17 +112,17 @@ spárován.
 Podmínky některých pravidel mohou být při vyhodnocování splněny několika různými
 posloupnostmi faktů. Výsledkem vyhodnocování pravidel tedy není pouze množina
 splněných pravidel, nýbrž množina shod (\emph{match}). Každá shoda je tvořena
-pravidlem a \emph{subsitucí} proměnných navázaných při vyhodnocování jeho
-podmínek.  Subsituci chápejme jako zobrazení z množiny všech proměnných,
+pravidlem a \emph{substitucí} proměnných navázaných při vyhodnocování jeho
+podmínek. Substituci chápejme jako zobrazení z množiny všech proměnných,
 vyskytujících se v podmínkách pravidla, na konkrétní hodnoty atomů (slotů).
 Aplikací této substituce na vzory podmínek pravidla získáme opět posloupnost
 faktů, kterými byly podmínky v dané shodě splněny. Tato substituce je následně
-použita při aktivaci pravidla k náhradě proměnných v jeho důsledích.
+použita při aktivaci pravidla k náhradě proměnných v jeho důsledcích.
 
 ExiL uchovává aktuální množinu shod. Ta ve skutečnosti není přepočítána v~první
 fázi inferenčního kroku, jak jsem dosud pro jednoduchost tvrdil, nýbrž
 automaticky po každé změně pracovní paměti či množiny pravidel (detaily viz
-RETE).  Aktuální množinu shod nazývám, po vzoru CLIPSu, \emph{agenda} a lze ji
+RETE). Aktuální množinu shod nazývám, po vzoru CLIPSu, \emph{agenda} a lze ji
 vypsat voláním stejnojmenné funkce. Každá shoda v agendě je opatřena časovým
 razítkem, shody je tedy možné uspořádat podle toho, kdy do agendy přibyly.
 

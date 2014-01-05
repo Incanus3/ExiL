@@ -89,7 +89,7 @@ Uvažme nyní složitější příklad (definice šablon vynechána):
   (female ?mother)
   (parent :parent ?mother :child ?child)
   =>
-  (assert (mother :mother ?mother :child ?child)))
+  (assert (mother :mother ?mother :child ?child))).
 \end{minted}
 Zajímá-li nás, kdo je matkou George, můžeme zkusit spustit dopřednou inferenci.
 Po jejím skončení bude v pracovní paměti jak informace o Georgově matce, tak
@@ -117,7 +117,7 @@ All goals have been satisfied
 (PARENT (PARENT . JANE) (CHILD . GEORGE)) satisfied by
   (PARENT (PARENT . JANE) (CHILD . GEORGE))
 These variable bindings have been used:
-((?MOTHER-OF-GEORGE . JANE))
+((?MOTHER-OF-GEORGE . JANE)).
 \end{minted}
 Systém tedy vyvodil pouze závěr, který nás zajímal.
 
@@ -193,7 +193,7 @@ Aktuální stav výpočtu pomocí zpětné inference je ztracen, zavoláme-li b�
 krokování \verb|defgoal| nebo \verb|undefgoal|. Kdyby tomu tak nebylo, mohli
 bychom systém uvést do nekonzistentního stavu.
 
-Implementace zpětné inference v ExiLu je velmi omezená. V důsledích pravidel
+Implementace zpětné inference v ExiLu je velmi omezená. V důsledcích pravidel
 zohledňuje pouze specifikace faktů ve voláních \verb|assert|. Nelze ji tedy
 aplikovat u pravidel, která fakty z pracovní paměti odstraňují, či je
 modifikují. Inference také neumí pracovat s negovanými cíli, tudíž ani s

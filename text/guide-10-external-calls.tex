@@ -16,7 +16,7 @@ následující:
 Tato makra berou jako parametry symboly a/nebo seznamy a tyto automaticky
 \emph{quotují}. To je pohodlné, pracujeme-li s knihovnou přímo. Představme si
 ale, že chceme knihovnu volat z jiného kódu a například specifikace faktů, které
-předáváme makru \verb|assert| generovat nějakou funkcí.
+předáváme makru \verb|assert|, generovat nějakou funkcí.
 
 Protože makro \verb|assert| seznamy se specifikacemi faktů quotuje, místo aby je
 vyhodnotilo, nelze ho v tomto případě použít. Výsledkem volání
@@ -46,7 +46,7 @@ konstruktů v důsledcích pravidla. Bude-li například podmínka pravidla
   =>
   (assertf `(palindrome ,(concatenate 'string "a" ?p "a"))))
 \end{minted}
-splněna faktem \verb|(palindrome "b")| přibyde po jeho aktivaci do pracovní
+splněna faktem \verb|(palindrome "b")|, přibyde po jeho aktivaci do pracovní
 paměti fakt \verb|(palindrome "aba")|. Funkci \verb|assertf| bohužel nelze
 použít se zpětnou inferencí, neboť ta nemá šanci předvídat, jaký fakt bude
 jejím voláním do pracovní paměti přidán.

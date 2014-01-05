@@ -61,7 +61,7 @@ přesunout krabici z~pozice \verb|A| na pozici \verb|B|.
 
 Následuje definice odvozovacích pravidel. Definice každého pravidla sestává
 z~množiny podmínek, tedy předpokladů pro jeho splnění (a následnou aktivaci),
-a~množiny důsledků, tedy libovolných lispových lispových výrazů, které jsou při
+a~množiny důsledků, tedy libovolných lispových výrazů, které jsou při
 aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
 \emph{symbolem}~\verb|=>|.
 
@@ -136,6 +136,10 @@ odvozovacích pravidel. Dotážeme-li se po skončení inference na seznam fakt�
 pracovní paměti voláním \verb|(facts)|, obdržíme výstup
 \cl|((GOAL MOVE BOX A B) (IN ROBOT B) (IN BOX B)).|
 Robot i krabice jsou tedy na cílové pozici.
+
+\begin{framed}
+  Vysvětlit interferenci
+\end{framed}
 
 Kód exilového programu má deklarativní charakter. Nikde jsme nemuseli
 specifikovat, jakou posloupností akcí má systém k výsledku dospět. To nás ovšem
