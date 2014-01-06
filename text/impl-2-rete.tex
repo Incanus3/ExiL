@@ -13,7 +13,9 @@ sdílením častí sítě mezi pravidly. Mají-li dvě pravidla strukturálně s
 nějaké podmínky (liší se jen použité proměnné), sdílí tato pravidla část alpha
 sítě, která tuto podmínku vyhodnocuje. Pokud mají dvě pravidla stejných několik
 prvních podmínek, sdílí tato pravidla kromě části alpha sítě i část beta sítě,
-která zajišťuje konzistenci vazeb proměnných mezi nimi.
+která zajišťuje konzistenci vazeb proměnných mezi nimi. Čím více je v systému
+definováno odvozovacích pravidel, tím pravděpodobnější jsou shody mezi jejich
+podmínkami a tím více se efektivita algoritmu projeví.
 
 Dataflow síť je tvořena uzly. Jejich vzájemné interakce nazýváme v~algoritmu
 aktivacemi. Každý uzel má několik sousedů. Aktivace však v síti probíhají jen
@@ -37,12 +39,12 @@ Obrázek \ref{rete-alpha} zobrazuje úsek alpha části sítě RETE. Uzel
 \verb|alpha-top-node| je vstupním bodem této sítě. Ten je aktivován při každé
 změně pracovní paměti faktem, který byl přidán nebo odebrán. Potomky
 \verb|alpha-top-nodu| jsou \verb|alpha-subtop-nody|, jeden pro jednoduché fakty
-a jeden pro každou definovanou šablonu. \verb|alpha-top-node| aktivuje příslušný
+a jeden pro každou definovanou šablonu. \verb|Alpha-top-node| aktivuje příslušný
 \verb|alpha-subtop-node| podle typu faktu.
 
 Každá cesta z \verb|alpha-subtop-nodu| do \verb|alpha-memory-nodu| skrze
 posloupnost \verb|alpha-test-nodů| vyhodnocuje jednu podmínku nějakého pravidla
-(případně skupiny pravidel). Mějme např. pravidla
+(případně skupiny pravidel). Mějme například pravidla
 \begin{minted}{cl}
 (defrule rule1
   (in :object box :location ?locaction)
@@ -72,7 +74,7 @@ Obrázek \ref{rete-beta} zobrazuje úsek beta části sítě, spolu s
 \verb|alpha-memory-nody|, kterými sem vstupují fakta splňující jednotlivé
 podmínky pravidel. Každý \verb|beta-memory-node| udržuje množinu tokenů
 reprezentujících posloupnosti faktů, z nichž každý splňuje podmínku nějakého
-pravidla. \verb|beta-join-nody| pak testují konzistenci vazeb proměnných mezi
+pravidla. \verb|Beta-join-nody| pak testují konzistenci vazeb proměnných mezi
 těmito podmínkami. \verb|beta-top-node| je speciální typ
 \verb|beta-memory-nodu|, který udržuje v paměti pouze jeden prázdný token.
 \verb|production-node| je pak speciální typ \verb|beta-memory-nodu|, který
@@ -100,12 +102,8 @@ reprezentující \uv{posloupnost} faktů, které splňují první podmínku.  Dr
 podmínkou pravidla. Druhý \verb|beta-memory-node| bude udržovat tokeny délky 2
 reprezentující dvojice faktů, splňující první dvě podmínky pravidla.  Třetí
 \verb|beta-join-node| bude testovat konzistenci vazeb mezi třetí podmínkou
-pravidla a předchozími dvěma. \verb|production-node| pak bude udržovat tokeny
+pravidla a předchozími dvěma. \verb|Production-node| pak bude udržovat tokeny
 délky 3 reprezentující trojice faktů splňující všechny podmínky pravidla.
-
-% Druhý \verb|beta-test-node| je aktivován buď zleva \verb|alpha-memory-nodem|,
-% přibyde-li fakt, který splňuje druhou podmínku pravidla, nebo zprava
-% \verb|beta-memory-nodem|, přibyde-li fakt, který splňuje první podmínku.
 
 Přidávejme nyní postupně fakty do pracovní paměti. Přidáním
 \verb|(in :object box :location A)| dojde (po průchodu alpha částí sítě)
@@ -119,8 +117,8 @@ Přidáním \verb|(goal :object box :from A :to B)| dojde k aktivaci prvního
 \verb|beta-join-node|. Ten nemá co testovat, takže aktivuje
 \verb|beta-memory-node| pod sebou. Ten uloží jednoprvkový token s přidaným
 faktem a aktivuje opět druhý \verb|beta-join-node|, tentokrát však \uv{zleva}.
-\verb|beta-join-node| tentokrát prohledá obsah paměti \verb|alpha-memory-nodu|
-nad sebou, zda neobsahuje fakt konzistentní s tokenem. \verb|beta-join-node| zde
+\verb|Beta-join-node| tentokrát prohledá obsah paměti \verb|alpha-memory-nodu|
+nad sebou, zda neobsahuje fakt konzistentní s tokenem. \verb|Beta-join-node| zde
 testuje, zda jsou hodnoty slotů \verb|object| a \verb|location| faktu v alpha
 paměti shodné s hodnotami \verb|object| a \verb|from| prvního faktu tokenu v
 beta paměti.
@@ -135,7 +133,7 @@ Po přidání faktu \verb|(in :object robot :location B)| dojde k aktivaci třet
 \verb|alpha-memory-nodu|. Ten fakt uloží a aktivuje třetí \verb|beta-join-node|
 \uv{zprava}. Ten prohledá paměť \verb|beta-memory-nodu| nad sebou, zda
 neobsahuje konzistentní tokeny. Ta obsahuje dvouprvkový token s prvními dvěma
-fakty. \verb|beta-join-node| tedy srovná hodnotu slotu \verb|location| přidaného
+fakty. \verb|Beta-join-node| tedy srovná hodnotu slotu \verb|location| přidaného
 faktu s hodnotou \verb|to| prvního faktu tokenu. Protože tyto hodnoty se
 shodují, aktivuje \verb|beta-join-node| \verb|production-node| pod sebou a předá
 mu tříprvkový token s posloupností faktů, které splňují všechny podmínky
@@ -155,6 +153,20 @@ negovanou podmínku pravidla. Ten naopak testuje, že druhá paměť
 \textbf{neobsahuje} konzistentní fakty/tokeny a v takovém případě aktivuje
 potomky.
 
+Při odebrání faktu z pracovní paměti se síť chová velmi podobně. Paměťové uzly
+ale v tomto případě odebírají fakty/tokeny ze svých pamětí.
+Je-li při odebrání faktu aktivován \verb|production-node|, upozorní prostředí,
+že pravidlo už není původní posloupností faktů splněno.
+
+Odlišně se ovšem při odebrání faktu chovají \verb|beta-negative-nody|. Každý
+\verb|beta-negative-node| je následníkem dvou paměťových uzlů - jednoho
+\verb|beta-memory-node| a jednoho \verb|alpha-memory-node|.  Pokud byl odebíraný
+fakt/token v paměti jednoho z těchto paměťových uzlů jediným faktem/tokenem,
+konzistentním s fakty/tokeny v druhém paměťovém uzlu, je nyní negovaná podmínka
+pravidla splněna a \verb|beta-negative-node| aktivuje \verb|beta-memory-node|
+pod sebou všemi tokeny z paměti \verb|beta-memory-nodu| nad sebou, jako by šlo o
+nově přidané tokeny.
+
 Kdybychom nyní přidali pravidlo, které bude mít první dvě podmínky stejné jako
 předchozí pravidlo, většina beta části sítě by zůstala stejná. Druhý
 \verb|beta-memory-node| by ale získal jako potomka další \verb|beta-join-node|,
@@ -164,3 +176,5 @@ nový \verb|production-node|. Kdybychom přidali pravidlo, které má všechny
 podmínky stejné, síť by se dokonce nezměnila vůbec. Původní
 \verb|production-node| by si jen zapamatoval, že jeho aktivace nyní značí splnění
 obou pravidel.
+
+Teorii nutnou k implementaci algoritmu RETE jsem nastudoval z \cite{doorenbos}.
