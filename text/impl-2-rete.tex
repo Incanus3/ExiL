@@ -15,17 +15,16 @@ sítě, která tuto podmínku vyhodnocuje. Pokud mají dvě pravidla stejných n
 prvních podmínek, sdílí tato pravidla kromě části alpha sítě i část beta sítě,
 která zajišťuje konzistenci vazeb proměnných mezi nimi.
 
-Dataflow síť je tvořena uzly. Jejich vzájemné interakce nazýváme
-v~algoritmu aktivacemi. Každý uzel má několik sousedů. Aktivace však v síti
-probíhají jen jedním směrem. Uzly, které jsou daným uzlem aktivovány, budu
-nazývat jeho potomky. Uzly rozdělujeme na dva základní typy - paměťové a
-testovací. Paměťové uzly ukládají průběžné výsledky vyhodnocování. Testovací
-uzly provádějí různé typy testů (v závislosti na typu uzlu), nutných pro
-vyhodnocení podmínek pravidla.  Uzlu je při aktivaci vždy předána nějaká datová
-struktura. Tou je buď fakt, nebo token, který reprezentuje posloupnost faktů.
-Zatímco paměťové uzly po aktivaci a uložení datové struktury do své paměti vždy
-aktivují své potomky, testovací uzly aktivují potomky jen v případě úspěšného
-testu.
+Dataflow síť je tvořena uzly. Jejich vzájemné interakce nazýváme v~algoritmu
+aktivacemi. Každý uzel má několik sousedů. Aktivace však v síti probíhají jen
+jedním směrem. Uzly, které jsou daným uzlem aktivovány, budu nazývat jeho
+potomky. Uzly rozdělujeme na dva základní typy - paměťové a testovací. Paměťové
+uzly ukládají průběžné výsledky vyhodnocování. Testovací uzly provádějí různé
+typy testů (v závislosti na typu uzlu), nutných pro vyhodnocení podmínek
+pravidla.  Uzlu je při aktivaci vždy předána nějaká datová struktura. Tou je buď
+fakt, nebo token, který reprezentuje posloupnost faktů.  Zatímco paměťové uzly
+po aktivaci a uložení datové struktury do své paměti vždy aktivují své potomky,
+testovací uzly aktivují potomky jen v případě úspěšného testu.
 
 \begin{figure}[h]
 \centering
@@ -74,9 +73,9 @@ Obrázek \ref{rete-beta} zobrazuje úsek beta části sítě, spolu s
 podmínky pravidel. Každý \verb|beta-memory-node| udržuje množinu tokenů
 reprezentujících posloupnosti faktů, z nichž každý splňuje podmínku nějakého
 pravidla. \verb|beta-join-nody| pak testují konzistenci vazeb proměnných mezi
-těmito podmínkami. \verb|beta-top-node| je speciální případ
+těmito podmínkami. \verb|beta-top-node| je speciální typ
 \verb|beta-memory-nodu|, který udržuje v paměti pouze jeden prázdný token.
-\verb|production-node| je pak speciální případ \verb|beta-memory-nodu|, který
+\verb|production-node| je pak speciální typ \verb|beta-memory-nodu|, který
 při aktivaci upozorní prostředí, že byly splněny všechny podmínky pravidla,
 případně že po odstranění faktu už nejsou všechny splněny.
 
@@ -93,14 +92,14 @@ Alpha část sítě pro toto pravidlo bude obsahovat tři \verb|alpha-memory-nod
 každý pro jednu jeho podmínku (kdyby však byla v poslední podmínce místo hodnoty
 \verb|robot| proměnná, vystačili bychom si se dvěma \verb|alpha-memory-nody|).
 
-Beta část sítě bude vypadat tak, jako na obrázku \ref{rete-beta}
-První (shora) \verb|beta-test-node| ve skutečnosti nemá co testovat, neboť jde o
-první podmínku pravidla. První \verb|beta-memory-node| bude udržovat tokeny
-délky 1 reprezentující \uv{posloupnost} faktů, které splňují první podmínku.
-Druhý \verb|beta-join-node| bude testovat konzistenci vazeb mezi druhou
-a první podmínkou pravidla. Druhý \verb|beta-memory-node| bude udržovat tokeny
-délky 2 reprezentující dvojice faktů, splňující první dvě podmínky pravidla.
-Třetí \verb|beta-join-node| bude testovat konzistenci vazeb mezi třetí podmínkou
+Beta část sítě bude vypadat tak, jako na obrázku \ref{rete-beta} První (shora)
+\verb|beta-test-node| ve skutečnosti nemá co testovat, neboť jde o první
+podmínku pravidla. První \verb|beta-memory-node| bude udržovat tokeny délky 1
+reprezentující \uv{posloupnost} faktů, které splňují první podmínku.  Druhý
+\verb|beta-join-node| bude testovat konzistenci vazeb mezi druhou a první
+podmínkou pravidla. Druhý \verb|beta-memory-node| bude udržovat tokeny délky 2
+reprezentující dvojice faktů, splňující první dvě podmínky pravidla.  Třetí
+\verb|beta-join-node| bude testovat konzistenci vazeb mezi třetí podmínkou
 pravidla a předchozími dvěma. \verb|production-node| pak bude udržovat tokeny
 délky 3 reprezentující trojice faktů splňující všechny podmínky pravidla.
 
@@ -109,12 +108,11 @@ délky 3 reprezentující trojice faktů splňující všechny podmínky pravidl
 % \verb|beta-memory-nodem|, přibyde-li fakt, který splňuje první podmínku.
 
 Přidávejme nyní postupně fakty do pracovní paměti. Přidáním
-\verb|(in :object box :location A)| dojde (po průchodu alpha částí sítě) k
-aktivaci druhého \verb|alpha-memory-nodu|. Ten uloží fakt do své paměti
-a aktivuje \uv{zprava} druhý \verb|beta-join-node|. Ten prohledá paměť
-\verb|beta-memory-nodu| nad sebou, zda neobsahuje nějaký token s
-konzistentními vazbami proměnných. Ta je ale prázdná, takže zde se aktivace
-zastaví.
+\verb|(in :object box :location A)| dojde (po průchodu alpha částí sítě)
+k~aktivaci druhého \verb|alpha-memory-nodu|. Ten uloží fakt do své paměti a
+aktivuje \uv{zprava} druhý \verb|beta-join-node|. Ten prohledá paměť
+\verb|beta-memory-nodu| nad sebou, zda neobsahuje nějaký token s konzistentními
+vazbami proměnných. Ta je ale prázdná, takže zde se aktivace zastaví.
 
 Přidáním \verb|(goal :object box :from A :to B)| dojde k aktivaci prvního
 \verb|alpha-memory-nodu|. Ten po uložení faktu aktivuje první
@@ -130,7 +128,8 @@ beta paměti.
 Test zde skončí úspěšně, takže druhý \verb|beta-join-node| aktivuje
 \verb|beta-memory-node| pod sebou a předá mu dvouprvkový token s oběma fakty.
 Ten aktivuje třetí \verb|beta-join-node| \uv{zleva}. Ten následně prohledá paměť
-\verb|alpha-memory-nodu| nad sebou. Ta je ale prázdná, takže zde aktivace skončí.
+\verb|alpha-memory-nodu| nad sebou. Ta je ale prázdná, takže zde aktivace
+skončí.
 
 Po přidání faktu \verb|(in :object robot :location B)| dojde k aktivaci třetího
 \verb|alpha-memory-nodu|. Ten fakt uloží a aktivuje třetí \verb|beta-join-node|
@@ -142,3 +141,26 @@ shodují, aktivuje \verb|beta-join-node| \verb|production-node| pod sebou a pře
 mu tříprvkový token s posloupností faktů, které splňují všechny podmínky
 pravidla. Ten token uloží a upozorní prostředí, že pravidlo bylo splňeno
 posloupností faktů v tokenu.
+
+Jak jsme viděli, \verb|beta-join-node| může být aktivován buď zprava
+\verb|alpha-memory-nodem| s novým faktem, který splňuje nějakou podmínku
+pravidla, nebo zleva \verb|beta-memory-nodem| s tokenem, jehož fakty splňují
+předchozí podmínky. V každém případě \verb|beta-join-node| prohledá obsah druhé
+paměti nad ním, aby nalezl tokeny konzistentní s~novým faktem, nebo fakty
+konzistentní s~novým tokenem.
+
+Speciálním typem \verb|beta-join-nodu| je \verb|beta-negative-node|, který je
+zprava aktivován \verb|alpha-memory-nodem| udržujícím fakty, které splňují
+negovanou podmínku pravidla. Ten naopak testuje, že druhá paměť
+\textbf{neobsahuje} konzistentní fakty/tokeny a v takovém případě aktivuje
+potomky.
+
+Kdybychom nyní přidali pravidlo, které bude mít první dvě podmínky stejné jako
+předchozí pravidlo, většina beta části sítě by zůstala stejná. Druhý
+\verb|beta-memory-node| by ale získal jako potomka další \verb|beta-join-node|,
+který by testoval konzistenci vazeb proměnných ve třetí, odlišné podmínce vůči
+prvním dvěma. Pod ním by pak následovaly další uzly testující zbytek podmínek a
+nový \verb|production-node|. Kdybychom přidali pravidlo, které má všechny
+podmínky stejné, síť by se dokonce nezměnila vůbec. Původní
+\verb|production-node| by si jen zapamatoval, že jeho aktivace nyní značí splnění
+obou pravidel.
