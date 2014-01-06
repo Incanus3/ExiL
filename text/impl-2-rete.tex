@@ -17,16 +17,23 @@ která zajišťuje konzistenci vazeb proměnných mezi nimi. Čím více je v sy
 definováno odvozovacích pravidel, tím pravděpodobnější jsou shody mezi jejich
 podmínkami a tím více se efektivita algoritmu projeví.
 
-Dataflow síť je tvořena uzly. Jejich vzájemné interakce nazýváme v~algoritmu
-aktivacemi. Každý uzel má několik sousedů. Aktivace však v síti probíhají jen
-jedním směrem. Uzly, které jsou daným uzlem aktivovány, budu nazývat jeho
-potomky. Uzly rozdělujeme na dva základní typy - paměťové a testovací. Paměťové
-uzly ukládají průběžné výsledky vyhodnocování. Testovací uzly provádějí různé
-typy testů (v závislosti na typu uzlu), nutných pro vyhodnocení podmínek
-pravidla.  Uzlu je při aktivaci vždy předána nějaká datová struktura. Tou je buď
-fakt, nebo token, který reprezentuje posloupnost faktů.  Zatímco paměťové uzly
-po aktivaci a uložení datové struktury do své paměti vždy aktivují své potomky,
-testovací uzly aktivují potomky jen v případě úspěšného testu.
+Dataflow síť tvoří orientovaný acyklický
+graf\footnote{\url{http://en.wikipedia.org/wiki/Directed_acyclic_graph}}. Uzly
+sítě rozdělujeme na dva základní typy - paměťové a testovací. Paměťové uzly
+ukládají průběžné výsledky vyhodnocování. Testovací uzly provádějí různé typy
+testů (v závislosti na typu uzlu) nutných pro vyhodnocení podmínek pravidla.
+
+Mezi uzly sítě dochází ke dvěma typům interakcí. Hlavním typem interakce je
+aktivace. Ta probíhá ve směru hran grafu a uzel při ní provádí svou hlavní
+funkci v závislosti na typu. Testovací uzel se dále může dotazovat sousedního
+paměťového uzlu na obsah jeho paměti a to \textbf{proti směru orientace hran}.
+Abych odlišil sousední uzly ve směru hran (tedy ty, jež může uzel aktivovat) od
+množiny všech sousedů, budu první skupinu nazývat \emph{potomky}.
+
+Uzlu je při aktivaci vždy předána nějaká datová struktura. Tou je buď fakt, nebo
+token, který reprezentuje posloupnost faktů. Zatímco paměťové uzly po aktivaci a
+uložení datové struktury do své paměti vždy aktivují své potomky, testovací uzly
+aktivují potomky jen v případě úspěšného testu.
 
 \begin{figure}[h]
 \centering
@@ -40,12 +47,15 @@ Obrázek \ref{rete-alpha} zobrazuje úsek alpha části sítě RETE. Uzel
 změně pracovní paměti faktem, který byl přidán nebo odebrán. Potomky
 \verb|alpha-top-nodu| jsou \verb|alpha-subtop-nody|, jeden pro jednoduché fakty
 a jeden pro každou definovanou šablonu. \verb|Alpha-top-node| aktivuje příslušný
-\verb|alpha-subtop-node| podle typu faktu.
+\verb|alpha-subtop-node| podle typu faktu. Ten pak aktivuje
+\verb|alpha-test-node| pod ním.
 
-Každá cesta z \verb|alpha-subtop-nodu| do \verb|alpha-memory-nodu| skrze
-posloupnost \verb|alpha-test-nodů| vyhodnocuje jednu podmínku nějakého pravidla
-(případně skupiny pravidel). Mějme například pravidla
-\begin{minted}{cl}
+Šrafované šipky v obrázku \ref{rete-alpha} symbolizují, že zde může následovat
+posloupnost několika dalších \verb|alpha-test-nodů|. Každá cesta z
+\verb|alpha-subtop-nodu| do \verb|alpha-memory-nodu| skrze posloupnost
+\verb|alpha-test-nodů| vyhodnocuje jednu podmínku nějakého pravidla (případně
+skupiny pravidel). Mějme například pravidla
+\begin{minted}[samepage]{cl}
 (defrule rule1
   (in :object box :location ?locaction)
   =>
@@ -97,10 +107,10 @@ každý pro jednu jeho podmínku (kdyby však byla v poslední podmínce místo 
 Beta část sítě bude vypadat tak, jako na obrázku \ref{rete-beta} První (shora)
 \verb|beta-test-node| ve skutečnosti nemá co testovat, neboť jde o první
 podmínku pravidla. První \verb|beta-memory-node| bude udržovat tokeny délky 1
-reprezentující \uv{posloupnost} faktů, které splňují první podmínku.  Druhý
+reprezentující \uv{posloupnost} faktů, které splňují první podmínku. Druhý
 \verb|beta-join-node| bude testovat konzistenci vazeb mezi druhou a první
 podmínkou pravidla. Druhý \verb|beta-memory-node| bude udržovat tokeny délky 2
-reprezentující dvojice faktů, splňující první dvě podmínky pravidla.  Třetí
+reprezentující dvojice faktů, splňující první dvě podmínky pravidla. Třetí
 \verb|beta-join-node| bude testovat konzistenci vazeb mezi třetí podmínkou
 pravidla a předchozími dvěma. \verb|Production-node| pak bude udržovat tokeny
 délky 3 reprezentující trojice faktů splňující všechny podmínky pravidla.
@@ -125,16 +135,16 @@ beta paměti.
 
 Test zde skončí úspěšně, takže druhý \verb|beta-join-node| aktivuje
 \verb|beta-memory-node| pod sebou a předá mu dvouprvkový token s oběma fakty.
-Ten aktivuje třetí \verb|beta-join-node| \uv{zleva}. Ten následně prohledá paměť
+Ten aktivuje \uv{zleva} třetí \verb|beta-join-node|. Ten následně prohledá paměť
 \verb|alpha-memory-nodu| nad sebou. Ta je ale prázdná, takže zde aktivace
 skončí.
 
 Po přidání faktu \verb|(in :object robot :location B)| dojde k aktivaci třetího
-\verb|alpha-memory-nodu|. Ten fakt uloží a aktivuje třetí \verb|beta-join-node|
-\uv{zprava}. Ten prohledá paměť \verb|beta-memory-nodu| nad sebou, zda
+\verb|alpha-memory-nodu|. Ten fakt uloží a aktivuje \uv{zprava} třetí
+\verb|beta-join-node|. Ten prohledá paměť \verb|beta-memory-nodu| nad sebou, zda
 neobsahuje konzistentní tokeny. Ta obsahuje dvouprvkový token s prvními dvěma
 fakty. \verb|Beta-join-node| tedy srovná hodnotu slotu \verb|location| přidaného
-faktu s hodnotou \verb|to| prvního faktu tokenu. Protože tyto hodnoty se
+faktu s hodnotou slotu \verb|to| prvního faktu tokenu. Protože tyto hodnoty se
 shodují, aktivuje \verb|beta-join-node| \verb|production-node| pod sebou a předá
 mu tříprvkový token s posloupností faktů, které splňují všechny podmínky
 pravidla. Ten token uloží a upozorní prostředí, že pravidlo bylo splňeno
@@ -143,9 +153,9 @@ posloupností faktů v tokenu.
 Jak jsme viděli, \verb|beta-join-node| může být aktivován buď zprava
 \verb|alpha-memory-nodem| s novým faktem, který splňuje nějakou podmínku
 pravidla, nebo zleva \verb|beta-memory-nodem| s tokenem, jehož fakty splňují
-předchozí podmínky. V každém případě \verb|beta-join-node| prohledá obsah druhé
-paměti nad ním, aby nalezl tokeny konzistentní s~novým faktem, nebo fakty
-konzistentní s~novým tokenem.
+předchozí podmínky. V každém případě \verb|beta-join-node| prohledá obsah paměti
+druhého paměťového uzlu nad ním, aby nalezl tokeny konzistentní s~novým faktem,
+nebo fakty konzistentní s~novým tokenem.
 
 Speciálním typem \verb|beta-join-nodu| je \verb|beta-negative-node|, který je
 zprava aktivován \verb|alpha-memory-nodem| udržujícím fakty, které splňují
@@ -159,22 +169,31 @@ Je-li při odebrání faktu aktivován \verb|production-node|, upozorní prostř
 že pravidlo už není původní posloupností faktů splněno.
 
 Odlišně se ovšem při odebrání faktu chovají \verb|beta-negative-nody|. Každý
-\verb|beta-negative-node| je následníkem dvou paměťových uzlů - jednoho
-\verb|beta-memory-node| a jednoho \verb|alpha-memory-node|.  Pokud byl odebíraný
+\verb|beta-negative-node| je potomkem dvou paměťových uzlů - jednoho
+\verb|beta-memory-nodu| a jednoho \verb|alpha-memory-nodu|. Pokud byl odebíraný
 fakt/token v paměti jednoho z těchto paměťových uzlů jediným faktem/tokenem,
 konzistentním s fakty/tokeny v druhém paměťovém uzlu, je nyní negovaná podmínka
 pravidla splněna a \verb|beta-negative-node| aktivuje \verb|beta-memory-node|
 pod sebou všemi tokeny z paměti \verb|beta-memory-nodu| nad sebou, jako by šlo o
 nově přidané tokeny.
 
-Kdybychom nyní přidali pravidlo, které bude mít první dvě podmínky stejné jako
+Kdybychom nyní přidali pravidlo, které má první dvě podmínky stejné jako
 předchozí pravidlo, většina beta části sítě by zůstala stejná. Druhý
 \verb|beta-memory-node| by ale získal jako potomka další \verb|beta-join-node|,
 který by testoval konzistenci vazeb proměnných ve třetí, odlišné podmínce vůči
 prvním dvěma. Pod ním by pak následovaly další uzly testující zbytek podmínek a
 nový \verb|production-node|. Kdybychom přidali pravidlo, které má všechny
 podmínky stejné, síť by se dokonce nezměnila vůbec. Původní
-\verb|production-node| by si jen zapamatoval, že jeho aktivace nyní značí splnění
-obou pravidel.
+\verb|production-node| by si jen zapamatoval, že jeho aktivace nyní značí
+splnění obou pravidel.
 
-Teorii nutnou k implementaci algoritmu RETE jsem nastudoval z \cite{doorenbos}.
+Každý typ uzlu sítě RETE je v programu reprezentován jedním typem objektu
+stejného názvu. Každý z těchto objektů implementuje metodu \verb|activate|,
+jejímž zavoláním je uzel aktivován. Většina kódu implementujícího modul
+\verb|rete| je tvořena právě definicemi metod \verb|activate|. Další část kódu
+pak implementuje dotváření sítě při přidání pravidla, které je netriviální.
+Program zde prochází podmínky pravidla, přičemž zároveň postupuje v síti odshora
+a zkoumá, zda je třeba vytvářet nové uzly, nebo lze použít existující, případně
+je nově propojit.
+
+Teorii potřebnou k implementaci algoritmu RETE jsem nastudoval z \cite{doorenbos}.

@@ -33,41 +33,9 @@ nízkoúrovňovou práci se symboly a datovými strukturami - (asociativními)
 seznamy, množinami, stromy, \emph{hashovacími tabulkami} apod.
 
 Modul \verb|core| definuje základní objekty, s nimiž zbytek knihovny
-pracuje.  Ty reprezentují fakty, vzory, šablony a pravidla. Fakty a vzory jsou
+pracuje. Ty reprezentují fakty, vzory, šablony a pravidla. Fakty a vzory jsou
 definovány ve dvou variantách - jednoduché a strukturované (\emph{templated}),
 jak jsem uvedl v uživatelské příručce.
-
-% \begin{framed}
-% Následující 4 odstavce jsou oproti zbytku příliš detailní. Odstranit minimálně
-% konkrétní názvy objeků a metody (pokud to bude možné)
-% \end{framed}
-
-% Protože fakty a vzory sdílí velkou část funkcionality, definuje modul obecné
-% objekty \verb|simple-object| a \verb|templated-object|, které implementují
-% společnou funkcionalitu. Jednoduché a strukturované fakty a vzory jsou pak
-% specializacemi těchto objektů.
-
-% Objekty \verb|simple-object| a \verb|template-object| navíc dědí z objektu
-% \verb|basic-object|. Hlavním úkolem tohoto objektu je smazat rozdíly mezi
-% jednoduchými a strukturovanými objekty. To je zajištěno \emph{metodami}
-% \verb|object-slot| a~\verb|atom-position|, které mají protichůdnou funkci.
-% Metoda \verb|object-slot| bere objekt a pozici atomu (index seznamu u
-% jednoduchého, název slotu u strukturovaného objektu) a vrací jeho hodnotu.
-% Metoda \verb|atom-position| naopak bere objekt a hodnotu atomu a vrací jeho
-% pozici (tedy index, nebo název slotu). Díky tomu může modul \verb|rete|
-% porovnávat a vyhledávat jednotlivé atomy objektů, aniž by ho zajímalo, s jakým
-% typem objektu zrovna pracuje.
-
-% Každý typ \verb|core| objektu také implementuje \emph{predikát} ekvivalence,
-% pomocí kterého je možno objekty vyhledávat v datových strukturách, udržovaných
-% prostředím a uzly sítě RETE (viz dále) a to opět bez ohledu na konkrétní typ
-% objektu.
-
-% Modul \verb|core| také implementuje metodu \verb|match-against-pattern|, která
-% umožňuje srovnání jednoho faktu se vzorem. Ta kromě \emph{booleovské} hodnoty,
-% zda se objekty shodují, vrací v případě shody také použité vazby proměnných.
-% Prostředí využívá tuto metodu při zpětné inferenci a při vyhodnocování důsledků
-% pravidel.
 
 Modul \verb|rete| implementuje algoritmus RETE, který slouží k efektivnímu
 vyhodnocování podmínek odvozovacích pravidel. Algoritmus je implementován
