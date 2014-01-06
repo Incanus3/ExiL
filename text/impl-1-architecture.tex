@@ -8,15 +8,9 @@ a specifikacemi jejich parametrů. V Common Lispu sice tuto entitu nazýváme
 \emph{package}, tento pojem se však špatně skloňuje a celkově narušuje plynulost
 textu.
 
-\begin{framed}
-  Přesunout stylistické poznámky do zvlaštní sekce za úvod
-\end{framed}
-
-Obrázek \ref{modules} zobrazuje architekturu knihovny ExiL, tedy moduly, do
-kterých je kód knihovny rozdělen a jejich vzájemnou komunikaci. Orientace šipek
-určuje směr volání funkcí (metod, maker) poskytovaných moduly, např. modul
-\verb|front-end| volá funkce modulu \verb|parser| a ne naopak. Těmito voláními
-jsou zároveň definovány závislosti mezi moduly, ty mají tedy stejnou orientaci.
+% \begin{framed}
+%   Přesunout stylistické poznámky do zvlaštní sekce za úvod
+% \end{framed}
 
 \begin{figure}[h]
 \centering
@@ -24,6 +18,12 @@ jsou zároveň definovány závislosti mezi moduly, ty mají tedy stejnou orient
 \caption{Architektura ExiLu}
 \label{modules}
 \end{figure}
+
+Obrázek \ref{modules} zobrazuje architekturu knihovny ExiL, tedy moduly, do
+kterých je kód knihovny rozdělen a jejich vzájemnou komunikaci. Orientace šipek
+určuje směr volání funkcí (metod, maker) poskytovaných moduly, např. modul
+\verb|front-end| volá funkce modulu \verb|parser| a ne naopak. Těmito voláními
+jsou zároveň definovány závislosti mezi moduly, ty mají tedy stejnou orientaci.
 
 Modul \verb|utils| definuje různorodé pomocné funkce a makra, která jsou volána
 všemi ostatními moduly. V obrázku \ref{modules} bych tedy mohl zahrnout šipky ze
@@ -69,12 +69,11 @@ jak jsem uvedl v uživatelské příručce.
 % Prostředí využívá tuto metodu při zpětné inferenci a při vyhodnocování důsledků
 % pravidel.
 
-% Modul \verb|rete| definuje objekt \verb|rete|, který reprezentuje síť RETE. Ta
-Modul \verb|rete| implementuje algoritmus RETE, který slouží slouží k
-efektivnímu vyhodnocování podmínek odvozovacích pravidel. Algoritmus je
-implementován \emph{dataflow} sítí, jejíž fungování popíšu detailně v sekci
-\ref{rete} Algoritmus RETE je sice nejkomplexnější částí ExiLu, veřejné rozhraní
-modulu \verb|rete| je však velmi jednoduché.
+Modul \verb|rete| implementuje algoritmus RETE, který slouží k efektivnímu
+vyhodnocování podmínek odvozovacích pravidel. Algoritmus je implementován
+\emph{dataflow} sítí, jejíž fungování popíšu detailně v sekci \ref{rete}
+Algoritmus RETE je sice nejkomplexnější částí ExiLu, veřejné rozhraní modulu
+\verb|rete| je však velmi jednoduché.
 
 Modul poskytuje dvojici metod kterými síť RETE upozorníme na přidání nebo
 odebrání pravidel. Ty dle potřeby doplní síť o uzly potřebné k vyhodnocení
