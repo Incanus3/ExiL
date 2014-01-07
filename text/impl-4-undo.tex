@@ -47,11 +47,12 @@ aby se volání \verb|step| uložilo na zásobník jako jedna akce. Volání
 \verb|assert|, ke kterému v průběhu této akce dojde, už samostatně ukládat
 nechceme.
 
-K tomuto účelu definuje prostředí dynamickou proměnnou \verb|*undo-enabled*|.
-Makro \verb|with-undo| ukládá uzávěr na zásobník jen v případě, že je hodnota
-této proměnná \verb|true|. Tělo akce pak makro vyhodnocuje s hodnotou této
-proměnné navázanou na \verb|false|. Tím je zajištěno, že se uzávěr na zásobník
-\verb|undo| uloží vždy jen v \uv{nejvnějšnějším} volání makra \verb|with-undo|.
+K tomuto účelu definuje prostředí \emph{dynamickou proměnnou}
+\verb|*undo-enabled*|.  Makro \verb|with-undo| ukládá uzávěr na zásobník jen v
+případě, že je hodnota této proměnná \verb|true|. Tělo akce pak makro
+vyhodnocuje s hodnotou této proměnné navázanou na \verb|false|. Tím je
+zajištěno, že se uzávěr na zásobník \verb|undo| uloží vždy jen v
+\uv{nejvnějšnějším} volání makra \verb|with-undo|.
 
 Díky makrům \verb|with-undo| a \verb|with-saved-slots| je možné velmi snadno
 přidat do prostředí další akce s možností jejich vrácení. Stačí jen tělo akce
@@ -60,21 +61,23 @@ implementováno. Pokud potřebujeme do prostředí přidat další slot, jehož 
 je třeba při volání \verb|undo| obnovovat, stačí k tomuto slotu implementovat
 metodu \verb|copy|.
 
-Nejsložitějším problémem při implementaci vracení akcí bylo implementovat metodu
+Nejsložitějším problémem při implementaci undo/redo bylo implementovat metodu
 \verb|copy-rete|. Ta kopíruje dataflow síť RETE uloženou ve slotu \verb|rete|
 prostředí. Kopírovnání sítě RETE je složité, neboť síť obsahuje cykly. Síť se
 sice z~pohledu aktivace uzlů chová jako acyklický graf, některé uzly však
 uchovávájí reference na své sousedy proti směru hran tohoto grafu.
 
-Pro účely kopírování sítě RETE jsem implementoval obecnou metodu vyššího řádu
-pro průchod cyklickým grafem. Tato metoda využívá techniky
-memoizace\footnote{\url{http://en.wikipedia.org/wiki/Memoization}}. Metoda bere
+Pro účely kopírování sítě RETE jsem implementoval obecnou funkci vyššího
+řádu\footnote{\url{http://en.wikipedia.org/wiki/Higher-order_function}}
+pro průchod cyklickým grafem. Tato funkce využívá techniky
+memoizace\footnote{\url{http://en.wikipedia.org/wiki/Memoization}}. Funkce bere
 kromě výchozího uzlu grafu tři funkce, které aplikuje na navštěvované uzly před
-memoizací a jimiž zajišťuje agregaci hodnot vrácených sousedy uzlu.
+memoizací a jimiž agreguje hodnoty vrácené sousedy uzlu.
 
-Fungování metody je pro textový popis příliš složité, považuji ji však za jednu
+Fungování funkce je pro textový popis příliš složité, považuji ji však za jednu
 z nejzajímavějších částí nového kódu, hlavně díky její obecnosti. Zrojový kód
-metody je v souboru \verb|rete/graph-traversal.lisp|, kód kopírující síť rete,
-který metodu využívá pak v souboru \verb|rete/rete-copy.lisp|. Celkově je kód
+funkce je v souboru \verb|rete/graph-traversal.lisp|, kód kopírující síť rete,
+který funkci využívá pak v souboru \verb|rete/rete-copy.lisp|. Celkově je kód
 zajišťující kopírování sítě RETE asi třikrát delší, než zbytek kódu
-implementující funkcionalitu undo/redo.
+implementující funkcionalitu undo/redo. Ten se nachází v souboru
+\verb|environment/env-undo.lisp|.
