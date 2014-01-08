@@ -1,11 +1,12 @@
 \subsubsection{Undo/redo}
+
 Možnost vrácení provedených akcí a jejich opětovného provedení (undo/redo) je
 implementována na úrovni prostředí, které udržuje aktuální stav systému.
 Hodnoty, které stav tvoří, jsem popsal v sekci \ref{env cleanup} a možnosti,
 které undo/redo poskytuje, v sekci \ref{undo}
 
 Prostředí je v programu reprezentováno objektem \verb|environment|. Stav
-prostředí je uchováván ve slotech tohoto objektu.
+systému je uchováván ve slotech tohoto objektu.
 
 Prostředí dále udržuje dva zásobníky - \verb|undo| a \verb|redo|.
 Každý z~těchto zásobníků ukládá seznamy tvořené popiskem akce k vrácení,
@@ -37,6 +38,12 @@ Funkce \verb|undo| pak jednoduše odstraní seznam z vrcholu zásobníku
 \verb|undo|, zavolá uzávěr, který vrátí poslední akci a druhý uzávěr, který akci
 opět provede, uloží na vrchol zásobníku \verb|redo|. Funkce \verb|redo| funguje
 symetricky.
+
+Všechny objekty definované modulem \verb|core| - šablony, fakty, vzory a
+pravidla jsou implementovány jako neměnné (\emph{immutable}). Každá jejich
+případná změna tedy znamená vytvoření nového objektu. Díky tomu není na úrovni
+prostředí nutné tyto objekty kopírovat. Kopírovat je třeba pouze datové
+struktury, které udržují kolekce těchto objektů.
 
 Nakonec je třeba zajistit, aby každé volání \verb|with-undo| uložilo na zásobník
 právě jeden uzávěr k vrácení akce. Například pokud samostatně voláme makro
