@@ -1,1 +1,102 @@
 \subsubsection{Zpětná inference}
+
+Zpětná inference hledá odpovědi na základě zadaných cílů. Odpovědi jsou zde
+reprezentovány použitou substitucí proměnných v cílech a posloupností faktů
+a~pravidel, použitých k jejich splnění. Možnosti zpětného řetězení a způsob jeho
+použití jsem popsal v sekci \ref{backward inference}
+
+Kód implementující zpětnou inferenci pracuje se dvěma datovými strukturami -
+seznamem cílů a zásobníkem pro backtracking (návrat ve výpočtu, pokud daná cesta
+nevede ke splnění všech cílů, nebo pro hledání alternativních odpovědí). Program
+nemodifikuje pracovní paměť, ani nevyhodnocuje odvozovací pravidla, pouze
+analyzuje volání \verb|assert| v jejich důsledcích.
+
+Cíle jsou v programu reprezentovány vzory, podobně jako podmínky pravidel.
+Inferenci si tedy můžeme představit tak, jako bychom definovali jedno pravidlo,
+jehož podmínky reprezentují seznam cílů a hledali všechny možné cesty výpočtu,
+vedoucí k jeho splnění.
+
+Zásobník pro backtracking (dále jen zásobník) ukládá struktury, z nichž každá
+reprezentuje právě provedený krok výpočtu. Tato struktura je tvořen aktuálním
+seznamem cílů, faktem či pravidlem, použitým pro splnění aktuálního cíle a
+seznamem faktů a pravidel, která již byla pro splnění tohoto cíle použita (v
+případě návratu výpočtu).
+
+Zpětná inference je řízena třemi metodami prostředí - \verb|back-step|,
+\verb|backtrack| a \verb|back-run|. Metoda \verb|back-step| vybere první cíl ze
+seznamu a hledá nejprve fakta, poté pravidla, vedoucí k jeho splnění, přičemž
+ignoruje ta, která už byla pro splnění cíle dříve použita.
+
+Při hledání faktů, která splňují cíl, srovnáváme fakt se vzorem cíle podobně,
+jako při vyhodnocování podmínek pravidel při dopředné inferenci (viz sekce
+\ref{inference}). Výsledkem tohoto srovnání je v případě shody substituce
+proměnných, vyskytujících se ve vzoru cíle. Je-li nalezen fakt, který aktuální
+cíl splňuje, program uloží nalezenou shodu na zásobník, načež cíl odstraní ze
+seznamu cílů a~aplikuje použitou substituci proměnných na zbytek cílů. Není-li
+nalezen takový fakt, uvažuje program dále odvozovací pravidla.
+
+Při hledání pravidel, která vedou ke splnění aktuálního cíle, program zohledňuje
+všechna volání \verb|assert| v jejich důsledcích. Reprezentace faktů, použité ve
+voláních \verb|assert|, nechá program zpracovat \verb|parser|em a výsledné fakty
+pak srovnává se vzorem cíle podobně, jako fakty v pracovní paměti. Protože jde
+však o~důsledkovou část pravidla, volání \verb|assert| mohou obsahovat proměnné.
+Program tedy hledá unifikaci aktuálního cíle s tímto \uv{proměnným faktem}.
+
+V případě shody je výsledkem unifikace opět substituce proměnných. Program v
+tomto případě opět uloží shodu na zásobník, odstraní aktuální cíl ze seznamu a
+aplikuje použitou substituci proměnných na zbytek cílů. Nejpreve ale program
+přidá podmínky použitého pravidla do seznamu cílů. Podmínky použitého pravidla
+se tedy stávají dalšími cíli, které je třeba splnit, abychom nalezli hledanou
+odpověď.
+
+Hledání unifikace vzoru cíle s \uv{proměnným faktem} je podobné jako v jazyce
+Prolog. Je však jednodušší o to, že symbolická reprezentace faktů a vzorů je
+lineární (seznamy nejsou vnořené) a není třeba rozlišovat mezi relačními
+a~funkčními symboly. V případě strukturovanch faktů a vzorů jsou jednotlivé
+sloty srovnávány, jako by šlo o atomy seznamu, jen zde nezáleží na pořadí, nýbrž
+se srovnávají odpovídající sloty faktu a vzoru.
+
+Pokud metoda \verb|back-step| nenalezne fakt ani pravidlo vedoucí ke splnění
+aktuálního cíle, volá metodu \verb|backtrack|. Ta odstraňuje postupně struktury z
+vrcholu zásobníku, obnoví cíle do stavu při uložení struktury a hledá shody s
+dosud nepoužitými fakty a pravidly. Pokud takovou shodu nalezne, ubírá se
+výpočet dále touto cestou. Je-li celý zásobník vyčerpán před nalezením shody,
+nahlásí metoda neúspěch.
+
+Metoda \verb|back-run| volá opakovaně metodu \verb|back-step|, dokud nejsou
+splněny všechny cíle, nebo není nahlášen neúspěch. V případě, že už jsou všechny
+cíle splněny, volá \verb|back-step| metodu \verb|backtrack| pro nalezení
+alternativních odpovědí. To může vést k nalezení nové shody, nebo vyčerpání
+zásobníku, což znamená, že už žádné další odpovědi neexistují.
+
+Dospěje-li volání \verb|back-run| ke splnění všech cílů, vytiskne se seznam
+faktů a~pravidel, použitých ke splnění jednotlivých cílů. Dále se vytiskne
+substituce proměnných, která byla pro splnění cílů použita. Tato substituce je
+tvořena složením všech substitucí, použitých v jednotlivých krocích výpočtu. Ve
+výsledné substituci jsou ponechány pouze proměnné, které uživatel použil v
+definicích původních cílů. Průběžné proměnné, které se sem dostaly při aplikaci
+odvozovacích pravidel nejsou pro uživatele zajímavé.
+
+Implementace zpětné inference je inspirována prohledáváním SLD-stromů používaným
+v jazyce
+Prolog\footnote{\url{http://en.wikipedia.org/wiki/SLD_resolution\#SLD_resolution_strategies}}.
+Z toho také vyplývají její omezení. Implementace pracuje pouze s \uv{pozitivní
+znalostí} - neumožňuje zadání negativních cílů, ani negované podmínky pravidel.
+Implementace také uvažuje pouze přidání nových faktů v důsledcích pravidel,
+nikoli jejich odebrání nebo změnu. Díky tomu, že se důsledky pravidel
+nevyhodnocují, nedochází navíc k vedlejším efektům jako při dopředné inferenci.
+
+Uvažovat negativní cíle, negované podmínky pravidel a odebírání faktů v
+důsledcích pravidla by nebylo náročné. Hrozí zde ovšem problém, že v průběhu
+inference bude splnění nějakého cíle záviset na nějakém faktu, načež splnění
+některého z dalších cílů bude záviset na negaci tohoto faktu. V tomto případě by
+byla implementace tímto způsobem chybná.
+
+\begin{framed}
+  chtělo by příklad
+\end{framed}
+
+Implementace nevyužívá sítě RETE, neboť ta vyhodnocuje splnění podmínek
+odvozovacích pravidel fakty v pracovní paměti. Zpětná inference ale pracuje
+opačně - analyzuje důsledky pravidel a pracovní paměť nemodifikuje. Síť RETE
+tedy nelze k implementaci využít.
