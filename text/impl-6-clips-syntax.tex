@@ -1,0 +1,15 @@
+\subsubsection{Kompatibilita se systémem CLIPS}
+Syntaktickou kompatibilitu se systémem CLIPS zajišťuje nově přidaný modul
+\verb|parser|.  Ten převádí externí reprezentace objektů - šablon, faktů, vzorů
+a pravidel - na interní objekty (ve smyslu instance třídy) definované v modulu
+\verb|core|.  K tomuto účelu definuje \verb|parser| metodu \verb|parse-<object>|
+pro každý typ \verb|core| objektu. Externími reprezentacemi jsou (případně
+vnořené) seznamy symbolů, které předáváme funkcím a makrům modulu
+\verb|front-end|, které jsem popsal v uživatelské příručce.
+
+Metody \verb|parseru| jednoduše analyzují tyto seznamy, rozhodují, zda jde o
+základní, nebo CLIPSovou syntax a podle toho je převádí na jednotnou
+reprezentaci, kterou pak předávají konstruktorům \verb|core| objektů. Tyto
+vnitřní objekty jsou pak metodami \verb|parseru| vraceny. Metody jsou volány
+modulem \verb|front-end|, který pak získané \verb|core| objekty předává
+prostředí.
