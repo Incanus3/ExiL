@@ -65,10 +65,6 @@
 
 ;; mod-list is a mapping from slot-name to new value
 ;; it can be either plist for non-clips syntax of alist for clips syntax
-;; TODO: modify-fact should be responsibility of parser, as it works with
-;; external representation of mod-list
-;; this should ask parser to parse fact-spec, then to modify the fact
-;; than remove the old fact from environment and add the modified one
 (defun modifyf (fact-spec mod-list)
   (let* ((old-fact (parse-fact *current-environment* fact-spec))
          (new-fact (modify-fact old-fact mod-list)))
