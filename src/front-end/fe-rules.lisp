@@ -78,6 +78,12 @@
 (defmacro find-rule (name)
   `(find-rulef ',name))
 
+(defun rule-docf (name)
+  (exil-core:doc (exil-env:find-rule *current-environment* name)))
+
+(defmacro rule-doc (name)
+  `(rule-docf ',name))
+
 (defun ppdefrulef (name)
   (fresh-princ (exil-env:find-rule *current-environment* name)))
 

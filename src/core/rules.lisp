@@ -28,7 +28,8 @@
 (defclass rule ()
   ((name :initarg :name :reader name)
    (conditions :initarg :conditions :reader conditions)
-   (activations :initarg :activations :reader activations)))
+   (activations :initarg :activations :reader activations)
+   (documentation :initarg :documentation :reader doc)))
 
 (defun rulep (object)
   (typep object 'rule))
@@ -76,16 +77,17 @@
         (list ext2))))
 
 (defmethod external ((rule rule))
-  (list (name rule)
-        (append (mapcan #'external% (conditions rule))
-                (list :=>)
-                (activations rule))))
+  (remove nil (list (name rule)
+                    (doc rule)
+                    (append (mapcan #'external% (conditions rule))
+                            (list :=>)
+                            (activations rule)))))
 
-(defun make-rule (name conditions activations)
+(defun make-rule (name conditions activations &optional doc)
   (assert (plusp (length conditions)) ()
           "Rule must have at least one condition")
   (make-instance 'rule :name name :conditions conditions
-                 :activations activations))
+                 :activations activations :documentation doc))
 
 (defmethod variables-in-rule ((rule rule))
   (remove-duplicates (nconc (mapcan #'variables-in-pattern (conditions rule))

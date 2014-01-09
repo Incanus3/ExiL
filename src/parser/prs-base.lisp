@@ -12,8 +12,6 @@
 ;; used by front-end:assert, retract and modify
 (defgeneric parse-fact (env fact-spec)
   (:documentation "create fact from external representation"))
-(defgeneric parse-pattern (env fact-spec)
-  (:documentation "create pattern from external representation"))
 ;; used by front-end:modify
 (defgeneric modify-fact (fact mod-list)
   (:documentation "create new fact from fact and mod-list"))

@@ -32,7 +32,8 @@
            :negated-p :simple-pattern :var-or-equal-p
 	   :variables-in-pattern
 	   :match-against-pattern :substitute-variables
-           :template-pattern :rule :rulep :name-equal-p :rule-equal-p :make-rule
+           :template-pattern
+           :rule :rulep :doc :name-equal-p :rule-equal-p :make-rule
            :name :conditions :activations :description))
 
 (defpackage :exil-rete
@@ -105,7 +106,7 @@
            :deffacts :deffactsf :undeffacts :undeffactsf
            :fact-groups :find-fact-group :find-fact-groupf
 	   :defrule :defrulef :undefrule :undefrulef :ppdefrule :rules
-           :find-rule :find-rulef
+           :find-rule :find-rulef :rule-docf :rule-doc
 	   :defgoal :defgoalf :undefgoal :undefgoalf :goals
 	   :defstrategy :defstrategyf :undefstrategy :undefstrategyf
            :setstrategy :setstrategyf

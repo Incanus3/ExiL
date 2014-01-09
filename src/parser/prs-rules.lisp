@@ -19,9 +19,9 @@
 ;; TODO: dodelat kontrolu, zda se vsechny promenne v RHS vyskytuji v LHS
 ; public
 (defmethod parse-rule ((env environment) (name symbol) (body list))
-  (when (stringp (first body))
-    (pop body)) ;; ignore clips rule header
-  (let ((=>-position (position '=> body :test #'weak-equal-p)))
+  (let ((documentation (when (stringp (first body))
+                         (pop body)))
+        (=>-position (position '=> body :test #'weak-equal-p)))
     (assert =>-position ()
             "Rule definition must include '=>'!")
     (let ((conditions (extract-conditions (subseq body 0 =>-position)))
@@ -31,4 +31,5 @@
                            (parse-pattern env (car condition)
                                           :match-var (cdr condition)))
                          conditions)
-                 activations))))
+                 activations
+                 documentation))))

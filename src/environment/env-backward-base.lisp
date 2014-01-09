@@ -36,8 +36,6 @@
 ;; 1) have no side-effect
 ;; 2) have no negative conditions
 ;; 3) result only in addition of a fact (only assert forms in rhs)
-;;    IDEALLY ONLY ONE FORM - THIS IS ACTUALLY A BACKWARD CHAINING
-;;    -> IS THIS REALLY AN ISSUE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; GOALS
@@ -88,7 +86,8 @@
   (third match))
 
 (defun print-goal-match (match)
-  (fresh-format t "~A satisfied by ~A" (goal-match-goal match) (goal-match-fact match)))
+  (fresh-format t "~A satisfied by ~A"
+                (goal-match-goal match) (goal-match-fact match)))
 
 (defun select-back-match (matches)
   (first matches))
