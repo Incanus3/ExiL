@@ -13,6 +13,7 @@
 
 ;; inference rules
 (defrule move-robot
+  "move robot to object's location"
   (goal move ?object ?from ?to)
   (in ?object ?from)
   (- in robot ?from)
@@ -22,6 +23,7 @@
   (assert (in robot ?from)))
 
 (defrule move-object
+  "move robot and object to desired location"
   (goal move ?object ?from ?to)
   ?rob-pos <- (in robot ?from)
   ?obj-pos <- (in ?object ?from)
@@ -32,6 +34,7 @@
   (assert (in ?object ?to)))
 
 (defrule stop
+  "stop if object is in desired location"
   (goal move ?object ?from ?to)
   (in ?object ?to)
   =>
@@ -59,8 +62,9 @@ případě potřeby.  Definice skupiny faktů \verb|world| v příkladu přidáv
 znalostní báze informaci o~počáteční pozici robota, krabice a~o~našem záměru
 přesunout krabici z~pozice \verb|A| na pozici \verb|B|.
 
-Následuje definice odvozovacích pravidel. Definice každého pravidla sestává
-z~množiny podmínek, tedy předpokladů pro jeho splnění (a následnou aktivaci),
+Následuje definice odvozovacích pravidel. Definice každého pravidla sestává z
+jeho názvu, volitelného řetězce sloužícího k dokumentaci pravidla,
+množiny podmínek, tedy předpokladů pro jeho splnění (a následnou aktivaci),
 a~množiny důsledků, tedy libovolných lispových výrazů, které jsou při
 aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
 \emph{symbolem}~\verb|=>|.
@@ -127,7 +131,7 @@ Firing MOVE-OBJECT
 Firing STOP
 Halting
 \end{minted}
-Řádky začínající symbolem \verb|==>| označují fakty přibyvší do pracovní paměti,
+Řádky začínající symbolem \verb|==>| označují fakty přidané do pracovní paměti,
 řádky začínající \verb|<==| fakty z paměti odstraněné. Tento výstup obdržíme
 pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz sekce
 \ref{inference tracing}). První tři fakty přibydou do pracovní paměti při

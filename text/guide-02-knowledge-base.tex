@@ -105,6 +105,7 @@ definujeme makrem
 \verb|defrule|, např.:
 \begin{minted}{cl}
 (defrule move-robot
+  "move robot to object's location"
   (goal :action move :object ?obj :from ?from)
   (in :object ?obj :location ?from)
   (- in :object robot :location ?from)
@@ -119,7 +120,7 @@ proměnné na celou podmínku). Ty popíšu podrobně v sekci \ref{inference} sp
 tím, jak jsou podmínky pravidla při inferenci vyhodnocovány.
 
 Důsledkovou část pravidla (za symbolem \verb|=>|) tvoří libovolný počet
-lispových výrazů. Jak se tyto vyhodnocují popíšu opět v sekci \ref{inference}.
+lispových výrazů. Jak se tyto vyhodnocují popíšu opět v sekci \ref{inference}
 
 Opakovaným voláním makra \verb|defrule| odvozovací pravidlo redefinujeme.
 K~získání seznamu názvů definovaných pravidel a jejich specifikací slouží

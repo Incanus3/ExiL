@@ -1,22 +1,46 @@
-\subsection{Common Lisp}
-\begin{framed}
-\begin{itemize}
-  \item základní znalosti lispu nutné pro používání knihovny
-  \begin{itemize}
-    \item loadování souborů - poté zjednodušit v kapitole o instalaci
-    \item package, export, import, shadow
-    \item seznam, atom, car, cdr, plist
-    \item symbol, klíč
-    \item prefixová syntax, S-expressions
-    \item funkce, makro
-    \item načítání souborů.
-    \item quotování (u funkčních alternativ, ale ty se stejně používají spíš z jiného
-      kódu, který knihovnu volá - tudíž uživatel evidentně lisp zná)
-    \item lexikální prostředí - u vyhodnocení aktivací pravidla
-    \item destrukturující makra - tamtéž
-    \item výjimky
-    \item dynamické proměnné
-  \end{itemize}
-  \item odkaz na practical common lisp, clhs
-\end{itemize}
-\end{framed}
+\subsection{Potřebná znalost Common Lispu}
+
+Knihovna ExiL je implementována v jazyce Common Lisp. Pro práci s ní a~pochopení
+její implementace je tedy potřebná znalost tohoto jazyka. Za perfektní příručku
+k jazku Common Lisp považuji knihu Practical Common Lisp\footnote{Siebel, P.:
+\textit{Practical Common Lisp}. Apress, 2005, ISBN 1-59059-239-5.}, která je k
+dispozici
+online\footnote{\url{http://clipsrules.sourceforge.net/OnlineDocs.html}}.
+Následující seznam uvádí relevantní pojmy z Common Lispu a kapitoly z knihy, kde
+se o nich lze dočíst. V dalším textu budu vždy první výskyt nového pojmu značit
+kurzívou.
+
+\begin{description}[style=nextline]
+  \item[2. Lather, Rinse, Repeat: A Tour of the REPL] implementace lispu,
+    Lispbox, práce s REPLem, obsluha výjimek
+  \item[4. Syntax and Semantics] prefixová syntax, S-výrazy, funkce,
+    speciální operátory, makra
+  \item[5. Functions] funkce - definice, typy parametrů, anonymní funkce
+  \item[6. Variables] proměnné - vytváření vazeb, lexikální proměnné a
+    uzávěry, dynamické proměnné, přiřazení, makra upravující hodnoty
+    proměnných
+  \item[7. Macros: Standard Control Constructs] řídicí struktury, cykly
+  \item[8. Macros: Defining Your Own] makra - jejich funkce, vyhodnocování,
+    definice, parametry
+  \item[10. Numbers, Characters, and Strings] základní vestavěné typy a
+    operace s nimi
+  \item[11. Collections] kolekce (pole, hashovací tabulky) a práce s nimi
+  \item[12. They Called It LISP for a Reason: List Processing] seznamy -
+    reprezentace, operace
+  \item[13. Beyond Lists: Other Uses for Cons Cells] stromy, množiny,
+    asociativní a property listy, destrukturující makra
+  \item[16. Object Reorientation: Generic Functions] generické funkce,
+    metody, multimetody, řetězec volání
+  \item[17. Object Reorientation: Classes] třídy a objekty - definice, sloty,
+    dědičnost
+  \item[19. Beyond Exception Handling: Conditions and Restarts] práce s
+    výjimkami
+  \item[20. The Special Operators] kontrola vyhodnocování S-výrazů, kvotování;
+    načítání zdrojových souborů pomocí \verb|load|
+  \item[21. Programming in the Large: Packages and Symbols] package a práce se
+    symboly - klíčky, import, export, zastiňování
+\end{description}
+
+Jako referenční příručku vestavěných funkcí a maker Common Lispu pak lze použít
+Common Lisp
+HyperSpec\texttrademark\footnote{\url{http://www.lispworks.com/documentation/HyperSpec/Front/}}.

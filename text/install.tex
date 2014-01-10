@@ -1,48 +1,51 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Instalace}
 \subsubsection{Získání zdrojového kódu}
-Zdrojový kód knihovny je přiložen k~této diplomové práci a~lze jej také získat
+Zdrojový kód knihovny ExiL je přiložen k~této diplomové práci a~lze jej také získat
 zklonováním\footnote{\url{http://git-scm.com/docs/git-clone}}
 gitového\footnote{\url{http://git-scm.com/}} repozitáře na adrese
 \verb|git@github.com:Incanus3/ExiL.git|.
 Kód knihovny se nachází v podadresáři \verb|src|, ten budu dále nazývat kořenovým
 adresářem knihovny či projektu.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Prerekvizity}
 Pro práci s knihovnou ExiL potřebujeme lispový
-interpreter\footnote{\url{http://en.wikipedia.org/wiki/Interpreter_(computing)}}
-\footnote{lispové interpretery jsou většinou zároveň
-kompilátory\footnotemark[6], označením
-interpreter tedy budu nazývat obojí},
-vývojové prostředí (s interpreterem bychom si ve skutečnosti vystačili, ale
-přímá práce s ním není většinou příliš pohodlná) a knihovny umožňující
-dávkové načtení celého projektu včetně závislostí.
-\footnotetext[6]{\url{http://en.wikipedia.org/wiki/Compiler}}
+interpreter\footnote{lispové interpretery jsou většinou zároveň
+kompilátory, %\footnotemark[11],
+označením interpreter tedy budu nazývat obojí}, vývojové prostředí (s
+interpreterem bychom si ve skutečnosti vystačili, ale přímá práce s~ním není
+většinou příliš pohodlná) a knihovny umožňující dávkové načtení celého projektu
+včetně závislostí.
+%\footnotetext[11]{\url{http://en.wikipedia.org/wiki/Compiler}}
+%\addtocounter{footnote}{1}\addtocounter{Hfootnote}{1}
 
 Knihovnu jsem vyvíjel v prostředí
 SLIME\footnote{\url{http://www.common-lisp.net/project/slime/}}, což je plugin
 pro textový editor GNU Emacs\footnote{\url{http://www.gnu.org/software/emacs/}}
 (poskytující mimo jiné pomůcky pro editaci lispového zdrojového kódu,
-REPL\footnote{\url{http://en.wikipedia.org/wiki/Read-eval-print_loop}} a
-debugger\footnote{\url{http://en.wikipedia.org/wiki/Debugger}})
+REPL\footnote{\url{http://en.wikipedia.org/wiki/Read-eval-print\_loop}} a
+debugger) %\footnote{\url{http://en.wikipedia.org/wiki/Debugger}}
 s interpreterem SBCL\footnote{\url{http://www.sbcl.org/}} a tuto kombinaci
 mohu vřele doporučit. V operačním systému Debian GNU Linux, který jsem pro vývoj
 použil, lze Emacs, SLIME i SBCL nainstalovat z výchozího repozitáře a aktivovat
-úpravou inicializačního souboru Emacsu, viz
-\url{http://www.common-lisp.net/projects/slime/doc/html/Installation.html}.
+úpravou inicializačního souboru
+Emacsu\footnote{\url{http://www.common-lisp.net/projects/slime/doc/html/Installation.html}}.
 Prostředí poté můžeme v~Emacsu spustit voláním příkazu \verb|slime|
 (\verb|<Alt+X>slime<ENTER>|). Při prvním spuštění se kód prostředí kompiluje, což
-může chvíli trvat, pak už se v editoru otevře buffer\footnote{emacs buffer}
+může chvíli trvat, pak už se v editoru otevře
+buffer\footnote{\url{http://www.gnu.org/software/emacs/manual/html\_node/emacs/Buffers.html}}
 s~lispovým REPLem.
 
 Knihovnu jsem testoval také ve vývojovém prostředí
 LispWorks\registered\footnote{\url{http://www.lispworks.com/}} Personal Edition
 6.1, pro které jsem také vytvořil minimalistické grafické uživatelské rozhraní.
-Součástí prostředí LispWorks je i lispový interpret. Prostředí můžeme získat zde
-\url{http://www.lispworks.com/downloads/index.html} a nainstalovat podle návodu,
-který se zobrazí po vyplnění formuláře.
+Součástí prostředí LispWorks je i lispový interpret. Prostředí můžeme získat na
+adrese \url{http://www.lispworks.com/downloads/index.html} a nainstalovat podle
+návodu, který se zobrazí po vyplnění formuláře.
 
 Pro efektivní načtení knihovny včetně závislostí potřebujeme ještě dvě knihovny:
+\clearpage
 \begin{itemize}
   \item ASDF\footnote{\url{http://common-lisp.net/project/asdf}} je knihovna
     umožňující snadnou definici struktury projektu a jeho dávkové načtení,

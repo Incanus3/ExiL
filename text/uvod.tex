@@ -5,7 +5,7 @@ Pojem expertního systému spadá do oblasti umělé inteligence. Jde o počíta
 systém, který simuluje rozhodování experta nad zvolenou problémovou doménou.
 Expertní systém může experta zcela nahradit, nebo mu při rozhodování asistovat.
 
-Ve své bakalářské práci jsem implementoval základní knihovnu pro tvorbu
+Ve své bakalářské práci \cite{bakalarka} jsem implementoval základní knihovnu pro tvorbu
 expertních systémů (tzv. prázdný expertní systém) s~dopředným řetězením v~jazyce
 Common Lisp. Cílem této práce je knihovnu rozšířit o následující:
 \begin{itemize}
@@ -17,15 +17,17 @@ Common Lisp. Cílem této práce je knihovnu rozšířit o následující:
   \item rozšíření odvozovacího aparátu o základní zpětné řetězení.
 \end{itemize}
 
-Jazyk Common Lisp\footnotemark[1] (případně jiné dialekty Lispu) je častou volbou
-pro implementaci umělé inteligence díky svým schopnostem v oblasti symbolických
-výpočtů (manipulace symbolických výrazů), na nichž řešení těchto problémů často
-staví. Navíc jde o~velmi vysokoúrovňový, dynamicky typovaný jazyk, díky čemuž je
-programový kód expresivní, snadno pochopitelný a tudíž jednoduše rozšiřitelný.
+Jazyk Common Lisp\footnote{\url{http://en.wikipedia.org/wiki/Common\_Lisp}}
+(případně jiné dialekty Lispu) je častou volbou pro implementaci umělé
+inteligence díky svým schopnostem v oblasti symbolických výpočtů (manipulace
+symbolických výrazů), na nichž řešení těchto problémů často staví. Navíc jde
+o~velmi vysokoúrovňový, dynamicky typovaný jazyk, díky čemuž je programový kód
+expresivní, snadno pochopitelný a tudíž jednoduše rozšiřitelný.
 
-Synax systému CLIPS\footnotemark[2] byla zvolena proto, že jde o reálně používaný
-systém\footnotemark[3], jehož syntax je Lispu velmi blízká, takže není těžké ji
-v~Lispu napodobit.
+Synax systému CLIPS\footnote{\url{http://clipsrules.sourceforge.net}} byla
+zvolena proto, že jde o reálně používaný
+systém\footnote{\url{http://clipsrules.sourceforge.net/FAQ.html\#Q6}}, jehož
+syntax je Lispu velmi blízká, takže není těžké ji v~Lispu napodobit.
 
 Přestože běžnou praxí je začínat diplomovou práci teoretickou částí, definovat
 jednotlivé pojmy a principy a ty poté v praktické části uplatnit, rozhodl jsem
@@ -47,8 +49,3 @@ si bude čtenář schopen představit, jaké problémy lze pomocí expertního s
 \begin{framed}
   Kdo už to dělal, čím se tohle liší
 \end{framed}
-
-\footnotetext[1]{\url{http://en.wikipedia.org/wiki/Common_Lisp}}
-\footnotetext[2]{\url{http://clipsrules.sourceforge.net}}
-\footnotetext[3]{\url{http://clipsrules.sourceforge.net/FAQ.html\#Q6}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

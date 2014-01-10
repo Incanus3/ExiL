@@ -13,17 +13,15 @@ definice cyklická).
 
 Pojem expertního systému zatím chápejme tak, jak jsem jej představil v úvodu
 práce. V teoretické části rozeberu pojem v potřebné šíři.
-\begin{description}[leftmargin=6cm,style=sameline,align=right,labelsep=0.5cm]
-  % \item[problémová doména] množina pojmů relevantních pro řešení určité skupiny
-  %   problémů
+\begin{description}[leftmargin=5cm,style=sameline,align=right,labelsep=0.5cm]
   \item[fakt] elementární statická znalost - tvrzení
-  \item[(odvozovací) pravidlo] elementární odvozovací znalost - pokud víme, že
-    (ne)platí nějaká tvrzení, můžeme odvodit, že platí i~nějaká další
+  \item[(odvozovací) pravidlo] elementární odvozovací znalost ve formě implikace
   \item[znalost (v ExiLu)] množina faktů a pravidel
   \item[znalostní báze] výchozí znalost expertního systému
   \item[pracovní paměť] aktuální množina faktů
-  % \item[production memory] aktuální množina pravidel
-  \item[inference] odvozování - postupná aplikace odvozovacích pravidel
+  \item[inference] odvozování - postupná aplikace pravidla modus
+    ponens\footnote{\url{http://en.wikipedia.org/wiki/Modus_ponens}} na
+    konjunkci faktů a odvozovací pravidlo
 \end{description}
 Pojem \emph{pracovní paměť} není příliš intuitivní. Jde o doslovný překlad
 v~literatuře užívaného pojmu \emph{working memory}, kterým je označována množina
