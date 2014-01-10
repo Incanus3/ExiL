@@ -86,39 +86,15 @@ Implementace také uvažuje pouze přidání nových faktů v důsledcích pravi
 nikoli jejich odebrání nebo změnu. Díky tomu, že se důsledky pravidel
 nevyhodnocují, nedochází navíc k vedlejším efektům jako při dopředné inferenci.
 
-\begin{framed}
-  \begin{itemize}
-    \item není implementačně složité, ale problém je v tom, jak vyhodnocovat
-      retract v důsledcích (podobně s modify)
-    \item pokud retract vyhodnocován jen pro splnění negativních podmínek (jinak
-      ignorován), problém se zneplatněním následujícího pravidla
-    \item pokud retract faktu znamená, že nemůžeme pravidlo použít, pokud máme
-      fakt v cílech, nenajde řešení, pokud je cesta okolo - bankomat
-    \item pokud by měl nějak odstranit fakta ze seznamu - jak? kdy?
-      \begin{itemize}
-        \item hned - zneplatní vlastní podmínky
-        \item po splnění podmínek? může být pozdě - obě pravidla jsou už
-          splněna, i když jedno zneplatňuje druhé
-        \item fakta k odstranění by se mohla přidávat nějaký seznam, odstraňovat
-          na konci a hlásit problém, pokud je nějaký fakt odstraňován vícekrát,
-          nemůže dojít k problémům s pořadím odstraňování - co když nějaké další
-          pravidlo má negativní podmínku, která vyžaduje, aby byl fakt odstraněn
-          dříve
-        \item podrobnější rozbor je nad rámec práce
-      \end{itemize}
-    \item podobně může dojít ke zneplatnění negativní podmínky assertem (ten je
-      zatím zohledňován jen pro splnění pozitivních podmínek $\rightarrow$
-      stejné problémy
-    \item modify dokonce obojí zároveň
-    \item rozdělit na dvě kapitoly?
-    \item v teoretické části rozebrat, jak tyto problémy řeší GPS v PoAIP
-  \end{itemize}
-\end{framed}
+Uvažovat negativní cíle, negované podmínky pravidel a odebírání faktů
+v~důsledcích pravidla se na první pohled nezdá implementačně náročné. Nabízí se
+několik možností, kterak vyhodnocovat odebrání faktu v důsledcích pravidla,
+každá z nich však vede k určitému typu problémů.
 
-Uvažovat negativní cíle, negované podmínky pravidel a odebírání faktů v
-důsledcích pravidla by nebylo implementačně náročné. Hrozí zde ovšem problém, že
-důsledky některého z pravidel zneplatní podmínky dalšího. Uvažujme následující
-zadání:
+První možností je zohledňovat volání \verb|retract| v důslecích pravidla jen
+jako indikaci, že toto pravidlo vede ke splnění negativního cíle, jinak je
+ignorovat. Zde ovšem hrozí problém, že důsledky některého z pravidel zneplatní
+podmínky dalšího. Uvažujme následující zadání:
 \begin{minted}{cl}
 (defgoal (at home))
 
@@ -137,12 +113,69 @@ zadání:
   (have money)
   (at city)
   =>
-  (at home)).
+  (assert (at home))
+  (retract (have money)).
 \end{minted}
-Dopředná inference v tomto případě korektně selže v odvození faktu (at home),
-neboť aplikace pravidla \verb|take-bus-to-city| odstraní fakt
-\verb|(have money)|, tudíž druhé pravidlo už nemůže být splněno. Dopředná
-inference
+Dopředná inference v tomto případě korektně selže v odvození faktu
+\verb|(at home)|, neboť aplikace pravidla \verb|take-bus-to-city| odstraní fakt
+\verb|(have money)|, tudíž druhé pravidlo už nemůže být splněno. Zpětná
+inference by však postupovala následovně:
+\begin{minted}[samepage]{cl}
+(goals)      ;=> ((at home))
+(back-step)  ; use rule take-taxi-home
+(goals)      ;=> ((have money) (at city))
+(back-step)  ; use fact (have money)
+(goals)      ;=> ((at city))
+(back-step)  ; use rule take-bus-to-city
+(goals)      ;=> ((have money) (out of city))
+(back-step)  ; use fact (have money)
+(goals)      ;=> ((out of city))
+(back-step)  ; use fact (out of city)
+(goals)      ;=> () => solution found
+\end{minted}
+Nalezeným řešením je tedy postupná aplikace pravidel \verb|take-bus-to-city| a
+\verb|take-taxi-home| (zpětná inference je aplikuje v opačném pořadí), přestože
+toto řešení je nesprávné.
+
+Další možností, která se nabízí, je pamatovat si všechny cíle, které se někdy
+vyskytovaly v množině cílů a brát volání \verb|(retract (have money))| v
+důsledcích pravidla jako indikaci, že pravidlo nelze použít, pokud je cíl
+\verb|(have money)| v této množině. To sice řeší předchozí problém, ale vede k
+dalšímu. Představme si, že bychom do znalostní báze přidali pravidlo, které
+umožňuje použití bankomatu:
+\begin{minted}{cl}
+(defrule use-atm
+  (have card)
+  (have money on account)
+  =>
+  (assert (have money))
+  (retract (have money on account))).
+\end{minted}
+Dopředná inference tentokrát nalezne korektní řešení postupnou aplikací pravidel
+\verb|take-bus-to-city|, \verb|use-atm|, \verb|take-taxi-home|. Zpětná inference
+však selže, neboť pravidlo \verb|take-bus-to-city| není díky tomuto způsobu
+vyhodnocování \verb|retract| nikdy aktivováno.
+
+Z neúspěchu předchozích variant je evidentní, že volání \verb|retract| musí
+nějakým způsobem manipulovat množinu faktů. V jakou chvíli by k tomu ale mělo
+docházet? Pokud bychom fakt \verb|(have money)| odstranili hned při aplikaci
+pravidla \verb|take-taxi-home| (které zpětná inference uvažuje jako první),
+zneplatníme tím jeho vlastní podmínky. Po splnění všech jeho podmínek je už ale
+na odstraňování faktu pozdě, neboť to už bude aplikováno i pravidlo
+\verb|take-bus-to-city|, k čemuž by vůbec dojít nemělo.
+
+K podobným problémům bude docházet při zneplatnění negativního cíle (který se do
+množiny cílů může dostat také jako negovaná podmínka aplikovaného pravidla) voláním
+\verb|assert|. Volání \verb|modify| dokonce tato dvě spojuje. I~kdybychom navíc
+našli vhodný způsob, kterak množinu faktů zpětně manipulovat, možnost
+backtrackingu by vyžadovala ukládat průběžné množiny faktů na zásobník, který by
+ve větších systémech rostl neúměrně rychle. Implementace plnohodnotného zpětného
+řetězení tedy není tak jednoduchá, jak se na první pohled jeví a domnívám se, že
+spolu s ostatními body zadání je nad rámec diplomové práce.
+
+\begin{framed}
+  v teoretické části rozebrat, jak tyto problémy řeší GPS v PoAIP
+\end{framed}
 
 \begin{framed}
   posunout následující odstavec výš?
