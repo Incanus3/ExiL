@@ -86,14 +86,66 @@ Implementace také uvažuje pouze přidání nových faktů v důsledcích pravi
 nikoli jejich odebrání nebo změnu. Díky tomu, že se důsledky pravidel
 nevyhodnocují, nedochází navíc k vedlejším efektům jako při dopředné inferenci.
 
+\begin{framed}
+  \begin{itemize}
+    \item není implementačně složité, ale problém je v tom, jak vyhodnocovat
+      retract v důsledcích (podobně s modify)
+    \item pokud retract vyhodnocován jen pro splnění negativních podmínek (jinak
+      ignorován), problém se zneplatněním následujícího pravidla
+    \item pokud retract faktu znamená, že nemůžeme pravidlo použít, pokud máme
+      fakt v cílech, nenajde řešení, pokud je cesta okolo - bankomat
+    \item pokud by měl nějak odstranit fakta ze seznamu - jak? kdy?
+      \begin{itemize}
+        \item hned - zneplatní vlastní podmínky
+        \item po splnění podmínek? může být pozdě - obě pravidla jsou už
+          splněna, i když jedno zneplatňuje druhé
+        \item fakta k odstranění by se mohla přidávat nějaký seznam, odstraňovat
+          na konci a hlásit problém, pokud je nějaký fakt odstraňován vícekrát,
+          nemůže dojít k problémům s pořadím odstraňování - co když nějaké další
+          pravidlo má negativní podmínku, která vyžaduje, aby byl fakt odstraněn
+          dříve
+        \item podrobnější rozbor je nad rámec práce
+      \end{itemize}
+    \item podobně může dojít ke zneplatnění negativní podmínky assertem (ten je
+      zatím zohledňován jen pro splnění pozitivních podmínek $\rightarrow$
+      stejné problémy
+    \item modify dokonce obojí zároveň
+    \item rozdělit na dvě kapitoly?
+    \item v teoretické části rozebrat, jak tyto problémy řeší GPS v PoAIP
+  \end{itemize}
+\end{framed}
+
 Uvažovat negativní cíle, negované podmínky pravidel a odebírání faktů v
-důsledcích pravidla by nebylo náročné. Hrozí zde ovšem problém, že v průběhu
-inference bude splnění nějakého cíle záviset na nějakém faktu, načež splnění
-některého z dalších cílů bude záviset na negaci tohoto faktu. V tomto případě by
-byla implementace tímto způsobem chybná.
+důsledcích pravidla by nebylo implementačně náročné. Hrozí zde ovšem problém, že
+důsledky některého z pravidel zneplatní podmínky dalšího. Uvažujme následující
+zadání:
+\begin{minted}{cl}
+(defgoal (at home))
+
+(deffacts initial
+  (out of city)
+  (have money))
+
+(defrule take-bus-to-city
+  (have money)
+  (out of city)
+  =>
+  (assert (at city))
+  (retract (have money)))
+
+(defrule take-taxi-home
+  (have money)
+  (at city)
+  =>
+  (at home)).
+\end{minted}
+Dopředná inference v tomto případě korektně selže v odvození faktu (at home),
+neboť aplikace pravidla \verb|take-bus-to-city| odstraní fakt
+\verb|(have money)|, tudíž druhé pravidlo už nemůže být splněno. Dopředná
+inference
 
 \begin{framed}
-  chtělo by příklad
+  posunout následující odstavec výš?
 \end{framed}
 
 Implementace nevyužívá sítě RETE, neboť ta vyhodnocuje splnění podmínek
