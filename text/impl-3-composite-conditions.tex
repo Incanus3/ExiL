@@ -12,11 +12,11 @@ RETE složitá.
 \label{rete-beta-conds}
 \end{figure}
 
-Obrázek \ref{rete-beta-conds} ukazuje diagram beta části sítě RETE z předchozí sekce. Názvy uzlů
-jsem zde ale nahradil jejich funkcí. Paměťové uzly ukládají fakty nebo tokeny
-splňující jednu (v případě alpha-memory-nodů), nebo více (u beta-memory-nodů)
-podmínek pravidla. Testovací (beta-join-nody) pak zajišťují agregaci těchto
-faktů a tokenů. Jednu z podmínek jsem navíc pro ukázku znegoval.
+Obrázek \ref{rete-beta-conds} ukazuje diagram beta části sítě RETE z předchozí
+sekce. Názvy uzlů jsem zde ale nahradil jejich funkcí. Paměťové uzly ukládají
+fakty nebo tokeny splňující jednu (v případě alpha-memory-nodů), nebo více (u
+beta-memory-nodů) podmínek pravidla. Testovací (beta-join-nody) pak zajišťují
+agregaci těchto faktů a tokenů. Jednu z podmínek jsem navíc pro ukázku znegoval.
 
 Síť v diagramu splňuje několik podmínek:
 \begin{enumerate}
@@ -24,7 +24,7 @@ Síť v diagramu splňuje několik podmínek:
     pravidla vyskytují,
   \item beta-join-node vždy spojuje jeden alpha-memory-node s jedním
     beta-memory-nodem, agreguje tedy fakty splňující jednu podmínku pravidla s
-    tokeny reprezentujícím posloupnost faktů splňující jeho předchozí podmínky,
+    tokeny reprezentujícími posloupnost faktů splňující jeho předchozí podmínky,
   \item negace podmínky je vždy aplikována jen na úrovni jednoho faktu.
 \end{enumerate}
 
@@ -48,7 +48,24 @@ Ta je zobrazena na obrázku \ref{rete-beta-comp-conds} Z diagramu vidíme, že s
 uvedené podmínky.
 
 \begin{framed}
-  popsat, co je problematického na podpoře této sítě
+  \begin{itemize}
+    \item popsat, co je problematického na podpoře této sítě
+    \item podmínky třeba procházet rekurzivně a síť budovat stromovitě
+    \item token je nyní list, stačí to, nebo musí být také strom?
+    \item testy v join nodech nyní ukládají pozici - o kolik podmínek zpět,
+      který atom v přechozí, který atom v aktuální
+    \item pozice by musela mít u beta-beta joinu minimálně jednu pozici navíc -
+      (fakt,atom)-(fakt,atom), pokud by musel být token strom, ještě složitější
+    \item lze vyřešit join-nody obecně - beta-beta i beta-alpha, nebo nutné dva
+      typy?
+    \item jak reprezentovat node, který neguje složenou podmínku?
+    \item jak joinovat tokeny, které mohou zahrnovat výsledky negativní podmínky?
+    \item síť je cyklická a jako taková špatně vizualizuje
+    \item počet uzlů sítě roste velmi rychle $\rightarrow$ mnoho uzlů i při
+      několika pravidlech $\rightarrow$ náročné ladění
+    \item zmínit, jak jednoduchá je implementace, pokud podmínky pracují pouze
+      se substitucemi proměnných - bez rete
+  \end{itemize}
 \end{framed}
 % Z fungování beta částí sítě RETE (viz sekce \ref{rete}) vidíme, že vyhodnocování
 % podmínek pravidla je inherentně sekvenční. \verb|Beta-join-nody| zde
