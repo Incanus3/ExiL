@@ -85,6 +85,7 @@
 (defmethod find/add-test-node ((test-node beta-join-node)
                                (parent beta-memory-node)
                                (alpha-mem alpha-memory-node))
+  ;; child lists are sets w.r.t. node-equal-p, so this won't add existing node
   (add-child parent test-node)
   (add-child alpha-mem test-node)
   test-node)
