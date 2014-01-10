@@ -75,11 +75,15 @@ substituce proměnných, která byla pro splnění cílů použita. Tato substit
 tvořena složením všech substitucí, použitých v jednotlivých krocích výpočtu. Ve
 výsledné substituci jsou ponechány pouze proměnné, které uživatel použil v
 definicích původních cílů. Průběžné proměnné, které se sem dostaly při aplikaci
-odvozovacích pravidel nejsou pro uživatele zajímavé.
+odvozovacích pravidel, nejsou pro uživatele zajímavé.
 
-Implementace zpětné inference je inspirována prohledáváním SLD-stromů používaným
-v jazyce
-Prolog\footnote{\url{http://en.wikipedia.org/wiki/SLD_resolution\#SLD_resolution_strategies}}.
+Implementace zpětné inference nevyužívá sítě RETE, neboť ta vyhodnocuje splnění
+podmínek odvozovacích pravidel fakty v pracovní paměti. Zpětná inference ale
+pracuje opačně - analyzuje důsledky pravidel a pracovní paměť nemodifikuje. Síť
+RETE tedy nelze k implementaci využít.
+
+Implementace je inspirována prohledáváním SLD-stromů používaným v jazyce
+Prolog\footnote{\url{http://en.wikipedia.org/wiki/SLD\_resolution\#SLD\_resolution\_strategies}}.
 Z toho také vyplývají její omezení. Implementace pracuje pouze s \uv{pozitivní
 znalostí} - neumožňuje zadání negativních cílů, ani negované podmínky pravidel.
 Implementace také uvažuje pouze přidání nových faktů v důsledcích pravidel,
@@ -171,17 +175,4 @@ našli vhodný způsob, kterak množinu faktů zpětně manipulovat, možnost
 backtrackingu by vyžadovala ukládat průběžné množiny faktů na zásobník, který by
 ve větších systémech rostl neúměrně rychle. Implementace plnohodnotného zpětného
 řetězení tedy není tak jednoduchá, jak se na první pohled jeví a domnívám se, že
-spolu s ostatními body zadání je nad rámec diplomové práce.
-
-\begin{framed}
-  v teoretické části rozebrat, jak tyto problémy řeší GPS v PoAIP
-\end{framed}
-
-\begin{framed}
-  posunout následující odstavec výš?
-\end{framed}
-
-Implementace nevyužívá sítě RETE, neboť ta vyhodnocuje splnění podmínek
-odvozovacích pravidel fakty v pracovní paměti. Zpětná inference ale pracuje
-opačně - analyzuje důsledky pravidel a pracovní paměť nemodifikuje. Síť RETE
-tedy nelze k implementaci využít.
+spolu s ostatními body zadání je nad rámec práce.
