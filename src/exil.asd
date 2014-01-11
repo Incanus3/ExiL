@@ -71,7 +71,7 @@
                  :components
                  ((:file "tst-tokens") (:file "tst-rete")
                   (:file "tst-rete-walk") (:file "tst-rete-copy-simple")
-                  (:file "tst-rete-copy-template")))
+                  (:file "tst-rete-copy-template") (:file "tst-rete-bugs")))
                 (:module
                  :environment
                  :components
@@ -85,7 +85,8 @@
                  :components
                  ((:file "simple") (:file "template") (:file "clips")
                   (:file "undo-redo") (:file "backward")
-                  (:file "undo-redo-backward") (:file "functional")))
+                  (:file "undo-redo-backward") (:file "functional")
+                  (:file "rete-bugs")))
                 (:file "run-tests")))
    #-lispworks(:module :examples
                :components

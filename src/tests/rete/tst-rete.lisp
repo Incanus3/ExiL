@@ -20,15 +20,17 @@
   (find (exil-env::make-match production token)
         (matches env) :test #'exil-env::match-equal-p))
 
-;; need to move object-makers to core first
-(defclass rete-simple-tests (test-case)
+(defclass rete-tests (test-case)
   ((env :accessor env)
    (rete :accessor rete)))
 
-(defmethod set-up ((tests rete-simple-tests))
+(defmethod set-up ((tests rete-tests))
   (with-slots (env rete rule) tests
     (setf env (make-instance 'env-mock))
     (setf rete (make-rete env))))
+
+
+(defclass rete-simple-tests (rete-tests) ())
 
 ;; rete has four entry-points:
 ;; add-wme, rem-wme, add-production, remove-production
@@ -82,10 +84,8 @@
       (assert-false (matches env)))))
 
 ;; need to move object-makers to core first
-(defclass rete-template-tests (test-case)
-  ((env :accessor env)
-   (rete :accessor rete)
-   (in-tmpl :reader in-tmpl
+(defclass rete-template-tests (rete-tests)
+  ((in-tmpl :reader in-tmpl
             :initform (make-template :in '(:object :location)))
    (goal-tmpl :reader goal-tmpl
               :initform (make-template :goal '(:action :object :from :to)))
@@ -96,6 +96,7 @@
    (wme4 :reader wme4)))
 
 (defmethod set-up ((tests rete-template-tests))
+  (call-next-method)
   (with-slots (env rete in-tmpl goal-tmpl rule wme1 wme2 wme3 wme4) tests
     (setf env (make-instance 'env-mock))
     (setf rete (make-rete env))
