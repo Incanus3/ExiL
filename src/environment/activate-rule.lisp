@@ -40,7 +40,7 @@
   (let* ((rule (match-rule match))
          (token (match-token match))
          (bindings (get-variable-bindings
-                    (token->list token)
+                    (remove nil (token->list token))
 		    (remove-if #'negated-p (conditions rule))))
          (activations (subst-vars-in-activations (activations rule)
 						 bindings)))

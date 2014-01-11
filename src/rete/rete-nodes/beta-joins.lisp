@@ -23,6 +23,8 @@
 (defgeneric perform-join-tests (test-list token wme))
 
 (defmethod initialize-instance :after ((node beta-join-node) &key rete)
+  ;; creates parent beta-memory-node and adds itself as its child
+  ;; how does the beta-memory-node's parent get set?
   (add-child node (make-instance 'beta-memory-node :parent node :rete rete)))
 
 (defmethod beta-memory ((node beta-join-node))
@@ -59,6 +61,9 @@
 ;; congruent with the pattern (with consistent variable bindings)
 
 (defclass beta-negative-node (beta-join-node memory-node)
+  ;; negative-wmes holds assoc list of (token matching-wmes)
+  ;; when last matching wme is removed from token's list, the negative
+  ;; condition is satisfied
   ((negative-wmes :initform () :accessor negative-wmes)))
 
 (defun get-neg-wmes (node token)
@@ -94,7 +99,8 @@
 ;; being satisfied) in the token for future use
 (defmethod activate ((node beta-negative-node) (token token))
   (let ((bad-wmes (get-consistent-wmes node token)))
-    (unless bad-wmes (activate-children node token))
+    (unless bad-wmes
+      (activate-children node (make-token nil token)))
     (set-neg-wmes node token bad-wmes)
     (add-item node token #'token-equal-p)))
 
@@ -108,7 +114,7 @@
   (dolist (token (items node))
     (when (perform-join-tests (tests node) token wme)
       (unless (get-neg-wmes node token)
-        (inactivate-children node token))
+        (inactivate-children node (make-token nil token)))
       (add-neg-wme node token wme))))
 
 ;; left inactivation only propagates to children
@@ -127,4 +133,4 @@
 	       (perform-join-tests (tests node) token wme))
       (rem-neg-wme node token wme)
       (unless (get-neg-wmes node token)
-        (activate-children node token)))))
+        (activate-children node (make-token nil token))))))

@@ -4,7 +4,7 @@
 
 (defclass rete-bugs-tests (rete-tests) ())
 
-(def-test-method test-find-atom-in-cond-list ((tests rete-bugs-tests) :run t)
+(def-test-method test-find-atom-in-cond-list ((tests rete-bugs-tests) :run nil)
   (let ((conds (list (make-simple-pattern '(in box ?loc))
                      (make-simple-pattern '(in robot ?loc2)))))
     (assert-equal (erete::find-atom-in-cond-list '?loc conds) (cons 2 2))))
@@ -15,7 +15,8 @@
     (let* ((wme1 (make-simple-fact '(in obj1 A)))
            (wme2 (make-simple-fact '(in obj2 B)))
            (token1 (erete::make-token wme1))
-           (token2 (erete::make-token wme2 token1))
+           (token2 (erete::make-token nil token1))
+           (token3 (erete::make-token wme2 token2))
            (rule (make-rule
                   :rule
                   (list (make-simple-pattern '(in obj1 ?loc1))
@@ -30,17 +31,18 @@
       (let ((node (third (erete::rete-nodes rete 'erete::beta-join-node))))
         (assert-false (erete::tests node))
         ;; once this test is gone, the rule should be satisfied
-        (assert-true (has-match env rule token2))))))
+        (assert-true (has-match env rule token3))))))
 
 (def-test-method rete-should-create-correct-test-when-skipping-neg-conds
-    ((tests rete-bugs-tests) :run t)
+    ((tests rete-bugs-tests) :run nil)
   (with-slots (env rete) tests
     (let* ((wme1 (make-simple-fact '(goal box B)))
            (wme2 (make-simple-fact '(in box A)))
            (wme3 (make-simple-fact '(in robot A)))
            (token1 (erete::make-token wme1))
-           (token2 (erete::make-token wme2 token1))
-           (token3 (erete::make-token wme3 token2))
+           (token2 (erete::make-token nil token1))
+           (token3 (erete::make-token wme2 token2))
+           (token4 (erete::make-token wme3 token3))
            (rule (make-rule
                   :push
                   (list (make-simple-pattern '(goal ?object ?goalloc))
@@ -67,7 +69,7 @@
         (assert-equal (length token-list) 2)
         (assert-equal (second token-list) nil))
 
-      (assert-true (has-match env rule token3)))))
+      (assert-true (has-match env rule token4)))))
 
 (add-test-suite 'rete-bugs-tests)
 ;;(textui-test-run (get-suite rete-bugs-tests))

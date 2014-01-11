@@ -43,6 +43,7 @@
            (wme4 (make-simple-fact '(in robot B)))
            (token1 (erete::make-token wme3))
            (token2 (erete::make-token wme2 token1))
+           (token3 (erete::make-token nil token2))
            (rule (make-rule :move
                             (list (make-simple-pattern '(goal ?action ?object ?from ?to))
                                   (make-simple-pattern '(in ?object ?from))
@@ -51,15 +52,15 @@
       (new-production rete rule)
       (add-wme rete wme1)
       (add-wme rete wme2)
-      (assert-false (has-match env rule token2))
+      (assert-false (matches env))
       (add-wme rete wme3)
-      (assert-true (has-match env rule token2))
+      (assert-true (has-match env rule token3))
       (rem-wme rete wme2)
-      (assert-false (has-match env rule token2))
+      (assert-false (matches env))
       (add-wme rete wme2)
-      (assert-true (has-match env rule token2))
+      (assert-true (has-match env rule token3))
       (add-wme rete wme4)
-      (assert-false (has-match env rule token2)))))
+      (assert-false (matches env)))))
 
 (def-test-method test-rete-fact-longer-than-condition
     ((tests rete-simple-tests) :run nil)
@@ -123,24 +124,25 @@
 (def-test-method test-rete ((tests rete-template-tests) :run nil)
   (with-slots (env rete rule wme1 wme2 wme3 wme4) tests
     (let* ((token1 (erete::make-token wme3))
-           (token2 (erete::make-token wme2 token1)))
+           (token2 (erete::make-token wme2 token1))
+           (token3 (erete::make-token nil token2)))
       (new-production rete rule)
       (add-wme rete wme1)
       (add-wme rete wme2)
       ;; first condition not satisfied
-      (assert-false (has-match env rule token2))
+      (assert-false (matches env))
       (add-wme rete wme3)
       ;; all conditions satisfied
-      (assert-true (has-match env rule token2))
+      (assert-true (has-match env rule token3))
       (rem-wme rete wme2)
       ;; second condition not satisfied
-      (assert-false (has-match env rule token2))
+      (assert-false (matches env))
       (add-wme rete wme2)
       ;; all conditions satisfied
-      (assert-true (has-match env rule token2))
+      (assert-true (has-match env rule token3))
       (add-wme rete wme4)
       ;; last (negated) condition blocked by wme4
-      (assert-false (has-match env rule token2)))))
+      (assert-false (matches env)))))
 
 (add-test-suite 'rete-simple-tests)
 (add-test-suite 'rete-template-tests)
