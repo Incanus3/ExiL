@@ -4,7 +4,12 @@
 
 (defclass rete-bugs-tests (rete-tests) ())
 
-(def-test-method test-rete ((tests rete-bugs-tests) :run t)
+(def-test-method test-find-atom-in-cond-list ((tests rete-bugs-tests) :run t)
+  (let ((conds (list (make-simple-pattern '(in box ?loc))
+                     (make-simple-pattern '(in robot ?loc2)))))
+    (assert-equal (erete::find-atom-in-cond-list '?loc conds) (cons 2 2))))
+
+(def-test-method rete-shouldnt-create-test-against-neg-conds ((tests rete-bugs-tests) :run t)
   (with-slots (env rete) tests
     (let* ((wme1 (make-simple-fact '(in obj1 A)))
            (wme2 (make-simple-fact '(in obj2 B)))

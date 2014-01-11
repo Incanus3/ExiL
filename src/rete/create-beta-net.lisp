@@ -23,12 +23,16 @@
   (:documentation "find or create child beta-join- or beta-negative-node
                    for given beta-memory-node"))
 
+;; THIS RETURNS ONLY ONE OCCURRENCE - is that a problem?
 ;; returns (cons <condition index from end> <atom-position in condition>)
 (defmethod find-atom-in-cond-list (atom cond-list)
-  (iter (for condition :in (reverse cond-list))
-        (for i :upfrom 1)
-        (when (atom-position condition atom)
-          (return (cons i (atom-position condition atom))))))
+  (or (iter (for condition :in (reverse cond-list))
+            (for i :upfrom 1)
+            (when (atom-position condition atom)
+              (return (cons i (atom-position condition atom)))))
+      ;; return pair even if not found
+      (cons nil nil)))
+
 
 ;; TODO: get-intercondition-tests and get-intracondition-tests shouldn't
 ;; make tests for the singleton variable '?
@@ -37,13 +41,24 @@
 ;; simple-pattern condition and prev-conds
 (defmethod get-intercondition-tests ((condition simple-pattern)
                                      (prev-conds list))
+  ;; iterate over atoms of current condition
   (iter (for atom :in (pattern condition))
         (with used-vars)
         (for i :upfrom 0)
-        (for (prev-cond . field) = (find-atom-in-cond-list atom prev-conds))
-        (when (and (variable-p atom) prev-cond (not (member atom used-vars)))
-          (collect (make-test i prev-cond field))
-          (push atom used-vars))))
+        ;; if it's a variable
+        (when (variable-p atom)
+          ;; find the atom in previous conditions
+          ;;                # conds back . which field
+          (destructuring-bind (prev-cond . field)
+              (find-atom-in-cond-list atom prev-conds)
+            ;; if it occurrs in previous conditions and it wasn't checked yet
+            ;; - this prevents checking multiple occurences of var in current
+            ;;   cond against previous conds
+            (when (and prev-cond (not (member atom used-vars)))
+              ;; create a test for it
+              (collect (make-test i prev-cond field))
+              ;; mark the variable as checked
+              (push atom used-vars))))))
 
 ;; get list of tests ensuring consistent variable bindings between
 ;; template-pattern condition and prev-conds
@@ -57,6 +72,7 @@
                    (not (member slot-val used-vars)))
           (collect (make-test slot-name prev-cond field))
           (push slot-val used-vars))))
+
 
 ;; get list of tests ensuring consistent variable bindings within
 ;; simple-pattern condition (important when the same variable appears in the
@@ -76,6 +92,7 @@
         (for other-occurrence = (rassoc slot-val (rest subpattern)))
         (when (and (variable-p slot-val) other-occurrence)
           (collect (make-test 0 slot-name (car other-occurrence))))))
+
 
 (defmethod get-join-tests-from-condition ((condition pattern)
                                           (prev-conds list))
