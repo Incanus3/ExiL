@@ -24,11 +24,14 @@
                    for given beta-memory-node"))
 
 ;; THIS RETURNS ONLY ONE OCCURRENCE - is that a problem?
+;; THIS SKIPS NEGATIVE CONDITIONS, which is a dirty hack, but the fastest way
 ;; returns (cons <condition index from end> <atom-position in condition>)
 (defmethod find-atom-in-cond-list (atom cond-list)
   (or (iter (for condition :in (reverse cond-list))
             (for i :upfrom 1)
-            (when (atom-position condition atom)
+            ;; (when (atom-position condition atom)
+            (when (and (not (negated-p condition)) ;; skip negative conds
+                       (atom-position condition atom))
               (return (cons i (atom-position condition atom)))))
       ;; return pair even if not found
       (cons nil nil)))
@@ -37,6 +40,9 @@
 ;; TODO: get-intercondition-tests and get-intracondition-tests shouldn't
 ;; make tests for the singleton variable '?
 
+;; ONLY THIS METHOD SHOULD KNOW TO SKIP PREVIOUS NEGATIVE CONDITIONS, BUT SINCE
+;; FINDING ATOM IN PREVIOUS CONDITIONS IS HANDLED BY find-atom-in-cond-list
+;; I'LL HACK IT THERE
 ;; get list of tests ensuring consistent variable bindings between
 ;; simple-pattern condition and prev-conds
 (defmethod get-intercondition-tests ((condition simple-pattern)
