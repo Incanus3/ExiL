@@ -6,7 +6,8 @@
   \begin{itemize}
     \item pracuje se znalostí - vlastnosti znalosti zpracovatelné ES
     \item symbolická reprezentace znalosti $\rightarrow$ symbolické výpočty
-      \item reprezentace stavu pomocí symbolických struktur, inference jako jejich manipulace
+    \item reprezentace stavu pomocí symbolických struktur, inference jako jejich manipulace
+    \item fakty a odvozovací pravidla
   \end{itemize}
 \end{framed}
 
@@ -26,6 +27,28 @@
     \item zpěnté - means-ends analysis
   \end{itemize}
 \end{framed}
+
+Expertní systémy rozdělujeme do dvou skupin podle toho, jakým způsobem nad
+zadanými znalostmi usuzují. \textbf{Expertní systém se dopředným řetězením}
+(inferencí) postupně vyvozuje závěry ze zadaných znalostí hledáním odvozovacích
+pravidel se splněnými podmínkami. \textbf{Expertní systém se zpětným řetězením}
+(inferencí) postupuje od zadaného cíle a hledá odvozovací pravidla, která vedou
+k jeho splnění. Jejich podmínky pak zpracovává jako dílčí cíle.
+
+Požadovaný cíl či dotaz může být součástí znalostí předaných systému (typické
+pro systémy s dopřednou inferencí), nebo může být zadán samostatně (systémy se
+zpětnou inferencí). Může nás také zajímat množina všech závěrů, odvoditelných ze
+zadaných znalostí.
+
+Zadáním cíle se systému dotazujeme, zda existuje posloupnost aplikace
+odvozovacích pravidel, vedoucí k jeho splnění. V případě nale
+
+Buď konkrétní cíl.
+Cíl problému můžeme zadat systému jako dotaz (typické pro, ale ne omezené na,
+zpětné řetězení).
+Nebo nás může zajímat množina všech výsledků odvoditelných z báze.
+poskytnutí odpovědi na otázku - zda lze ze znalostní báze odvodit fakt daného
+tvaru (vzor), nalézt možné vazby proměnných
 
 \subsection{Interpretace programu}
 \begin{framed}

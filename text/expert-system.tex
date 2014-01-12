@@ -1,45 +1,68 @@
-\subsection{Expertní systémy}
+\subsection{Expertní systém}
 
-\begin{framed}
-  \begin{itemize}
-    \item co je expertní systém - vlastnosti, distinkce
-    \item popsáno v bakalářce:
-      \begin{itemize}
-        \item základní definice
-        \item historie
-        \item zařazení (knowledge-based, rule-based, AI)
-        \item postup návrhu (volba reprezentace znalostí, proces učení -
-          vytvoření znalostní báze)
-        \item typické vlastnosti (dedukce, ne algebraické výpočty, oddělení
-          znalosti od odvozovacího aparátu, heuristiky)
-        \item základní rozdíl mezi dopředným a zpětným řetězením
-      \end{itemize}
+Expertní systém je počítačový program, který usuzuje na základě znalostí
+z~nějaké \emph{problémové domény} za účelem vyřešení zadaného problému nebo
+poskytnutí odpovědi na otázku \cite{introduction}. Problémovou doménou zde
+rozumíme množinu znalostí, omezenou na určitý okruh, který nás zajímá, s
+vyloučením všech ostatních, irelevantních znalostí \cite{problem-domain}.
+Znalosti z problémové domény jsou reprezentovány jejím
+\emph{modelem}\footnote{\url{http://en.wikipedia.org/wiki/Domain\_model}}.
+Expertní systém tedy pracuje s modelem zvolené problémové domény.
 
-    \item zopakovat definici - počítačový program, který usuzuje nad nějakou
-      problémovou doménou za účelem vyřešení zadaného problému (např. nalézt
-      posloupnost akcí), nebo poskytnutí odpovědi na otázku (zda odpověď
-      existuje, nalézt možné vazby proměnných)
-    \item problémová doména, vyřešení problému, odpověď na otázku
+K typickým problémům, řešeným pomocí expertních systému patří
+\cite{introduction}
+\begin{itemize}
+  \item plánování posloupnosti akcí vedoucích k zadanému cíli (např.
+    plánování trasy ze znalosti dopravních spojů a dopravní situace),
+  \item interpretace dat (např. detekce nebezpečí z dat získaných z
+    termografické kamery), analýza složení (vyhodnocení dat získaných metodami
+    analytické chemie),
+  \item diagnóza a plánování oprav poruch systému,
+  \item konfugurace komplexních objektů (např. navržení serverového cloudu pro
+    poskytnutí zadaných služeb).
+\end{itemize}
 
-    \item vyjmenovat, co už řeší bakalářka
-    \item typickou vlastností je také schopnost vysvětlit, jak se došlo k
-      řešení (to zde řeší watchers, zpětná inference řeší přímo) - motivace
-      (str. 9)
-    \item typické problémy řešené pomocí ES, aplikabilita
-      \begin{itemize}
-        \item plánování posloupnosti akcí
-        \item interpretace dat (např. z nějakých senzorů), strukturální analýza
-          (např. aplikace chemických analytických metod - když vypadá
-          chromatograf takhle, pak látka asi obsahuje tohle)
-        \item diagnóza poruch systému
-        \item hledání konfugurace komplexních objektů - např. provisioning
-          serverů pro pokrytí zadaného úkolu
-      \end{itemize}
-    \item aplikabilita, limitace
-  \end{itemize}
-\end{framed}
+V první kapitole své bakalářské práce \cite{bakalarka} uvádím typické vlastnosti
+expertních systémů, jejich zařazení v rámci informatiky a umělé inteligence a
+jejich rozdíly oproti jiným typům programů, které daný problém mohou řešit.
+Stěžejní charakteristikou expertního systému je úplné oddělení reprezentace
+znalostí, nad kterými systém usuzuje, od samotného \emph{odvozovacího aparátu}.
+Odvozovací aparát je tedy obecný a je schopen usuzovat nad jakoukoli problémovou
+doménou, jejíž model lze v expertním systému reprezentovat.
 
-Expertní systém je počítačový program, který usuzuje nad nějakou problémovou
-doménou za účelem vyřešení zadaného problému (např. nalézt posloupnost akcí),
-nebo poskytnutí odpovědi na otázku (zda odpověď existuje, nalézt možné vazby
-proměnných)
+Jak vyplývá z uvedené definice, expertní systém je hotový program schopný
+odpovídat na dotazy, či řešit problémy v rámci zvolené problémové domény. Tento
+program můžeme vytvořit od základu v nějakém obecném programovacím jazyce. To je
+ale poměrně složité a pokud nemáme specifické nároky, nevyplatí se to.  Častěji
+použijeme existující \emph{nástroj} či \emph{knihovnu pro tvorbu expertních
+systémů}. Tento nástroj už obsahuje odvozovací aparát a definuje reprezentaci
+znalostí a~dotazů a syntax pro jejich zadávání. Takovým nástrojem je i knihovna
+ExiL, která je přílohou této práce.
+
+\clearpage
+Zařazení expertního systému do procesu sestává z následujících fází:
+\begin{enumerate}
+  \item sestavení modelu zvolené problémové domény,
+  \item výběr nástroje pro tvorbu expertních systémů podle typu domény a dotazů,
+    které chceme být schopni zadávat,
+  \item reprezentace modelu problémové domény použitím syntaxe zvoleného
+    nástroje.
+\end{enumerate}
+Vytvořená reprezentace modelu problémové domény tvoří po načtení nástrojem pro
+tvorbu expertních systémů tzv. \emph{znalostní bázi} výsledného expertního systému.
+Tomu pak můžeme zadávat dotazy buď přímo, použitím jeho syntaxe, nebo skrze
+nějaké uživatelské rozhraní. Je-li zvolený nástroj navržen jako knihovna, můžeme
+také vytvořit další program, který zadává znalosti do expertního systému a/nebo
+mu zadává dotazy a odpovědi na ně pak dále zpracovává.
+
+Jednou z běžných vlastností expertních systémů je také schopnost vysvětlit, jak
+systém k řešení problému dospěl. To umožňuje evaluaci správnosti řešení
+a~poskytuje tak zpětnou vazbu pro případnou opravu znalostní báze, zadaného cíle
+či dotazu, nebo odvozovacího aparátu (v případě vlastního návrhu expertního
+systému).
+
+Expretní systém nelze použít k řešení jakéhokoli typu problému. To je dáno
+reprezentací znalostí v expertním systému a způsobem, jakým systém nad těmito
+znalostmi usuzuje. Vlastnosti znalostí, které lze v expertním systému
+reprezentovat, jejich reprezentace, způsoby zadávání cílů a dotazů i to, jak
+systém zadaných cílů dosahuje, je náplní následujících sekcí.
