@@ -1,0 +1,112 @@
+## first rule invalidates conditions of second
+(defgoal (at home))
+
+(deffacts initial
+  (out of city)
+  (have money))
+
+(defrule use-atm
+  (have card)
+  (have money on account)
+  =>
+  (assert (have money))
+  (retract (have money on account)))
+
+(defrule take-bus-to-city
+  (have money)
+  (out of city)
+  =>
+  (assert (at city))
+  (retract (have money)))
+
+- how should retract behave during backward inference?
+  - used only to satisfy negative goals, otherwise ignored
+    - would result in problem with invalidation of next rule
+  - when rule retracts fact, that we have or had as goal, it could signify, that we
+    can't use that rule
+    - could actually work for this case, but wouldn't work, when there's a way
+      around - e.g. atm
+  - retract facts from initial facts? when?
+    - when done immediately, would invalidate it's own conditions
+    - after? when?
+    - also problem with big stack
+
+(defrule take-taxi-home
+  (have money)
+  (at city)
+  =>
+  (at home))
+
+(goals) => ((at home))
+(step)  - use take-taxi-home
+- this can't remove (have money) from initial facts, because
+1) it can't know, that money can be used only once (imagine police badge instead
+   of money)
+   (we could tell the system by including (retract (have money)) in activations)
+2) it would invalidate it's own conditions if done immediately (before
+   satisfying preconditions), but it can't be done after, because that's too
+   late - take-bus-to-city is allready satisfied
+   - actually, this could be "tried to done" after and fail, because the fact is
+     no longer there - take-bus-to-city removed it also, but this is really
+     problematic
+3) we would need to save facts at each step to stack, which would get really big
+(goals) => ((have money) (at city))
+(step)  - use (have money)
+(goals) => ((at city))
+(step)  - use take-bus-to-city
+(goals) => ((have money) (out of city))
+- the rest can be satisfied by initial facts
+=> finds solution even though first rule invalidates conditions of the second
+    one
+- here positive condition of second rule is invalidated by retraction in first
+  rule
+- in similar way, negative condition of second rule could be invalidated by
+  assertion in the first one
+- how could this be solved?
+- backward inference could try to find the solution and then validate it using
+  forward inference
+
+- backward inference tries different facts and rules for given goal, but it
+  doesn't try difference sequence of goals, which may prove to be problematic
+
+
+(defgoal (at home))
+
+(deffacts initial
+  (out of city)
+  (have money))
+
+(defrule take-bus-to-city
+  (have money)
+  (out of city)
+  =>
+  (assert (at city))
+  (retract (have money)))
+
+(defrule take-taxi-home
+  (have money)
+  (at city)
+  =>
+  (assert (at home))
+  (retract (have money)))
+
+(defrule use-atm
+  (have card)
+  (have money on account)
+  =>
+  (assert (have money))
+  (retract (have money on account))).
+
+(goals) => ((at home))
+(step)  - use take-taxi-home
+(goals) => ((have money) (at city))
+(step)  - use (have money)
+(goals) => ((at city))
+(step)  - doesn't use use-atm, because that doesn't solve goal
+        - can't use take-bus-to-city, because that retracts (have money), which
+          was in goals previously
+        => backtrack to goals ((have money) (at city))
+        - can't use take-bus-to-city, because (have money) is in goals
+        - use rule use-atm
+(goals) => ((at city))
+        - take-bus-to-city again can't be used

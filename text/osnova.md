@@ -1,126 +1,29 @@
-## Osnova
-### úvod
-- motivace
-  - co je ES - AI, náhražka nebo asistence expertu
-  - existující možnosti - CLIPS, jejich omezení
-    - najít další aktuální možnosti
-    - lisa - zeptat se dostála, co se mu na lise nelíbilo
-  - proč lisp
-- cíle práce
-  - co bylo implementováno v bakalářské práci
-  - jaká rozšíření jsem měl implementovat
-- organizační poznámka - proč začínám praktickou částí
-
-
-### praktická část
-#### dokumentace ExiLu (5-10) + příklady
-* uživatelská příručka
-  - instalace, získání kódu, git
-  - úvod do lispu - odkaz na practical common lisp, clhs
-  - začít příkladem, ideálně templated fakta
-  - popsat jednotlivé sekce kódu, jejich význam (korespondence s fázemi návrhu ES,
-    formulace problému, formát dat, vstupní znalosti, odvozovací krok, řízení odvozování, ladění)
-    - definice prostředí
-    - definice šablon - formát dat
-    - definice znalostní báze - vstupní znalost - deffacts, defrules
-    - (nastavení sledování průběhu inference - watchers)
-    - (úprava průběhu inference - strategie)
-    - spuštění / krokování inference - reset, run, step
-    - dotazy nad working memory - facts, agenda
-    - úprava working memory - assert, retract, modify
-    - dotazy nad znalostní bází - fact-groups, rules
-    - cleanup - volatile vs durable sloty prostředí
-    - undo/redo
-    - zpětné řetězení
-    - GUI
-* referenční příručka
-  * popsat jednotlivé fáze detailně - všechny funkce, možnosti, syntax (CLIPS, lispy), redefinice
-  * ordered / structured fakta
-  * odlišnosti / nedodělávky od CLIPS
-    * na pravé straně pravidel nejsou povoleny direktivy deftemplate, deffacts, defrule
-      => inference nemůže ovlivňovat znalostní bazi, jen working memory
-    * ExiL toto naopak umožnuje - to by dokonce umožňovalo učení (promyslet možnosti)
-  * chování v kombinaci - např. externí reprezentace - query -> repre -> modifier
-  * aktivace pravidel jsou vyhodnocovány -> mohou používat lispové funkce (funkční alternativy)
-    - uvést příklady - např. pravidla snadno mohou agregovat nejistotu (Jackson, 81)
-  * ukončení inference - buď zajistit, že nebude splněno žádné pravidlo (např. odstranit
-    goal, pokud je explicitní), nebo explicitně volat halt
-
-##### pojmy nutné pro zvládnutí příručky
-* **znalostní baze** - množina výchozích znalostí (po resetu, před započetím inference)
-  - podle některých definic zahrnuje pravidla
-  - Jackson odděluje rule set jako **production memory**
-    - co ale v tu chvíli modifikuje defrule? pravděpodobně obojí
-* **inference** - odvozování (posloupnost odvozovacích kroků - typicky aplikace pravidel)
-* **working memory**
-  - pracovní množina znalostí - přesné, ale příliš obšírné
-  - pracovní znalost - zavádí k představě jedné znalosti, místo celé množiny
-  - pracovní paměť - je přesným překladem, ale pojem je ve skutečnosti nesmyslný - není paměť
-* knowledge base a working memory - autoři používají různě - někde slučují
-  * pokud systém umožňuje přidání / změnu pravidel uživatelem v průběhu, jsou tato součástí
-    knowledge base?
-* pojmy citovat z The Handbook of applied expert systems - kap. 4 - John Durkin
-* => working and production memory is initialized from knowledge base
-  * working memory can change by rule activation or user interaction
-  * production memory - usually static, but sometimes can change (clips - ověřit)
-
-#### implementace (5-8)
-* architektura
-  - popsat jednotlivé package, zodpovědnosti, závislosti (cykly), interakce
-    * rete <-> env (as observer - not possible with packages)
-    * parser <-> env (in backward chaining, because env analyzes rule's activations,
-        which is probably a bad idea)
-* jednotlivé části zadání (5)
-  * CLIPS kompatibilita - parser
-  * GUI - CAPI, #+features, provázanost - gui třeba vázat k prostředí (ideálně opět observer)
-  * undo/redo
-    * implementace - ulozeni hodnot slotu v closure a obnoveni
-      - dynamicke volani copy-'slot'
-      - kopie rete + ověření správnosti (ekvivalence)
-      -> pruchod grafem s cykly - velmi obecna funkce vyssiho radu
-  * zpětné řetězení
-    * cíle, kroky, odpovědi, backtracking
-    * plánování (hledání posloupností akcí vedoucí k výsledku)
-      X hledání odpovědí (konzistentní vazby proměnných)
-    * dopředné X zpětné, determinismus, aplikovatelnost, výhody, limitace
-    * zdokumentovat to, že aplikace pravidel se tiskne odzadu (v opačném pořadí, než je
-      třeba akce vykonat) - viz notes.txt
-    * příklady z kap. 4 Paradigms of AI programming, omezení
-  * použité nástroje - iterate, xlunit (TDD)
-* použité algoritmy - RETE - převzít z bakalářky
-* zajímavosti, problémy
-* PoAIP - kap 4. - zpětné řetězení, kap. 5 - pattern matching (5.2,5.3)
-* co by obnášela různá vylepšení
-  * or, wildcardy a custom testy v podmínkách pravidel
-    - rozšíření RETE sítě, složitější parsování
-  * problém s evalem důsledků (jak bych řešil v ruby - vyhodnocení bloku v prostředí/objektu)
-
-#### další teorie
-* principy - state space search, symbolické výpočty - manipulace reprezentace stavu
-* AI - porozumění problému strojem - stroj je schopen řešit, prestože nechápe význam
-  - syntax X sémantika - inteligence, pravidla chování, odvozovací pravidla -> symbolické výpočty
-* limitace ES
-  - problémy v běžném životě vyžadují inherentní znalosti - aby byl systém self-contained,
-    musel by být obrovský
-  - předání znalostí programu - spoustu vědomostí ani nevíme, že máme, další nedokážeme popsat,
-    kvantifikovat - intuice, zkušenost (-> abstrahujeme heuristiky, abychom nemuseli stejný problém
-    promýšlet pokaždé znovu), neurčitost, vágnost
-  - u velkých systémů - nepředvídané interakce vědomostí (McCarthy - The Robot and The Baby)
-  - nárůst state space - combinatorial explosion
-  - strategie výběru kroku, salience, metapravidla, (řezy - Prolog)
-* sémantika programu
-  * typy faktů - atributy objektu - triplety, vektory
-  * relace
-  * další formy - např. goal u dopředného řetězení
-  * zajímá pouze uživatele, ES nerozlišuje (ExiL, GPS) X Prolog - funktory, predikáty
-    - trade-off expresivity reprezentace a jednoduchosti odvozovacího aparátu
-* interpretace výstupu programu
+# Teoretická část
+- co je expertní systém - vlastnosti, distinkce, typické problémy
+- pracuje se znalostí - vlastnosti znalosti zpracovatelné ES
+- symbolická reprezentace znalosti -> symbolické výpočty
+  - reprezentace stavu pomocí symbolických struktur, inference jako jejich manipulace
+- principy - rule-based systémy
+  - prohledávání prostoru stavů (stromy)
+  - combinatorial explosion -> heuristiky (strategie)
+- dopředné vs. zpětné řetězení
+  - zpěnté - means-ends analysis
+- interpretace výstupu programu
   - plánování akcí
   - hledání odpovědí
   - dokazování vyplývání
-* retract ve zpětném řetězení X nepravda v Prologu - pouze pozitivní znalost
+- aplikace
+  - strips, gps - zpětné řetězení
+    - mycin - složitější pravidla
+  - clips - dopředné řetězení
 
 
+
+
+
+
+
+## Předběžná osnova
 ### teoretická část I (8-12) - expertní systémy - čerpá z Jacksona
 * úvod - definice (znalosti, expertíza), vlastnosti, odlišnosti, typické aplikace
 * přehled AI - co směřovalo k pojmu expertního systému
@@ -161,6 +64,77 @@
   * výhody (a nevýhody) LISPu pro symbolické výpočty
   * základní přehled lispu - pravděpodobně jen odkaz na materiály a vyjmenování
     pojmů potřebných pro pochopení implementace
+
+### úvod
+- motivace
+  - co je ES - AI, náhražka nebo asistence expertu
+  - existující možnosti - CLIPS, jejich omezení
+    - najít další aktuální možnosti
+    - lisa - zeptat se dostála, co se mu na lise nelíbilo
+  - proč lisp
+- cíle práce
+  - co bylo implementováno v bakalářské práci
+  - jaká rozšíření jsem měl implementovat
+- organizační poznámka - proč začínám praktickou částí
+
+##### pojmy nutné pro zvládnutí příručky
+* **znalostní baze** - množina výchozích znalostí (po resetu, před započetím inference)
+  - podle některých definic zahrnuje pravidla
+  - Jackson odděluje rule set jako **production memory**
+    - co ale v tu chvíli modifikuje defrule? pravděpodobně obojí
+* **inference** - odvozování (posloupnost odvozovacích kroků - typicky aplikace pravidel)
+* **working memory**
+  - pracovní množina znalostí - přesné, ale příliš obšírné
+  - pracovní znalost - zavádí k představě jedné znalosti, místo celé množiny
+  - pracovní paměť - je přesným překladem, ale pojem je ve skutečnosti nesmyslný - není paměť
+* knowledge base a working memory - autoři používají různě - někde slučují
+  * pokud systém umožňuje přidání / změnu pravidel uživatelem v průběhu, jsou tato součástí
+    knowledge base? (production memory)
+* pojmy citovat z The Handbook of applied expert systems - kap. 4 - John Durkin
+* => working and production memory is initialized from knowledge base
+  * working memory can change by rule activation or user interaction
+  * production memory - usually static, but sometimes can change (clips - ověřit)
+
+#### implementace (5-8)
+* jednotlivé části zadání (5)
+  * zpětné řetězení
+    * cíle, kroky, odpovědi, backtracking
+    * plánování (hledání posloupností akcí vedoucí k výsledku)
+      X hledání odpovědí (konzistentní vazby proměnných)
+    * dopředné X zpětné, determinismus, aplikovatelnost, výhody, limitace
+    * zdokumentovat to, že aplikace pravidel se tiskne odzadu (v opačném pořadí, než je
+      třeba akce vykonat) - viz notes.txt
+    * příklady z kap. 4 Paradigms of AI programming, omezení
+  * použité nástroje - iterate, xlunit (TDD)
+* použité algoritmy - RETE - převzít z bakalářky
+* PoAIP - kap 4. - zpětné řetězení, kap. 5 - pattern matching (5.2,5.3)
+
+#### další teorie
+* principy - state space search, symbolické výpočty - manipulace reprezentace stavu
+* AI - porozumění problému strojem - stroj je schopen řešit, prestože nechápe význam
+  - syntax X sémantika - inteligence, pravidla chování, odvozovací pravidla -> symbolické výpočty
+* limitace ES
+  - problémy v běžném životě vyžadují inherentní znalosti - aby byl systém self-contained,
+    musel by být obrovský
+  - předání znalostí programu - spoustu vědomostí ani nevíme, že máme, další nedokážeme popsat,
+    kvantifikovat - intuice, zkušenost (-> abstrahujeme heuristiky, abychom nemuseli stejný problém
+    promýšlet pokaždé znovu), neurčitost, vágnost
+  - u velkých systémů - nepředvídané interakce vědomostí (McCarthy - The Robot and The Baby)
+  - nárůst state space - combinatorial explosion
+  - strategie výběru kroku, salience, metapravidla, (řezy - Prolog)
+* sémantika programu
+  * typy faktů - atributy objektu - triplety, vektory
+  * relace
+  * další formy - např. goal u dopředného řetězení
+  * zajímá pouze uživatele, ES nerozlišuje (ExiL, GPS) X Prolog - funktory, predikáty
+    - trade-off expresivity reprezentace a jednoduchosti odvozovacího aparátu
+* interpretace výstupu programu
+  - plánování akcí
+  - hledání odpovědí
+  - dokazování vyplývání
+* retract ve zpětném řetězení X nepravda v Prologu - pouze pozitivní znalost
+
+
 
 
 ### teoretická část II (odkazy na praktickou část) (4-6)
