@@ -1,10 +1,55 @@
-\subsection{Reprezentace znalosti}
+\subsection{Reprezentace znalostí}
 
 \begin{framed}
   \begin{itemize}
-    \item pracuje se znalostí - vlastnosti znalosti zpracovatelné ES
-    \item symbolická reprezentace znalosti $\rightarrow$ symbolické výpočty
-    \item reprezentace stavu pomocí symbolických struktur, inference jako jejich manipulace
+    \item vlastnosti znalostí zpracovatelných ES
+      \begin{itemize}
+        \item relevantní
+        \item organizovaná (postihuje souvislosti mezi pojmy), extensively
+          indexed and content-addressable (should enable cross-referencing)
+        \item jednoznačná - i v reprezentaci, která umožnuje rozlišení můžeme
+          znalost vyjádřit nejednoznačně
+        \item self-contained - can't assume prior knowledge
+      \end{itemize}
+    \item reprezentace
+      \begin{itemize}
+        \item "set of syntactic and semantic conventions that make it possible
+          to describe things", things ~ knowledge ~ state of the system
+          (objects, their properties and relationships)
+        \item syntax = "set of rules for combining symbols to form expressions
+          in the representation language"
+        \item semantics = how expressions so constructed should be interpreted
+          - what is the meaning of the forms - typically by assigning meanings
+          to individual symbols, than recurently inducing meaning of more
+          complex expressions
+        \item formally described, well-defined syntax and semantics
+        \item unambiguous
+        \item processable and storable by computer
+        \item logical adequacy - representation should be capable of making all
+          distinctions that you want to make
+        \item heuristic power - there must be a way of using this representation
+          to solve problems - the more expressive language (more possible
+          distinctions), the the more difficult to manipulate during inference
+          item natational convenience - expressions easy to write, read and
+          understand (without knowing, how the computer will interpret them)
+        \item declarative - descriptive $\rightarrow$ can be understood without
+          knowing what states the program will go though when interpreting the
+          representation
+        \item example schemes - production rules, structured objects (e.g.
+          templates), logic programs
+        \item representation language - oriented towards organizing descriptions
+          of objects and ideas, rather than stating sequences of instructions or
+          storing simple data elements
+      \end{itemize}
+    \item problem solving involves reasoning about actions and states of the
+      world
+    \item problems can be formulated in terms of initial state, goal state
+      and a set of operations, that can be employed in an attempt to
+      transform one state into another
+    \item symbolické výpočty - non-numeric computations, manipulation of
+      symbolic representations
+    \item reprezentace stavu pomocí symbolických struktur, inference jako jejich
+      manipulace
     \item fakty a odvozovací pravidla
   \end{itemize}
 \end{framed}

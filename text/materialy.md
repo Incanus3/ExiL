@@ -1,10 +1,6 @@
 ## References and information sources + covered topics
 1. Introduction to Expert Systems [Peter Jackson]
   * What are expert systems?
-    * nature of knowledge and expertise, aim of ES, typical tasks solved by ES
-    * characteristics of ES, differences from other AI
-    * knowledge representation - characteristics, criteria, conventions
-    * explaining solutions
     * ES applicability
   * Overview of AI
     * what is AI, where does ES fit in
@@ -25,9 +21,6 @@
         * pros and cons
         * trade-off btw. inference engine simplicity and flexibility of knowledge repr.
   * Knowledge representation
-    * properties and criteria
-      - unambiguous, self-contained, organized, processable and storable by computer
-    * definitions - representation, description, syntax, semantics, problem
     * historic implementations
       * STRIPS
         - state, operators (preconditions, delete list, add list), goals
