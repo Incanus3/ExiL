@@ -1,55 +1,72 @@
 \subsection{Reprezentace znalostí}
 
+% representation language - oriented towards organizing descriptions
+% of objects and ideas, rather than stating sequences of instructions or
+% storing simple data elements
+
+Aby bylo možné pracovat se znalostmi v expertním systému, měly by splňovat
+několik vlastností:
+\begin{itemize}
+  \item přesnost - pro vyvození rozumných závěrů nemůže být znalost vágní (to
+    neznamená, že nemůžeme vyjádřit nejistotu),
+  \item relevance - znalosti by se měly týkat pouze pojmů z problémové domény
+  \item organizovanost - znalosti by měly postihovat všechny potřebné spojitosti
+    mezi pojmy, to zahrnuje například používání vždy stejného pojmu pro tutéž
+    věc,
+  \item uzavřenost - systém by pro vyvození závěrů neměl potřebovat žádné
+    předchozí znalosti.
+\end{itemize}
+
+Systém nechápe význam znalostí, pracuje pouze s jejich reprezentací.
+Reprezentaci obecně chápeme jako množinu syntaktických a sémantických pravidel,
+které umožňují popsat znalosti. Reprezentaci znalosti pak jako výraz, který
+podle těchto pravidel popisuje danou znalost. Jazyk reprezentace je množina
+všech možných reprezentací znalostí.
+
+Syntax reprezentace je množina pravidel, která definují základní stavební bloky
+(atomy) jazyka reprezentace a jak jejich kombinací vytvářet výrazy tohoto
+jazyka. Sémantika říká, jak jsou výrazy jazyka reprezentace interpretovány -
+jaký je jejich význam. Sémantika nám tedy dává zobrazení z reprezentace znalosti
+na reprezentovanou znalost. Sémantická pravidla jsou často rekurentní -
+přiřkneme význam atomům a poté jednotlivým strukturám, které vznikají jejich
+kombinací.
+
+Aby byla reprezentace praktická, musí být
+\begin{itemize}
+  \item jednoznačná - není možné, aby měl jeden výraz jazyka reprezentace
+    několik významů,
+  \item expresivní - reprezentace musí umožňovat vyjádření všech detailů
+    (\emph{distinction}) znalosti, kterou chceme popsat,
+  \item srozumitelná - význam výrazu by měl být snadno pochopitelný bez
+    nutnosti chápat, jak je systémem zpracováván,
+  \item stručná - výrazy by mělo být snadné psát, neměly by být zbytečně
+    mnohomluvné;
+  \item reprezentaci musí být možno zpracovávat a ukládat v počítači.
+\end{itemize}
+Míra expresivity je často v protikladu snadného strojového zpracování, hledáme
+tedy kompromis, mezi těmito dvěma vlastnostmi.
+
+Často používanými reprezentačními schematy jsou strukturované objekty,
+odvozovací pravidla a logické programy. Knihovna ExiL, stejně jako systém CLIPS
+používá prvních dvou. Typickou ukázkou třetího je jazyk
+Prolog\footnote{\url{http://en.wikipedia.org/wiki/Prolog}}.
+
 \begin{framed}
   \begin{itemize}
-    \item vlastnosti znalostí zpracovatelných ES
+    \item fakty a vzory (strukturované objekty) a odvozovací pravidla
+    \item dále pracovat s pojmem znalost (reprezentace je implicitní)
+    \item stav expertního systému - mna znalostí
+    \item pracovní paměť
+    \item reprezentace problému
       \begin{itemize}
-        \item relevantní
-        \item organizovaná (postihuje souvislosti mezi pojmy), extensively
-          indexed and content-addressable (should enable cross-referencing)
-        \item jednoznačná - i v reprezentaci, která umožnuje rozlišení můžeme
-          znalost vyjádřit nejednoznačně
-        \item self-contained - can't assume prior knowledge
+        \item problem solving involves reasoning about actions and states of the
+          world (state = current knowledge = describes objects, their properties and
+          relationonships)
+        \item problems can be formulated in terms of initial state, goal state
+          and a set of operations, that can be employed in an attempt to
+          transform one state into another
+        \item symbolické výpočty - non-numeric computations, manipulation of
+          symbolic representations
       \end{itemize}
-    \item reprezentace
-      \begin{itemize}
-        \item "set of syntactic and semantic conventions that make it possible
-          to describe things", things ~ knowledge ~ state of the system
-          (objects, their properties and relationships)
-        \item syntax = "set of rules for combining symbols to form expressions
-          in the representation language"
-        \item semantics = how expressions so constructed should be interpreted
-          - what is the meaning of the forms - typically by assigning meanings
-          to individual symbols, than recurently inducing meaning of more
-          complex expressions
-        \item formally described, well-defined syntax and semantics
-        \item unambiguous
-        \item processable and storable by computer
-        \item logical adequacy - representation should be capable of making all
-          distinctions that you want to make
-        \item heuristic power - there must be a way of using this representation
-          to solve problems - the more expressive language (more possible
-          distinctions), the the more difficult to manipulate during inference
-          item natational convenience - expressions easy to write, read and
-          understand (without knowing, how the computer will interpret them)
-        \item declarative - descriptive $\rightarrow$ can be understood without
-          knowing what states the program will go though when interpreting the
-          representation
-        \item example schemes - production rules, structured objects (e.g.
-          templates), logic programs
-        \item representation language - oriented towards organizing descriptions
-          of objects and ideas, rather than stating sequences of instructions or
-          storing simple data elements
-      \end{itemize}
-    \item problem solving involves reasoning about actions and states of the
-      world
-    \item problems can be formulated in terms of initial state, goal state
-      and a set of operations, that can be employed in an attempt to
-      transform one state into another
-    \item symbolické výpočty - non-numeric computations, manipulation of
-      symbolic representations
-    \item reprezentace stavu pomocí symbolických struktur, inference jako jejich
-      manipulace
-    \item fakty a odvozovací pravidla
   \end{itemize}
 \end{framed}
