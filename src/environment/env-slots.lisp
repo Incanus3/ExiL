@@ -233,8 +233,13 @@
 (defun redo-stack-initform ()
   ())
 
+(defvar *max-undo-stack-size* 20)
+
 (defun stack-for-undo (env undo-fun redo-fun label)
   (push (list undo-fun redo-fun label) (undo-stack env))
+  ;; trim undo-stack to max length
+  (when (> (length (undo-stack env)) *max-undo-stack-size*)
+    (setf (undo-stack env) (subseq (undo-stack env) 0 *max-undo-stack-size*)))
   nil)
 
 (defun stack-for-redo (env redo-fun undo-fun label)
