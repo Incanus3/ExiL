@@ -1,0 +1,55 @@
+\subsection{Systém CLIPS}
+
+Prázdný expertní systém CLIPS poskytuje obecnější a tudíž flexibilnější
+reprezentaci faktů a odvozovacích pravidel než systém STRIPS. Atomy faktů CLIPSu
+mohou být nejen symboly, ale také řetězce znaků a čísla (celá i desetinná).
+Systém rozlišuje dva typy faktů - jednoduché a strukturované. Jednoduchý fakt je
+reprezentován seznamem (uspořádanou \emph{n}-ticí) atomů, např.
+\verb|(in box A)|. Strukturovaný fakt je reprezentován objektem s pojmenovanými
+atributy (sloty), např. \verb|(in (object box) (location A))|. Hodnotami slotů jsou
+opět atomy.
+
+Vzory mají v CLIPSu stejný tvar, jako fakty. Symboly proměnných zde začínají
+znakem \verb|?|, např. \verb|?location|. Kongruenci faktů a vzorů lze definovat
+podobně jako ve STRIPSu. U jednoduchých faktů srovnáváme atomy na odpovídajících
+pozicích, u strukturovaných pak hodnoty odpovídajících slotů objektu.
+
+Systém CLIPS umožňuje spojovat podmínky odvozovacích pravidel logickými
+konjunkcemi i disjunkcemi a tyto libovolně vnořovat, navíc můžeme některé dílčí
+podmínky negovat. Dale je možné podmínky pravidel kvantifikovat jak existenčně,
+tak všeobecně. Podmínky CLIPSového odvozovacího pravidla tedy mohou vypadat
+například takto \cite{clips}:
+\begin{minted}{cl}
+(or (and (temp high)
+         (valve closed))
+    (and (temp low)
+         (valve open))).
+\end{minted}
+
+Definice pravidla CLIPSu vypadá například takto \cite{clips}:
+\begin{minted}{cl}
+(defrule system-flow
+  (error-status ?status)
+  (or (and (temp high)
+           (valve closed))
+      (and (temp low)
+           (valve open)))
+  =>
+  (retract (error-status ?status))
+  (assert (error-status confirmed))
+  (printout t "The system is having a flow problem." crlf)).
+\end{minted}
+Definice obsahuje název pravidla, jeho podmínky a důsledky. Podmínky jsou od
+důsledků odděleny symbolem \verb|=>|. Důsledky pravidla nejsou pouze vzory faktů
+k~přidání do či odebrání ze znalostní báze, nýbrž libovolné výrazy jazyka, který
+CLIPS definuje. Ty jsou při aktivaci pravidla, po nahrazení proměnných jejich
+vazbami, vyhodnoceny CLIPSovým interpreterem.
+
+Systém CLIPS poskytuje velmi široké možnosti, další už nebudu uvádět. Lze je
+však najít v dokumentaci
+systému\footnote{\url{http://clipsrules.sourceforge.net/OnlineDocs.html}}.
+Praktická část této prace popisuje implementaci knihovny ExiL, která je přílohou
+práce a implementuje prázdný expertní systém inspirovaný právě systémem CLIPS.
+Ve srovnání s ním však poskytuje jen velmi omezené možnosti. Knihovna je
+vytvořena v programovacím jazyce Common Lisp a v důsledcích pravidla lze použít
+libovolné lispové výrazy, včetně volání maker pro modifikaci stavu systému.

@@ -84,10 +84,10 @@ byly jistě výstižnější, bohužel ale také značně těžkopádné.
 
 Různé expertní systémy se liší v reprezentaci faktů a pravidel. V různých
 expertních systémech tedy můžeme vyjádřit znalosti s různou mírou flexibility.
-Jednoduchým příkladem reprezentace faktů a pravidel je reprezentace expertního
-systému STRIPS\footnote{\url{http://en.wikipedia.org/wiki/STRIPS}}. Atomy sytaxe
-této reprezentace jsou symboly. Ty reprezentují názvy jednotlivých objektů a
-relací z problémové domény. Fakty jsou pak ve tvaru
+Jednoduchým příkladem reprezentace faktů a pravidel je reprezentace prázného
+expertního systému STRIPS\footnote{\url{http://en.wikipedia.org/wiki/STRIPS}}.
+Atomy sytaxe této reprezentace jsou symboly. Ty reprezentují názvy jednotlivých
+objektů a relací z problémové domény. Fakty jsou pak ve tvaru
 \verb|<relace>(<argumenty oddělené čárkami>)|, např. \verb|At(robot,roomA)|.
 
 Pro vyšší flexibilitu pravidel definuje často syntaxe expertního systému
@@ -143,11 +143,9 @@ Některé expertní systémy umožňují definovat i takovéto podmínky pravide
 
 Odvozovací pravidlo systému STRIPS je reprezentováno názvem, seznamem použitých
 proměnných, podmínkami a důsledky. Podmínky i důsledky pravidel jsou
-reprezentovány posloupnostmi vzorů. Před vzorem v důsledcích pravidla může
-být navíc použit speciální symbol \verb|not|. Ten vyjadřuje, že fakt, získaný
-nahrazením proměnných vzoru jejich vazbami, má být z pracovní paměti systému
-odebrán, nikoli do ní přidán.  Definice odvozovacího pravidla STRIPSu může tedy
-vypadat následovně:
+reprezentovány posloupnostmi vzorů. Před vzorem v důsledcích pravidla může být
+navíc použit speciální symbol \verb|not|. Definice odvozovacího pravidla STRIPSu
+může tedy vypadat následovně:
 \begin{verbatim}
 // move the box up a level
 _MoveUp(Box,Location)_
@@ -155,18 +153,19 @@ Preconditions:  At(Box,Location), At(lift,Location), Level(Box,low)
 Postconditions: Level(Box,high), not Level(Box,low).
 \end{verbatim}
 
-\emph{Aplikace odvozovacího pravidla} pak definuje přechod mezi dvěma stavy
+\emph{Aplikace odvozovacího pravidla} definuje přechod mezi dvěma stavy
 systému. Pravidlo je možné aplikovat, jsou-li splněny jeho podmínky. Při jeho
 aplikaci jsou vyhodnoceny jeho důsledky, na základě čehož je stav systému
 modifikován - reprezentace nějakých faktů jsou přidány do a/nebo odebrány z
-množiny, která stav reprezentuje.
+pracovní paměti systému.
 
-Při vyhodnocení pravidla jsou pak v jeho důsledcích použity místo proměnných
-jejich vazby.
+Pri aplikaci odvozovacího pravidla systému STRIPS jsou nejprve nahrazeny
+proměnné vzorů důsledků pravidla jejich vazbami, získanými při vyhodnocování
+jeho podmínek. Tím převedeme vzory důsledků pravidla na fakty. Každý z těchto
+faktů je pak přidán do pracovní paměti, pokud není před vzorem odpovídajícího
+důsledku použit symbol \verb|not|, nebo z paměti odebrán, pokud je tento symbol
+použit.
 
 \begin{framed}
-  \begin{itemize}
-    \item odněkud dále pracovat s pojmem znalost (reprezentace je implicitní)
-    \item výpočet jako posloupnost stavů s přechody danými aplikací pravidel
-  \end{itemize}
+odněkud dále pracovat s pojmem znalost (reprezentace je implicitní)
 \end{framed}
