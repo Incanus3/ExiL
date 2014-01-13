@@ -68,7 +68,7 @@ jasná}) a \emph{důsledků} (\uv{neprší}).
 množinou reprezentací odpovídajících faktů. Tvrzení tedy platí, pokud je
 reprezentace příslušného faktu součástí stavu systému. \emph{Aplikace
 odvozovacího pravidla} pak definuje přechod mezi dvěma stavy systému. Pravidlo
-je možné aplikovat, jsou-li splněny jeho podmínky. Při jeho aplikaci jsou pak
+je možné aplikovat, jsou-li splněny jeho podmínky. Při jeho aplikaci jsou
 vyhodnoceny jeho důsledky, na základě čehož je stav systému modifikován -
 reprezentace nějakých faktů jsou přidány do a/nebo odebrány z množiny, která
 stav reprezentuje.
@@ -94,23 +94,43 @@ této reprezentace jsou symboly. Ty reprezentují názvy jednotlivých objektů 
 relací z problémové domény. Fakty jsou pak ve tvaru
 \verb|<relace>(<argumenty oddělené čárkami>)|, např. \verb|At(robot,roomA)|.
 
-Pravidla systému STRIPS (které jsou zde nazývány operátory) jsou pak tvořena
-třemi seznamy (množinami) faktů. První množina reprezentuje podmínky pro splnění
-pravidla, tedy tvrzení, která musí platit, aby bylo možné pravidlo aplikovat.
+Pro vyšší flexibilitu pravidel definuje často syntaxe expertního systému
+speciální výraz, tzv. \emph{vzor}. Ten má typicky stejnou strukturu jako fakt,
+ale může obsahovat speciální atomy - \emph{proměnné}. Podmínky a důsledky
+pravidel jsou pak tvořeny nikoli fakty, nýbrž právě vzory. Díky tomu mohou být
+podmínky pravidel splněny mnoha různými skupinami faktů.
+
+Při vyhodnocování splnění podmínek pravidla srovnáváme vzory podmínek s
+konkrétními fakty. Každý vzor podmínky je spárován s jedním faktem, který má
+stejnou strukturu a stejné hodnoty neproměnných atomů. Konkrétní atom, který se
+ve faktu vyskytuje na pozici proměnné vzoru, se kterým byl spárován, označujeme
+jako \emph{vazbu} této proměnné. Při vyhodnocování pravidla je zajištěna
+konzistence těchto vazeb. Vyskytuje-li se táž proměnná na více místech ve
+vzorech podmínek pravidla, musí mít vždy stejnou vazbu. Při vyhodnocení pravidla
+jsou pak v jeho důsledcích použity místo proměnných jejich vazby.
+
+Odvozovací pravidlo systému STRIPS je reprezentováno názvem, seznamem použitých
+proměnných, podmínkami a důsledky. Podmínky i důsledky pravidel jsou
+reprezentovány seznamy (množinami) vzorů. Před vzorem v důsledcích pravidla může
+být navíc použit speciální symbol \verb|not|. Ten vyjadřuje, že fakt, získaný
+nahrazením proměnných vzoru jejich vazbami, má být z pracovní paměti systému
+odebrán, nikoli do ní přidán.  Definice odvozovacího pravidla STRIPSu může tedy
+vypadat následovně:
+\begin{verbatim}
+// move the box up a level
+_MoveUp(Box,Lift,Location)_
+Preconditions:  At(Box,Location), At(Lift,Location), Level(Box,low)
+Postconditions: Level(Box,high), not Level(Box,low).
+\end{verbatim}
 
 \begin{framed}
   \begin{itemize}
-    \item reprezentace faktů a pravidel v STRIPS, odkaz na GPS (nebo až v
-      inferenci?)
-    \item strips umožňuje proměnné - Atomy, postkondice jako jedna množina s
-      případným not u odebíraných faktů
-    \item CLIPS i EXIL - speciální výraz vzoru - v CLIPSU stavební blok - není
-      v jazyce reprezentace, v EXILu je i samostatný vzor reprezentací -
-      reprezentuje cíl
+    \item sémantika podmínek - existenční charakter
     \item reprezentace pravidel v CLIPSU a EXILu - syntax a sémantika
       (stavební bloky, význam - podmínky mají existenční charakter)
     \item EXIL - cíle jako vzory (zpětná inference)
     \item dále pracovat s pojmem znalost (reprezentace je implicitní)
+    \item výpočet jako posloupnost stavů s přechody danými aplikací pravidel
     \item reprezentace problému - počáteční stav, přechody, koncový stav,
       příp. cíle (zpětná inference)
     \item reprezentace problému
