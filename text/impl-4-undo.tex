@@ -10,7 +10,7 @@ systému je uchováván ve slotech tohoto objektu.
 
 Prostředí dále udržuje dva zásobníky - \verb|undo| a \verb|redo|.
 Každý z~těchto zásobníků ukládá seznamy tvořené popiskem akce k vrácení,
-uzávěrem, který akci vrátí a~uzávěrem, který ji opět provede. První uzávěr ve
+uzávěrem, který akci vrátí, a~uzávěrem, který ji opět provede. První uzávěr ve
 svém lexikálním prostředí uchovává hodnoty potřebné k vrácení akce. Zásobníky
 jsou manipulovány pouze několika makry a metodami k tomu určenými, zbytek kódu k
 zásobníkům přímo nepřistupuje.
@@ -30,12 +30,12 @@ slotů prostředí a při vyhodnocení je nastaví zpět na tyto hodnoty.
 
 Prostředí ke každému svému slotu definuje metodu \verb|copy-<slot>|, např.
 \verb|copy-facts|. Makro \verb|with-saved-slots| tedy vytvoří potřebný uzávěr
-tak, že v \verb|let|u naváže výsledky volání těchto metod pro každý požadovaný
-slot. V tomto \verb|let|u pak vytvoří anonymní (lambda) funkci, která hodnoty
-prostředí nastaví zpět na ty, které \verb|let| navázal.
+tak, že pomocí volání makra \verb|let| naváže výsledky volání těchto metod pro
+každý požadovaný slot. V těle tohoto volání pak vytvoří anonymní (lambda)
+funkci, která hodnoty prostředí nastaví zpět na ty, které \verb|let| navázal.
 
 Funkce \verb|undo| pak jednoduše odstraní seznam z vrcholu zásobníku
-\verb|undo|, zavolá uzávěr, který vrátí poslední akci a druhý uzávěr, který akci
+\verb|undo|, zavolá uzávěr, který vrátí poslední akci, a druhý uzávěr, který akci
 opět provede, uloží na vrchol zásobníku \verb|redo|. Funkce \verb|redo| funguje
 symetricky.
 
@@ -75,14 +75,14 @@ sice z~pohledu aktivace uzlů chová jako acyklický graf, některé uzly však
 uchovávájí reference na své sousedy proti směru hran tohoto grafu.
 
 Pro účely kopírování sítě RETE jsem implementoval obecnou funkci vyššího
-řádu\footnote{\url{http://en.wikipedia.org/wiki/Higher-order_function}}
+řádu\footnote{\url{http://en.wikipedia.org/wiki/Higher-order\_function}}
 pro průchod cyklickým grafem. Tato funkce využívá techniky
 memoizace\footnote{\url{http://en.wikipedia.org/wiki/Memoization}}. Funkce bere
 kromě výchozího uzlu grafu tři funkce, které aplikuje na navštěvované uzly před
 memoizací a jimiž agreguje hodnoty vrácené sousedy uzlu.
 
 Fungování funkce je pro textový popis příliš složité, považuji ji však za jednu
-z nejzajímavějších částí nového kódu, hlavně díky její obecnosti. Zrojový kód
+z nejzajímavějších částí nového kódu, hlavně díky její obecnosti. Zdrojový kód
 funkce je v souboru \verb|rete/graph-traversal.lisp|, kód kopírující síť rete,
 který funkci využívá pak v souboru \verb|rete/rete-copy.lisp|. Celkově je kód
 zajišťující kopírování sítě RETE asi třikrát delší, než zbytek kódu

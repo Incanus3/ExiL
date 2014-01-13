@@ -16,7 +16,7 @@ textu.
 \end{figure}
 
 Obrázek \ref{modules} zobrazuje architekturu knihovny ExiL, tedy moduly, do
-kterých je kód knihovny rozdělen a jejich vzájemnou komunikaci. Orientace šipek
+kterých je kód knihovny rozdělen, a jejich vzájemnou komunikaci. Orientace šipek
 určuje směr volání funkcí (metod, maker) poskytovaných moduly, např. modul
 \verb|front-end| volá funkce modulu \verb|parser| a ne naopak. Těmito voláními
 jsou zároveň definovány závislosti mezi moduly, ty mají tedy stejnou orientaci.
@@ -39,7 +39,7 @@ vyhodnocování podmínek odvozovacích pravidel. Algoritmus je implementován
 Algoritmus RETE je sice nejkomplexnější částí ExiLu, veřejné rozhraní modulu
 \verb|rete| je však velmi jednoduché.
 
-Modul poskytuje dvojici metod kterými síť RETE upozorníme na přidání nebo
+Modul poskytuje dvojici metod, kterými síť RETE upozorníme na přidání nebo
 odebrání pravidel. Ty dle potřeby doplní síť o uzly potřebné k vyhodnocení
 podmínek těchto pravidel, případně uzly při odebrání pravidla odstraní.
 
@@ -56,7 +56,7 @@ jsem popsal v sekci \ref{env cleanup} Prostředí udržuje krom jiného
 Modul \verb|parser| zajišťuje vytváření \verb|core| objektů z externí
 reprezentace (té, kterou předáváme makrům při práci s knihovnou). Modul
 rozpoznává jak základní, tak CLIPSovou syntax, takže o to, kterou z nich
-uživatel používá se zbytek kódu nemusí dále starat.
+uživatel používá, se zbytek kódu nemusí dále starat.
 
 Při parsování strukturovaných faktů či vzorů se \verb|parser| dotazuje
 aktuálního prostředí na definici šablony. Při zpětné inferenci prostředí
@@ -68,7 +68,7 @@ však moduly nekomunikují.
 Modul \verb|front-end| udržuje seznam definovaných prostředí a ví, které je
 právě aktivní. Kromě manipulace tohoto seznamu modul sám žádnou funkcionalitu
 neimplementuje. Pouze quotuje parametry předané makrům, předává je
-\verb|parser|u a výsledné objekty (se zbytkem parametrů) pak aktivnímu prostředí.
+\verb|parser|u a~výsledné objekty (se zbytkem parametrů) pak aktivnímu prostředí.
 
 Do diagramu jsem nezahrnul modul \verb|gui|. Ten implementuje grafické
 uživatelské rozhraní a poskytuje jedinou metodu - \verb|show-gui|. Rozhraní se

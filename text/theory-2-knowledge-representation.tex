@@ -111,7 +111,7 @@ jsou pak v jeho důsledcích použity místo proměnných jejich vazby.
 
 Odvozovací pravidlo systému STRIPS je reprezentováno názvem, seznamem použitých
 proměnných, podmínkami a důsledky. Podmínky i důsledky pravidel jsou
-reprezentovány seznamy (množinami) vzorů. Před vzorem v důsledcích pravidla může
+reprezentovány posloupnostmi vzorů. Před vzorem v důsledcích pravidla může
 být navíc použit speciální symbol \verb|not|. Ten vyjadřuje, že fakt, získaný
 nahrazením proměnných vzoru jejich vazbami, má být z pracovní paměti systému
 odebrán, nikoli do ní přidán.  Definice odvozovacího pravidla STRIPSu může tedy
@@ -122,6 +122,19 @@ _MoveUp(Box,Lift,Location)_
 Preconditions:  At(Box,Location), At(Lift,Location), Level(Box,low)
 Postconditions: Level(Box,high), not Level(Box,low).
 \end{verbatim}
+
+Pro potřeby definice sémantiky odvozovacího pravidla zavedu pojem
+\emph{kongruence} faktu se vzorem (případně faktu a vzoru, nebo i naopak). Fakt
+a vzor jsou kongruentní, pokud mají stejnou strukturu, tedy stejný název
+predikátu a stejný počet jeho argumentů a pokud jsou neproměnné atomy vzoru
+stejné, jako atomy na odpovídajících pozicích faktu.
+
+Podmínky pravidel STRIPSu jsou spojeny logickou konjunkcí a mají existenční
+charakter. Význam podmínek pravidla je tedy \uv{existuje posloupnost
+\emph{n}~faktů, kde \emph{n}~je počet podmínek pravidla, a jednotlivé fakty
+jsou kongruentní s odpovídajícími vzory jeho podmínek při zachování konzistence
+vazeb proměnných.} Pokud je toto tvrzení splňeno, lze pravidlo aplikovat výše
+uvedeným způsobem.
 
 \begin{framed}
   \begin{itemize}

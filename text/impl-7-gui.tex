@@ -5,13 +5,13 @@ definuje pět rozhraní (oken) voláním makra \verb|define-interface| knihovny.
 Každé rozhraní je pak reprezentováno objektem \verb|interface|.
 
 Každý z objektů rozhraní udržuje referenci na prostředí, s nímž je rozhraní
-svázáno a implementuje callbacky pro každé ze zobrazených tlačítek. Tyto
+svázáno, a implementuje callbacky pro každé ze zobrazených tlačítek. Tyto
 callbacky pak volají příslušné funkce prostředí. Objekty rozhraní, která
 zobrazují seznamy hodnot prostředí, navíc implementují metodu
-\verb|update-lists|, která slouží k překreslení seznamů a dotazuje se prostředí
+\verb|update-lists|, která slouží k překreslení seznamů, a dotazuje se prostředí
 na jejich obsah.
 
-Každé prostředí také udržuje referenci na rozhraní, které je s ním svázáno
+Každé prostředí také udržuje referenci na rozhraní, které je s ním svázáno,
 a~upozorňuje jej na změny ve svém stavu voláním jeho metody \verb|update-lists|.
 
 Kód definující uživatelské rozhraní a volání \verb|update-lists| z prostředí se

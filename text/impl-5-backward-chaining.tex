@@ -17,10 +17,10 @@ jehož podmínky reprezentují seznam cílů a hledali všechny možné cesty v�
 vedoucí k jeho splnění.
 
 Zásobník pro backtracking (dále jen zásobník) ukládá struktury, z nichž každá
-reprezentuje právě provedený krok výpočtu. Tato struktura je tvořen aktuálním
-seznamem cílů, faktem či pravidlem, použitým pro splnění aktuálního cíle a
-seznamem faktů a pravidel, která již byla pro splnění tohoto cíle použita (v
-případě návratu výpočtu).
+reprezentuje právě provedený krok výpočtu. Tato struktura je tvořena aktuálním
+seznamem cílů, faktem či pravidlem, použitým pro splnění aktuálního cíle,
+a~seznamem faktů a pravidel, která již byla pro splnění tohoto cíle použita
+(v~případě návratu výpočtu).
 
 Zpětná inference je řízena třemi metodami prostředí - \verb|back-step|,
 \verb|backtrack| a \verb|back-run|. Metoda \verb|back-step| vybere první cíl ze
@@ -44,7 +44,7 @@ Program tedy hledá unifikaci aktuálního cíle s tímto \uv{proměnným faktem
 
 V případě shody je výsledkem unifikace opět substituce proměnných. Program v
 tomto případě opět uloží shodu na zásobník, odstraní aktuální cíl ze seznamu a
-aplikuje použitou substituci proměnných na zbytek cílů. Nejpreve ale program
+aplikuje použitou substituci proměnných na zbytek cílů. Nejprve ale program
 přidá podmínky použitého pravidla do seznamu cílů. Podmínky použitého pravidla
 se tedy stávají dalšími cíli, které je třeba splnit, abychom nalezli hledanou
 odpověď.
@@ -52,7 +52,7 @@ odpověď.
 Hledání unifikace vzoru cíle s \uv{proměnným faktem} je podobné jako v jazyce
 Prolog. Je však jednodušší o to, že symbolická reprezentace faktů a vzorů je
 lineární (seznamy nejsou vnořené) a není třeba rozlišovat mezi relačními
-a~funkčními symboly. V případě strukturovanch faktů a vzorů jsou jednotlivé
+a~funkčními symboly. V případě strukturovaných faktů a vzorů jsou jednotlivé
 sloty srovnávány, jako by šlo o atomy seznamu, jen zde nezáleží na pořadí, nýbrž
 se srovnávají odpovídající sloty faktu a vzoru.
 
@@ -95,7 +95,7 @@ v~důsledcích pravidla se na první pohled nezdá implementačně náročné. N
 několik možností, kterak vyhodnocovat odebrání faktu v důsledcích pravidla,
 každá z nich však vede k určitému typu problémů.
 
-První možností je zohledňovat volání \verb|retract| v důslecích pravidla jen
+První možností je zohledňovat volání \verb|retract| v důsledcích pravidla jen
 jako indikaci, že toto pravidlo vede ke splnění negativního cíle, jinak je
 ignorovat. Zde ovšem hrozí problém, že důsledky některého z pravidel zneplatní
 podmínky dalšího. Uvažujme následující zadání:
@@ -137,9 +137,9 @@ inference by však postupovala následovně:
 (back-step)  ; use fact (out of city)
 (goals)      ;=> () => solution found
 \end{minted}
-Nalezeným řešením je tedy postupná aplikace pravidel \verb|take-bus-to-city| a
-\verb|take-taxi-home| (zpětná inference je aplikuje v opačném pořadí), přestože
-toto řešení je nesprávné.
+Nalezeným řešením je tedy postupná aplikace pravidel \verb|take-bus-to-city|
+a~\verb|take-taxi-home| (zpětná inference je aplikuje v opačném pořadí),
+přestože toto řešení je nesprávné.
 
 Další možností, která se nabízí, je pamatovat si všechny cíle, které se někdy
 vyskytovaly v množině cílů a brát volání \verb|(retract (have money))| v
@@ -174,5 +174,5 @@ množiny cílů může dostat také jako negovaná podmínka aplikovaného pravi
 našli vhodný způsob, kterak množinu faktů zpětně manipulovat, možnost
 backtrackingu by vyžadovala ukládat průběžné množiny faktů na zásobník, který by
 ve větších systémech rostl neúměrně rychle. Implementace plnohodnotného zpětného
-řetězení tedy není tak jednoduchá, jak se na první pohled jeví a domnívám se, že
+řetězení tedy není tak jednoduchá, jak se na první pohled jeví, a domnívám se, že
 spolu s ostatními body zadání je nad rámec práce.

@@ -18,14 +18,14 @@ definováno odvozovacích pravidel, tím pravděpodobnější jsou shody mezi je
 podmínkami a tím více se efektivita algoritmu projeví.
 
 Dataflow síť tvoří orientovaný acyklický
-graf\footnote{\url{http://en.wikipedia.org/wiki/Directed_acyclic_graph}}. Uzly
+graf\footnote{\url{http://en.wikipedia.org/wiki/Directed\_acyclic\_graph}}. Uzly
 sítě rozdělujeme na dva základní typy - paměťové a testovací. Paměťové uzly
 ukládají průběžné výsledky vyhodnocování. Testovací uzly provádějí různé typy
 testů (v závislosti na typu uzlu) nutných pro vyhodnocení podmínek pravidla.
 
 Mezi uzly sítě dochází ke dvěma typům interakcí. Hlavním typem interakce je
 aktivace. Ta probíhá ve směru hran grafu a uzel při ní provádí svou hlavní
-funkci v závislosti na typu. Testovací uzel se dále může dotazovat sousedního
+funkci v~závislosti na typu. Testovací uzel se dále může dotazovat sousedního
 paměťového uzlu na obsah jeho paměti a to \textbf{proti směru orientace hran}.
 Abych odlišil sousední uzly ve směru hran (tedy ty, jež může uzel aktivovat) od
 množiny všech sousedů, budu první skupinu nazývat \emph{potomky}.
@@ -34,13 +34,6 @@ Uzlu je při aktivaci vždy předána nějaká datová struktura. Tou je buď fa
 token, který reprezentuje posloupnost faktů. Zatímco paměťové uzly po aktivaci a
 uložení datové struktury do své paměti vždy aktivují své potomky, testovací uzly
 aktivují potomky jen v případě úspěšného testu.
-
-\begin{figure}[h]
-\centering
-\includegraphics[height=10cm]{rete-alpha.eps}
-\caption{Alpha část sítě RETE}
-\label{rete-alpha}
-\end{figure}
 
 Obrázek \ref{rete-alpha} zobrazuje úsek alpha části sítě RETE. Uzel
 \verb|alpha-top-node| je vstupním bodem této sítě. Ten je aktivován při každé
@@ -69,15 +62,15 @@ Tato pravidla mohou sdílet část alpha sítě pro vyhodnocení svých podmíne
 ty se liší pouze názvy proměnných. Pro vyhodnocení těchto podmínek budeme
 potřebovat jeden \verb|alpha-subtop-node| pro šablonu \verb|in|, jeden
 \verb|alpha-test-node| pro testování, zda je hodnota slotu \verb|object| rovna
-hodnotě \verb|box| a jeden \verb|alpha-memory-node| pro uložení faktů, které
+hodnotě \verb|box|, a jeden \verb|alpha-memory-node| pro uložení faktů, které
 tuto podmínku splňují. Pro slot \verb|location| \verb|alpha-test-node|
 nepotřebujeme, neboť alpha část sítě se hodnotami proměnných nezabývá.
 
 \begin{figure}[h]
 \centering
-\includegraphics[height=10cm]{rete-beta.eps}
-\caption{Beta část sítě RETE}
-\label{rete-beta}
+\includegraphics[height=10cm]{rete-alpha.eps}
+\caption{Alpha část sítě RETE}
+\label{rete-alpha}
 \end{figure}
 
 Obrázek \ref{rete-beta} zobrazuje úsek beta části sítě, spolu s
@@ -85,11 +78,18 @@ Obrázek \ref{rete-beta} zobrazuje úsek beta části sítě, spolu s
 podmínky pravidel. Každý \verb|beta-memory-node| udržuje množinu tokenů
 reprezentujících posloupnosti faktů, z nichž každý splňuje podmínku nějakého
 pravidla. \verb|Beta-join-nody| pak testují konzistenci vazeb proměnných mezi
-těmito podmínkami. \verb|beta-top-node| je speciální typ
+těmito podmínkami. \verb|Beta-top-node| je speciální typ
 \verb|beta-memory-nodu|, který udržuje v paměti pouze jeden prázdný token.
-\verb|production-node| je pak speciální typ \verb|beta-memory-nodu|, který
+\verb|Production-node| je pak speciální typ \verb|beta-memory-nodu|, který
 při aktivaci upozorní prostředí, že byly splněny všechny podmínky pravidla,
 případně že po odstranění faktu už nejsou všechny splněny.
+
+\begin{figure}[h]
+\centering
+\includegraphics[height=10cm]{rete-beta.eps}
+\caption{Beta část sítě RETE}
+\label{rete-beta}
+\end{figure}
 
 Mějme například pravidlo
 \begin{minted}[samepage]{cl}
@@ -160,7 +160,7 @@ nebo fakty konzistentní s~novým tokenem.
 Speciálním typem \verb|beta-join-nodu| je \verb|beta-negative-node|, který je
 zprava aktivován \verb|alpha-memory-nodem| udržujícím fakty, které splňují
 negovanou podmínku pravidla. Ten naopak testuje, že druhá paměť
-\textbf{neobsahuje} konzistentní fakty/tokeny a v takovém případě aktivuje
+\textbf{neobsahuje} konzistentní fakty/tokeny, a v takovém případě aktivuje
 potomky.
 
 Při odebrání faktu z pracovní paměti se síť chová velmi podobně. Paměťové uzly
