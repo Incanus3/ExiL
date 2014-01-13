@@ -54,15 +54,56 @@ odvozovací pravidla a logické programy. Knihovna ExiL, stejně jako systém CL
 používá prvních dvou. Typickou ukázkou třetího je jazyk
 Prolog\footnote{\url{http://en.wikipedia.org/wiki/Prolog}}.
 
+Expertní systémy jsou \emph{systémy založené na
+pravidlech}\footnote{\url{http://en.wikipedia.org/wiki/Rule-based\_system}}.
+Jako takové rozlišují dva základní typy znalostí - \emph{fakty} a
+\emph{pravidla}. Fakt je elementární \uv{statická} znalost - vyjadřuje nějaké
+tvrzení z problémové domény, např. \uv{obloha je jasná}. Odvozovací pravidlo je
+pak elementární odvozovací znalostí a má formu implikace. Pravidlo vyjadřuje,
+jaké (jaká) tvrzení můžeme odvodit z platnosti jiných tvrzení, např. \uv{pokud
+je obloha jasná, neprší}. Pravidlo tedy sestává z \emph{podmínek} (\uv{obloha je
+jasná}) a \emph{důsledků} (\uv{neprší}).
+
+\emph{Stav systému} je tvořen množinou aktuálně platných tvrzení a reprezentován
+množinou reprezentací odpovídajících faktů. Tvrzení tedy platí, pokud je
+reprezentace příslušného faktu součástí stavu systému. \emph{Aplikace
+odvozovacího pravidla} pak definuje přechod mezi dvěma stavy systému. Pravidlo
+je možné aplikovat, jsou-li splněny jeho podmínky. Při jeho aplikaci jsou pak
+vyhodnoceny jeho důsledky, na základě čehož je stav systému modifikován -
+reprezentace nějakých faktů jsou přidány do a/nebo odebrány z množiny, která
+stav reprezentuje.
+
+Počáteční stav expertního systému spolu s množinou definovaných odvozovacích
+pravidel tvoří tzv. \emph{znalostní bázi} systému. Pokud se může množina
+definovaných pravidel v průběhu práce se systémem měnit, zařazujeme ji také do
+stavu systému. Ten je pak reprezentován dvěma množinami - množinou reprezentací
+faktů (tzv. \emph{pracovní paměť}) a množinou definovaných pravidel (tzv.
+\emph{produkční paměť}).
+
+Pojmy pracovní a produkční paměť nejsou příliš intuitivní. Jde o doslovný
+překlad v~literatuře užívaných pojmů \emph{working memory} a \emph{production
+memory}. Nejde ve skutečnosti o paměťi, nýbrž o obsahy pomyslných pamětí. Pojmy
+\uv{pracovní množina faktů} a \uv{pracovní množina pravidel} by byly jistě
+výstižnější, bohužel ale také značně těžkopádné.
+
+Různé expertní systémy se liší v reprezentaci faktů a pravidel. V různých
+expertních systémech tedy můžeme vyjádřit znalosti s různou mírou flexibility.
+Jednoduchým příkladem reprezentace faktů a pravidel je reprezentace expertního
+systému STRIPS\footnote{\url{http://en.wikipedia.org/wiki/STRIPS}}. Atomy sytaxe
+této reprezentace jsou symboly. Ty reprezentují názvy jednotlivých objektů a
+relací z problémové domény. Fakty jsou pak ve tvaru
+\verb|<relace>(<argumenty oddělené čárkami>)|, např. \verb|At(robot,roomA)|.
+
+Pravidla systému STRIPS (které jsou zde nazývány operátory) jsou pak tvořena
+třemi seznamy (množinami) faktů. První množina reprezentuje podmínky pro splnění
+pravidla, tedy tvrzení, která musí platit, aby bylo možné pravidlo aplikovat.
+
 \begin{framed}
   \begin{itemize}
-    \item ES jakožto rule-based system rozlišuje 2 základní typy znalostí -
-      fakty a odvozovací pravidla
-    \item různé ES se liší v reprezentaci těchto znalostí
     \item reprezentace faktů a pravidel v STRIPS, odkaz na GPS (nebo až v
       inferenci?)
-    \item atomy v CLIPS
-    \item fakta v CLIPS - seznamy nebo strukturované objekty z atomů
+    \item strips umožňuje proměnné - Atomy, postkondice jako jedna množina s
+      případným not u odebíraných faktů
     \item CLIPS i EXIL - speciální výraz vzoru - v CLIPSU stavební blok - není
       v jazyce reprezentace, v EXILu je i samostatný vzor reprezentací -
       reprezentuje cíl
@@ -70,10 +111,6 @@ Prolog\footnote{\url{http://en.wikipedia.org/wiki/Prolog}}.
       (stavební bloky, význam - podmínky mají existenční charakter)
     \item EXIL - cíle jako vzory (zpětná inference)
     \item dále pracovat s pojmem znalost (reprezentace je implicitní)
-    \item stav expertního systému - mna faktů - pracovní paměť
-    \item pokud se mohou pravidla v průběhu měnit, patří do stavu i množina
-      pravidel - production memory
-    \item aplikace pravidla jako přechod mezi stavy
     \item reprezentace problému - počáteční stav, přechody, koncový stav,
       příp. cíle (zpětná inference)
     \item reprezentace problému
