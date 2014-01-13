@@ -66,25 +66,21 @@ jasná}) a \emph{důsledků} (\uv{neprší}).
 
 \emph{Stav systému} je tvořen množinou aktuálně platných tvrzení a reprezentován
 množinou reprezentací odpovídajících faktů. Tvrzení tedy platí, pokud je
-reprezentace příslušného faktu součástí stavu systému. \emph{Aplikace
-odvozovacího pravidla} pak definuje přechod mezi dvěma stavy systému. Pravidlo
-je možné aplikovat, jsou-li splněny jeho podmínky. Při jeho aplikaci jsou
-vyhodnoceny jeho důsledky, na základě čehož je stav systému modifikován -
-reprezentace nějakých faktů jsou přidány do a/nebo odebrány z množiny, která
-stav reprezentuje.
-
-Počáteční stav expertního systému spolu s množinou definovaných odvozovacích
-pravidel tvoří tzv. \emph{znalostní bázi} systému. Pokud se může množina
-definovaných pravidel v průběhu práce se systémem měnit, zařazujeme ji také do
-stavu systému. Ten je pak reprezentován dvěma množinami - množinou reprezentací
-faktů (tzv. \emph{pracovní paměť}) a množinou definovaných pravidel (tzv.
-\emph{produkční paměť}).
+reprezentace příslušného faktu součástí stavu systému. Počáteční stav
+expertního systému spolu s množinou definovaných odvozovacích pravidel tvoří
+tzv. \emph{znalostní bázi} systému. Pokud se může množina definovaných pravidel
+v průběhu práce se systémem měnit, zařazujeme ji také do stavu systému. Ten je
+pak reprezentován dvěma množinami - množinou reprezentací faktů (tzv.
+\emph{pracovní paměť}) a~množinou definovaných pravidel (tzv. \emph{produkční
+paměť}).
 
 Pojmy pracovní a produkční paměť nejsou příliš intuitivní. Jde o doslovný
 překlad v~literatuře užívaných pojmů \emph{working memory} a \emph{production
-memory}. Nejde ve skutečnosti o paměťi, nýbrž o obsahy pomyslných pamětí. Pojmy
-\uv{pracovní množina faktů} a \uv{pracovní množina pravidel} by byly jistě
-výstižnější, bohužel ale také značně těžkopádné.
+memory}. Pojem production memory je odvozen od označení \emph{production
+rules}\footnote{\url{http://en.wikipedia.org/wiki/Production\_system}} pro
+odvozovací pravidla. Nejde ve skutečnosti o paměťi, nýbrž o obsahy pomyslných
+pamětí. Pojmy \uv{pracovní množina faktů} a \uv{pracovní množina pravidel} by
+byly jistě výstižnější, bohužel ale také značně těžkopádné.
 
 Různé expertní systémy se liší v reprezentaci faktů a pravidel. V různých
 expertních systémech tedy můžeme vyjádřit znalosti s různou mírou flexibility.
@@ -98,16 +94,52 @@ Pro vyšší flexibilitu pravidel definuje často syntaxe expertního systému
 speciální výraz, tzv. \emph{vzor}. Ten má typicky stejnou strukturu jako fakt,
 ale může obsahovat speciální atomy - \emph{proměnné}. Podmínky a důsledky
 pravidel jsou pak tvořeny nikoli fakty, nýbrž právě vzory. Díky tomu mohou být
-podmínky pravidel splněny mnoha různými skupinami faktů.
+podmínky pravidla splněny mnoha různými posloupnostmi faktů.
 
-Při vyhodnocování splnění podmínek pravidla srovnáváme vzory podmínek s
-konkrétními fakty. Každý vzor podmínky je spárován s jedním faktem, který má
-stejnou strukturu a stejné hodnoty neproměnných atomů. Konkrétní atom, který se
-ve faktu vyskytuje na pozici proměnné vzoru, se kterým byl spárován, označujeme
-jako \emph{vazbu} této proměnné. Při vyhodnocování pravidla je zajištěna
-konzistence těchto vazeb. Vyskytuje-li se táž proměnná na více místech ve
-vzorech podmínek pravidla, musí mít vždy stejnou vazbu. Při vyhodnocení pravidla
-jsou pak v jeho důsledcích použity místo proměnných jejich vazby.
+Atomy proměnných začínají v~reprezentaci STRIPSu velkými písmeny. STRIPSovým
+vzorem je tedy například \verb|At(Box,Room)|. STRIPS umožňuje použití proměnných
+jen pro argumenty relace, samotný symbol názvu relace je neproměnný, navíc už
+velkým písmenem začíná (což je poněkud matoucí).
+
+Pro potřeby vyhodnocování podmínek odvozovacích pravidel zavedu relaci
+\emph{kongruence} faktu se vzorem (příp. faktu a vzoru, nebo i naopak). Fakt
+a~vzor jsou kongruentní, pokud mají stejnou strukturu, tedy stejný název
+predikátu a stejný počet jeho argumentů, a pokud jsou neproměnné atomy vzoru
+stejné, jako atomy na odpovídajících pozicích faktu. Vzor \verb|At(Box,roomA)|
+je tedy kongruentní s faktem \verb|At(box1,roomA)|, nikoli však s fakty
+\verb|At(box1,roomB)|, \verb|At(box1,roomA,floor2)| a \verb|In(box1,roomA)|.
+Posloupnost faktů je kongruentní s posloupností vzorů, pokud mají tyto stejnou
+délku a jednotlivé fakty jsou kongruentní s odpovídajícími vzory (v daném
+pořadí).
+
+Podmínky STRIPSového odvozovacího pravidla mohou být definovány například takto:
+\begin{verbatim}
+Preconditions: At(Box,Location), At(lift,Location), Level(Box,low).
+\end{verbatim}
+Jednotlivé podmínky pravidla jsou sémanticky spojeny logickou konjunkcí a celá
+posloupnost je existenčně kvantifikována. Při vyhodnocování podmínek pravidla
+tedy hledáme (alespoň jednu) posloupnost faktů kongruentní s posloupností vzorů
+podmínek. Každý vzor podmínky je tedy spárován s jedním kongruentním faktem.
+
+Konkrétní atom, který se ve faktu vyskytuje na pozici, kde je ve vzoru
+odpovídající podmínky proměnná, označujeme jako \emph{vazbu} této proměnné. Při
+vyhodnocování podmínek je zajištěna konzistence těchto vazeb. Vyskytuje-li se
+táž proměnná na více místech ve vzorech podmínek pravidla, musí mít vždy stejnou
+vazbu. Pokud tedy najdeme posloupnost faktů kongruentní s podmínkami pravidla
+při zachování konzistence vazeb, říkáme, že podmínky pravidla jsou splněny touto
+posloupností faktů.
+
+Predchozí podmínky jsou splněny například posloupností faktů \verb|At(box1,z)|,
+\verb|At(lift,z)| a \verb|Level(box1,low)|. Použité vazby proměnných jsou
+\verb|box1| pro \verb|Box| a~\verb|z|~pro \verb|Location|. Kdyby ovšem byla v
+druhém faktu pozice \verb|x|, nesplňovala by tato posloupnost uvedené podmínky,
+neboť by nebyla zachována konzistence vazeb.
+
+Kdyby byly podmínky spojeny logickou disjunkcí, stačilo by nám nalézt jeden
+fakt kongruentní alespoň s jednou z podmínek. Kdyby byly podmínky naopak
+kvantifikovány všeobecně, znamenalo by to, že všechny posloupnosti faktů
+kongruentní s podmínkami pravidla musí zachovávat konzistenci vazeb proměnných.
+Některé expertní systémy umožňují definovat i takovéto podmínky pravidel.
 
 Odvozovací pravidlo systému STRIPS je reprezentováno názvem, seznamem použitých
 proměnných, podmínkami a důsledky. Podmínky i důsledky pravidel jsou
@@ -118,44 +150,23 @@ odebrán, nikoli do ní přidán.  Definice odvozovacího pravidla STRIPSu můž
 vypadat následovně:
 \begin{verbatim}
 // move the box up a level
-_MoveUp(Box,Lift,Location)_
-Preconditions:  At(Box,Location), At(Lift,Location), Level(Box,low)
+_MoveUp(Box,Location)_
+Preconditions:  At(Box,Location), At(lift,Location), Level(Box,low)
 Postconditions: Level(Box,high), not Level(Box,low).
 \end{verbatim}
 
-Pro potřeby definice sémantiky odvozovacího pravidla zavedu pojem
-\emph{kongruence} faktu se vzorem (případně faktu a vzoru, nebo i naopak). Fakt
-a vzor jsou kongruentní, pokud mají stejnou strukturu, tedy stejný název
-predikátu a stejný počet jeho argumentů a pokud jsou neproměnné atomy vzoru
-stejné, jako atomy na odpovídajících pozicích faktu.
+\emph{Aplikace odvozovacího pravidla} pak definuje přechod mezi dvěma stavy
+systému. Pravidlo je možné aplikovat, jsou-li splněny jeho podmínky. Při jeho
+aplikaci jsou vyhodnoceny jeho důsledky, na základě čehož je stav systému
+modifikován - reprezentace nějakých faktů jsou přidány do a/nebo odebrány z
+množiny, která stav reprezentuje.
 
-Podmínky pravidel STRIPSu jsou spojeny logickou konjunkcí a mají existenční
-charakter. Význam podmínek pravidla je tedy \uv{existuje posloupnost
-\emph{n}~faktů, kde \emph{n}~je počet podmínek pravidla, a jednotlivé fakty
-jsou kongruentní s odpovídajícími vzory jeho podmínek při zachování konzistence
-vazeb proměnných.} Pokud je toto tvrzení splňeno, lze pravidlo aplikovat výše
-uvedeným způsobem.
+Při vyhodnocení pravidla jsou pak v jeho důsledcích použity místo proměnných
+jejich vazby.
 
 \begin{framed}
   \begin{itemize}
-    \item sémantika podmínek - existenční charakter
-    \item reprezentace pravidel v CLIPSU a EXILu - syntax a sémantika
-      (stavební bloky, význam - podmínky mají existenční charakter)
-    \item EXIL - cíle jako vzory (zpětná inference)
-    \item dále pracovat s pojmem znalost (reprezentace je implicitní)
+    \item odněkud dále pracovat s pojmem znalost (reprezentace je implicitní)
     \item výpočet jako posloupnost stavů s přechody danými aplikací pravidel
-    \item reprezentace problému - počáteční stav, přechody, koncový stav,
-      příp. cíle (zpětná inference)
-    \item reprezentace problému
-      \begin{itemize}
-        \item problem solving involves reasoning about actions and states of the
-          world (state = current knowledge = describes objects, their properties and
-          relationonships)
-        \item problems can be formulated in terms of initial state, goal state
-          and a set of operations, that can be employed in an attempt to
-          transform one state into another
-        \item symbolické výpočty - non-numeric computations, manipulation of
-          symbolic representations
-      \end{itemize}
   \end{itemize}
 \end{framed}

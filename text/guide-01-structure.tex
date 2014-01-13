@@ -115,7 +115,6 @@ nejjednodušeji voláním \verb|(run)|. Inferenční mechanismus poté postupně
 vyhodnocuje, která odvozovací pravidla mají splněné všechny podmínky, v každém
 kroku z nich jedno vybere a aktivuje jej. Detaily viz sekce \ref{inference}
 
-\clearpage
 Výstup programu je následující:
 \begin{minted}{cl}
 ==> (IN ROBOT B)
@@ -149,11 +148,11 @@ při konstrukci programu opatrní, může výpočet snadno dospět k neočekáva
 výsledkům, dostat se do slepé větve, či se zacyklit. Tyto problémy jsou často
 způsobeny nezamýšlenou interferencí podmínek pravidel s důsledky jiných.
 
+\FloatBarrier
+
 Skupina pravidel může například snadno cyklit, pokud první pravidlo závisí na
 neexistenci nějakého faktu, tento v důsledcích přidá, načež je tento fakt
 posledním pravidlem odstraněn, aniž by byla v průběhu zneplatněna nějaká další
 podmínka prvního pravidla. Fakt, který odvodíme v jedné část programu může také
 neočekávaně splnit podmínku pravidla definovaného v úplně jiné části, která s
 první neměla vůbec přímo komunikovat.
-
-% \FloatBarrier

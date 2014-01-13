@@ -2,21 +2,37 @@
 \input{theory-1-expert-system}
 \input{theory-2-knowledge-representation}
 
-\subsection{Základní principy}
+\subsection{Systém CLIPS}
 \begin{framed}
   \begin{itemize}
-    \item rule-based systémy - základní pojmy - revisited s citacemi
-    \item prohledávání prostoru stavů (stromy)
-    \item combinatorial explosion $\rightarrow$ heuristiky (strategie)
+    \item reprezentace faktů - jednoduché, strukturované; vzory, kongruence
+    \item reprezentace pravidel, kompozitní podmínky, obecnější důsledky,
+      aplikace
   \end{itemize}
 \end{framed}
 
-\subsection{Dopředná a zpětná inference}
+\subsection{Inference}
 \begin{framed}
   \begin{itemize}
+    \item prohledávání prostoru stavů (stromy)
+    \item combinatorial explosion $\rightarrow$ heuristiky (strategie)
+    \item cíle v STRIPS jako vzory
     \item dopředné vs. zpětné řetězení
     \item zpětné - means-ends analysis
     \item STRIPS x CLIPS
+    \item reprezentace problému - počáteční stav, přechody, koncový stav,
+      příp. cíle (zpětná inference)
+    \item reprezentace problému
+      \begin{itemize}
+        \item problem solving involves reasoning about actions and states of the
+          world (state = current knowledge = describes objects, their properties and
+          relationonships)
+        \item problems can be formulated in terms of initial state, goal state
+          and a set of operations, that can be employed in an attempt to
+          transform one state into another
+        \item symbolické výpočty - non-numeric computations, manipulation of
+          symbolic representations
+      \end{itemize}
   \end{itemize}
 \end{framed}
 
