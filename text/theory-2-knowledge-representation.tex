@@ -1,42 +1,45 @@
 \subsection{Reprezentace znalostí}
+\label{knowledge representation}
 
 % representation language - oriented towards organizing descriptions
 % of objects and ideas, rather than stating sequences of instructions or
 % storing simple data elements
 
-Aby bylo možné pracovat se znalostmi v expertním systému, měly by splňovat
+Aby bylo možné pracovat se znalostmi v expertním systému, musí tyto splňovat
 několik vlastností:
 \begin{itemize}
   \item přesnost - pro vyvození rozumných závěrů nemůže být znalost vágní (to
-    neznamená, že nemůžeme vyjádřit nejistotu),
+    neznamená, že nemůžeme vyjádřit nejistotu, i ta ale musí být definována
+    přesně),
   \item relevance - znalosti by se měly týkat pouze pojmů z problémové domény
   \item organizovanost - znalosti by měly postihovat všechny potřebné spojitosti
-    mezi pojmy, to zahrnuje například používání vždy stejného pojmu pro tutéž
-    věc,
+    mezi pojmy (to zahrnuje například používání vždy stejného pojmu pro tutéž
+    věc),
   \item uzavřenost - systém by pro vyvození závěrů neměl potřebovat žádné
     předchozí znalosti.
 \end{itemize}
 
 Systém nechápe význam znalostí, pracuje pouze s jejich reprezentací.
 Reprezentaci obecně chápeme jako množinu syntaktických a sémantických pravidel,
-které umožňují popsat znalosti. Reprezentaci znalosti pak jako výraz, který
-podle těchto pravidel popisuje danou znalost. Jazyk reprezentace je množina
-všech možných reprezentací znalostí.
+které umožňují popsat nějaké entity. Reprezentaci entity pak jako výraz, který
+podle těchto pravidel popisuje danou entitu. Jazyk reprezentace je množina
+všech možných reprezentací entit. V expertních systémech jsou těmito entitami
+právě znalosti.
 
 Syntax reprezentace je množina pravidel, která definují základní stavební bloky
 (atomy) jazyka reprezentace a jak jejich kombinací vytvářet výrazy tohoto
-jazyka. Sémantika říká, jak jsou výrazy jazyka reprezentace interpretovány -
-jaký je jejich význam. Sémantika nám tedy dává zobrazení z reprezentace znalosti
-na reprezentovanou znalost. Sémantická pravidla jsou často rekurentní -
-přiřkneme význam atomům a poté jednotlivým strukturám, které vznikají jejich
-kombinací.
+jazyka, tedy reprezentace jednotlivých entit. Sémantika říká, jak jsou výrazy
+jazyka reprezentace interpretovány - jaký je jejich význam. Sémantika nám tedy
+dává zobrazení z reprezentace entity na reprezentovanou entitu. Sémantická
+pravidla jsou často rekurentní - přiřkneme význam atomům a poté jednotlivým
+strukturám, které vznikají jejich kombinací.
 
 Aby byla reprezentace praktická, musí být
 \begin{itemize}
   \item jednoznačná - není možné, aby měl jeden výraz jazyka reprezentace
     několik významů,
-  \item expresivní - reprezentace musí umožňovat vyjádření všech detailů
-    (\emph{distinction}) znalosti, kterou chceme popsat,
+  \item expresivní - reprezentace musí umožňovat vyjádření všech potřebných
+    detailů (\emph{distinction}) popisované entity
   \item srozumitelná - význam výrazu by měl být snadno pochopitelný bez
     nutnosti chápat, jak je systémem zpracováván,
   \item stručná - výrazy by mělo být snadné psát, neměly by být zbytečně
@@ -53,10 +56,26 @@ Prolog\footnote{\url{http://en.wikipedia.org/wiki/Prolog}}.
 
 \begin{framed}
   \begin{itemize}
-    \item fakty a vzory (strukturované objekty) a odvozovací pravidla
+    \item ES jakožto rule-based system rozlišuje 2 základní typy znalostí -
+      fakty a odvozovací pravidla
+    \item různé ES se liší v reprezentaci těchto znalostí
+    \item reprezentace faktů a pravidel v STRIPS, odkaz na GPS (nebo až v
+      inferenci?)
+    \item atomy v CLIPS
+    \item fakta v CLIPS - seznamy nebo strukturované objekty z atomů
+    \item CLIPS i EXIL - speciální výraz vzoru - v CLIPSU stavební blok - není
+      v jazyce reprezentace, v EXILu je i samostatný vzor reprezentací -
+      reprezentuje cíl
+    \item reprezentace pravidel v CLIPSU a EXILu - syntax a sémantika
+      (stavební bloky, význam - podmínky mají existenční charakter)
+    \item EXIL - cíle jako vzory (zpětná inference)
     \item dále pracovat s pojmem znalost (reprezentace je implicitní)
-    \item stav expertního systému - mna znalostí
-    \item pracovní paměť
+    \item stav expertního systému - mna faktů - pracovní paměť
+    \item pokud se mohou pravidla v průběhu měnit, patří do stavu i množina
+      pravidel - production memory
+    \item aplikace pravidla jako přechod mezi stavy
+    \item reprezentace problému - počáteční stav, přechody, koncový stav,
+      příp. cíle (zpětná inference)
     \item reprezentace problému
       \begin{itemize}
         \item problem solving involves reasoning about actions and states of the
