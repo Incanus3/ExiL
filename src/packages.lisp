@@ -138,27 +138,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TESTS
 
-(defpackage :tests-base
-  (:use :common-lisp :xlunit :exil-utils)
-  (:export :add-test-suite :run-tests))
+;; (defpackage :tests-base
+;;   (:use :common-lisp :xlunit :exil-utils)
+;;   (:export :add-test-suite :run-tests))
 
-(defpackage :utils-tests
-  (:documentation "tests for the utils package")
-  (:use :common-lisp :exil-utils :xlunit :tests-base))
+;; (defpackage :utils-tests
+;;   (:documentation "tests for the utils package")
+;;   (:use :common-lisp :exil-utils :xlunit :tests-base))
 
-(defpackage :core-tests
-  (:documentation "tests for the utils package")
-  (:use :common-lisp :exil-core :xlunit :tests-base))
+;; (defpackage :core-tests
+;;   (:documentation "tests for the utils package")
+;;   (:use :common-lisp :exil-core :xlunit :tests-base))
 
-(defpackage :rete-tests
-  (:documentation "tests for the rete package")
-  (:use :common-lisp :exil-utils :exil-core :exil-rete :xlunit :iterate :tests-base))
+;; (defpackage :rete-tests
+;;   (:documentation "tests for the rete package")
+;;   (:use :common-lisp :exil-utils :exil-core :exil-rete :xlunit :iterate :tests-base))
 
-(defpackage :env-tests
-  (:documentation "tests for the environment package")
-  (:use :common-lisp :exil-core :exil-env :xlunit :tests-base))
+;; (defpackage :env-tests
+;;   (:documentation "tests for the environment package")
+;;   (:use :common-lisp :exil-core :exil-env :xlunit :tests-base))
 
-(defpackage :integration-tests
-  (:use :common-lisp :exil :xlunit :tests-base)
-  (:import-from :exil-utils :set-equal-p)
-  (:shadowing-import-from :exil :assert :step :run))
+;; (defpackage :integration-tests
+;;   (:use :common-lisp :exil :xlunit :tests-base)
+;;   (:import-from :exil-utils :set-equal-p)
+;;   (:shadowing-import-from :exil :assert :step :run))
