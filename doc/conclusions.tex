@@ -4,7 +4,7 @@ Ke knihovně ExiL jsem implementoval možnost vrácení a opětovného proveden�
 akcí s vedlejším efektem, včetně inferenčních kroků. Tato funkcionalita je
 kompletní, implementace je však neefektivní. V každém kroku se například
 kopíruje celá síť RETE. Ukládat pouze inverzní volání však není možné, neboť to
-vede ke změně pořadí ukládananých hodnot stavu systému, tudíž ke zvolení jiné
+vede ke změně pořadí ukládaných hodnot stavu systému, tudíž ke zvolení jiné
 výpočetní větve po navrácení.
 
 Systém podporuje základní syntaxi systému CLIPS. Některé konstrukty však nejsou
@@ -49,6 +49,6 @@ nepohodlný.
 
 Funkčnost systému jsem testoval na několika malých příkladech, které jsem buď
 vytvořil od základu, nebo převzal z \cite{paradigms}. Vytvoření rozsáhlejších
-příkladů, nebo jejich přepsání z programů vytvořených pro systém CLIPS by bylo
+příkladů nebo jejich přepsání z programů vytvořených pro systém CLIPS by bylo
 časově velmi náročné. Kód programu je navíc opatřen velkou sadou integračních a
 unit testů.
