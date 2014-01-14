@@ -1,6 +1,54 @@
 \section{Závěr}
-Zpětné řetězení je
-implementováno v omezené podobě a kompozitní podmínky nejsou implementovány
-vůbec. V implementační části ale rozeberu problémy, ke kterým při implementaci
-zpětného řetězení dochází (\ref{impl backward}) a popíšu, co by obnášela
-implementace kompozitních podmínek (\ref{composite conditions}).
+
+Ke knihovně ExiL jsem implementoval možnost vrácení a opětovného provedení všech
+akcí s vedlejším efektem, včetně inferenčních kroků. Tato funkcionalita je
+kompletní, implementace je však neefektivní. V každém kroku se například
+kopíruje celá síť RETE. Ukládat pouze inverzní volání však není možné, neboť to
+vede ke změně pořadí ukládananých hodnot stavu systému, tudíž ke zvolení jiné
+výpočetní větve po navrácení.
+
+Systém podporuje základní syntaxi systému CLIPS. Některé konstrukty však nejsou
+podporovány, protože buď v Common Lispu nemají smysl, nebo by vyžadovaly rozsáhlé
+úpravy vnitřní implementace systému.
+
+Zpětné řetězení je implementováno v omezené podobě, založené na prohledávání
+SLD-stromů v jazyce Prolog. Stejně jako Prolog nepodporuje zpětné řetězení práci
+s negací a odstraňování faktů z pracovní paměti systému. Podpora této
+funkcionality není problematická implementačně, nýbrž principiálně. Problémy, ke
+kterým dochází, jsem popsal v kapitole \ref{impl backward}
+
+Grafické uživatelské rozhraní je funkční, umožňuje však pouze prohlížení stavu
+systému a odebírání jednotlivých definic, nikoli jejich přidávání. To by
+znamenalo přidat textová definiční pole do jednotlivých rozhraní. K tomu ale
+nevidím důvod, neboť definice lze zadávat pomocí REPLu (Listeneru) interpreteru
+Common Lispu, přičemž se grafické rozhraní automaticky obnoví. Rozhraní je
+svázáno s~prostředím systému, lze tedy používat více prostředí zároveň a ke
+každému zobrazit grafické rozhraní.
+
+Podpora kompozitních podmínek není implementována vůbec. Podpora by
+vyžadovala rozšíření implementace algoritmu RETE, která je už tak složitá. Síť
+RETE navíc velmi rychle roste a obsahuje cykly, v důsledku čehož se velmi těžko
+ladí. V kapitole \ref{composite conditions} ale popisuji, jak by tuto
+funkcionalitu bylo možné implementovat.
+
+Kromě podpory kompozitních podmínek a některých složitějších konstruktů systému
+CLIPS, jako například multisloty, by bylo zajímavé, implementovat podporu
+použití objektů CLOSu jako faktů expertního systému. Knihovna by také mohla
+podporovat například uživatelsky definované testy v podmínkách pravidel, jako
+porovnávání číselných hodnot, nebo rozhodování na základě návratových hodnot
+volání lispových funkcí. Implementace této funkcionality by však byla velmi
+složitá.
+
+Zajímavá by byla také podpora nejistoty u faktů a odvozovacích pravidel
+systému, jakou poskytuje například systém
+MYCIN\footnote{\url{http://en.wikipedia.org/wiki/Mycin}}. Tu je už teď možné
+nasimulovat připojením hodnot k faktům a jejich manipulací použitím funkčních
+alternativ maker v důsledcích pravidel. Kromě rovnosti však není možné tyto
+hodnoty testovat v podmínkách pravidel, navíc je tento nepřímý způsob
+nepohodlný.
+
+Funkčnost systému jsem testoval na několika malých příkladech, které jsem buď
+vytvořil od základu, nebo převzal z \cite{paradigms}. Vytvoření rozsáhlejších
+příkladů, nebo jejich přepsání z programů vytvořených pro systém CLIPS by bylo
+časově velmi náročné. Kód programu je navíc opatřen velkou sadou integračních a
+unit testů.
