@@ -31,6 +31,9 @@ zvolena proto, že jde o reálně používaný
 systém\footnote{\url{http://clipsrules.sourceforge.net/FAQ.html\#Q6}}, jehož
 syntax je Lispu velmi blízká, takže není těžké ji v~Lispu napodobit.
 
-\begin{framed}
-  Kdo už to dělal, čím se tohle liší
-\end{framed}
+Expertní systém se syntaxí podobnou systému CLIPS implementuje v Common Lispu
+také projekt Lisa\footnote{\url{http://lisa.sourceforge.net/}}. Ten však
+poskytuje pouze makra pro přímou práci se systémem nikoli funkce, které by bylo
+možné volat z jiného kódu. Tento nedostatek řeším pomocí funkčních alternativ
+maker popsaných v kapitole \ref{external calls} Projekt také neposkytuje možnost
+zpětného řetězení, vracení provedených změn ani grafické uživatelské rozhraní.
