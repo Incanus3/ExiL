@@ -6,11 +6,12 @@
 
 \usepackage{hyperref}
 \hypersetup{backref,
-linktocpage,
+% linktocpage,
 colorlinks=true,
-linkcolor=blue,
-citecolor=blue,
-urlcolor=blue}
+linkcolor=black,
+citecolor=black,
+urlcolor=black
+}
 
 \usepackage{minted}
 \usemintedstyle{autumn}
@@ -56,6 +57,7 @@ nebo integrovat do dalších programů.
 \bibliographystyle{czechiso}
 \bibliography{reference}
 
+{\renewcommand{\addtocontents}[2]{}
 \appendix
 \include{cd}
 \end{document}
