@@ -1,32 +1,121 @@
 \subsection{Referenční příručka}
-\begin{framed}
-  \begin{itemize}
-    \item reprezentace objektů vracené findery + názvy vracené makry jako rules či current
-strategy - proč klíčky - různé package
-    \item kombinace s funkčními alternativami.
-    \item clipsová syntax - deftemplate, specifikace faktů, volání facts s
-      čísly, singleton proměnná
-  \end{itemize}
-\end{framed}
 
-ExiL umožňuje definici vlastní strategie makrem \verb|defstrategy|. Makro bere
-jako parametry název strategie a výběrovou funkci. Výběrové funkci je předána
-agenda (množina shod), z nichž funkce musí jednu vrátít. Definice vlastní
-strategie ovšem není v praxi příliš použitelná, neboť pro její implementaci je
-třeba znát vnitřní implementaci shody. Definice mohou vypadat například takto:
-\begin{minted}[samepage]{cl}
-(defmethod newer-than-p ((match1 match) (match2 match))
-  (> (timestamp match1) (timestamp match2)))
+V uživatelské příručce jsem uvedl všechny možnosti, které knihovna ExiL
+poskytuje. Zde tedy uvedu pouze seznam signatur funkci a maker s odkazy na
+opovídající sekce příručky, pro snadnou referenci.
 
-(defmethod simpler-than-p ((rule1 rule) (rule2 rule))
-  (< (length (conditions rule1))
-     (length (conditions rule2))))
-(defmethod simpler-than-p ((match1 match) (match2 match))
-  (simpler-than-p (match-rule match1) (match-rule match2)))
+\vspace{0.5cm}
 
-(defstrategy breadth-stragegy #'newer-than-p)
-(defstrategy simplicity-strategy #'simpler-than-p)
+\textbf{Definice šablon} - \ref{knowledge base definition}, \ref{guide clips}
+\begin{minted}{cl}
+(defmacro deftemplate (name &body slots))
+(defun deftemplatef (name slots))
+(defmacro undeftemplate (name))
+(defun undeftemplatef (name))
+(defun templates ())
+(defmacro find-template (name))
+(defun find-templatef (name))
 \end{minted}
-Symboly názvů metod \verb|timestamp|, \verb|conditions| a \verb|match-rule| jsou
-navíc interní v jiném package, než běžně uživatel pracuje, bylo by tedy třeba je
-plně kvalifikovat.
+
+\textbf{Definice skupin faktů} - \ref{knowledge base definition}, \ref{guide clips}
+\begin{minted}{cl}
+(defmacro deffacts (name &body fact-specs))
+(defun deffactsf (name fact-specs))
+(defmacro undeffacts (name))
+(defun undeffactsf (name))
+(defun fact-groups ())
+(defmacro find-fact-group (name))
+(defun find-fact-groupf (name))
+\end{minted}
+
+\textbf{Definice pravidel} - \ref{knowledge base definition}, \ref{guide clips}
+\begin{minted}{cl}
+(defmacro defrule (name &body body))
+(defun defrulef (name body))
+(defmacro undefrule (name))
+(defun undefrulef (name))
+(defun rules ())
+(defmacro find-rule (name))
+(defun find-rulef (name))
+(defun agenda ())
+\end{minted}
+
+\textbf{Modifikace pracovní paměti} - \ref{modifikace}
+\begin{minted}{cl}
+(defun facts (&optional start-index end-index at-most))
+(defmacro assert (&rest fact-specs))
+(defun assertf (&rest fact-specs))
+(defmacro retract (&rest fact-specs))
+(defun retractf (&rest fact-specs))
+(defun retract-all ())
+(defmacro modify (fact-spec &rest mod-list))
+(defun modifyf (fact-spec mod-list))
+\end{minted}
+
+\textbf{Sledování průběhu inference} - \ref{inference tracing}
+\begin{minted}{cl}
+(defmacro watch (watcher))
+(defun watchf (watcher))
+(defmacro unwatch (watcher))
+(defun unwatchf (watcher))
+(defmacro watchedp (watcher))
+(defun watchedpf (watcher))
+\end{minted}
+
+\textbf{Definice cílů} - \ref{backward inference}
+\begin{minted}{cl}
+(defmacro defgoal (goal-spec))
+(defun defgoalf (goal-spec))
+(defmacro undefgoal (goal-spec))
+(defun undefgoalf (goal-spec))
+(defun goals ())
+\end{minted}
+
+\textbf{Spuštění inference} - \ref{inference}, \ref{backward inference}
+\begin{minted}{cl}
+(defun step ())
+(defun halt ())
+(defun run ())
+(defun back-step ())
+(defun back-run ())
+\end{minted}
+
+\textbf{Reset prostředí} - \ref{env cleanup}
+\begin{minted}{cl}
+(defun clear ())
+(defun reset ())
+(defun complete-reset ())
+\end{minted}
+
+\textbf{Undo/redo} - \ref{undo}
+\begin{minted}{cl}
+(defun undo ())
+(defun redo ())
+(defun undo-stack ())
+(defun redo-stack ())
+\end{minted}
+
+\textbf{Práce s více prostředími} - \ref{multiple environments}
+\begin{minted}{cl}
+(defmacro defenv (name &key redefine))
+(defun defenvf (name &key redefine))
+(defmacro undefenv (name))
+(defun undefenvf (name))
+(defmacro setenv (name))
+(defun setenvf (name))
+(defun environments ())
+(defun current-environment ())
+\end{minted}
+
+\textbf{Inferenční strategie} - \ref{inference}
+\begin{minted}{cl}
+(defmacro setstrategy (name))
+(defun setstrategyf (name))
+(defun current-strategy ())
+(defun strategies ())
+\end{minted}
+
+\textbf{Grafické uživatelské rozhraní} - \ref{guide gui}
+\begin{minted}{cl}
+(defun show-gui (&optional environment))
+\end{minted}

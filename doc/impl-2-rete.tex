@@ -129,9 +129,9 @@ Přidáním \verb|(goal :object box :from A :to B)| dojde k aktivaci prvního uz
 faktem a aktivuje opět druhý \verb|beta-join-node|, tentokrát však \uv{zleva}.
 \verb|Beta-join-node| tentokrát prohledá obsah paměti uzlu \verb|alpha-memory-node|
 nad sebou, zda neobsahuje fakt konzistentní s tokenem. \verb|Beta-join-node| zde
-testuje, zda jsou hodnoty slotů \verb|object| a \verb|location| faktu v alpha
-paměti shodné s hodnotami slotů \verb|object| a \verb|from| prvního faktu tokenu v
-beta paměti.
+testuje, zda jsou hodnoty slotů \verb|object| a \verb|location| faktu v~alpha
+paměti shodné s hodnotami slotů \verb|object| a \verb|from| prvního faktu tokenu
+v~beta paměti.
 
 Test zde skončí úspěšně, takže druhý \verb|beta-join-node| aktivuje
 \verb|beta-memory-node| pod sebou a předá mu dvouprvkový token s oběma fakty.
@@ -144,10 +144,10 @@ uzlu \verb|alpha-memory-node|. Ten fakt uloží a aktivuje \uv{zprava} třetí
 \verb|beta-join-node|. Ten prohledá paměť uzlu \verb|beta-memory-node| nad sebou, zda
 neobsahuje konzistentní tokeny. Ta obsahuje dvouprvkový token s prvními dvěma
 fakty. \verb|Beta-join-node| tedy srovná hodnotu slotu \verb|location| přidaného
-faktu s hodnotou slotu \verb|to| prvního faktu tokenu. Protože tyto hodnoty se
+faktu s~hodnotou slotu \verb|to| prvního faktu tokenu. Protože tyto hodnoty se
 shodují, aktivuje \verb|beta-join-node| \verb|production-node| pod sebou a předá
 mu tříprvkový token s posloupností faktů, které splňují všechny podmínky
-pravidla. Ten token uloží a upozorní prostředí, že pravidlo bylo splňeno
+pravidla. Ten token uloží a~upozorní prostředí, že pravidlo bylo splňeno
 posloupností faktů v tokenu.
 
 Jak jsme viděli, \verb|beta-join-node| může být aktivován buď zprava uzlem

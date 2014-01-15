@@ -81,8 +81,8 @@
 ;;; backward chaining inference execution:
 ;; (defmacro defgoal (goal-spec))
 ;; (defun defgoalf (goal-spec))
-;; TODO: (defmacro undefgoal (goal-spec))
-;; TODO: (defun undefgoalf (goal-spec))
+;; (defmacro undefgoal (goal-spec))
+;; (defun undefgoalf (goal-spec))
 ;; (defun goals ())
 ;; (defun back-step ())
 ;; (defun back-run ())
