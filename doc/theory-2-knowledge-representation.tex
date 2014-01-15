@@ -6,7 +6,7 @@
 % storing simple data elements
 
 Aby bylo možné pracovat se znalostmi v expertním systému, musí tyto splňovat
-několik vlastností:
+několik vlastností \cite{introduction}:
 \begin{itemize}
   \item přesnost - pro vyvození rozumných závěrů nemůže být znalost vágní (to
     neznamená, že nemůžeme vyjádřit nejistotu, i ta ale musí být definována
@@ -21,25 +21,25 @@ několik vlastností:
 
 Systém nechápe význam znalostí, pracuje pouze s jejich reprezentací.
 Reprezentaci obecně chápeme jako množinu syntaktických a sémantických pravidel,
-která umožňují popsat nějaké entity. Reprezentaci entity pak jako výraz, který
-podle těchto pravidel popisuje danou entitu. Jazyk reprezentace je množina
-všech možných reprezentací entit. V expertních systémech jsou těmito entitami
-právě znalosti.
+která umožňují popsat nějaké entity \cite{introduction}. Reprezentaci entity pak
+jako výraz, který podle těchto pravidel popisuje danou entitu. Jazyk
+reprezentace je množina všech možných reprezentací entit. V expertních systémech
+jsou těmito entitami právě znalosti.
 
 Syntax reprezentace je množina pravidel, která definují základní stavební bloky
 (atomy) jazyka reprezentace a jak jejich kombinací vytvářet výrazy tohoto
-jazyka, tedy reprezentace jednotlivých entit. Sémantika říká, jak jsou výrazy
-jazyka reprezentace interpretovány - jaký je jejich význam. Sémantika nám tedy
-dává zobrazení z reprezentace entity na reprezentovanou entitu. Sémantická
-pravidla jsou často rekurentní - přiřkneme význam atomům a poté jednotlivým
-strukturám, které vznikají jejich kombinací.
+jazyka, tedy reprezentace jednotlivých entit \cite{introduction}. Sémantika
+říká, jak jsou výrazy jazyka reprezentace interpretovány - jaký je jejich
+význam. Sémantika nám tedy dává zobrazení z reprezentace entity na
+reprezentovanou entitu. Sémantická pravidla jsou často rekurentní - přiřkneme
+význam atomům a poté jednotlivým strukturám, které vznikají jejich kombinací.
 
-Aby byla reprezentace praktická, musí být
+Aby byla reprezentace praktická, musí být \cite{introduction}
 \begin{itemize}
   \item jednoznačná - není možné, aby měl jeden výraz jazyka reprezentace
     několik významů,
   \item expresivní - reprezentace musí umožňovat vyjádření všech potřebných
-    detailů (\emph{distinction}) popisované entity,
+    detailů reprezentovaných entit,
   \item srozumitelná - význam výrazu by měl být snadno pochopitelný bez
     nutnosti chápat, jak je systémem zpracováván,
   \item stručná - výrazy by mělo být snadné psát, neměly by být zbytečně
@@ -50,7 +50,7 @@ Míra expresivity je často v protikladu snadného strojového zpracování, hle
 tedy kompromis mezi těmito dvěma vlastnostmi.
 
 Často používanými reprezentačními schematy jsou strukturované objekty,
-odvozovací pravidla a logické programy. Knihovna ExiL, stejně jako systém CLIPS,
+odvozovací pravidla a logické programy \cite{introduction}. Knihovna ExiL, stejně jako systém CLIPS,
 používá prvních dvou. Typickou ukázkou třetího je jazyk
 Prolog\footnote{\url{http://en.wikipedia.org/wiki/Prolog}}.
 
@@ -71,7 +71,7 @@ systému spolu s množinou definovaných odvozovacích pravidel tvoří tzv.
 \emph{znalostní bázi} systému. Pokud se může množina definovaných pravidel v
 průběhu práce se systémem měnit, zařazujeme ji také do stavu systému. Ten je pak
 tvořen dvěma množinami - množinou faktů (tzv.  \emph{pracovní paměť}) a~množinou
-definovaných pravidel (tzv. \emph{produkční paměť}).
+definovaných pravidel (tzv. \emph{produkční paměť}) \cite{introduction}.
 
 Pojmy pracovní a produkční paměť nejsou příliš intuitivní. Jde o doslovný
 překlad v~literatuře užívaných pojmů \emph{working memory} a \emph{production

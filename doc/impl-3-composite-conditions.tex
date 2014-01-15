@@ -7,7 +7,7 @@ neimplementoval, neboť ta by vyžadovala komplexní změny v implementaci algor
 RETE, která je už tak poměrně složitá. Síť navíc při definici nových pravidel
 velice rychle roste a obsahuje cykly (nikoli z pohledu aktivace uzlů, ale z
 pohledu referencí, které na sebe uzly udržují), díky čemuž se velice těžko ladí.
-Alespoň tedy nastíním, jak lze podporu těchto podmínek implementovat.
+Alespoň tedy nastíním, z čeho bych při implementaci těchto podmínek vycházel.
 
 \cite{doorenbos} uvádí, jak v síti RETE implementovat tzv. konjunktivní negace,
 například podmínku ve tvaru
@@ -25,9 +25,9 @@ Negace a konjunkce mohou být v~podmínkách libovolně vnořovány.
 Pro skupinu podmínek v negaci vytvoříme podsíť uzlů, stejně jako v původním
 algoritmu. Místo použití jednoho \verb|beta-negative-node| je pak pro
 vyhodnocení složené negace použita dvojice speciálních uzlů. První z nich se
-stane potomkem uzlu \verb|beta-memory-node|, který ukládá výsledky předchozích
-podmínek. Druhý je pak potomkem prvního, zároveň však i potomkem posledního uzlu
-v podsíti.
+stane potomkem uzlu \verb|beta-memory-node|, který udržuje tokeny s fakty
+navázanými na vzory předchozích podmínek. Druhý uzel je pak potomkem prvního
+uzlu z této dvojice, zároveň však i potomkem posledního uzlu v podsíti.
 
 Druhý uzel funguje podobně, jako běžný \verb|beta-negative-node|
 s tím, že ale testuje konzistenci vazeb mezi tokeny z předchozích podmínek a
@@ -40,7 +40,7 @@ jednotlivé podmínky. Pro ty je pak použit běžný \verb|beta-negative-node|.
 konjunkci a negaci, které lze libovolně vnořovat, můžeme implementovat také
 disjunkci (neboť
 $\varphi \lor \psi \Leftrightarrow \lnot(\lnot \varphi \land \lnot \psi)$)
-a dokonce všeobecný kvantifikátor
+a dokonce všeobecnou kvantifikaci
 (neboť $(\forall x)(P(x)) \Leftrightarrow (\nexists x)(\lnot P(x))$).
 
 Síť už ale nelze budovat lineárně, nýbrž je nutné stavět ji stromovitě s

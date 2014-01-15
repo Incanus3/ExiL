@@ -50,12 +50,12 @@ přidá podmínky použitého pravidla do seznamu cílů. Podmínky použitého 
 se tedy stávají dalšími cíli, které je třeba splnit, abychom nalezli hledanou
 odpověď.
 
-Hledání unifikace vzoru cíle s \uv{proměnným faktem} je podobné jako v jazyce
-Prolog. Je však jednodušší o to, že symbolická reprezentace faktů a vzorů je
-lineární (seznamy nejsou vnořené) a není třeba rozlišovat mezi relačními
-a~funkčními symboly. V případě strukturovaných faktů a vzorů jsou jednotlivé
-sloty srovnávány, jako by šlo o atomy seznamu, jen zde nezáleží na pořadí, nýbrž
-se srovnávají odpovídající sloty faktu a vzoru.
+Hledání unifikace vzoru cíle s \uv{proměnným faktem} z důsledků pravidla je
+podobné jako v jazyce Prolog. Je však jednodušší o to, že symbolická
+reprezentace faktů a vzorů je lineární (seznamy nejsou vnořené) a není třeba
+rozlišovat mezi relačními a~funkčními symboly. V případě strukturovaných faktů a
+vzorů srovnáváme hodnoty jednotlivých slotů, jako by šlo o atomy seznamu, jen zde
+nezáleží na pořadí, nýbrž srovnáváme odpovídající sloty faktu a vzoru.
 
 Pokud metoda \verb|back-step| nenalezne fakt ani pravidlo vedoucí ke splnění
 aktuálního cíle, volá metodu \verb|backtrack|. Ta odstraňuje postupně struktury z
@@ -143,7 +143,7 @@ a~\verb|take-taxi-home| (zpětná inference je aplikuje v opačném pořadí),
 přestože toto řešení je nesprávné.
 
 Další možností, která se nabízí, je pamatovat si všechny cíle, které se někdy
-vyskytovaly v množině cílů a brát volání \verb|(retract (have money))| v
+vyskytovaly v množině cílů, a brát volání \verb|(retract (have money))| v
 důsledcích pravidla jako indikaci, že pravidlo nelze použít, pokud je cíl
 \verb|(have money)| v této množině. To sice řeší předchozí problém, ale vede k
 dalšímu. Představme si, že bychom do znalostní báze přidali pravidlo, které

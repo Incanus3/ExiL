@@ -52,13 +52,13 @@ abychom přešli z počátečního stavu systému do cílového. Pokud obsahoval
 cíle proměnné, je součástí odpovědi také množina použitých vazeb těchto
 proměnných, tedy jejich \emph{substituce}.
 
-U expertních systémů můžeme také definovat cíle výpočtu. Tyto ale musíme přidat
-jako fakta do znalostní báze a v pravidlech je musíme explicitně testovat,
-případně modifikovat, což může být velmi složité.
+U expertních systémů s dopředným řetězením můžeme také definovat cíle výpočtu.
+Tyto ale musíme přidat jako fakta do znalostní báze a v pravidlech je musíme
+explicitně testovat, případně modifikovat, což může být velmi složité.
 
 Budeme-li uvažovat všechny možné cesty, kterými se systém může v každém stavu
 ubírat, ať už aplikací splněného pravidla, nebo pravidla, jehož důsledky vedou
-ke splnění cíle, může možné dosažitelné stavy uspořádat do stromu. Ten bude mít
+ke splnění cíle, můžeme dosažitelné stavy uspořádat do stromu. Ten bude mít
 kořen buď v počátečním stavu (u systému s dopředným), nebo v cílovém (u systému
 se zpětným řetězením).
 
@@ -68,5 +68,5 @@ vzhledem k počtu kroků výpočtu), systém neprohledává celý strom, nýbrž
 heuristik k rozhodnutí, kterou větví výpočtu se ubírat.  Těmito heuristikami
 jsou právě zmíněné inferenční strategie.
 
-Přiložená knihovna ExiL implementuje jak dopřednou, tak velmi omezenou zpětnou
-inferenci. Její použití a implementaci popisuje praktická část práce.
+Přiložená knihovna ExiL implementuje jak dopřednou, tak omezenou formu zpětné
+inference. Její použití a implementaci popisuje praktická část práce.

@@ -32,7 +32,7 @@ ladí. V kapitole \ref{composite conditions} ale popisuji, jak by tuto
 funkcionalitu bylo možné implementovat.
 
 Kromě podpory kompozitních podmínek a některých složitějších konstruktů systému
-CLIPS, jako například multisloty, by bylo zajímavé, implementovat podporu
+CLIPS, jako například multisloty, by bylo zajímavé implementovat podporu
 použití objektů CLOSu jako faktů expertního systému. Knihovna by také mohla
 podporovat například uživatelsky definované testy v podmínkách pravidel, jako
 porovnávání číselných hodnot, nebo rozhodování na základě návratových hodnot
@@ -43,12 +43,12 @@ Zajímavá by byla také podpora nejistoty u faktů a odvozovacích pravidel
 systému, jakou poskytuje například systém
 MYCIN\footnote{\url{http://en.wikipedia.org/wiki/Mycin}}. Tu je už teď možné
 nasimulovat připojením hodnot k faktům a jejich manipulací použitím funkčních
-alternativ maker v důsledcích pravidel. Kromě rovnosti však není možné tyto
-hodnoty testovat v podmínkách pravidel, navíc je tento nepřímý způsob
-nepohodlný.
+alternativ maker modifikujících pracovní paměť v důsledcích pravidel. Kromě
+rovnosti však není možné tyto hodnoty testovat v podmínkách pravidel, navíc je
+tento nepřímý způsob nepohodlný.
 
-Funkčnost systému jsem testoval na několika malých příkladech, které jsem buď
-vytvořil od základu, nebo převzal z \cite{paradigms}. Vytvoření rozsáhlejších
-příkladů nebo jejich přepsání z programů vytvořených pro systém CLIPS by bylo
-časově velmi náročné. Kód programu je navíc opatřen velkou sadou integračních a
-unit testů.
+Funkčnost systému jsem testoval na mnoha malých příkladech, které jsem buď
+vytvořil od základu, nebo převzal z \cite{paradigms} a ručním voláním funkcí a
+maker systému. Vytvoření rozsáhlejších příkladů nebo jejich přepsání z programů
+vytvořených pro systém CLIPS by bylo časově náročné. Kód programu je navíc
+opatřen velkou sadou integračních a unit testů.
