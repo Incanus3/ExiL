@@ -30,8 +30,8 @@ seznamy, množinami, stromy, \emph{hashovacími tabulkami} apod.
 
 Modul \verb|core| definuje základní objekty, s nimiž zbytek knihovny
 pracuje. Ty reprezentují fakty, vzory, šablony a pravidla. Fakty a vzory jsou
-definovány ve dvou variantách - jednoduché a strukturované (\emph{templated}),
-jak jsem uvedl v uživatelské příručce.
+definovány ve dvou variantách - jednoduché a strukturované, jak jsem uvedl v
+uživatelské příručce.
 
 Modul \verb|rete| implementuje algoritmus RETE, který slouží k efektivnímu
 vyhodnocování podmínek odvozovacích pravidel. Algoritmus je implementován
@@ -46,16 +46,16 @@ podmínek těchto pravidel, případně uzly při odebrání pravidla odstraní.
 Další dvojice metod upozorní síť na přidání faktu do (resp. odebrání z) pracovní
 paměti. Síť pak přepočítá splněné podmínky pravidel a případně upozorní
 prostředí na nově přibyvší nebo rozbité shody (\emph{broken match} - pravidla,
-která byla splněná a už nejsou).
+která byla splněná nějakou posloupností faktů a už nejsou).
 
 Modul \verb|environment| definuje stejnojmenný objekt, který udržuje průbežný
 stav prostředí a řídí průběh inference. Hodnoty, které stav prostředí tvoří,
 jsem popsal v kapitole \ref{env cleanup} Prostředí udržuje krom jiného
-\emph{referenci} na síť \verb|rete|, kterou upozorňuje na nastalé změny.
+referenci na síť \verb|rete|, kterou upozorňuje na nastalé změny.
 
 Modul \verb|parser| zajišťuje vytváření \verb|core| objektů z externí
-reprezentace (té, kterou předáváme makrům při práci s knihovnou). Modul
-rozpoznává jak základní, tak CLIPSovou syntax, takže o to, kterou z nich
+reprezentace (té, kterou předáváme funkcím a makrům při práci s knihovnou).
+Modul rozpoznává jak základní, tak CLIPSovou syntax, takže o to, kterou z nich
 uživatel používá, se zbytek kódu nemusí dále starat.
 
 Při parsování strukturovaných faktů či vzorů se \verb|parser| dotazuje
@@ -71,6 +71,6 @@ neimplementuje. Pouze kvotuje parametry předané makrům, předává je
 \verb|parser|u a~výsledné objekty (se zbytkem parametrů) pak aktivnímu prostředí.
 
 Do diagramu jsem nezahrnul modul \verb|gui|. Ten implementuje grafické
-uživatelské rozhraní a poskytuje jedinou metodu - \verb|show-gui|. Rozhraní se
-dotazuje prostředí, se kterým je svázáno, na hodnoty aktuálního stavu a je jím
-upozorněno, pokud se tyto změní.
+uživatelské rozhraní a poskytuje dvě metody - \verb|show-gui| a
+\verb|update-lists|. Rozhraní se dotazuje prostředí, se kterým je svázáno, na
+hodnoty aktuálního stavu a je jím upozorněno, pokud se tyto změní.

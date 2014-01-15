@@ -2,76 +2,50 @@
 \label{composite conditions}
 
 Podporu kompozitních podmínek odvozovacích pravidel (vnořené aplikace logických
-funkcí v podmínkách) jsem v ExiLu neimplementoval. Rád bych zde ale ukázal, proč
-je implementace této funkcionality vzhledem k aktuální implementaci algoritmu
-RETE složitá.
+funkcí v podmínkách) a všeobecné kvantifikace podmínek jsem v ExiLu
+neimplementoval, neboť ta by vyžadovala komplexní změny v implementaci algoritmu
+RETE, která je už tak poměrně složitá. Síť navíc při definici nových pravidel
+velice rychle roste a obsahuje cykly (nikoli z pohledu aktivace uzlů, ale z
+pohledu referencí, které na sebe uzly udržují), díky čemuž se velice těžko ladí.
+Alespoň tedy nastíním, jak lze podporu těchto podmínek implementovat.
 
-\begin{figure}[h]
-\centering
-\includegraphics[height=10cm]{rete-beta-conds.eps}
-\caption{Beta část sítě RETE s funkcemi uzlů}
-\label{rete-beta-conds}
-\end{figure}
-
-Obrázek \ref{rete-beta-conds} ukazuje diagram beta části sítě RETE z předchozí
-kapitoly. Názvy uzlů jsem zde ale nahradil jejich funkcí. Paměťové uzly ukládají
-fakty nebo tokeny splňující jednu (v případě alpha-memory-nodů), nebo více (u
-beta-memory-nodů) podmínek pravidla. Testovací (beta-join-nody) pak zajišťují
-agregaci těchto faktů a tokenů. Jednu z podmínek jsem navíc pro ukázku znegoval.
-
-Síť v diagramu splňuje několik podmínek:
-\begin{enumerate}
-  \item uzly jsou konstruovány ve stejném pořadí, v jakém se podmínky v definici
-    pravidla vyskytují,
-  \item beta-join-node vždy spojuje jeden alpha-memory-node s jedním
-    beta-memory-nodem, agreguje tedy fakty splňující jednu podmínku pravidla s
-    tokeny reprezentujícími posloupnost faktů splňující jeho předchozí podmínky,
-  \item negace podmínky je vždy aplikována jen na úrovni jednoho faktu.
-\end{enumerate}
-
-\begin{figure}[h]
-\centering
-\includegraphics[height=12cm]{rete-beta-comp-conds.eps}
-\caption{Síť RETE s kompozitními podmínkami}
-\label{rete-beta-comp-conds}
-\end{figure}
-
-Představme si nyní stavbu RETE sítě v případě následujícícho pravidla
-s~kompozitními podmínkami:
+\cite{doorenbos} uvádí, jak v síti RETE implementovat tzv. konjunktivní negace,
+například podmínku ve tvaru
 \begin{minted}{cl}
-(defrule rule
-  (and (or condition1 condition2)
-       (not (and condition3 condition4)))
-  =>
-  ...)
+(and (?x on ?y)
+     (?y left-of ?z)
+     (not (and (?z color red)
+               (?z on ?w)))).
 \end{minted}
-Ta je zobrazena na obrázku \ref{rete-beta-comp-conds} Z diagramu vidíme, že síť porušuje všechny
-uvedené podmínky.
+Příklad pracuje s barevnými bloky, které lze stavět na sebe. Tato podmínka je
+splněna ve chvíli, kdy existuje blok \verb|?x| na bloku \verb|?y|, nalevo od
+bloku \verb|?z|, který není zároveň červený a umístěn na nějakém dalším bloku.
+Negace a konjunkce mohou být v~podmínkách libovolně vnořovány.
 
-\begin{framed}
-  \begin{itemize}
-    \item popsat, co je problematického na podpoře této sítě
-    \item podmínky třeba procházet rekurzivně a síť budovat stromovitě
-    \item token je nyní list, stačí to, nebo musí být také strom?
-    \item testy v join nodech nyní ukládají pozici - o kolik podmínek zpět,
-      který atom v přechozí, který atom v aktuální
-    \item pozice by musela mít u beta-beta joinu minimálně jednu pozici navíc -
-      (fakt,atom)-(fakt,atom), pokud by musel být token strom, ještě složitější
-    \item lze vyřešit join-nody obecně - beta-beta i beta-alpha, nebo nutné dva
-      typy?
-    \item jak reprezentovat node, který neguje složenou podmínku?
-    \item jak joinovat tokeny, které mohou zahrnovat výsledky negativní podmínky?
-    \item síť je cyklická a jako taková špatně vizualizuje
-    \item počet uzlů sítě roste velmi rychle $\rightarrow$ mnoho uzlů i při
-      několika pravidlech $\rightarrow$ náročné ladění
-    \item podpora kompozitních podmínek je navíc problematická vzhledem ke
-      zpětné inferenci (ale ta už je stejně omezená) - znamenalo by složené cíle
-      (kvůli or, not)
-    \item zmínit, jak jednoduchá je implementace, pokud podmínky pracují pouze
-      se substitucemi proměnných - bez rete
-  \end{itemize}
-\end{framed}
-% Z fungování beta částí sítě RETE (viz kapitola \ref{rete}) vidíme, že vyhodnocování
-% podmínek pravidla je inherentně sekvenční. \verb|Beta-join-nody| zde
-% implementují logickou spojku \emph{a} mezi podmínkami pravidla, která je zde
-% zleva asociativní.
+Pro skupinu podmínek v negaci vytvoříme podsíť uzlů, stejně jako v původním
+algoritmu. Místo použití jednoho \verb|beta-negative-node| je pak pro
+vyhodnocení složené negace použita dvojice speciálních uzlů. První z nich se
+stane potomkem uzlu \verb|beta-memory-node|, který ukládá výsledky předchozích
+podmínek. Druhý je pak potomkem prvního, zároveň však i potomkem posledního uzlu
+v podsíti.
+
+Druhý uzel funguje podobně, jako běžný \verb|beta-negative-node|
+s tím, že ale testuje konzistenci vazeb mezi tokeny z předchozích podmínek a
+tokeny přicházející z~podsítě. Pokud k danému tokenu shora neexistuje
+konzistentní token z~podsítě, je konjunktivní negace na této úrovni splněna a
+druhý uzel aktivuje potomky.
+
+Takto můžeme postupovat rekurzivně až na úroveň, kdy jsou negovány pouze
+jednotlivé podmínky. Pro ty je pak použit běžný \verb|beta-negative-node|. Díky
+konjunkci a negaci, které lze libovolně vnořovat, můžeme implementovat také
+disjunkci (neboť
+$\varphi \lor \psi \Leftrightarrow \lnot(\lnot \varphi \land \lnot \psi)$)
+a dokonce všeobecný kvantifikátor
+(neboť $(\forall x)(P(x)) \Leftrightarrow (\nexists x)(\lnot P(x))$).
+
+Síť už ale nelze budovat lineárně, nýbrž je nutné stavět ji stromovitě s
+rekurzivním vyhodnocováním podmínek. \cite{doorenbos} už navíc neuvádí, jak při
+aktivaci pravidel navazovat hodnoty proměnných. Například u disjunktivních
+podmínek obdrží sice \verb|production-node| token s posloupností faktů, pokud
+mají ale podmínky v disjunkci stejnou strukturu, nevíme, na kterou z podmínek
+byl daný fakt návázán.
