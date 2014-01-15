@@ -70,15 +70,15 @@ aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
 \emph{symbolem}~\verb|=>|.
 
 Podmínky odvozovacích pravidel jsou ve formě vzorů (\emph{pattern}). Struktura
-vzorů je stejná jako struktura faktů (viz sekce \ref{knowledge base
+vzorů je stejná jako struktura faktů (viz kapitola \ref{knowledge base
 definition}), ale na rozdíl od nich mohou obsahovat proměnné (symboly začínající
 otazníkem).  Při vyhodnocování podmínek pravidla je zajišťěna
 konzistence vazeb těchto proměnných a výskyty všech proměnných v~důsledcích
-pravidla jsou při jeho aktivaci nahrazeny jejich vazbami. Detaily viz sekce
+pravidla jsou při jeho aktivaci nahrazeny jejich vazbami. Detaily viz kapitola
 \ref{inference}
 
 Důsledky pravidel typicky obsahují příkazy pro modifikaci pracovní paměti (viz
-sekce \ref{modifikace}), tedy přidání (\verb|assert|), odebrání
+kapitola \ref{modifikace}), tedy přidání (\verb|assert|), odebrání
 (\verb|retract|), či úpravu (\verb|modify|) faktů v ní. Nemusí tomu tak ale být
 vždycky - důsledkem aktivace pravidla může být např. vypsání výstupu, logování,
 zápis souboru, ale také např. ovládání externího systému.
@@ -86,7 +86,7 @@ zápis souboru, ale také např. ovládání externího systému.
 Ukázkový příklad definuje tři odvozovací pravidla. Pravidlo
 \verb|move-robot| je aktivováno, pokud chceme přesunout nějaký objekt z pozice
 \verb|?from| na pozici \verb|?to|, objekt se nachází v pozici \verb|?from|
-a~robot nikoli (třetí podmínka je negovaná, viz sekce \ref{inference}).
+a~robot nikoli (třetí podmínka je negovaná, viz kapitola \ref{inference}).
 Poslední podmínka slouží pouze k navázání původní pozice robota.  Při aktivaci
 pravidla je v pracovní paměti nahrazena informace o~původní pozici robota
 pozicí \verb|?from|. Robot se tedy nyní nachází na stejné pozici, jako kýžený
@@ -98,7 +98,7 @@ přesunut na pozici \verb|?to| nahrazením faktů o původních pozicích novým
 podobně jako v~prvním pravidle. Definice pravidla obsahuje speciální notaci (s
 použitím operátoru \verb|<-|), jejímž účelem je navázání celého faktu na
 proměnnou. Ten pak můžeme v~důsledcích snadno ostranit z pracovní paměti.
-Detaily opět viz sekce \ref{inference}
+Detaily opět viz kapitola \ref{inference}
 
 Poslední pravidlo slouží k zastavení inference, pokud se již objekt nachází na
 cílové pozici. Inference je zde zastavena explicitním voláním \verb|(halt)|.
@@ -113,7 +113,7 @@ původních faktů) přidá do pracovní paměti fakty ve všech definovaných s
 Poslední nutnou fází exilového programu je spuštění inference. To můžeme udělat
 nejjednodušeji voláním \verb|(run)|. Inferenční mechanismus poté postupně
 vyhodnocuje, která odvozovací pravidla mají splněné všechny podmínky, v každém
-kroku z nich jedno vybere a aktivuje jej. Detaily viz sekce \ref{inference}
+kroku z nich jedno vybere a aktivuje jej. Detaily viz kapitola \ref{inference}
 
 Výstup programu je následující:
 \begin{minted}{cl}
@@ -133,7 +133,7 @@ Halting
 \end{minted}
 Řádky začínající symbolem \verb|==>| označují fakty přidané do pracovní paměti,
 řádky začínající \verb|<==| fakty z paměti odstraněné. Tento výstup obdržíme
-pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz sekce
+pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz kapitola
 \ref{inference tracing}). První tři fakty přibydou do pracovní paměti při
 vyhodnocení volání \verb|(reset)|, další pak spolu s~postupnou aplikací
 odvozovacích pravidel. Dotážeme-li se po skončení inference na seznam faktů v

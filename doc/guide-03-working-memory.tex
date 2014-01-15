@@ -4,7 +4,7 @@
 Pracovní paměť je množina faktů, které systém v danou chvíli považuje za platné.
 Její obsah můžeme vypsat voláním funkce \verb|facts|. Funkcí \verb|reset|
 inicializujeme pracovní paměť ze znalostní báze. Jejím voláním jsou do pracovní
-paměti zavedeny fakty všech definovaných skupin faktů (viz sekce
+paměti zavedeny fakty všech definovaných skupin faktů (viz kapitola
 \ref{knowledge base definition}).
 
 Obsah pracovní paměťi může být dále modifikován třemi makry:
@@ -15,7 +15,7 @@ Obsah pracovní paměťi může být dále modifikován třemi makry:
 \end{itemize}
 Ta lze volat buď před započetím inference (ale po volání \verb|reset|, neboť to
 dodatečné úpravy vymaže), nebo v jejím průběhu, pokud inferenci krokujeme (viz
-sekce \ref{inference}). Makra také typicky voláme v důsledcích pravidel.
+kapitola \ref{inference}). Makra také typicky voláme v důsledcích pravidel.
 
 Makra \verb|assert| a \verb|retract| berou jako parametry libovolný počet
 specifikací faktů ve stejném formátu, jako u makra \verb|deffacts| (ale bez
@@ -28,7 +28,7 @@ určující hodnoty slotů ke změně. Např.
 nahradí v pracovní paměti fakt \verb|(in :object box :location A)| faktem
 \verb|(in :object box :location B)|.
 Toto makro je obzvláště užitečné, navážeme-li v podmínkách pravidla celý fakt na
-proměnnou (viz sekce \ref{inference}).
+proměnnou (viz kapitola \ref{inference}).
 
 Pracovní paměť se skutečně chová jako množina, každý fakt tedy může být v
 pracovní paměti jen jednou. Opětovné volání \verb|assert| nemá žádný efekt.

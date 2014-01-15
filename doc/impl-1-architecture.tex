@@ -1,6 +1,6 @@
 \subsubsection{Architektura programu}
 
-V následující sekci budu používat obecný pojem \emph{modul} pro ohraničenou část
+V následující kapitole budu používat obecný pojem \emph{modul} pro ohraničenou část
 programu, implementující nějakou část funkcionality. Veřejné rozhraní modulu
 definuje vstupní body, pomocí nichž s ním mohou ostatní moduly komunikovat.
 Ty jsou zde reprezentovány funkcemi, makry a metodami, které modul poskytuje
@@ -35,7 +35,7 @@ jak jsem uvedl v uživatelské příručce.
 
 Modul \verb|rete| implementuje algoritmus RETE, který slouží k efektivnímu
 vyhodnocování podmínek odvozovacích pravidel. Algoritmus je implementován
-\emph{dataflow} sítí, jejíž fungování popíšu detailně v sekci \ref{rete}
+\emph{dataflow} sítí, jejíž fungování popíšu detailně v kapitole \ref{rete}
 Algoritmus RETE je sice nejkomplexnější částí ExiLu, veřejné rozhraní modulu
 \verb|rete| je však velmi jednoduché.
 
@@ -50,7 +50,7 @@ která byla splněná a už nejsou).
 
 Modul \verb|environment| definuje stejnojmenný objekt, který udržuje průbežný
 stav prostředí a řídí průběh inference. Hodnoty, které stav prostředí tvoří,
-jsem popsal v sekci \ref{env cleanup} Prostředí udržuje krom jiného
+jsem popsal v kapitole \ref{env cleanup} Prostředí udržuje krom jiného
 \emph{referenci} na síť \verb|rete|, kterou upozorňuje na nastalé změny.
 
 Modul \verb|parser| zajišťuje vytváření \verb|core| objektů z externí

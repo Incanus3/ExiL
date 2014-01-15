@@ -9,24 +9,18 @@ Znalosti z problémové domény jsou reprezentovány jejím
 \emph{modelem}\footnote{\url{http://en.wikipedia.org/wiki/Domain\_model}}.
 Expertní systém tedy pracuje s modelem zvolené problémové domény.
 
-\begin{framed}
-  \url{http://en.wikipedia.org/wiki/Expert\_system#Applications} poskytuje dobré
-  příklady aplikací
-\end{framed}
-
 K typickým problémům, řešeným pomocí expertních systému patří
 \cite{introduction}
 \begin{itemize}
   \item plánování posloupnosti akcí vedoucích k zadanému cíli (např.
-    plánování trasy ze znalosti dopravních spojů a dopravní situace),
-    \emph{nevhodný příklad - potřeba numerických výpočtů při výběru z více tras
-    - ne že by nešlo, ale není typickým příkladem}
-  \item interpretace dat (např. detekce nebezpečí z dat získaných z
-    termografické kamery), analýza složení (vyhodnocení dat získaných metodami
-    analytické chemie),
-  \item diagnóza a plánování oprav poruch systému,
+    plánování rozvrhu hodin se zohledněním obsazení učeben a vyučujících),
+  \item diagnóza poruch systému a plánování jejich oprav, diagnóza a plánování
+    léčby pacientů,
   \item konfugurace komplexních objektů (např. navržení serverového cloudu pro
-    poskytnutí zadaných služeb).
+    poskytnutí zadaných služeb),
+  \item interpretace předem klasifikovaných dat (např. detekce nebezpečí z dat
+    získaných z termografické kamery), analýza složení (vyhodnocení dat
+    získaných metodami analytické chemie).
 \end{itemize}
 
 V první kapitole své bakalářské práce \cite{bakalarka} uvádím typické vlastnosti
@@ -43,10 +37,11 @@ program můžeme vytvořit od základu v nějakém obecném programovacím jazyc
 ale poměrně složité a pokud nemáme specifické nároky, nevyplatí se to. Častěji
 použijeme existující \emph{nástroj} či \emph{knihovnu pro tvorbu expertních
 systémů}. Tento nástroj už obsahuje odvozovací aparát a definuje reprezentaci
-znalostí a~dotazů a~její syntax (viz sekce \ref{knowledge representation}).
+znalostí a~dotazů a~její syntax (viz kapitola \ref{knowledge representation}).
 Poskytuje tedy tzv. \emph{prázdný expertní systém}. Takovým nástrojem je i
 knihovna ExiL, která je přílohou této práce.
 
+\clearpage
 Zařazení expertního systému do procesu sestává z následujících fází:
 \begin{enumerate}
   \item sestavení modelu zvolené problémové domény,
@@ -72,4 +67,4 @@ Expretní systém nelze použít k řešení jakéhokoli typu problému. To je d
 reprezentací znalostí v expertním systému a způsobem, jakým systém nad těmito
 znalostmi usuzuje. Vlastnosti znalostí, které lze v expertním systému
 reprezentovat, jejich reprezentace, způsoby zadávání cílů a dotazů i to, jak
-systém zadaných cílů dosahuje, je náplní následujících sekcí.
+systém zadaných cílů dosahuje, je náplní následujících kapitol.

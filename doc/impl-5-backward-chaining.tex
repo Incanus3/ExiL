@@ -4,7 +4,7 @@
 Zpětná inference hledá odpovědi na základě zadaných cílů. Odpovědi jsou zde
 reprezentovány použitou substitucí proměnných v cílech a posloupností faktů
 a~pravidel, použitých k jejich splnění. Možnosti zpětného řetězení a způsob jeho
-použití jsem popsal v sekci \ref{backward inference}
+použití jsem popsal v kapitole \ref{backward inference}
 
 Kód implementující zpětnou inferenci pracuje se dvěma datovými strukturami -
 seznamem cílů a zásobníkem pro backtracking (návrat ve výpočtu, pokud daná cesta
@@ -29,7 +29,7 @@ seznamu a hledá nejprve fakta, poté pravidla, vedoucí k jeho splnění, při�
 ignoruje ta, která už byla pro splnění cíle dříve použita.
 
 Při hledání faktů, která splňují cíl, srovnáváme fakt se vzorem cíle podobně,
-jako při vyhodnocování podmínek pravidel při dopředné inferenci (viz sekce
+jako při vyhodnocování podmínek pravidel při dopředné inferenci (viz kapitola
 \ref{inference}). Výsledkem tohoto srovnání je v případě shody substituce
 proměnných, vyskytujících se ve vzoru cíle. Je-li nalezen fakt, který aktuální
 cíl splňuje, program uloží nalezenou shodu na zásobník, načež cíl odstraní ze

@@ -16,7 +16,7 @@ so just use `load-manual.lisp`, which compiles and loads each file in turn, avoi
 ## Documentation
 - CLIPS documentation - http://clipsrules.sourceforge.net/OnlineDocs.html
 - API reference - https://github.com/Incanus3/ExiL/wiki/API-reference
-- more extensive documentation is part of the text part of the thesis (text/bakalarka.pdf), unfortunately it's in Czech
+- more extensive documentation is part of the text part of the thesis (text/diplomka.pdf), unfortunately it's in Czech
 
 ## Examples
 - ordered facts - https://github.com/Incanus3/ExiL/blob/master/src/examples/examples-simple.lisp
