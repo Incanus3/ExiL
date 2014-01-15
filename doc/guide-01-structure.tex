@@ -58,7 +58,7 @@ Definice faktů jsou uspořádány do skupin označených názvem (v tomto pří
 \verb|world|). V ukázkovém programu si snadno vystačíme s jednou skupinou faktů,
 v reálných programech bude ale těchto skupin většinou více. Tato organizace
 umožňuje snadnou redefinici, případně odebrání, jen některých skupin faktů v
-případě potřeby.  Definice skupiny faktů \verb|world| v příkladu přidává do
+případě potřeby. Definice skupiny faktů \verb|world| v příkladu přidává do
 znalostní báze informaci o~počáteční pozici robota, krabice a~o~našem záměru
 přesunout krabici z~pozice \verb|A| na pozici \verb|B|.
 
@@ -66,16 +66,15 @@ Následuje definice odvozovacích pravidel. Definice každého pravidla sestáv�
 jeho názvu, volitelného řetězce sloužícího k dokumentaci pravidla,
 množiny podmínek, tedy předpokladů pro jeho splnění (a následnou aktivaci),
 a~množiny důsledků, tedy libovolných lispových výrazů, které jsou při
-aktivaci pravidla vyhodnoceny.  Tyto dvě množiny jsou od sebe odděleny
-\emph{symbolem}~\verb|=>|.
+aktivaci pravidla vyhodnoceny. Tyto dvě množiny jsou od sebe odděleny
+symbolem~\verb|=>|.
 
-Podmínky odvozovacích pravidel jsou ve formě vzorů (\emph{pattern}). Struktura
-vzorů je stejná jako struktura faktů (viz kapitola \ref{knowledge base
-definition}), ale na rozdíl od nich mohou obsahovat proměnné (symboly začínající
-otazníkem).  Při vyhodnocování podmínek pravidla je zajišťěna
-konzistence vazeb těchto proměnných a výskyty všech proměnných v~důsledcích
-pravidla jsou při jeho aktivaci nahrazeny jejich vazbami. Detaily viz kapitola
-\ref{inference}
+Podmínky odvozovacích pravidel jsou ve formě vzorů. Struktura vzorů je stejná
+jako struktura faktů (viz kapitola \ref{knowledge base definition}), ale na
+rozdíl od nich mohou obsahovat proměnné (symboly začínající otazníkem). Při
+vyhodnocování podmínek pravidla je zajišťěna konzistence vazeb těchto proměnných
+a výskyty všech proměnných v~důsledcích pravidla jsou při jeho aktivaci
+nahrazeny jejich vazbami. Detaily viz kapitola \ref{inference}
 
 Důsledky pravidel typicky obsahují příkazy pro modifikaci pracovní paměti (viz
 kapitola \ref{modifikace}), tedy přidání (\verb|assert|), odebrání
@@ -107,8 +106,8 @@ vidíme v~příkladu \ref{structured facts}), neboť v takovou chvíli nemůže 
 žádné další pravidlo splňeno.
 
 Jakmile je znalostní báze nadefinována, můžeme z ní inicializovat pracovní
-paměť. To provedeme voláním \verb|(reset)|, které (po případném vyčištění
-původních faktů) přidá do pracovní paměti fakty ve všech definovaných skupinách.
+paměť. To provedeme voláním \verb|(reset)|, které, po případném vymazání
+původních faktů, přidá do pracovní paměti fakty ve všech definovaných skupinách.
 
 Poslední nutnou fází exilového programu je spuštění inference. To můžeme udělat
 nejjednodušeji voláním \verb|(run)|. Inferenční mechanismus poté postupně
@@ -135,7 +134,7 @@ Halting
 řádky začínající \verb|<==| fakty z paměti odstraněné. Tento výstup obdržíme
 pouze pokud zapneme sledování faktů voláním \verb|(watch facts)| (viz kapitola
 \ref{inference tracing}). První tři fakty přibydou do pracovní paměti při
-vyhodnocení volání \verb|(reset)|, další pak spolu s~postupnou aplikací
+vyhodnocení volání \verb|(reset)|, další pak s~postupnou aplikací
 odvozovacích pravidel. Dotážeme-li se po skončení inference na seznam faktů v
 pracovní paměti voláním \verb|(facts)|, obdržíme výstup
 \cl|((GOAL MOVE BOX A B) (IN ROBOT B) (IN BOX B)).|

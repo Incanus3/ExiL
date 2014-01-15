@@ -3,28 +3,28 @@
 
 ExiL, stejně jako CLIPS, rozlišuje dva typy faktů - jednoduché (\emph{simple,
 ordered}) a strukturované (\emph{templated}). Stuktura jednoduchého faktu je udána
-pouze pořadím \emph{atomů}, typickou volbou je např. \verb|objekt-attribut-hodnota|:
+pouze pořadím atomů, typickou volbou je např. \verb|objekt-attribut-hodnota|:
 \cl|(box color red),| či \verb|relace-objekty|: \cl|(in box hall).|
 
 Strukturované fakty mají naproti tomu explicitně pojmenované složky (sloty).
-Typicky popisují objekt s množinou pojmenovaných atributů: \cl|(box :color red :size small),|
-či relaci s pojmenovanými aktory: \cl|(in :object box :location hall),| kde
-\verb|box| a \verb|in| jsou šablony (\emph{template}), které je třeba definovat
-předem. Na pořadí specifikace slotů u strukturovaných faktů
-nezáleží.
+Typicky popisují objekt s pojmenovanými atributy:
+\cl|(box :color red :size small),| či relaci s pojmenovanými zůčastněnými
+objekty: \cl|(in :object box :location hall),| kde \verb|box| a \verb|in| jsou
+šablony (\emph{template}), které je třeba definovat předem. Na pořadí
+specifikace slotů u strukturovaných faktů nezáleží.
 
 Vyjadřovací síla obou typů faktů je stejná, použitím explicitnějších
 strukturovaných faktů ale docílíme lepší čitelnosti a jednoznačnější sémantiky
 exilového programu, zvláště třeba v případě relací na jedné množině objektů:
 \cl|(father john george).|
 
-Šablonu definujeme voláním \emph{makra} \verb|deftemplate|, např:
+Šablonu definujeme voláním makra \verb|deftemplate|, např:
 \cl|(deftemplate in object (location :default here)).| Prvním parametrem je
 název šablony, za ním následuje libovolný počet specifikací slotů. Specifikací
 slotu je buď symbol - jméno slotu, nebo \emph{seznam}, jehož hlavou
 (\emph{car}) je jméno slotu a~tělem (\emph{cdr}) je \emph{property list (plist)}
 s dalšími parametry. Aktuálně systém umožňuje pouze specifikaci výchozí hodnoty
-slotu \emph{klíčem} \verb|:default|. Ta je použita, není-li při specifikaci
+slotu \emph{klíčkem} \verb|:default|. Ta je použita, není-li při specifikaci
 faktu, používajícího tuto šablonu, uvedena hodnota pro daný slot. Příklad
 \ref{structured facts} na straně \pageref{structured facts} ukazuje definici
 znalostní báze ekvivalentní příkladu \ref{typical structure} s použitím
@@ -68,14 +68,15 @@ strukturovaných faktů.
 
 Je-li už šablona požadovaného názvu definována, ale neexistují v pracovní
 paměti fakty, které ji používají, je její stávající definice nahrazena. Pokud
-ale v~pracovní paměti existují takové fakty, skončí volání \verb|deftemplate|
-výjimkou.
+ale v~pracovní paměti nebo v některé z definic skupin faktů existují takové
+fakty, skončí volání \verb|deftemplate| výjimkou.
 
 Seznam názvů všech definovaných šablon můžeme získat voláním \verb|(templates)|.
 Specifikaci šablony pak získáme voláním makra
 \verb|find-template|, např. \verb|(find-template in).| Definici šablony zrušíme
 voláním makra \verb|undeftemplate|, např. \verb|(undeftemplate goal)|. To opět
-skončí výjimkou, existují-li v pracovní paměti fakty, které šablonu využívají.
+skončí výjimkou, existují-li v pracovní paměti nebo v některé ze skupin fakty,
+které šablonu využívají.
 
 Fakty, ze kterých expertní systém vychází, zavádíme pomocí skupin faktů. Ty
 definujeme makrem \verb|deffacts|, např.:
@@ -114,17 +115,17 @@ definujeme makrem
   (modify ?robot :location ?from)).
 \end{minted}
 Podmínková část pravidla (před symbolem \verb|=>|) je tvořena vzory. Ty mohou
-být, stejně jako fakty, jednoduché, nebo strukturované. Kromě toho umožňuje
+být, stejně jako fakty, jednoduché nebo strukturované. Kromě toho umožňuje
 definice pravidla několik speciálních konstruktů (negace podmínky, navázání
 proměnné na celou podmínku). Ty popíšu podrobně v kapitole \ref{inference} spolu~s
 tím, jak jsou podmínky pravidla při inferenci vyhodnocovány.
 
+\FloatBarrier
+
 Důsledkovou část pravidla (za symbolem \verb|=>|) tvoří libovolný počet
 lispových výrazů. Jak se tyto vyhodnocují popíšu opět v kapitole \ref{inference}
 
-\FloatBarrier
-
 Opakovaným voláním makra \verb|defrule| odvozovací pravidlo redefinujeme.
 K~získání seznamu názvů definovaných pravidel a jejich specifikací slouží
-\emph{funkce} \verb|rules| a makro \verb|find-rule|, podobně jako u šablon a
+funkce \verb|rules| a makro \verb|find-rule|, podobně jako u šablon a
 skupin faktů.  Ke zrušení definice pravidla slouží makro \verb|undefrule|.

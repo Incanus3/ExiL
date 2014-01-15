@@ -30,8 +30,8 @@ Firing STOP
 Halting.
 \end{minted}
 
-Sledování pravidel (\verb|(watch rules)|), přidává informace o pravidlech
-přidaných do (odebraných ze) znalostní báze, např.
+Sledování pravidel - \verb|(watch rules)| - přidává informace o pravidlech
+přidaných do (odebraných ze) znalostní báze, například
 \begin{minted}{cl}
 ==> (RULE STOP
   (GOAL MOVE ?OBJECT ?FROM ?TO)
@@ -45,26 +45,26 @@ kompatibilitě se systémem CLIPS) budeme navíc informováni o shodách, které
 agendy přibyly, nebo z ní byly odstraněny. Výstup programu pak bude následující:
 \begin{minted}[samepage]{cl}
 ==> (MATCH MOVE-ROBOT
-      ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT B)))
+      ((GOAL MOVE BOX A B) (IN BOX A) NIL (IN ROBOT B)))
 Firing MOVE-ROBOT
 ==> (MATCH MOVE-OBJECT
       ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
 ==> (MATCH MOVE-ROBOT
-      ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
+      ((GOAL MOVE BOX A B) (IN BOX A) NIL (IN ROBOT A)))
 <== (MATCH MOVE-ROBOT
-      ((GOAL MOVE BOX A B) (IN BOX A) (IN ROBOT A)))
+      ((GOAL MOVE BOX A B) (IN BOX A) NIL (IN ROBOT A)))
 Firing MOVE-OBJECT
-==> (MATCH STOP ((GOAL MOVE BOX A B) (IN BOX B)))
+==> (MATCH STOP
+      ((GOAL MOVE BOX A B) (IN BOX B)))
 Firing STOP
-Halting.
+Halting
 \end{minted}
 Každá shoda je zde reprezentována názvem pravidla a posloupností faktů, které
 byly spárovány s jeho podmínkami. Odtud můžeme snadno odvodit substituci, jež
 byla při vyhodnocení použita. Negované podmínky nejsou spárovány s žádným
-konkréním faktem, proto jsou zde jen tři fakty, přestože pravidlo
-\verb|move-robot| má podmínky čtyři.
+konkréním faktem, proto jsou na odpovídajících pozicích hodnoty \verb|NIL|.
 
-Je zde také vidět, že po aktivaci pravidla
-\verb|move-robot| se v agendě na chvíli objeví opětovná shoda tohoto pravidla.
-To je způsobeno tím, že obsah agendy se přepočítává po každé změně pracovní
-paměti, takže se zde mohou objevit dočasné výsledky.
+Je zde také vidět, že po aktivaci pravidla \verb|move-robot| se v agendě na
+chvíli objeví opětovná shoda tohoto pravidla. To je způsobeno tím, že obsah
+agendy se přepočítává po každé změně pracovní paměti, takže se zde mohou objevit
+dočasné výsledky.

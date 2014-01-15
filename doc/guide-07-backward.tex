@@ -38,7 +38,7 @@ Mějme následující znalostní bázi:
   (assert (rent-payed))).
 \end{minted}
 Spustíme-li dopřednou inferenci, systém nám vesele doporučí nákup auta.
-Mít nové auto je sice pěkné, hrozí-li nám ale vyhození z pronajatého bytu,
+Mít nové auto je sice pěkné, hrozí-li nám ale vykázání z pronajatého bytu,
 není nákup auta pravděpodobně cestou, kterou bychom se chtěli ubírat.
 Systém by nám v tuto chvíli mohl stejně dobře doporučit správnou cestu. Že bylo
 vybráno zrovna první pravidlo je výsledkem toho, jak funguje síť RETE, která
@@ -70,7 +70,7 @@ All goals have been satisfied
 \end{minted}
 Zde vidíme, že po spuštění zpětné inference nezačal systém bezhlavě provádět
 akce, ke kterým měl dostatečné prostředky. Místo toho systém uvážil zadaný cíl a
-jal se hledat akce, které k jeho splnění směřují.
+jal se hledat akce, které k vedou jeho splnění.
 
 Uvažme nyní složitější příklad (definice šablon vynechána):
 \begin{minted}[samepage]{cl}
@@ -160,7 +160,7 @@ v jeho důsledcích, podle vzoru cíle. Tyto vazby poté aplikuje na jeho podmí
 (tedy opačně než u inference dopředné) a ty pak přidá do množiny cílů. Použité
 vazby proměnných se navíc aplikují i na zbytek cílů.
 
-Zkusme nyní krokovat (použitím \verb|(back-step)|) předchozí příklad s dotazem na
+Zkusme nyní krokovat (použitím \verb|back-step|) předchozí příklad s dotazem na
 matku George s průběžným výpisem cílů pomocí \verb|(goals)|.
 \begin{minted}[samepage]{cl}
 GOALS: ((MOTHER :MOTHER ?MOTHER-OF-GEORGE :CHILD GEORGE))

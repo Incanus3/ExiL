@@ -41,10 +41,11 @@ EXIL-USER> (redo-stack)
         (HALT)))
 \end{minted}
 Vidíme tedy, že jsme vrátili zpět definice pravidel \verb|move-object| a
-\verb|stop| (ty bychom mohli opět provést voláním \verb|(redo)|). Dalším voláním
+\verb|stop|, ty bychom mohli opět provést voláním \verb|(redo)|. Dalším voláním
 \verb|(undo)| by pak byla vrácena definice pravidla \verb|move-robot| a poté
 definice skupiny faktů \verb|world|.
 
 Nemá-li akce žádný vedlejší efekt - např. volání \verb|assert| s faktem, který
 už v~pracovní paměti je, či volání \verb|run| ve chvíli, kdy už není co
-odvozovat - prázdná akce se na zásobník neuloží.
+odvozovat - prázdná akce se na zásobník neuloží. ExiL umožňuje vrácení akcí až
+20 kroků zpět.

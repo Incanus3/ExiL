@@ -41,7 +41,7 @@
 ;(unwatch all)
 ;(watch facts)
 ;(watch rules)
-;(watch activations)
+(watch activations)
 
 (reset)
 

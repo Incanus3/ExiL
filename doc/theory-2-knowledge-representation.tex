@@ -66,13 +66,12 @@ jasná}) a \emph{důsledků} (\uv{neprší}).
 
 \emph{Stav systému} je tvořen množinou aktuálně platných tvrzení a reprezentován
 množinou reprezentací odpovídajících faktů. Tvrzení tedy platí, pokud je
-reprezentace příslušného faktu součástí stavu systému. Počáteční stav
-expertního systému spolu s množinou definovaných odvozovacích pravidel tvoří
-tzv. \emph{znalostní bázi} systému. Pokud se může množina definovaných pravidel
-v průběhu práce se systémem měnit, zařazujeme ji také do stavu systému. Ten je
-pak reprezentován dvěma množinami - množinou reprezentací faktů (tzv.
-\emph{pracovní paměť}) a~množinou definovaných pravidel (tzv. \emph{produkční
-paměť}).
+reprezentace příslušného faktu součástí stavu systému. Počáteční stav expertního
+systému spolu s množinou definovaných odvozovacích pravidel tvoří tzv.
+\emph{znalostní bázi} systému. Pokud se může množina definovaných pravidel v
+průběhu práce se systémem měnit, zařazujeme ji také do stavu systému. Ten je pak
+tvořen dvěma množinami - množinou faktů (tzv.  \emph{pracovní paměť}) a~množinou
+definovaných pravidel (tzv. \emph{produkční paměť}).
 
 Pojmy pracovní a produkční paměť nejsou příliš intuitivní. Jde o doslovný
 překlad v~literatuře užívaných pojmů \emph{working memory} a \emph{production
@@ -90,7 +89,11 @@ Atomy syntaxe této reprezentace jsou symboly. Ty reprezentují názvy jednotliv
 objektů a relací z problémové domény. Fakty jsou pak ve tvaru
 \verb|<relace>(<argumenty oddělené čárkami>)|, např. \verb|At(robot,roomA)|.
 
-Pro vyšší flexibilitu pravidel definuje často syntaxe expertního systému
+V následujícím textu už nebudu rozlišovat mezi entitami a jejich reprezentací,
+pokud bude toto rozlišení jasné z kontextu, neboť to činí text zbytečně
+nepřehledným.
+
+Pro vyšší flexibilitu pravidel definuje často reprezentace expertního systému
 speciální výraz, tzv. \emph{vzor}. Ten má typicky stejnou strukturu jako fakt,
 ale může obsahovat speciální atomy - \emph{proměnné}. Podmínky a důsledky
 pravidel jsou pak tvořeny nikoli fakty, nýbrž právě vzory. Díky tomu mohou být
@@ -112,12 +115,11 @@ Posloupnost faktů je kongruentní s posloupností vzorů, pokud mají tyto stej
 délku a jednotlivé fakty jsou kongruentní s odpovídajícími vzory (v daném
 pořadí).
 
-\clearpage
 Podmínky STRIPSového odvozovacího pravidla mohou být definovány například takto:
 \begin{verbatim}
 Preconditions: At(Box,Location), At(lift,Location), Level(Box,low).
 \end{verbatim}
-Jednotlivé podmínky pravidla jsou sémanticky spojeny logickou konjunkcí a celá
+Sémanticky jsou jednotlivé podmínky pravidla spojeny logickou konjunkcí a celá
 posloupnost je existenčně kvantifikována. Při vyhodnocování podmínek pravidla
 tedy hledáme (alespoň jednu) posloupnost faktů kongruentní s posloupností vzorů
 podmínek. Každý vzor podmínky je tedy spárován s jedním kongruentním faktem.
@@ -166,7 +168,3 @@ jeho podmínek. Tím převedeme vzory důsledků pravidla na fakty. Každý z t�
 faktů je pak přidán do pracovní paměti, pokud není před vzorem odpovídajícího
 důsledku použit symbol \verb|not|, nebo z paměti odebrán, pokud je tento symbol
 použit.
-
-\begin{framed}
-odněkud dále pracovat s pojmem znalost (reprezentace je implicitní)
-\end{framed}

@@ -10,11 +10,11 @@ přerušen ve chvíli, kdy není splněno žádné další pravidlo, nebo volán
 \verb|(halt)| v důsledcích právě aktivovaného pravidla.
 
 Podmínky pravidel jsou ve tvaru vzorů a jsou spojeny logickou konjunkcí,
-pravidlo je tedy splněno, jsou-li splněny všechny jeho podmínky. Kromě
-toho mohou být některé podmínky negovány. Taková podmínka je splněna tehdy,
-neexistuje-li v pracovní paměti žádný fakt, který by se shodoval s jejím vzorem
-(při zachování konzistence vazeb proměnných). Negovanou podmínku značí znak
-\verb|-| (minus) na prvním místě specifikace vzoru.
+pravidlo je tedy splněno, jsou-li splněny všechny jeho podmínky. Kromě toho
+mohou být některé podmínky negovány. Taková podmínka je splněna tehdy,
+neexistuje-li v pracovní paměti žádný fakt kongruentní s jejím vzorem (při
+zachování konzistence vazeb proměnných). Negovanou podmínku značí znak \verb|-|
+(minus) na prvním místě specifikace vzoru.
 
 Vyhodnocování podmínek pravidel probíhá ve dvou fázích. V první fází srovnáváme
 vzory jednotlivých podmínek se všemi fakty v pracovní paměti a~to pouze
@@ -61,15 +61,16 @@ faktů
 \end{minted}
 neprojde druhou fází výběru, neboť vazby proměnných nejsou konzistentní.
 Proměnná \verb|?from| je například v první podmínce navázána na symbol \verb|A|, v
-druhé ale na \verb|B|. Kdyby si ovšem krabice s robotem vyměnily pozice, budou
+druhé ale na \verb|B|. Kdyby si ovšem krabice s robotem vyměnili pozice, budou
 vazby proměnných konzistentní a podmínky pravidla budou splněny. Proměnná
-\verb|?from| by pak nabyla hodnoty \verb|A|, proměnná \verb|?to| hodnoty
-\verb|B| a proměnná \verb|?obj| hodnoty \verb|box|.
+\verb|?from| by pak měla vazbu \verb|A|, proměnná \verb|?to| vazbu
+\verb|B| a proměnná \verb|?obj| vazbu \verb|box|.
 
 Vyhodnocení negovaných podmínek si můžeme představit tak, že nejprve vyhodnotíme
-a navážeme proměnné všech ostatních podmínek. Pokud poté neexistuje fakt, který
-by se se vzorem negované podmínky shodoval a měl konzistentní vazby se zbytkem navázaných
-proměnných, je tato podmínka splněna. Mějme například pravidlo s~podmínkami
+a navážeme proměnné všech ostatních podmínek. Pokud poté neexistuje fakt
+kongruentní se vzorem negované podmínky s konzistentními vazbami se zbytkem
+navázaných proměnných, je tato podmínka splněna. Mějme například pravidlo
+s~podmínkami
 \begin{minted}{cl}
 (goal move box ?from ?to)
 (in box ?from)
@@ -83,9 +84,12 @@ Máme-li v pracovní paměti pouze fakty
 \end{minted}
 budou podmínky pravidla splněny, neboť po spárování vzorů prvních dvou podmínek
 s prvními dvěma fakty bude proměnná \verb|?from| navázána na hodnotu
-\verb|A|~a~neexistuje fakt, který by se shodoval se vzorem \verb|(in robot A)|.
+\verb|A|~a~neexistuje fakt kogruentní se vzorem \verb|(in robot A)|.
 Přesuneme-li ale robota na pozici \verb|A|, podmínka již splněna nebude a
-pravidlo nelze aktivovat.
+pravidlo nelze aktivovat. U negovaných podmínek je třeba dát pozor na to, aby se
+všechny jejich proměnné vyskytovaly už dříve v nějaké pozitivní podmínce. V
+opačném případě nebude vyhodnocení vazeb proměnných fungovat správně (viz
+kapitola \ref{rete}).
 
 Ve vzorech podmínek pravidla můžeme využít speciální proměnné \verb|?|.
 Konzistence vazby této proměnné není při vyhodnocování testována, takže
@@ -112,19 +116,20 @@ spárován.
 Podmínky některých pravidel mohou být při vyhodnocování splněny několika různými
 posloupnostmi faktů. Výsledkem vyhodnocování pravidel tedy není pouze množina
 splněných pravidel, nýbrž množina shod (\emph{match}). Každá shoda je tvořena
-pravidlem a \emph{substitucí} proměnných navázaných při vyhodnocování jeho
-podmínek. Substituci chápejme jako zobrazení z množiny všech proměnných,
-vyskytujících se v podmínkách pravidla, na konkrétní hodnoty atomů (slotů).
-Aplikací této substituce na vzory podmínek pravidla získáme opět posloupnost
-faktů, kterými byly podmínky v dané shodě splněny. Tato substituce je následně
-použita při aktivaci pravidla k náhradě proměnných v jeho důsledcích.
+pravidlem a substitucí proměnných navázaných při vyhodnocování jeho podmínek.
+Substituci chápejme jako zobrazení z množiny všech proměnných, vyskytujících se
+v podmínkách pravidla, na konkrétní hodnoty atomů (slotů). Aplikací této
+substituce na vzory podmínek pravidla získáme opět posloupnost faktů, kterými
+byly podmínky v dané shodě splněny. Tato substituce je následně použita při
+aktivaci pravidla k náhradě proměnných v jeho důsledcích.
 
 ExiL uchovává aktuální množinu shod. Ta ve skutečnosti není přepočítána v~první
 fázi inferenčního kroku, jak jsem dosud pro jednoduchost tvrdil, nýbrž
 automaticky po každé změně pracovní paměti či množiny pravidel (detaily viz
-RETE). Aktuální množinu shod nazývám, po vzoru CLIPSu, \emph{agenda} a lze ji
-vypsat voláním stejnojmenné funkce. Každá shoda v agendě je opatřena časovým
-razítkem, shody je tedy možné uspořádat podle toho, kdy do agendy přibyly.
+kapitola \ref{rete}). Aktuální množinu shod nazývám, po vzoru CLIPSu,
+\emph{agenda} a~lze ji vypsat voláním stejnojmenné funkce. Každá shoda v agendě
+je opatřena časovým razítkem, shody je tedy možné uspořádat podle toho, kdy do
+agendy přibyly.
 
 Je-li na začátku inferenčního kroku v agendě více shod, je třeba z nich jednu
 vybrat k aktivaci. Výběr shody záleží na zvolené strategii. ExiL poskytuje
@@ -135,10 +140,8 @@ následující strategie výběru shody:
   \item[simplicity-strategy] vybere shodu, jejíž pravidlo má nejméně podmínek
   \item[complexity-strategy] volí shodu, jejíž pravidlo má nejvíce podmínek.
 \end{description}
-Názvy prvních dvou strategií vychází z toho, že jde o prohledávání prostoru
-stavů systému do hloubky, či do šířky, jak blíže popíšu v teoretické části
-textu, spolu s~motivacemi pro využití jednotlivých typů strategií a dalšími typy
-strategií, které se v expertních systémech používají.
+Názvy prvních dvou strategií vychází z toho, že jde o prohledávání stromu
+stavů systému do hloubky, či do šířky (viz kapitola \ref{theory inference}).
 
 Výchozí strategií je \verb|depth-strategy|. Strategii, která bude v inferenci
 použita, můžeme zvolit voláním makra \verb|setstrategy| s názvem strategie,
@@ -150,10 +153,9 @@ Po výběru shody k aktivaci je její pravidlo aktivováno. Nejprve jsou v
 důsledcích pravidla nahrazeny všechny proměnné pomocí substituce shody. Výrazy
 v~důsledcích jsou poté vyhodnoceny lispovým makrem \verb|eval|. Tento způsob
 vyhodnocení vede ke značným omezením. Výrazy totiž nejsou vyhodnoceny v
-\emph{lexikálním prostředí} definice pravidla, nýbrž ve výchozím (\emph{top-level})
-prostředí Lispu. Díky tomu nemůžeme v důsledcích pravidla volat lokální funkce
-(definované např. makrem \verb|labels|), či přistupovat k lokálním proměnným
-(navázaným například v~\verb|let|u či pomoci \emph{destrukturujících maker}).
+\emph{lexikálním prostředí} definice pravidla, nýbrž ve výchozím
+(\emph{top-level}) prostředí Lispu. Díky tomu nemůžeme v důsledcích pravidla
+volat \emph{lokální funkce} či přistupovat k~\emph{lokálním proměnným}.
 
 V důsledcích každého pravidla chceme typicky alespoň jednou volat některé
 z~maker modifikujících pracovní paměť, abychom zneplatnili podmínky pravidla,

@@ -5,8 +5,8 @@ Zdrojový kód knihovny ExiL je přiložen k~této diplomové práci a~lze jej t
 zklonováním\footnote{\url{http://git-scm.com/docs/git-clone}}
 gitového\footnote{\url{http://git-scm.com/}} repozitáře na adrese
 \verb|git@github.com:Incanus3/ExiL.git|.
-Kód knihovny se nachází v podadresáři \verb|src|, ten budu dále nazývat kořenovým
-adresářem knihovny či projektu.
+Kód knihovny ja na přiloženém CD v~adresáři \verb|src|, umístění zdrojových
+souborů budu vztahovat vzhledem k tomuto adresáři.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Prerekvizity}
@@ -17,19 +17,16 @@ označením interpreter tedy budu nazývat obojí}, vývojové prostředí (s
 interpreterem bychom si ve skutečnosti vystačili, ale přímá práce s~ním není
 většinou příliš pohodlná) a knihovny umožňující dávkové načtení celého projektu
 včetně závislostí.
-%\footnotetext[11]{\url{http://en.wikipedia.org/wiki/Compiler}}
-%\addtocounter{footnote}{1}\addtocounter{Hfootnote}{1}
 
 Knihovnu jsem vyvíjel v prostředí
 SLIME\footnote{\url{http://www.common-lisp.net/project/slime/}}, což je plugin
 pro textový editor GNU Emacs\footnote{\url{http://www.gnu.org/software/emacs/}}
 (poskytující mimo jiné pomůcky pro editaci lispového zdrojového kódu,
 REPL\footnote{\url{http://en.wikipedia.org/wiki/Read-eval-print\_loop}} a
-debugger) %\footnote{\url{http://en.wikipedia.org/wiki/Debugger}}
-s interpreterem SBCL\footnote{\url{http://www.sbcl.org/}} a tuto kombinaci
-mohu vřele doporučit. V operačním systému Debian GNU Linux, který jsem pro vývoj
-použil, lze Emacs, SLIME i SBCL nainstalovat z výchozího repozitáře a aktivovat
-úpravou inicializačního souboru
+debugger), s interpreterem SBCL\footnote{\url{http://www.sbcl.org/}} a tuto
+kombinaci mohu vřele doporučit. V operačním systému Debian GNU Linux, který jsem
+pro vývoj použil, lze Emacs, SLIME i SBCL nainstalovat z výchozího repozitáře a
+aktivovat úpravou inicializačního souboru
 Emacsu\footnote{\url{http://www.common-lisp.net/projects/slime/doc/html/Installation.html}}.
 Prostředí poté můžeme v~Emacsu spustit voláním příkazu \verb|slime|
 (\verb|<Alt+X>slime<ENTER>|). Při prvním spuštění se kód prostředí kompiluje, což
@@ -38,14 +35,19 @@ buffer\footnote{\url{http://www.gnu.org/software/emacs/manual/html\_node/emacs/B
 s~lispovým REPLem.
 
 Knihovnu jsem testoval také ve vývojovém prostředí
-LispWorks\registered\footnote{\url{http://www.lispworks.com/}} Personal Edition
+LispWorks\texttrademark\footnote{\url{http://www.lispworks.com/}} Personal Edition
 6.1, pro které jsem také vytvořil minimalistické grafické uživatelské rozhraní.
 Součástí prostředí LispWorks je i lispový interpret. Prostředí můžeme získat na
 adrese \url{http://www.lispworks.com/downloads/index.html} a nainstalovat podle
 návodu, který se zobrazí po vyplnění formuláře.
 
+Zběžně jsem knihovnu testoval také v prostředí
+Lispbox\footnote{\url{http://common-lisp.net/project/lispbox/}}, což je balík
+umožňující hormadnou instalaci editoru Emacs, prostředí SLIME a interpreteru
+Clozure CL\footnote{\url{http://www.clozure.com/clozurecl.html}} dostupný pro
+Windows, GNU Linux i Mac OS X.
+
 Pro efektivní načtení knihovny včetně závislostí potřebujeme ještě dvě knihovny:
-\clearpage
 \begin{itemize}
   \item ASDF\footnote{\url{http://common-lisp.net/project/asdf}} je knihovna
     umožňující snadnou definici struktury projektu a jeho dávkové načtení,
@@ -58,23 +60,25 @@ Knihovnu quicklisp jsem k projektu přiložil a pokud není součástí prostře
 automaticky načtena před načtením ExiLu.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Načtení knihovny}
-V prostředí SLIME načteme knihovnu načtením souboru \verb|load.lisp| z kořenového
-adresáře knihovny, tedy zadáním \cl|(load "cesta/k/projektu/src/load.lisp")|
-v~REPLu). Tento soubor nejprve načte knihovnu \verb|quicklisp|, je-li potřeba,
-a s její pomocí poté načte celý projekt ExiL včetně závislostí. Nakonec soubor
-definuje výchozí prostředí, viz kapitola \ref{multiple environments}
+V prostředí SLIME (interpreter SBCL) načteme knihovnu načtením souboru
+\verb|load.lisp| z kořenového adresáře knihovny, tedy zadáním
+\cl|(load "cesta/k/projektu/src/load.lisp")| v~REPLu). Tento soubor nejprve
+načte knihovnu \verb|quicklisp|, je-li potřeba, a s její pomocí poté načte celý
+projekt ExiL včetně závislostí. Pro prvotní stažení závislostí je třeba
+internetového připojení. Nakonec soubor definuje výchozí prostředí, viz kapitola
+\ref{multiple environments}
 
-V prostředí LispWorks načítání pomocí knihovny \verb|quicklisp| nefunguje správně,
-knihovnu je proto třeba načítat načtením souboru \verb|load-manual.lisp| (opět
-z kořenového adresáře projektu). Načíst můžeme opět voláním \verb|load| v~REPLu,
+V prostředích LispWorks a Lispbox (Clozure CL) načítání pomocí knihovny
+\verb|quicklisp| nefunguje správně, knihovnu je proto třeba načítat pomocí
+souboru \verb|load-manual.lisp|. Načíst můžeme opět voláním \verb|load| v~REPLu,
 nebo vybráním položky \verb|Load...| v nabídce \verb|File| menu libovolného okna
-prostředí.
+prostředí LispWorks.
 
-Všechna makra a funkce, které knihovna definuje pro přímé volání uživatelem jsou
-\emph{exportována} z \emph{package} \verb|exil|. Před interakcí s knihovnou je
-tedy třeba vstoupit do package \verb|exil-user|, který symboly z~package
-\verb|exil| \emph{importuje}. Symboly z~package je také možno importovat do
-existujícího package takto:
+Všechna \emph{makra} a \emph{funkce}, které knihovna definuje pro přímé volání,
+jsou \emph{exportována} z \emph{package} \verb|exil|. Před interakcí s knihovnou
+je tedy třeba vstoupit do package \verb|exil-user|, který \emph{symboly} z~package
+\verb|exil| \emph{importuje}, voláním \verb|(in-package :exil-user)|. Symboly
+z~package je také možno importovat do existujícího package takto:
 \begin{minted}{cl}
   (defpackage :my-package
     (:documentation "user-defined package")

@@ -15,11 +15,11 @@ následující:
   \item[definice prostředí] \verb|defenv undefenv setenv|
 \end{description}
 Tato makra berou jako parametry symboly a/nebo seznamy a tyto automaticky
-\emph{quotují}. To je pohodlné, pracujeme-li s knihovnou přímo. Představme si
+\emph{kvotují}. To je pohodlné, pracujeme-li s knihovnou přímo. Představme si
 ale, že chceme knihovnu volat z jiného kódu a například specifikace faktů, které
 předáváme makru \verb|assert|, generovat nějakou funkcí.
 
-Protože makro \verb|assert| seznamy se specifikacemi faktů quotuje, místo aby je
+Protože makro \verb|assert| seznamy se specifikacemi faktů kvotuje, místo aby je
 vyhodnotilo, nelze ho v tomto případě použít. Výsledkem volání
 \cl|(assert (generate-fact))| totiž bude přidání faktu \verb|(generate-fact)| do
 pracovní paměti. K tomuto účelu poskytuje ExiL ke všem uvedeným makrům funkční
@@ -55,7 +55,7 @@ jejím voláním do pracovní paměti přidán.
 V důsledcích pravidla bychom také mohli chtít například upozornit jinou část
 programu na událost, ke které došlo. Protože ExiL nahrazuje výskyty
 proměnných v celé důsledkové části pravidla, lze toho snadno dosáhnout. Je ale
-třeba dát pozor na quotování hodnot proměnných. Uvažme pravidlo
+třeba dát pozor na kvotování hodnot proměnných. Uvažme pravidlo
 \begin{minted}{cl}
 (defrule move-robot
   (goal move robot ?from ?to)
@@ -66,7 +66,7 @@ třeba dát pozor na quotování hodnot proměnných. Uvažme pravidlo
   (notify 'moving-robot '?from '?to))
 \end{minted}
 a fakt \verb|(goal move robot A B)| v pracovní paměti. Kdybychom ve volání
-\verb|notify| proměnné \verb|?from| a \verb|?to| nequotovali, volání by se při
+\verb|notify| proměnné \verb|?from| a \verb|?to| nekvotovali, volání by se při
 aktivaci pravidla vyhodnotilo jako \verb|(notify 'moving-robot A B)|. To by
 pravděpodobně skončilo chybovou hláškou sdělující, že proměnné \verb|A| a
 \verb|B| nejsou definovány.
