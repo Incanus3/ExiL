@@ -3,6 +3,12 @@ build:
 	bibtex diplomka.aux
 	pdfcslatex -shell-escape diplomka.tex
 
+psbuild:
+	cslatex -shell-escape diplomka.tex
+	bibtex diplomka.aux
+	cslatex -shell-escape diplomka.tex
+	dvipdfm diplomka.dvi
+
 clean:
 	rm -f *fasl
 	rm -f *~
